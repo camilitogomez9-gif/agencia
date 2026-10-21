@@ -1,0 +1,13 @@
+{
+  "wf": "W6",
+  "descripcion": "convierte **texto** en *texto*. El prompt del Recolector lo prohíbe explícitamente (delta 02) y el modelo lo escribe igual: se vio '**Pantuflas Normales**' en una prueba real del 14/08. Ni WhatsApp ni Telegram renderizan el doble asterisco — al cliente le llegan los asteriscos literales y el mensaje se ve roto.",
+  "por_que_nodo": "Una regla de prompt ya existe y no se cumple. El formato correcto es uno solo, no hay criterio que delegar, así que va por código: 100% en vez de probabilístico.",
+  "ediciones": [
+    {
+      "nodo": "Partir en burbujas",
+      "campo": "parameters.jsCode",
+      "anchor": "// ── LINKS EN MARKDOWN → URL PELADA ─────────────────────────────────────────────",
+      "reemplazo": "// ── ASTERISCO DOBLE → SIMPLE ───────────────────────────────────────────────────\n// WhatsApp y Telegram usan *texto* para negrita; **texto** es markdown y les llega\n// literal, con los asteriscos a la vista. El prompt del Recolector ya lo prohíbe y aun\n// así el modelo lo escribe (se midió '**Pantuflas Normales**' el 14/08), así que se\n// normaliza acá: no hay criterio que delegar, el formato correcto es uno solo.\n//\n// Va ANTES del reemplazo de links para no pisar un [texto](url) que tenga ** adentro.\ntxt = txt.replace(/\\*\\*([^*\\n]{1,120})\\*\\*/g, '*$1*');\n\n// ── LINKS EN MARKDOWN → URL PELADA ─────────────────────────────────────────────"
+    }
+  ]
+}

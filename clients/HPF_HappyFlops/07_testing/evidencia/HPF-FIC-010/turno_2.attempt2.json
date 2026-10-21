@@ -1,0 +1,70 @@
+{
+  "probe_id": "sess_hpf_fic_010_1785957035#3af95af4f939",
+  "session_id": "sess_hpf_fic_010_1785957035",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "quiero mandiles",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 59.4,
+  "version_antes": "cff6a505-9b93-437e-8535-df2be25e399f",
+  "version_despues": "cff6a505-9b93-437e-8535-df2be25e399f",
+  "capturado_utc": "2026-08-05T19:12:53.475182+00:00",
+  "execution_id": "989872",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T19:11:49.652Z",
+  "stoppedAt": "2026-08-05T19:12:47.950Z",
+  "n_esperadas": 2,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Gracias por tu interés! Para XV Años manejamos sandalias, pantuflas, cilindros, kit anticruda y vasos popote, pero los mandiles son exclusivos para bodas",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "Son un hit en las fiestas! ✨",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 215,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2080,
+      "chat_id": 6390727286,
+      "texto_entregado": "Gracias por tu interés! Para XV Años manejamos sandalias, pantuflas, cilindros, kit anticruda y vasos popote, pero los mandiles son exclusivos para bodas",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 249,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2081,
+      "chat_id": 6390727286,
+      "texto_entregado": "Son un hit en las fiestas! ✨",
+      "error": null
+    }
+  ],
+  "n_entregadas": 2,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Gracias por tu interés! Para XV Años manejamos sandalias, pantuflas, cilindros, kit anticruda y vasos popote, pero los mandiles son exclusivos para bodas.\n\nTe gustaría que te muestre las opciones de productos que sí aplican para tus XV? Son un hit en las fiestas! ✨",
+    "tools": []
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-FIC-010"
+}

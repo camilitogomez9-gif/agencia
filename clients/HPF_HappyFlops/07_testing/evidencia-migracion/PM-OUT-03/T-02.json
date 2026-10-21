@@ -1,0 +1,620 @@
+{
+  "test_id": "T-02",
+  "punto": "PM-OUT-03",
+  "titulo": "send-image (ficha de producto)",
+  "resultado": "CORROBORADO",
+  "detalle": "http=201 conv=44tBzIqK9ODLJ7Jr9Lco body_exacto=sí status=failed attachments=['https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg'] | asset Range→206 image/jpeg",
+  "pasos": [
+    {
+      "paso": "POST message",
+      "method": "POST",
+      "path": "/conversations/messages",
+      "request": {
+        "type": "WhatsApp",
+        "contactId": "3tzzBVjsKlOF2RJjKNOL",
+        "message": "Aqui te muestro los *colores disponibles* para las *TINTAS*",
+        "attachments": [
+          "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+        ]
+      },
+      "status": 201,
+      "response": {
+        "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+        "messageId": "XqGUOXndtq8v2D80J7HY",
+        "traceId": "f80d4c26-5459-4cf0-8152-f31dadd4200d"
+      }
+    },
+    {
+      "paso": "read-back mensajes",
+      "method": "GET",
+      "path": "/conversations/44tBzIqK9ODLJ7Jr9Lco/messages?limit=20",
+      "request": null,
+      "status": 200,
+      "response": {
+        "messages": {
+          "lastMessageId": "sEZ9zqn59EL9MbGUcsqJ",
+          "nextPage": true,
+          "messages": [
+            {
+              "id": "XqGUOXndtq8v2D80J7HY",
+              "direction": "outbound",
+              "status": "failed",
+              "type": 19,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "attachments": [
+                "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+              ],
+              "body": "Aqui te muestro los *colores disponibles* para las *TINTAS*",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "contentType": "text/plain",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:31:44.358Z",
+              "dateUpdated": "2026-08-06T23:31:45.477Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "error": "WHATSAPP_INTEGRATION_UNAVAILABLE_LOCATION",
+              "meta": {
+                "marketplace": {
+                  "appId": "6a355d3fd70f7bc6633d2172"
+                }
+              },
+              "messageType": "TYPE_WHATSAPP"
+            },
+            {
+              "id": "3bXT5AQSMgi01VRU8arA",
+              "direction": "outbound",
+              "status": "failed",
+              "type": 19,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "attachments": [],
+              "body": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n\n¿Cuáles te interesan?",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "contentType": "text/plain",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:31:41.086Z",
+              "dateUpdated": "2026-08-06T23:31:41.741Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "error": "WHATSAPP_INTEGRATION_UNAVAILABLE_LOCATION",
+              "meta": {
+                "marketplace": {
+                  "appId": "6a355d3fd70f7bc6633d2172"
+                }
+              },
+              "messageType": "TYPE_WHATSAPP"
+            },
+            {
+              "id": "REPoFyyz1yEKO8yQRrmd",
+              "direction": "outbound",
+              "type": 28,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "body": "Opportunity updated",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:31:40.810Z",
+              "dateUpdated": "2026-08-06T23:31:40.810Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "activity": {
+                "data": {
+                  "id": "vzYAb3P86uJ08CI9jKyV",
+                  "name": "ZZ Test Migracion GHL",
+                  "status": "open",
+                  "pipeline": "Happy Flops IA",
+                  "stage": {
+                    "oldStageName": "Ventas Perdidas",
+                    "newStageName": "Lead Nuevo"
+                  }
+                },
+                "title": "Opportunity updated",
+                "type": "opportunity_stage_updated"
+              },
+              "messageType": "TYPE_ACTIVITY_OPPORTUNITY"
+            },
+            {
+              "id": "WPFVUAA2GKlZSq3D8bGO",
+              "direction": "outbound",
+              "type": 28,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "body": "Opportunity updated",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:31:39.303Z",
+              "dateUpdated": "2026-08-06T23:31:39.303Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "activity": {
+                "data": {
+                  "id": "vzYAb3P86uJ08CI9jKyV",
+                  "name": "ZZ Test Migracion GHL",
+                  "status": "open",
+                  "pipeline": "Happy Flops IA",
+                  "stage": {
+                    "oldStageName": "Lead Nuevo",
+                    "newStageName": "Ventas Perdidas"
+                  }
+                },
+                "title": "Opportunity updated",
+                "type": "opportunity_stage_updated"
+              },
+              "messageType": "TYPE_ACTIVITY_OPPORTUNITY"
+            },
+            {
+              "id": "m3IMOsATagWyp8uLJpXY",
+              "direction": "outbound",
+              "type": 28,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "body": "Opportunity updated",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:31:31.092Z",
+              "dateUpdated": "2026-08-06T23:31:31.092Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "activity": {
+                "data": {
+                  "id": "vzYAb3P86uJ08CI9jKyV",
+                  "name": "ZZ Test Migracion GHL",
+                  "status": "open",
+                  "pipeline": "Happy Flops IA",
+                  "stage": {
+                    "oldStageName": "Ventas Perdidas",
+                    "newStageName": "Lead Nuevo"
+                  }
+                },
+                "title": "Opportunity updated",
+                "type": "opportunity_stage_updated"
+              },
+              "messageType": "TYPE_ACTIVITY_OPPORTUNITY"
+            },
+            {
+              "id": "ba2OTGOWhipyNKrgHPzd",
+              "direction": "outbound",
+              "type": 28,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "body": "Opportunity updated",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:31:28.175Z",
+              "dateUpdated": "2026-08-06T23:31:28.175Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "activity": {
+                "data": {
+                  "id": "vzYAb3P86uJ08CI9jKyV",
+                  "name": "ZZ Test Migracion GHL",
+                  "status": "open",
+                  "pipeline": "Happy Flops IA",
+                  "stage": {
+                    "oldStageName": "Ganado",
+                    "newStageName": "Ventas Perdidas"
+                  }
+                },
+                "title": "Opportunity updated",
+                "type": "opportunity_stage_updated"
+              },
+              "messageType": "TYPE_ACTIVITY_OPPORTUNITY"
+            },
+            {
+              "id": "cuUR6eWoDj5uomSrFjHD",
+              "direction": "outbound",
+              "type": 28,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "body": "Opportunity updated",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:31:27.225Z",
+              "dateUpdated": "2026-08-06T23:31:27.225Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "activity": {
+                "data": {
+                  "id": "vzYAb3P86uJ08CI9jKyV",
+                  "name": "ZZ Test Migracion GHL",
+                  "status": "open",
+                  "pipeline": "Happy Flops IA",
+                  "stage": {
+                    "oldStageName": "En Espera",
+                    "newStageName": "Ganado"
+                  }
+                },
+                "title": "Opportunity updated",
+                "type": "opportunity_stage_updated"
+              },
+              "messageType": "TYPE_ACTIVITY_OPPORTUNITY"
+            },
+            {
+              "id": "zwSxz0QJ6SlRcIsbEKCt",
+              "direction": "outbound",
+              "type": 28,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "body": "Opportunity updated",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:31:26.281Z",
+              "dateUpdated": "2026-08-06T23:31:26.281Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "activity": {
+                "data": {
+                  "id": "vzYAb3P86uJ08CI9jKyV",
+                  "name": "ZZ Test Migracion GHL",
+                  "status": "open",
+                  "pipeline": "Happy Flops IA",
+                  "stage": {
+                    "oldStageName": "Enviado",
+                    "newStageName": "En Espera"
+                  }
+                },
+                "title": "Opportunity updated",
+                "type": "opportunity_stage_updated"
+              },
+              "messageType": "TYPE_ACTIVITY_OPPORTUNITY"
+            },
+            {
+              "id": "BWvXeCZhjCLHdx5sWmMU",
+              "direction": "outbound",
+              "type": 28,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "body": "Opportunity updated",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:31:25.881Z",
+              "dateUpdated": "2026-08-06T23:31:25.881Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "activity": {
+                "data": {
+                  "id": "vzYAb3P86uJ08CI9jKyV",
+                  "name": "ZZ Test Migracion GHL",
+                  "status": "open",
+                  "pipeline": "Happy Flops IA",
+                  "stage": {
+                    "oldStageName": "En Producción",
+                    "newStageName": "Enviado"
+                  }
+                },
+                "title": "Opportunity updated",
+                "type": "opportunity_stage_updated"
+              },
+              "messageType": "TYPE_ACTIVITY_OPPORTUNITY"
+            },
+            {
+              "id": "x2xwHxEQFYChmUvCkWed",
+              "direction": "outbound",
+              "type": 28,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "body": "Opportunity updated",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:31:24.360Z",
+              "dateUpdated": "2026-08-06T23:31:24.360Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "activity": {
+                "data": {
+                  "id": "vzYAb3P86uJ08CI9jKyV",
+                  "name": "ZZ Test Migracion GHL",
+                  "status": "open",
+                  "pipeline": "Happy Flops IA",
+                  "stage": {
+                    "oldStageName": "Diseño en Proceso",
+                    "newStageName": "En Producción"
+                  }
+                },
+                "title": "Opportunity updated",
+                "type": "opportunity_stage_updated"
+              },
+              "messageType": "TYPE_ACTIVITY_OPPORTUNITY"
+            },
+            {
+              "id": "2phU1JvpfvR36lPpi9jW",
+              "direction": "outbound",
+              "type": 28,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "body": "Opportunity updated",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:31:22.935Z",
+              "dateUpdated": "2026-08-06T23:31:22.935Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "activity": {
+                "data": {
+                  "id": "vzYAb3P86uJ08CI9jKyV",
+                  "name": "ZZ Test Migracion GHL",
+                  "status": "open",
+                  "pipeline": "Happy Flops IA",
+                  "stage": {
+                    "oldStageName": "Pago Confirmado",
+                    "newStageName": "Diseño en Proceso"
+                  }
+                },
+                "title": "Opportunity updated",
+                "type": "opportunity_stage_updated"
+              },
+              "messageType": "TYPE_ACTIVITY_OPPORTUNITY"
+            },
+            {
+              "id": "s13YCbgG8PSQQuQdAPqr",
+              "direction": "outbound",
+              "type": 28,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "body": "Opportunity updated",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:31:20.194Z",
+              "dateUpdated": "2026-08-06T23:31:20.194Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "activity": {
+                "data": {
+                  "id": "vzYAb3P86uJ08CI9jKyV",
+                  "name": "ZZ Test Migracion GHL",
+                  "status": "open",
+                  "pipeline": "Happy Flops IA",
+                  "stage": {
+                    "oldStageName": "Esperando Pago",
+                    "newStageName": "Pago Confirmado"
+                  }
+                },
+                "title": "Opportunity updated",
+                "type": "opportunity_stage_updated"
+              },
+              "messageType": "TYPE_ACTIVITY_OPPORTUNITY"
+            },
+            {
+              "id": "jOmNBfNViXAPWdusBG8b",
+              "direction": "outbound",
+              "type": 28,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "body": "Opportunity updated",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:31:19.646Z",
+              "dateUpdated": "2026-08-06T23:31:19.646Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "activity": {
+                "data": {
+                  "id": "vzYAb3P86uJ08CI9jKyV",
+                  "name": "ZZ Test Migracion GHL",
+                  "status": "open",
+                  "pipeline": "Happy Flops IA",
+                  "stage": {
+                    "oldStageName": "Cotizado",
+                    "newStageName": "Esperando Pago"
+                  }
+                },
+                "title": "Opportunity updated",
+                "type": "opportunity_stage_updated"
+              },
+              "messageType": "TYPE_ACTIVITY_OPPORTUNITY"
+            },
+            {
+              "id": "6whjnBCfXPqXkRLqo36q",
+              "direction": "outbound",
+              "type": 28,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "body": "Opportunity updated",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:31:18.697Z",
+              "dateUpdated": "2026-08-06T23:31:18.697Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "activity": {
+                "data": {
+                  "id": "vzYAb3P86uJ08CI9jKyV",
+                  "name": "ZZ Test Migracion GHL",
+                  "status": "open",
+                  "pipeline": "Happy Flops IA",
+                  "stage": {
+                    "oldStageName": "Productos Mostrados",
+                    "newStageName": "Cotizado"
+                  }
+                },
+                "title": "Opportunity updated",
+                "type": "opportunity_stage_updated"
+              },
+              "messageType": "TYPE_ACTIVITY_OPPORTUNITY"
+            },
+            {
+              "id": "2AKEkeBfMppR4Ykf9QJD",
+              "direction": "outbound",
+              "type": 28,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "body": "Opportunity updated",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:31:17.763Z",
+              "dateUpdated": "2026-08-06T23:31:17.763Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "activity": {
+                "data": {
+                  "id": "vzYAb3P86uJ08CI9jKyV",
+                  "name": "ZZ Test Migracion GHL",
+                  "status": "open",
+                  "pipeline": "Happy Flops IA",
+                  "stage": {
+                    "oldStageName": "Evento Identificado",
+                    "newStageName": "Productos Mostrados"
+                  }
+                },
+                "title": "Opportunity updated",
+                "type": "opportunity_stage_updated"
+              },
+              "messageType": "TYPE_ACTIVITY_OPPORTUNITY"
+            },
+            {
+              "id": "WTvuDzBOeFlftlGdcRZX",
+              "direction": "outbound",
+              "type": 28,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "body": "Opportunity updated",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:31:17.074Z",
+              "dateUpdated": "2026-08-06T23:31:17.074Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "activity": {
+                "data": {
+                  "id": "vzYAb3P86uJ08CI9jKyV",
+                  "name": "ZZ Test Migracion GHL",
+                  "status": "open",
+                  "pipeline": "Happy Flops IA",
+                  "stage": {
+                    "oldStageName": "Saludo Enviado",
+                    "newStageName": "Evento Identificado"
+                  }
+                },
+                "title": "Opportunity updated",
+                "type": "opportunity_stage_updated"
+              },
+              "messageType": "TYPE_ACTIVITY_OPPORTUNITY"
+            },
+            {
+              "id": "sopz4Lr0vWj5jZ05pl3W",
+              "direction": "outbound",
+              "type": 28,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "body": "Opportunity updated",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:31:16.158Z",
+              "dateUpdated": "2026-08-06T23:31:16.158Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "activity": {
+                "data": {
+                  "id": "vzYAb3P86uJ08CI9jKyV",
+                  "name": "ZZ Test Migracion GHL",
+                  "status": "open",
+                  "pipeline": "Happy Flops IA",
+                  "stage": {
+                    "oldStageName": "Lead Nuevo",
+                    "newStageName": "Saludo Enviado"
+                  }
+                },
+                "title": "Opportunity updated",
+                "type": "opportunity_stage_updated"
+              },
+              "messageType": "TYPE_ACTIVITY_OPPORTUNITY"
+            },
+            {
+              "id": "tC63K0oYRkuKdDVHO9GV",
+              "direction": "outbound",
+              "type": 28,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "body": "Opportunity status changed",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:31:14.037Z",
+              "dateUpdated": "2026-08-06T23:31:14.037Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "activity": {
+                "data": {
+                  "id": "vzYAb3P86uJ08CI9jKyV",
+                  "name": "ZZ Test Migracion GHL",
+                  "status": "open",
+                  "pipeline": "Happy Flops IA",
+                  "stage": {
+                    "newStageName": "Lead Nuevo"
+                  }
+                },
+                "title": "Opportunity status changed",
+                "type": "opportunity_status_updated"
+              },
+              "messageType": "TYPE_ACTIVITY_OPPORTUNITY"
+            },
+            {
+              "id": "xSPlM7f6cLdl1geDBxhv",
+              "direction": "outbound",
+              "type": 28,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "body": "Opportunity status changed",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:31:13.093Z",
+              "dateUpdated": "2026-08-06T23:31:13.093Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "activity": {
+                "data": {
+                  "id": "vzYAb3P86uJ08CI9jKyV",
+                  "name": "ZZ Test Migracion GHL",
+                  "status": "lost",
+                  "pipeline": "Happy Flops IA",
+                  "stage": {
+                    "newStageName": "Lead Nuevo"
+                  }
+                },
+                "title": "Opportunity status changed",
+                "type": "opportunity_status_updated"
+              },
+              "messageType": "TYPE_ACTIVITY_OPPORTUNITY"
+            },
+            {
+              "id": "sEZ9zqn59EL9MbGUcsqJ",
+              "direction": "outbound",
+              "type": 28,
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "body": "Opportunity updated",
+              "contactId": "3tzzBVjsKlOF2RJjKNOL",
+              "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+              "dateAdded": "2026-08-06T23:29:51.928Z",
+              "dateUpdated": "2026-08-06T23:29:51.928Z",
+              "source": "app",
+              "from": "Happy Flopps",
+              "to": "+5213300000199",
+              "activity": {
+                "data": {
+                  "id": "vzYAb3P86uJ08CI9jKyV",
+                  "name": "ZZ Test Migracion GHL",
+                  "status": "open",
+                  "pipeline": "Happy Flops IA",
+                  "stage": {
+                    "oldStageName": "Ganado",
+                    "newStageName": "Lead Nuevo"
+                  }
+                },
+                "title": "Opportunity updated",
+                "type": "opportunity_stage_updated"
+              },
+              "messageType": "TYPE_ACTIVITY_OPPORTUNITY"
+            }
+          ]
+        },
+        "traceId": "2f741359-eb4a-4728-a433-c972f0236d23"
+      }
+    },
+    {
+      "paso": "asset Range 0-1023",
+      "url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg",
+      "status": 206,
+      "content_type": "image/jpeg"
+    }
+  ]
+}

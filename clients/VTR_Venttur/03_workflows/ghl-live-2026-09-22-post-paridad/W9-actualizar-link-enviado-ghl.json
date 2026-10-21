@@ -1,0 +1,245 @@
+{
+  "updatedAt": "2026-09-22T05:38:21.573Z",
+  "createdAt": "2026-09-22T05:12:06.064Z",
+  "id": "TROsQ5h78baAuVOY",
+  "name": "W9 · Actualizar link_enviado (GHL) - Venttur (OFF)",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\"contact_id\": \"abc123\", \"phone\": \"+5213312345678\", \"programa\": \"Internados\", \"first_name\": \"Juan\", \"opportunityId\": \"\"}"
+      },
+      "id": "aeb6955a-719a-44bb-a801-ab7a185171a5",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $json.contact_id || $json.contactId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "53664bc8-6f3f-4840-8d0b-71149920eca7",
+      "name": "GET contact (enrich)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        200,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YkVmaA4jlRbO1TQD",
+          "name": "GHL VTR (PIT)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\n// W9 · auto-enriquece programa + first_name desde el GET contact\nconst trig = $('When Executed by Another Workflow').first().json;\nconst contact_id = (trig.contact_id || trig.contactId || '').toString();\nconst phone = (trig.phone || '').toString();\nconst opportunityId = (trig.opportunityId || '').toString();\n\nconst resp = $json || {};\nconst c = resp.contact || resp || {};\nconst first_name = (trig.first_name || c.firstName || c.first_name || '').toString();\n\nconst PROGRAMA_FIELD = 'xK2NFqtz1DYUw3gYdn8I';\nlet programa = (trig.programa || trig.programa_interes || '').toString();\nif (!programa) {\n  const cfs = c.customFields || c.customField || [];\n  if (Array.isArray(cfs)) {\n    const f = cfs.find(x => x.id === PROGRAMA_FIELD);\n    if (f) programa = (f.value || f.field_value || '').toString();\n  }\n}\n\nconst CF = {\"link_enviado\": \"rHzGNiesWuESPmSZyviJ\", \"programa_interes\": \"xK2NFqtz1DYUw3gYdn8I\"};\nconst put_body = {\n  customFields: [{ id: CF.link_enviado, value: 'true' }],\n  tags: ['LINK_ENVIADO'].concat(programa ? [programa] : [])\n};\nconst rescate_body = { first_name, programa_interes: programa, phone, contactId: contact_id, opportunityId };\nreturn [{ json: { contact_id, programa, first_name, phone, opportunityId, put_body, rescate_body } }];\n"
+      },
+      "id": "f878b449-d6f6-4fbe-b0c3-f72ea4ef496c",
+      "name": "Preparar payloads",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $json.contact_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "LocationId",
+              "value": "7aXb4JCKsWV5nUyBXeSF"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={{ JSON.stringify($json.put_body) }}",
+        "options": {}
+      },
+      "id": "d4ba3ead-5a0f-45c0-8da8-837e7e2c719b",
+      "name": "PUT link_enviado=true + tags",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        600,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YkVmaA4jlRbO1TQD",
+          "name": "GHL VTR (PIT)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://[TU-INSTANCIA-N8N]/webhook/vtr-rescate-link",
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={{ JSON.stringify($('Preparar payloads').first().json.rescate_body) }}",
+        "options": {}
+      },
+      "id": "d53646a8-01a0-489e-85ae-4b5e7ad2ff81",
+      "name": "Disparar Rescate (webhook)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        800,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "GET contact (enrich)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET contact (enrich)": {
+      "main": [
+        [
+          {
+            "node": "Preparar payloads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar payloads": {
+      "main": [
+        [
+          {
+            "node": "PUT link_enviado=true + tags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PUT link_enviado=true + tags": {
+      "main": [
+        [
+          {
+            "node": "Disparar Rescate (webhook)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "1ba7d0fe-3b04-46e8-9bd1-642114a1739e",
+  "activeVersionId": null,
+  "versionCounter": 2,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-09-22T05:12:06.070Z",
+      "createdAt": "2026-09-22T05:12:06.070Z",
+      "role": "workflow:owner",
+      "workflowId": "TROsQ5h78baAuVOY",
+      "projectId": "OZub3m3DGqbZefcZ",
+      "project": {
+        "updatedAt": "2025-02-10T13:18:00.403Z",
+        "createdAt": "2025-02-10T13:17:23.832Z",
+        "id": "OZub3m3DGqbZefcZ",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-02-10T13:17:23.833Z",
+            "createdAt": "2025-02-10T13:17:23.833Z",
+            "userId": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+            "projectId": "OZub3m3DGqbZefcZ",
+            "user": {
+              "updatedAt": "2026-09-22T15:36:40.000Z",
+              "createdAt": "2025-02-10T13:17:22.713Z",
+              "id": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "lastName": "AI",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-02-10T13:18:23.044Z",
+                "personalization_survey_n8n_version": "1.77.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "KFHNPOd9iRMDKpBc",
+                "userActivatedAt": 1739194255698,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1789467400717
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-21",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

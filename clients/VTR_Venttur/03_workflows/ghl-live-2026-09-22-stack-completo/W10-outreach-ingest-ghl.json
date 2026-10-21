@@ -1,0 +1,289 @@
+{
+  "updatedAt": "2026-09-22T05:12:11.690Z",
+  "createdAt": "2026-09-22T05:12:11.690Z",
+  "id": "MbPTKvy0bq8b4YAw",
+  "name": "W10 · Outreach Sheet → Contact GHL (ingesta) - Venttur (OFF)",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1HzJVMBwnGikiI_U805N7oqcXPYE7TjEFTL1rqdcCEIU",
+          "mode": "list",
+          "cachedResultName": "LEADS - FORMULARIO (VTR)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HzJVMBwnGikiI_U805N7oqcXPYE7TjEFTL1rqdcCEIU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 160362675,
+          "mode": "list",
+          "cachedResultName": "Boarding_Schools_Venttur_2026-test-2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HzJVMBwnGikiI_U805N7oqcXPYE7TjEFTL1rqdcCEIU/edit#gid=160362675"
+        },
+        "event": "rowAdded",
+        "options": {
+          "valueRender": "UNFORMATTED_VALUE"
+        }
+      },
+      "id": "043ee015-599c-48d2-a056-f731857cb1b4",
+      "name": "Sheets Trigger - Form Meta Sync",
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "xjVkf0DxxXJ7sMSa",
+          "name": "la agencia (@gmail)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize Payload — versión Google Sheets Trigger\n// Input shape: cada item es una fila del sheet sincronizado por Meta\n// El trigger emite N items por poll si entran N filas → procesar TODOS\n\nconst items = $input.all();\nconst results = [];\n\n// --- Helpers ---\n\nconst stripMetaPrefix = (v) => (v || '').toString().replace(/^[a-z]+:/, '').trim();\n\nconst titleCase = (s) => (s || '')\n  .toString()\n  .toLowerCase()\n  .replace(/(^|\\s|-)\\p{L}/gu, c => c.toUpperCase());\n\nconst splitName = (full) => {\n  const trimmed = (full || '').toString().trim();\n  if (!trimmed) return { nombre: 'Lead', apellido: '' };\n  const parts = trimmed.split(/\\s+/);\n  return {\n    nombre: titleCase(parts[0]),\n    apellido: parts.length > 1 ? titleCase(parts.slice(1).join(' ')) : ''\n  };\n};\n\n// parsePhone: maneja 3 formatos del sheet\n//   1) \"p:+5215512345678\" (con prefijo p:+)\n//   2) \"5215512345678\"   (raw sin prefijo)\n//   3) \"p:MX\" o basura   → invalid\nconst parsePhone = (raw) => {\n  if (raw === undefined || raw === null || raw === '') return { valid: false };\n  // saca prefijo \"p:\", \"+\", espacios, paréntesis y guiones\n  const d = raw.toString().replace(/^p:/i, '').replace(/[^0-9]/g, '');\n  if (!d) return { valid: false, motivo: 'sin dígitos' };\n\n  let e164 = null;\n  if (d.length === 10) {\n    e164 = '52' + d;                                   // local MX sin código de país\n  } else if (d.length === 11 && d.startsWith('1')) {\n    e164 = d;                                          // EEUU / Canadá\n  } else if (d.length === 11 && d.startsWith('52')) {\n    return { valid: false, motivo: 'MX incompleto: 52 + 9 dígitos' };\n  } else if (d.length === 12 && d.startsWith('52')) {\n    e164 = d;                                          // 52 + 10\n  } else if (d.length === 13 && d.startsWith('521')) {\n    e164 = d;                                          // 521 + 10\n  } else if (d.length >= 11 && d.length <= 15) {\n    e164 = d;                                          // otro país, ya en E.164\n  } else {\n    return { valid: false, motivo: 'longitud ' + d.length + ' no reconocida' };\n  }\n\n  // rechaza rellenos obvios (5555555555, 0000000000, ...)\n  const local = e164.startsWith('521') ? e164.slice(3)\n              : e164.startsWith('52')  ? e164.slice(2)\n              : e164.startsWith('1')   ? e164.slice(1)\n              : e164;\n  if (/^(\\d)\\1{6,}$/.test(local)) return { valid: false, motivo: 'número relleno' };\n\n  return { valid: true, phoneNoPlus: e164, phoneWithPlus: '+' + e164 };\n};\n\nconst deriveTipo = (adName) => {\n  const upper = (adName || '').toString().toUpperCase();\n  if (upper.includes('PAPAS') || upper.includes('PAPÁS') ||\n      upper.includes('MAMAS') || upper.includes('MAMÁS')) return 'Padre/Madre';\n  return 'No especificado';\n};\n\nconst deriveFuente = (platform) => {\n  const p = (platform || '').toString().toLowerCase();\n  if (p === 'ig' || p === 'instagram') return 'Instagram';\n  if (p === 'fb' || p === 'facebook') return 'Facebook';\n  return 'Facebook - Instagram';\n};\n\n// Helper para acceder a keys del sheet con caracteres especiales\nconst pick = (row, ...keys) => {\n  for (const k of keys) {\n    if (row[k] !== undefined && row[k] !== null && row[k] !== '') return row[k];\n  }\n  return '';\n};\n\n// --- Loop principal ---\n\nfor (const item of items) {\n  const row = item.json;\n\n  // Las 3 preguntas del form tienen keys con caracteres especiales\n  const gradoEscolar = pick(row, '¿qué_grado_escolar_cursa_actualmente_tu_hijo(a)?', 'grado_escolar');\n  const cuandoIniciar = pick(row, '¿cuándo_te_gustaría_que_iniciara_sus_estudios?', 'cuando_iniciar');\n  const nivelIngles = pick(row, '¿cuál_es_el_nivel_actual_de_inglés_de_tu_hijo(a)?', 'nivel_ingles');\n\n  // Phone: priorizar `whatsapp` (más limpio en el sheet), fallback `phone_number`\n  let phoneResult = parsePhone(row.whatsapp);\n  if (!phoneResult.valid) {\n    phoneResult = parsePhone(row.phone_number);\n  }\n\n  // Si phone inválido (ej. fila con whatsapp='' y phone_number='p:MX'),\n  // marcar para rama _error en lugar de throw (no abortar el batch entero)\n  if (!phoneResult.valid) {\n    results.push({\n      json: {\n        _error: true,\n        _error_reason: 'Phone inválido: whatsapp=\"' + (row.whatsapp || '') +\n                       '\" phone_number=\"' + (row.phone_number || '') + '\"',\n        _meta_lead_id: stripMetaPrefix(row.id),\n        _row_number: row.row_number,\n        _raw_row: row\n      }\n    });\n    continue;\n  }\n\n  const { nombre, apellido } = splitName(row.full_name);\n\n  // Touch 1 programado at = ahora (Cron pickea en el próximo ciclo de 5 min)\n  const touch1At = new Date().toISOString();\n\n  results.push({\n    json: {\n      _error: false,\n\n      // Identificación (Folio = meta_lead_id sin prefijo l:)\n      meta_lead_id: stripMetaPrefix(row.id),\n\n      // Datos del lead\n      telefono: phoneResult.phoneNoPlus,\n      telefono_con_plus: phoneResult.phoneWithPlus,\n      nombre,\n      apellido,\n      email: (row.email || '').toString().trim().toLowerCase(),\n\n      // Tracking Meta (campos nuevos en Airtable)\n      ad_name: (row.ad_name || '').toString(),\n      platform: (row.platform || '').toString().toLowerCase(),\n\n      // Cualificación ORO (campos nuevos en Airtable)\n      grado_escolar: gradoEscolar.toString(),\n      inicio_deseado: cuandoIniciar.toString(),\n      nivel_ingles: nivelIngles.toString(),\n\n      // Derivados (reutilizan campos existentes en Airtable)\n      tipo: deriveTipo(row.ad_name),\n      fuente_lead: deriveFuente(row.platform),\n\n      // Cadencia tri-toque\n      touch_1_programado_at: touch1At,\n\n      // Defaults / origen\n      origen: 'Form Meta',\n      received_at: new Date().toISOString()\n    }\n  });\n}\n\nreturn results;\n"
+      },
+      "id": "46b95cef-8feb-4155-96f9-108df7f10202",
+      "name": "Normalize Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0f4dac72-697f-45ad-9326-e51f857ce900",
+              "leftValue": "={{ $json._error }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5a58b4e3-9560-4cf7-9a3e-df0940633e68",
+      "name": "IF (_error?)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\n// W10 · normalized item → GHL upsert body (solo items válidos)\nconst i = $json;\nconst CF = {\"programa_interes\": \"xK2NFqtz1DYUw3gYdn8I\", \"atribuida_a\": \"yEgBeLQNnCPkTTv8OvfX\", \"link_enviado\": \"rHzGNiesWuESPmSZyviJ\", \"folio\": \"S80aYglwiVLkMsf95Ddz\", \"fbclid\": \"8REOsOHYC3boWRY74Rx5\", \"ad_name\": \"McKjVHiSyU1IU3G1PpN1\", \"platform\": \"ffxBAFkCuCgBI1vo8PmS\", \"grado_escolar\": \"HjNeRtIv6XHHMgFbtsaR\", \"inicio_deseado\": \"dUvMI4NaamfRPOF1p95q\", \"nivel_ingles\": \"uOecQsOv9i3uwMeSgEkX\", \"fuente_lead\": \"2hv0GovhSzZO3hj9cFqm\", \"tipo_contacto\": \"4sj9sWAen1PvGCkn9eCN\", \"origen\": \"BEhJWnXS9SQovJTLSA2W\", \"toques_enviados\": \"ez934lu03v7nC4ZRS7LJ\", \"outreach_enviado\": \"wFD12kJI9fCufQmvHAGc\", \"touch1_programado_at\": \"95bG6wvWFk2ma17T4NuE\"};\n\nconst platform = (i.platform||'').toLowerCase();\nconst platform_opt = (platform==='ig'||platform==='fb') ? platform : null;\nconst nivel = (i.nivel_ingles||'').toString().toLowerCase();\nconst nivel_opt = ['básico','basico','intermedio','avanzado'].includes(nivel)\n  ? (nivel==='basico'?'básico':nivel) : null;\nconst tipo = (i.tipo==='Padre/Madre') ? 'Padre/Madre' : 'No especificado';\n\nconst customFields = [\n  { id: CF.folio, value: (i.meta_lead_id||'').toString() },\n  { id: CF.programa_interes, value: 'Internados' },   // Outreach Form Meta = Boarding School\n  { id: CF.origen, value: 'Form Meta' },\n  { id: CF.fuente_lead, value: (i.fuente_lead||'').toString() },\n  { id: CF.tipo_contacto, value: tipo },\n  { id: CF.ad_name, value: (i.ad_name||'').toString() },\n  { id: CF.grado_escolar, value: (i.grado_escolar||'').toString() },\n  { id: CF.inicio_deseado, value: (i.inicio_deseado||'').toString() },\n  { id: CF.touch1_programado_at, value: (i.touch_1_programado_at||'').toString() },\n  { id: CF.toques_enviados, value: 0 },\n  { id: CF.outreach_enviado, value: 'false' },\n];\nif(platform_opt) customFields.push({ id: CF.platform, value: platform_opt });\nif(nivel_opt) customFields.push({ id: CF.nivel_ingles, value: nivel_opt });\n\nconst ghl_body = {\n  locationId: '7aXb4JCKsWV5nUyBXeSF',\n  phone: i.telefono_con_plus || undefined,\n  firstName: (i.nombre||'').toString(),\n  lastName: (i.apellido||'').toString(),\n  email: (i.email||'').toString() || undefined,\n  customFields,\n  tags: ['Origen: Form Meta', 'Internados']\n};\nreturn [{ json: { ghl_body } }];\n"
+      },
+      "id": "39f8d07c-57f5-49b9-a208-935fd1375ee7",
+      "name": "Build GHL body",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/contacts/upsert",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "LocationId",
+              "value": "7aXb4JCKsWV5nUyBXeSF"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={{ JSON.stringify($json.ghl_body) }}",
+        "options": {}
+      },
+      "id": "e9debb66-1817-4ff0-91bf-8d719f4aed4d",
+      "name": "POST /contacts/upsert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        120
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YkVmaA4jlRbO1TQD",
+          "name": "GHL VTR (PIT)"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "c1c9d862-7922-4745-9e99-4cbc11e0f459",
+      "name": "Descartar (phone inválido)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        660,
+        -120
+      ]
+    }
+  ],
+  "connections": {
+    "Sheets Trigger - Form Meta Sync": {
+      "main": [
+        [
+          {
+            "node": "Normalize Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Payload": {
+      "main": [
+        [
+          {
+            "node": "IF (_error?)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF (_error?)": {
+      "main": [
+        [
+          {
+            "node": "Descartar (phone inválido)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build GHL body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build GHL body": {
+      "main": [
+        [
+          {
+            "node": "POST /contacts/upsert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "1604cb56-bcd7-4212-ad8a-d48e65c94517",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-09-22T05:12:11.700Z",
+      "createdAt": "2026-09-22T05:12:11.700Z",
+      "role": "workflow:owner",
+      "workflowId": "MbPTKvy0bq8b4YAw",
+      "projectId": "OZub3m3DGqbZefcZ",
+      "project": {
+        "updatedAt": "2025-02-10T13:18:00.403Z",
+        "createdAt": "2025-02-10T13:17:23.832Z",
+        "id": "OZub3m3DGqbZefcZ",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-02-10T13:17:23.833Z",
+            "createdAt": "2025-02-10T13:17:23.833Z",
+            "userId": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+            "projectId": "OZub3m3DGqbZefcZ",
+            "user": {
+              "updatedAt": "2026-09-21T22:19:54.000Z",
+              "createdAt": "2025-02-10T13:17:22.713Z",
+              "id": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "lastName": "AI",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-02-10T13:18:23.044Z",
+                "personalization_survey_n8n_version": "1.77.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "KFHNPOd9iRMDKpBc",
+                "userActivatedAt": 1739194255698,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1789467400717
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-21",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

@@ -1,0 +1,1384 @@
+{
+  "name": "sys-agente-principal-v0.5",
+  "nodes": [
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, skipped: true, reason: $json.reason }) }}",
+        "options": {}
+      },
+      "id": "8128cf57-653e-48d5-8171-ed1f7e45f5f2",
+      "name": "Respond Skip",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -2912,
+        -256
+      ]
+    },
+    {
+      "parameters": {
+        "description": "ÚNICA tool de escritura. Notifica al equipo comercial sobre un lead calificado (mail al CM con link directo al chat de ManyChat + cc a info@sistemasysoluciones.com + Telegram interno la agencia). Invocá SOLO cuando tengas los 4 datos obligatorios: nombre + telefono + ubicacion + equipo_o_aplicacion. Pasá TODOS los args con la información que hayas recolectado de la conversación (empresa, perfil, tecnologia_interes, notas, urgencia, mail) — si no tenés un dato, pasalo como string vacío, no omitas argumentos. La tool valida internamente y rechaza el call si faltan los 4 obligatorios.",
+        "workflowId": {
+          "__rl": true,
+          "value": "QI1gO4dZ5vXXo7V3",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/QI1gO4dZ5vXXo7V3",
+          "cachedResultName": "sys-tool-notificar-lead-v2"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nombre": "={{ $fromAI('nombre', `Nombre del lead`, 'string') }}",
+            "telefono": "={{ $fromAI('telefono', `Teléfono del lead`, 'string') }}",
+            "ubicacion": "={{ $fromAI('ubicacion', `Ubicación o localidad del lead`, 'string') }}",
+            "equipo_o_aplicacion": "={{ $fromAI('equipo_o_aplicacion', `Equipo o aplicación que consulta el cliente`, 'string') }}",
+            "mail": "={{ $fromAI('mail', `Mail del lead`, 'string') }}",
+            "empresa": "={{ $fromAI('empresa', `Empresa del lead`, 'string') }}",
+            "perfil": "={{ $fromAI('perfil', `Perfil del lead: Distribuidor, Pyme, Emprendedor o Sin clasificar`, 'string') }}",
+            "urgencia": "={{ $fromAI('urgencia', `Urgencia del lead: true o false`, 'string') }}",
+            "notas": "={{ $fromAI('notas', `Notas adicionales sobre el lead`, 'string') }}",
+            "tecnologia_interes": "={{ $fromAI('tecnologia_interes', `Tecnología de interés del lead`, 'string') }}",
+            "subscriber_id": "={{ $('Normalize Payload').item.json.subId }}",
+            "canal": "={{ $('Normalize Payload').item.json.canalLabel }}",
+            "session_id": "={{ $('Normalize Payload').item.json.leadIdentifier }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "telefono",
+              "displayName": "telefono",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "ubicacion",
+              "displayName": "ubicacion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "equipo_o_aplicacion",
+              "displayName": "equipo_o_aplicacion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "mail",
+              "displayName": "mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "empresa",
+              "displayName": "empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "perfil",
+              "displayName": "perfil",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "urgencia",
+              "displayName": "urgencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "notas",
+              "displayName": "notas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "tecnologia_interes",
+              "displayName": "tecnologia_interes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "subscriber_id",
+              "displayName": "subscriber_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": false,
+              "type": "string"
+            },
+            {
+              "id": "canal",
+              "displayName": "canal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": false,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        }
+      },
+      "id": "6351a262-c576-4f4d-8f53-d7562ea1e13d",
+      "name": "notificar_lead",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -1760,
+        160
+      ],
+      "notes": "v0.5 — apunta a sys-tool-notificar-lead-v2 (mail al CM con link a ManyChat). subscriber_id y canal inyectados desde Normalize Payload (no expuestos al AI)."
+    },
+    {
+      "parameters": {
+        "description": "Verifica compatibilidad entre un equipo y un sustrato/tinta/cabezal. Usá cuando el cliente pregunta 'este equipo imprime sobre vidrio?', 'esta tinta sirve para mi Mimaki?', etc.",
+        "workflowId": {
+          "__rl": true,
+          "value": "g92OmRNkh6TVtTIY",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/g92OmRNkh6TVtTIY",
+          "cachedResultName": "sys-tool-consultar-compatibilidad-v1"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "session_id": "={{ $('Normalize Payload').item.json.leadIdentifier }}",
+            "elemento": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('elemento', `OBLIGATORIO: sustrato/tinta/cabezal a verificar compatibilidad`, 'string') }}",
+            "equipo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('equipo', `OBLIGATORIO: modelo o nombre del equipo (ej: DLI-1010, HR 1602 ES, Mimaki UJF)`, 'string') }}",
+            "tipo_consulta": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('tipo_consulta', `OBLIGATORIO: equipo_sustrato | equipo_tinta | equipo_cabezal`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "tipo_consulta",
+              "displayName": "tipo_consulta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "equipo",
+              "displayName": "equipo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "elemento",
+              "displayName": "elemento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        }
+      },
+      "id": "d7a398ab-cf6a-4446-80b1-2488af712d40",
+      "name": "consultar_compatibilidad",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -1632,
+        160
+      ],
+      "notes": "Cablear workflow ID via dropdown → seleccionar 'sys-tool-consultar-compatibilidad-v1'."
+    },
+    {
+      "parameters": {
+        "description": "Devuelve URL de la tienda online de insumos/repuestos (tintas, films, polvos, vinilos). Usá cuando el cliente pregunta dónde comprar consumibles o repuestos.",
+        "workflowId": {
+          "__rl": true,
+          "value": "EDoSNfvaEQTevJmj",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/EDoSNfvaEQTevJmj",
+          "cachedResultName": "sys-tool-consultar-url-tienda-v1"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "session_id": "={{ $('Normalize Payload').item.json.leadIdentifier }}",
+            "categoria": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('categoria', `Opcional: TINTAS | FILM | POLVO | Vinilo | Papel transfer | Otros`, 'string') }}",
+            "producto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('producto', `Opcional: nombre o tipo del producto buscado (ej: tinta UV, film DTF)`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "producto",
+              "displayName": "producto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "categoria",
+              "displayName": "categoria",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        }
+      },
+      "id": "578f4835-c91f-4009-bf00-192910cbabf4",
+      "name": "consultar_url_tienda",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -1504,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "description": "Devuelve las líneas de producto destacadas este mes según el equipo comercial. Útil al inicio de una conversación para mencionar sutilmente promos si las hay. NO obligatoria invocar siempre.",
+        "workflowId": {
+          "__rl": true,
+          "value": "Zby6KiGHJrDKuotN",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Zby6KiGHJrDKuotN",
+          "cachedResultName": "sys-tool-consultar-lineas-priorizadas-v1"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "session_id": "={{ $('Normalize Payload').item.json.leadIdentifier }}"
+          },
+          "matchingColumns": [
+            "session_id"
+          ],
+          "schema": [
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        }
+      },
+      "id": "32c8ee76-a559-463a-861f-2d5afb275a12",
+      "name": "consultar_lineas_priorizadas",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -1376,
+        160
+      ],
+      "notes": "Cablear workflow ID via dropdown → seleccionar 'sys-tool-consultar-lineas-priorizadas-v1'."
+    },
+    {
+      "parameters": {
+        "description": "Busca en la base de FAQs sobre showroom, financiación, garantía, plazos, servicio técnico, llamadas, tienda online, distribuidores, IVA, cabezales. Usá cuando el cliente pregunta cualquiera de estos temas operativos/comerciales.",
+        "workflowId": {
+          "__rl": true,
+          "value": "T1qIgrg7f0763wXm",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/T1qIgrg7f0763wXm",
+          "cachedResultName": "sys-tool-consultar-faq-v1"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "pregunta_usuario": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('pregunta_usuario', `OBLIGATORIO: texto literal de la pregunta del cliente`, 'string') }}",
+            "session_id": "={{ $('Normalize Payload').item.json.leadIdentifier }}",
+            "categoria_hint": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('categoria_hint', `Opcional: Showroom | Financiación | Servicio Técnico | Plazos | Garantía | Llamadas | Devoluciones | Distribuidores | Otros`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "pregunta_usuario",
+              "displayName": "pregunta_usuario",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "categoria_hint",
+              "displayName": "categoria_hint",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        }
+      },
+      "id": "340762c0-805f-42c5-9861-684abe4fd0ed",
+      "name": "consultar_faq",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -1248,
+        160
+      ],
+      "notes": "Cablear workflow ID via dropdown → seleccionar 'sys-tool-consultar-faq-v1'."
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "07d0744a-99ac-4ca4-bab5-fe1f3fa6a972",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        592,
+        32
+      ],
+      "notes": "v0.1: devuelve la respuesta directamente al curl/ManyChat de prueba. En F6 cambia a { ok: true, trigger_flow: 'responder_multi_parte' } y los partes van a setCustomFields aparte."
+    },
+    {
+      "parameters": {
+        "jsCode": "// ManyChat Standard interno 2026 — naming ai_msg_*\n// v3 — Lee output JSON del Formatter (gpt-4o-mini) + COMPACTA partes no-vacías\n//\n// Diferencia vs v2: si el formatter llena parte1+parte3 saltando parte2,\n// compactamos las partes no-vacías y las asignamos sequencialmente a ai_msg_1/2/3.\n// Eso evita que ManyChat haga skip del mensaje del medio.\n\nconst inp = $input.first().json;\n\n// El output del nodo OpenAI Chat puede venir en:\n//   - .message.content (string JSON)\n//   - .content (string JSON)\n//   - directamente como objeto parseado\nlet parsed = {};\nconst raw = inp.message?.content ?? inp.content ?? inp;\n\ntry {\n  parsed = typeof raw === 'string' ? JSON.parse(raw) : (raw && typeof raw === 'object' ? raw : {});\n} catch (e) {\n  // Fallback: si el formatter devuelve mal el JSON, asignar todo a parte1\n  parsed = { parte1: typeof raw === 'string' ? raw : String(raw), parte2: '', parte3: '' };\n}\n\n// Compactar partes no-vacías en orden (descartar empties intermedios)\nconst allParts = [parsed.parte1, parsed.parte2, parsed.parte3]\n                   .map(p => String(p || '').trim())\n                   .filter(p => p.length > 0);\n\nconst ai_msg_1 = allParts[0] || '';\nconst ai_msg_2 = allParts[1] || '';\nconst ai_msg_3 = allParts[2] || '';\nconst ai_msg_count = allParts.length || 1;\n\n// Conservar el output crudo del AI Agent (pre-formatter) para auditoría\nconst rawOriginal = $('AI Agent').first().json.output || '';\n\nreturn [{\n  json: {\n    raw: rawOriginal,\n    ai_msg_1,\n    ai_msg_2,\n    ai_msg_3,\n    ai_msg_count,\n    subscriber_id: $('Normalize Payload').first().json.subId\n  }\n}];\n"
+      },
+      "id": "b5be45cc-7f30-4560-bcf6-e228fe38e92d",
+      "name": "Split Respuesta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -304,
+        -64
+      ],
+      "notes": "Divide en parte1/2/3 por separador '---'. En F6 estos campos van a setCustomFields de ManyChat. En F3 se devuelven directo al webhook."
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.userMessage }}",
+        "options": {
+          "systemMessage": "={{ $json.content || $json.backup }}",
+          "maxIterations": 5,
+          "returnIntermediateSteps": false
+        }
+      },
+      "id": "d016e65a-4620-4c28-8d26-2df93a96f63d",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -1512,
+        -64
+      ],
+      "notes": "AI Agent con system prompt v2.1 inline. Sin tools en F3 (se conectan en F4). returnIntermediateSteps=false para no contaminar memoria."
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Normalize Payload').item.json.sessionKey }}",
+        "contextWindowLength": 20
+      },
+      "id": "3f9e7bb5-a299-480e-957f-43bec3156620",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -1888,
+        160
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "notes": "REEMPLAZAR credential ID por el de Supabase SYS (creada en F2). sessionKey = leadIdentifier estable por canal+sub_id. contextWindowLength=20 turnos."
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o"
+        },
+        "options": {
+          "maxTokens": 1500,
+          "temperature": 0.4
+        }
+      },
+      "id": "ad8f5ab7-63ab-4b8f-aad5-96e30aa3c2ea",
+      "name": "OpenAI Chat Model (gpt-4o)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2016,
+        160
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "Fa3aaCsYTBS79y3Y",
+          "name": "OpenAI la agencia®"
+        }
+      },
+      "notes": "REEMPLAZAR credential ID por el de tu credencial OpenAI en n8n. Temperature 0.4 para tono natural pero consistente."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Inyecta [CONTEXTO TURNO] al user message para que el LLM tenga vars dinámicas.\nconst data = $input.first().json;\nconst fecha = new Date().toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' });\n\nconst contextoTurno = `[CONTEXTO TURNO]\n- Canal: ${data.canalLabel}\n- Fecha y hora actual: ${fecha}\n- Perfil del lead (si se conoce): sin clasificar\n- Etapa actual: bienvenida\n- Datos ya capturados: {}\n- Productos ya mostrados: ninguno\n\n[MENSAJE DEL USUARIO]\n${data.mensajeActual}`;\n\nreturn [{\n  json: {\n    ...data,\n    userMessage: contextoTurno\n  }\n}];"
+      },
+      "id": "6f64d222-cd27-420e-977f-131b2eddea65",
+      "name": "Build User Message Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2912,
+        -64
+      ],
+      "notes": "v0.1: contexto turno simple (sin Postgres state lookup). En F4-F5 se reemplaza por un SELECT real a sys_session_state."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "skip-check",
+              "leftValue": "={{ $json.skip }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8933b966-9a75-412a-b7f8-f2151ef3286d",
+      "name": "IF skip?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -3136,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Alinea con el contrato de Flow A (sección 1.2).\n// Payload esperado: { subscriber_id, channel, first_name, last_input_text }\n\nconst body = $input.first().json.body || $input.first().json;\n\nconst channel = (body.channel || 'test').toLowerCase();     // 'wa' | 'ig' | 'fb' | 'test'\nconst subId = String(body.subscriber_id || body.from || 'anon');\nconst sessionKey = `${channel}_${subId}`;                   // sessionKey para memoria Postgres\nconst mensajeActual = String(body.last_input_text || body.mensaje || body.text || '').trim();\n\nif (!mensajeActual) {\n  return [{ json: { skip: true, reason: 'empty_message' } }];\n}\n\nconst canalLabel = channel === 'wa' ? 'WhatsApp'\n                 : channel === 'ig' ? 'Instagram'\n                 : channel === 'fb' ? 'Facebook'\n                 : 'Test';\n\nreturn [{\n  json: {\n    skip: false,\n    channel,\n    canalLabel,\n    subId,\n    sessionKey,\n    mensajeActual,\n    firstName: body.first_name || '',\n    timestamp: body.timestamp || new Date().toISOString()\n  }\n}];"
+      },
+      "id": "05019141-acf3-4ca0-80b3-6690d1fa605a",
+      "name": "Normalize Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3360,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sys-agent",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "id": "ca32b042-6f06-42c8-bed3-114807f66bf5",
+      "name": "Webhook (ManyChat)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -3584,
+        -160
+      ],
+      "webhookId": "8ae267bb-d2fb-452f-88ee-8da49f8e2861",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "UnA18VVz7bSrSUNX",
+          "name": "Webhook SYS Inbound"
+        }
+      },
+      "notes": "Webhook que ManyChat invoca. PATH: /webhook/sys-agent. En F6 se cablea desde ManyChat External Request. En F3 podés testear con curl (ver setup doc)."
+    },
+    {
+      "parameters": {
+        "description": "Consulta ficha técnica de una tecnología del catálogo SyS. Devuelve descripción, materiales recomendados, restricciones y aplicaciones. Tecnologías disponibles: DTF Textil, DTF UV, UV, Sublimación, Eco-Solvente, Solvente, RISO, IDL Láser, Gran Formato, Corte. Usá cuando el cliente pregunta 'qué es X', 'cómo funciona X', 'diferencia entre X e Y' (en este caso invocá 2 veces, una por cada tecnología).",
+        "workflowId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "jtnr7FRSDvKs5N6g",
+          "cachedResultName": "sys-tool-consultar-tecnologia-v1"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "tecnologia": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('tecnologia', `OBLIGATORIO: nombre exacto. Valores: DTF Textil | DTF UV | UV | Sublimación | Eco-Solvente | Solvente | RISO | IDL Láser | Gran Formato | Corte`, 'string') }}",
+            "aspecto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('aspecto', `Opcional: descripcion | materiales | restricciones | aplicaciones`, 'string') }}",
+            "session_id": "={{ $('Normalize Payload').item.json.leadIdentifier }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "tecnologia",
+              "displayName": "tecnologia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "aspecto",
+              "displayName": "aspecto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        }
+      },
+      "id": "4141bc06-f057-48e0-af65-d35f731bdf6b",
+      "name": "consultar_tecnologia",
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -1120,
+        160
+      ],
+      "notes": "Cablear workflow ID via dropdown → seleccionar 'sys-tool-consultar-tecnologia-v1'."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/subscriber/setCustomFields",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  subscriber_id: $json.subscriber_id,\n  fields: [\n    { field_name: \"ai_msg_1\", field_value: $json.ai_msg_1 },\n    { field_name: \"ai_msg_2\", field_value: $json.ai_msg_2 || null },\n    { field_name: \"ai_msg_3\", field_value: $json.ai_msg_3 || null },\n    { field_name: \"ai_msg_count\", field_value: $json.ai_msg_count }\n  ]\n}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        144,
+        32
+      ],
+      "id": "eae1e837-5613-47a4-af76-6b22c0191358",
+      "name": "setCustomFields ManyChat",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "E41Ucr4mYfSjuoxJ",
+          "name": "ManyChat - SYS"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  subscriber_id: $('Split Respuesta').first().json.subscriber_id,\n  flow_ns: \"content20260602201354_388410\"\n}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        368,
+        32
+      ],
+      "id": "a47ef310-0cf2-4637-b677-53704b2349ff",
+      "name": "sendFlow ManyChat",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "E41Ucr4mYfSjuoxJ",
+          "name": "ManyChat - SYS"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "test-channel-check",
+              "leftValue": "={{ $('Normalize Payload').first().json.channel }}",
+              "rightValue": "test",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        -64
+      ],
+      "id": "6ff72199-394d-4fa1-8242-43423f9cdf68",
+      "name": "IF channel test?"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, raw: $('Split Respuesta').first().json.raw, ai_msg_1: $('Split Respuesta').first().json.ai_msg_1, ai_msg_2: $('Split Respuesta').first().json.ai_msg_2, ai_msg_3: $('Split Respuesta').first().json.ai_msg_3, ai_msg_count: $('Split Respuesta').first().json.ai_msg_count }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        144,
+        -160
+      ],
+      "id": "42922935-eb42-4e12-8666-bad9d54df5fa",
+      "name": "Respond Test (con body)"
+    },
+    {
+      "parameters": {
+        "description": "Consulta el catalogo de Sistemas y Soluciones (equipos, marcas, tecnologias, aplicaciones concretas, inventario refurbished Konica). Pasa el mensaje del cliente como texto natural; la tool detecta intent automaticamente y devuelve los matches del catalogo real.",
+        "workflowId": {
+          "__rl": true,
+          "value": "oQtLMujJBHlxZTTJ",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/oQtLMujJBHlxZTTJ",
+          "cachedResultName": "sys-tool-consultar-catalogo-v1"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ $fromAI('query', 'Texto natural del cliente sobre catalogo equipos aplicaciones o inventario refurbished. Pasa el mensaje literal o un resumen breve.', 'string') }}",
+            "session_id": "={{ $('Normalize Payload').item.json.sessionKey }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -992,
+        160
+      ],
+      "id": "cb5fac9d-31e2-49d2-85fb-58a8e6f56264",
+      "name": "consultar_catalogo"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=# Tarea\n\nFormatear el siguiente mensaje del agente de Sistemas y Soluciones (industria gráfica argentina) para envío por WhatsApp/Instagram/Facebook. Mensaje a formatear:\n\n\"{{ $json.output.replaceAll(\"¿\",\"\").replaceAll(\"¡\",\"\").replaceAll(\"'\", \"\").replaceAll(\"\\\"\",\"\") }}\"\n\n## 1: Dividir el mensaje en partes\n\nPara simular un diálogo humano y dinámico, dividí el mensaje principal en hasta tres partes más pequeñas, sin omitir ningún contenido. Cada parte debe tener sentido por sí misma y no puede cortarse en medio de una oración (esperá a que haya un punto, coma o símbolo que cierre la idea). Si el mensaje es breve y no requiere tres partes, dejá las partes innecesarias vacías (como \"\"). Si el mensaje es extenso, dividilo en tres partes sin perder ningún contenido, permitiendo que las partes sean más largas si es necesario para incluir todo el texto. Asegurate de que ninguna parte termine con un punto final, ya que esto hace que la conversación se sienta más real y fluida.\n\nDevolvé las partes en un formato JSON con esta estructura:\n{\n  \"parte1\": \"Texto de la primera parte\",\n  \"parte2\": \"Texto de la segunda parte\",\n  \"parte3\": \"Texto de la tercera parte\"\n}\n\n## 2: Formateo de mensajes\n\nEn caso de que el mensaje principal sea apto para listados con saltos de línea y guiones (por ejemplo estás presentando modelos de equipos, especificaciones técnicas o datos a recolectar del cliente), formatealo para sumar claridad. Presentá cada elemento con viñetas usando un guión al inicio. Ejemplo: si el mensaje menciona varios modelos HUENU, listalos con guiones y un modelo por línea.\n\n## 3: Preservación de nombres técnicos\n\nPreservá EXACTAMENTE los nombres de marcas, modelos y tecnologías del catálogo. No los reformatees, no los traduzcas, no les cambies mayúsculas/minúsculas. Ejemplos: HUENU, DLICAN, TENETH, HANRUN, XENONS, RISO, Sinajet, Konica Minolta, BIZHUB C450i, HR 6004 DU, DTF Textil, DTF UV, Sublimación, Eco-Solvente.\n\n# Reglas críticas\n\n- Jamás dejes ningún contenido del mensaje principal sin incluir en las partes. No podemos perder información.\n- Siempre rellená las variables en orden: primero parte1, luego parte2, luego parte3. Nunca te saltees una parte ni cambies el orden.\n- Siempre incluí las 3 variables (parte1, parte2, parte3) en el JSON, aunque algunas estén vacías.\n- Las partes divididas deben tener coherencia por sí solas.\n- NUNCA agregues comillas dobles dentro del texto de las partes (las comillas del JSON son distintas y necesarias).\n- NUNCA agregues frases tipo \"perfecto\", \"genial\", \"entendido\" que no estaban en el mensaje original.\n- Preservá el tono rioplatense (vos, contame, mirá) si el original lo tiene."
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -656,
+        -64
+      ],
+      "id": "18367aa4-a29c-4683-a87e-2666c1b6b85c",
+      "name": "Formatear mensaje",
+      "credentials": {
+        "openAiApi": {
+          "id": "Fa3aaCsYTBS79y3Y",
+          "name": "OpenAI la agencia®"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Persiste el email del cliente en Google Sheets apenas se captura. Invocá esta tool en el MISMO turno en que el cliente comparte su email (por novedades, por derivación, o espontáneo). No esperes al cierre. Es independiente de notificar_lead — pueden coexistir en el mismo turno. Pasá TODOS los args con la información que hayas recolectado de la conversación (nombre, telefono, origen, aplicacion_interes) — si no tenés un dato, pasalo como string vacío, no omitas argumentos. Si already_exists=true en el output, no lo menciones al cliente: seguí natural.",
+        "workflowId": {
+          "__rl": true,
+          "value": "v9HD7P2uroG4Ni3A",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/v9HD7P2uroG4Ni3A",
+          "cachedResultName": "sys-tool-guardar-email-v1"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $fromAI('email', `Email del cliente en formato xxx@xxx.xxx`, 'string') }}",
+            "nombre": "={{ $fromAI('nombre', `Nombre del cliente`, 'string') }}",
+            "telefono": "={{ $fromAI('telefono', `Teléfono del cliente`, 'string') }}",
+            "origen": "={{ $fromAI('origen', `Motivo del email. Valores: newsletter, derivacion, descuento_insumos, otro`, 'string') }}",
+            "aplicacion_interes": "={{ $fromAI('aplicacion_interes', `Aplicación o equipo que el cliente consulta`, 'string') }}",
+            "canal": "={{ $('Normalize Payload').item.json.canalLabel }}",
+            "subscriber_id": "={{ $('Normalize Payload').item.json.subId }}",
+            "session_id": "={{ $('Normalize Payload').item.json.sessionKey }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "telefono",
+              "displayName": "telefono",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "aplicacion_interes",
+              "displayName": "aplicacion_interes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "origen",
+              "displayName": "origen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "canal",
+              "displayName": "canal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "subscriber_id",
+              "displayName": "subscriber_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -864,
+        160
+      ],
+      "id": "07c7dc6f-69aa-4bc6-aa95-78b2c28707c1",
+      "name": "guardar_email"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1Obn0xzfAAUGs4oMpoh99dFXPfGuG9d6uBWglKNuPY5I/edit?tab=t.0"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -2688,
+        -64
+      ],
+      "id": "3d087611-753a-42d6-8bc8-ede4da622c48",
+      "name": "Get a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "LuHm4iiDhCNWvSqM",
+          "name": "la agencia v2"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e5ac3d80-279c-43cd-b2b3-0e9b81cb5644",
+              "name": "backup",
+              "value": "=Versión: v2.0\nFecha: 2026-05-28\nProyecto: Sistemas y Soluciones — Agente de Calificación y Asesoramiento\n\n---\n\n## ROL E IDENTIDAD\n\nSos el asistente virtual de Sistemas y Soluciones.\nSistemas y Soluciones es una empresa con más de 40 años de trayectoria en tecnología para la industria gráfica. Comercializan equipos de impresión y producción gráfica — gran formato, DTF, UV, plotters de corte, mesas de corte, insumos y más — para distribuidores, pymes y emprendedores en CABA, Gran Buenos Aires y el interior del país.\nEstás atendiendo clientes que se comunican por WhatsApp, Instagram o Facebook.\n\nNo tenés nombre propio: presentate simplemente como \"el asistente virtual de Sistemas y Soluciones\". Si el cliente pregunta tu nombre, podés decir \"soy el asistente de Sistemas y Soluciones, ¿en qué te puedo ayudar?\" — sin inventar un nombre.\n\n---\n\n## PERSONALIDAD Y TONO\n\nPrincipio base: escribís como escribe una persona real en WhatsApp. Directo, breve, sin relleno. Si podés decirlo en 5 palabras, no uses 15. Este principio aplica a todo — preguntas, confirmaciones, cierres — excepto cuando una explicación técnica lo requiera.\n\nTu estilo:\n- Directa y al punto: cada mensaje tiene una sola idea o pregunta. Sin introducciones, sin recapitular lo que el cliente ya dijo.\n- Rioplatense y cercana: \"vos/sos\", \"contame\", \"mirá\", \"che\". Lenguaje de persona, no de chatbot.\n- Cálida sin relleno: la calidez está en el tono, no en frases como \"¡Claro que sí!\", \"¡Con mucho gusto!\", \"¡Perfecto!\". Esas frases sobran.\n- Con autoridad técnica: sabés del sector. Lo mostrás siendo preciso, no extenso.\n- Sin emojis excesivos: uno por mensaje máximo, solo en saludos o confirmaciones.\n\nRegla de oro: si el mensaje parece escrito por un chatbot, está mal. Si parece escrito por una persona, está bien.\n\nCorrecto (así de corto):\n- \"Hola, bienvenido a Sistemas y Soluciones. ¿En qué te puedo ayudar?\"\n- \"¿Qué tipo de trabajo pensás hacer?\"\n- \"¿Y cuántas prendas por día estimás?\"\n- \"Con eso, la DTF es lo que más te conviene. ¿Querés que te pase un comercial?\"\n- \"¿Nombre, teléfono y de dónde escribís?\"\n- \"Listo, ya le paso tus datos. Cualquier cosa nos avisas, saludos.\"\n\nIncorrecto (NO hacer):\n- Empezar mensajes con: \"¡Perfecto!\", \"¡Genial!\", \"¡Entendido!\", \"¡Claro que sí!\", \"Por supuesto\", \"Sin dudas\", \"Qué bueno saberlo\"\n- Recapitular los datos que el cliente ya dio antes de hacer la siguiente pregunta\n- Agregar frases de cierre genéricas después de cada respuesta (\"Estoy a disposición para cualquier consulta\")\n\n---\n\n## OBJETIVO PRINCIPAL\n\nTu objetivo principal es: entender la necesidad del cliente, asesorarlo con claridad sobre las tecnologías y equipos disponibles, y derivarlo al representante comercial correcto cuando esté listo para recibir una cotización formal.\n\n---\n\n## FLUJO DE CONVERSACIÓN\n\nLa conversación tiene las siguientes etapas:\n\nETAPA 1 — Bienvenida y apertura:\nSaludá al cliente, presentate como asistente de Sistemas y Soluciones, y hacé una primera pregunta abierta para entender qué lo trae.\n\nETAPA 2 — Identificación del perfil:\nDeterminá si el cliente es un distribuidor, una pyme o un emprendedor/particular. Esto define cómo orientar la conversación:\n- Distribuidor: interesado en condiciones comerciales, volumen, soporte técnico y postventa. Antes de pedir datos de contacto, hacé UNA pregunta de contexto (qué líneas de producto le interesan o en qué zona opera). Luego derivá con todos sus datos.\n- Pyme/Empresa: tiene un proceso productivo concreto. Priorizar diagnóstico técnico de la necesidad.\n- Emprendedor/Particular: puede no saber exactamente qué necesita. Asesorar desde cero, con paciencia y claridad.\n\nETAPA 3 — Diagnóstico de la necesidad:\nHacé UNA pregunta a la vez para entender la aplicación. Seguir este orden según lo que aún no se haya respondido:\n1. ¿Qué tipo de trabajo pensás realizar?\n2. ¿Sobre qué sustratos (materiales)?\n3. ¿En qué tamaños?\n4. ¿Qué cantidades diarias estimás?\n5. ¿Qué requerimientos de velocidad y calidad tenés?\n6. ¿Con qué espacio físico contás para el equipo?\n7. ¿Tenés un presupuesto estimado?\n\nNo es necesario hacer todas las preguntas si con algunas ya podés orientar al cliente.\nSi el cliente ya mencionó claramente la tecnología o el tipo de equipo que busca, omitís las preguntas sobre qué trabajo hace o qué tecnología necesita — eso ya está respondido. Pasá directamente a volumen, tamaño o especificaciones de uso.\n\nETAPA 4 — Asesoramiento:\nCon los datos recabados, explicá qué tecnología o línea de equipos se ajusta mejor a su necesidad. Usá lenguaje claro — una analogía o ejemplo concreto vale más que una ficha técnica. Si el cliente ya sabe qué equipo quiere, podés ir directo acá.\nSi el cliente pregunta por modelos o especificaciones técnicas concretas, invocá la tool correspondiente (ver sección HERRAMIENTAS).\n\nETAPA 5 — Captura de datos y derivación:\nCuando el cliente esté listo para avanzar (pide cotización formal, quiere que lo contacten), pedí los datos de contacto y activá la derivación al representante comercial.\n\nETAPA 6 — Cierre:\nConfirmá que un representante se va a comunicar. Ofrecé enviarle más información por mail si no tenés el email todavía. Cerrá con calidez.\n\nEn cada etapa, hacé UNA sola pregunta. Esperá la respuesta antes de avanzar.\n\n---\n\n## HERRAMIENTAS DISPONIBLES\n\nTenés 8 herramientas para consultar información actualizada del catálogo o registrar leads. NO improvises información técnica si no estás seguro: consultá la herramienta.\n\n### Reglas generales de tool calling\n\n1. Si una tool retorna `status: \"NOT_FOUND\"`, NO inventes. Decí \"Dejame verificar con el equipo\" o derivá si tenés datos del cliente.\n2. NUNCA invoques `notificar_lead` sin tener: nombre + teléfono + ubicación + equipo/aplicación. Si falta alguno, pedilo primero.\n3. No encadenes más de 2 tools en el mismo turno. Si necesitás info adicional, pedila al cliente y consultá en el próximo turno.\n4. Si una tool retorna `status: \"ERROR\"`, decí \"Dame un segundo, lo verifico\" y reintentá una vez. Si vuelve a fallar, derivá al equipo humano.\n5. Cuando uses información de tool, integrala natural en tu respuesta. No digas \"según mi base de datos\" — habla como persona.\n6. Si una tool retorna `status: \"AMBIGUOUS\"` con alternativas, presentá la principal al cliente y mencioná que hay alternativas; pedile que aclare prioridad si hace falta.\n\n### Catálogo de herramientas\n\n**consultar_tecnologia**\n- Cuándo: cliente pregunta \"qué es X\" (DTF, UV, Sublimación, Eco-Solvente, RISO, IDL Láser, Gran Formato), cómo funciona una tecnología, diferencias entre tecnologías.\n- Args: tecnologia, aspecto opcional (descripcion | materiales | restricciones | aplicaciones).\n- Devuelve: ficha técnica de la tecnología.\n\n**consultar_compatibilidad**\n- Cuándo: cliente pregunta si algo sirve para algo (\"esta tinta para mi equipo\", \"imprime sobre vidrio\", \"este cabezal con mi Mimaki\").\n- Args: tipo_consulta (equipo_sustrato | equipo_tinta | equipo_cabezal), equipo, elemento.\n- Devuelve: compatible (true/false/depende) + notas + alternativas.\n\n**consultar_faq**\n- Cuándo: cliente pregunta financiación, showroom, garantía, plazos, servicio técnico, llamadas, devoluciones, condiciones para distribuidores.\n- Args: pregunta_usuario (texto literal), categoria_hint opcional.\n- Devuelve: respuesta corta lista para integrar.\n\n**consultar_lineas_priorizadas**\n- Cuándo: opcionalmente, una vez al inicio de la conversación para saber qué líneas mencionar/destacar este mes.\n- Args: ninguno.\n- Devuelve: líneas priorizadas del mes + notas para el agente (ej: promo activa).\n\n**consultar_url_tienda**\n- Cuándo: cliente pregunta por insumos, repuestos, tintas, \"dónde compro\", consumibles, films, polvos.\n- Args: producto opcional, categoria opcional.\n- Devuelve: URL tienda + URL categoría (si aplica) + URL producto específico + mensaje sugerido.\n\n**notificar_lead**\n- Cuándo: cuando tenés nombre + teléfono + ubicación + equipo/aplicación (datos obligatorios para derivar).\n- Args obligatorios: nombre, telefono, ubicacion, equipo_o_aplicacion. Opcionales: mail, empresa, perfil, tecnologia_interes, linea_interes, urgencia, notas.\n- Devuelve: confirmación de envío (mail al equipo comercial + Telegram interno).\n- IMPORTANTE: esta es la única tool de notificación. NO la invoques sin los 4 datos obligatorios. La validación es bloqueante.\n- En la versión F1 actual: solo manda mail + Telegram; NO escribe en Airtable (CRM pausado por cliente — ver upsell).\n\n**consultar_catalogo**\n- Cuando: cliente pregunta por equipos, modelos, marcas, tecnologias, aplicaciones concretas (imprimir gorras, wrap vehicular, etc), o inventario refurbished Konica.\n- Args obligatorios: query (texto natural del pedido del cliente).\n- Devuelve: matches del catalogo con intent detectado (equipo / aplicacion / inventario). NO da precios.\n- Pasa siempre el mensaje natural del cliente o un resumen breve. NO estructures los args; la tool clasifica internamente.\n- Si la tool devuelve NOT_FOUND, decile al cliente que un comercial verifica disponibilidad y deriva.\n\n---\n\n## BASE DE CONOCIMIENTO\n\n### Índice de tecnologías del catálogo\nEstos son los nombres válidos para invocar `consultar_tecnologia`:\n- DTF Textil\n- DTF UV\n- UV\n- Sublimación\n- Eco-Solvente\n- Solvente (regular, distinto a Eco-Solvente)\n- Corte (plotters y mesas — Sinajet + TENETH)\n- RISO\n- IDL Láser (Konica Minolta)\n- Gran Formato\n\nPara cualquier detalle (descripción, materiales, restricciones, aplicaciones), invocá `consultar_tecnologia`. No inventes especificaciones.\n\n### Marcas reales del catálogo\n\nEl catálogo de Sistemas y Soluciones trabaja con estas marcas:\n- **Equipos de impresión y corte**: HUENU (la más amplia, equipos UV/DTF/Sublimación/Eco-Solvente/Solvente), DLICAN (UV híbridos y cama plana grande), TENETH (plotters y mesas de corte), HANRUN (DTF UV y DTF Textil — también provee insumos), XENONS (sublimación y tintas), RISO (impresión inkjet digital), Sinajet (mesas de corte profesionales), Konica Minolta (línea IDL Láser nueva + inventario refurbished).\n- **Cabezales** (componentes técnicos de las máquinas): EPSON (DX5, XP600, i3200, i1600), RICOH (Gen5, Gen5i, Gen6), KONICA MINOLTA (1024A).\n- NO trabajamos con Mimaki ni Roland directamente.\n\n### Equipos accesorios\n\nAlgunos productos NO son impresoras sino accesorios complementarios:\n- **Horno** (HH 7000, HH 4000): se usa para curar el polvo adhesivo en DTF Textil. Suele venderse con la impresora DTF.\n- **Purificador** (HP 6000, HP 4000): purificador de aire para hornos DTF. Incluido en el horno respectivo.\n- **Plancha** (EVO-6040-2 Heat press): plancha de calor para transferir el film DTF a la prenda.\n\nSi el cliente arranca con DTF Textil, mencionar que típicamente el kit incluye: impresora + horno (con purificador) + plancha + insumos (tinta + film + polvo).\n\n### Inventario de equipos USADOS — Konica Minolta refurbished\n\nTenemos equipos Konica Minolta refurbished disponibles en showroom PEPIRI (modelos BIZHUB 308E/368E/450i/458/458E/558/558E/808, ACCURIO PRINT C3070L, Acurio Press C3080/6120, BIZHUB C 654E/754E/C224/C450i/C550i/C658/C659/C759, PRO C 1085). Tienen contadores de copias y stock variable.\n\nCuando el cliente pregunta por equipos de **producción digital láser** con presupuesto ajustado, ofrecer la opción \"equipos refurbished\" e invocar `consultar_inventario_usados`. El comercial cotiza caso por caso.\n\n### Cabezales — Gamas por perfil de usuario\n\nLos cabezales de las máquinas se clasifican en gamas según perfil de usuario:\n- **Económica** (XP600): emprendedores con bajo presupuesto inicial.\n- **Calidad/Precio** (i3200, i1600): talleres con producción diaria constante.\n- **Industrial UV** (Ricoh Gen5/Gen5i): producción de artículos promocionales y rígidos.\n- **Alta Velocidad** (Ricoh Gen6, Konica 1024A): plantas industriales de gran volumen.\n\nSi el cliente menciona presupuesto o nivel de producción, podés usar `buscar_equipo` filtrando por `Cabezales tipo` para recomendar el equipo según su perfil.\n\n### Datos fijos de la empresa (no requieren tool)\n\n- Trayectoria: más de 40 años en industria gráfica en Argentina.\n- Valores: Especialización · Experiencia · Confianza · Respaldo · Compromiso.\n- Atienden a: distribuidores, pymes, comercios, emprendedores/particulares.\n- Operación geográfica: CABA y Gran Buenos Aires para toda la línea. Algunos equipos también en el interior.\n- Horario equipo humano: Lunes a Viernes de 9 a 18 hs (zona horaria Argentina).\n- Teléfono oficina (llamadas + servicio técnico): 4342-5742.\n- Instagram: @sistemasysoluciones.\n- Insumos y repuestos online: {{URL_TIENDA}}.\n\n### Líneas a priorizar este mes\n\nAl inicio de una conversación, podés invocar `consultar_lineas_priorizadas()` para conocer qué líneas tienen prioridad o promo. Incorporá esa info sutilmente en la conversación si aplica, sin convertirla en anuncio publicitario.\n\n---\n\n## INSTRUCCIONES OPERATIVAS\n\n1. NUNCA des precios de equipos. Tu rol es asesorar y calificar, no cotizar. Cuando el cliente pregunte precios, informale que un representante comercial le envía la cotización formal con todos los detalles.\n\n2. Para insumos y repuestos, podés direccionar directamente a la tienda online de Sistemas y Soluciones invocando `consultar_url_tienda`. SIEMPRE ofrecé también la posibilidad de hablar con un representante si lo prefiere.\n\n3. Datos obligatorios antes de derivar: nombre, teléfono, mail y localidad/provincia. Pedirlos en este orden — el mail siempre con la frase del punto 4. Además registrar empresa (si corresponde) y el equipo consultado junto con la conclusión técnica a la que llegaron. No invocás `notificar_lead` sin los 4 datos obligatorios (nombre, teléfono, ubicación, equipo/aplicación). El mail es altamente deseable pero no bloqueante.\n\n4. Para solicitar el mail, usá exactamente esta propuesta: \"Si querés, te mando más información sobre los equipos que consultaste. ¿Me pasás tu mail?\"\n\n5. Distribuidores: si el cliente se presenta como distribuidor, reconocé el perfil y hacé UNA pregunta de contexto (qué líneas de producto le interesan o en qué zona opera). Luego pedí los datos para derivar al equipo comercial.\n\n6. Follow-up: Si el cliente deja de responder, hacer seguimiento al día siguiente y otro a la semana siguiente. Máximo 2 mensajes de seguimiento.\n\n7. Zonas geográficas: Algunos equipos están disponibles solo en CABA y Gran Buenos Aires. Si el cliente es del interior del país, aclaralo antes de avanzar en la recomendación para no generar expectativas incorrectas.\n\n8. Horario de atención del equipo humano: Lunes a viernes de 9 a 18 hs. Fuera de ese horario, el agente opera sin respaldo inmediato. Si el cliente necesita respuesta urgente fuera de horario, avisale que el equipo lo contactará al próximo día hábil.\n\n9. Líneas a priorizar este mes: invocá `consultar_lineas_priorizadas()` cuando lo necesites (idealmente al inicio).\n\n10. Nunca hagás dos preguntas en el mismo mensaje.\n\n11. Si el cliente muestra hostilidad o impaciencia, no escalés el tono. Respondé con calma y ofrecé derivarlo directamente a un representante.\n\n12. Cuando el cliente pregunte por modelos, compare equipos o pida especificaciones técnicas, invocá la tool correcta (`buscar_equipo`, `consultar_tecnologia`, `consultar_compatibilidad`). Si no hay match en la tool, no inventes — decilo y derivá.\n\n13. Si en un solo mensaje el cliente incluye nombre, datos de contacto (teléfono o mail) y lo que necesita, confirmá los datos recibidos, invocá `notificar_lead` (solo si tenés los 4 obligatorios), e informale que el equipo comercial se va a contactar. No continúes con diagnóstico.\n\n14. Para showroom y financiación los datos obligatorios son los mismos: nombre, teléfono, mail y localidad/provincia. Si el cliente aún no dio el mail, pedílo con la frase del punto 4 antes de derivar.\n\n15. Llamadas: si el cliente pregunta si puede llamar, informale: \"Para comunicarte con la oficina, podés llamar al 4342-5742.\"\n\n16. Confusión frecuente — equipos vs servicio de impresión: si el cliente pregunta el precio de una impresión o quiere que hagamos las impresiones por él, aclarale que Sistemas y Soluciones vende equipos de impresión, no el servicio. Si necesita a alguien que le haga las impresiones, tendrá que buscar un proveedor con el equipo correspondiente. Luego preguntá si le interesa conocer los equipos.\n\n17. Servicio técnico: si el cliente busca servicio técnico, reparación o mantenimiento de un equipo, informale que para eso debe comunicarse directamente con la oficina al 4342-5742.\n\n18. Teléfono del chat: si el cliente hace referencia implícita al número del canal (ej: \"el teléfono por el cual me estoy comunicando\"), es PRIORITARIO pedirle que lo escriba antes de continuar. No pidas mail ni ningún otro dato hasta tener el número escrito explícitamente: \"¿Me podés escribir el número acá en el chat para no perder el dato?\"\n\n19. Cierre sin datos: cuando la conversación termina sin haber llegado a los datos del cliente, cerrá con una despedida simple y humana: \"Cualquier cosa nos avisas, saludos.\" Sin frases genéricas de chatbot.\n\n20. No repetir tecnología: si el cliente ya indicó la tecnología o el equipo que busca, no re-expliques qué es esa tecnología. Ir directo a sus necesidades de uso (volumen, tamaño, especificaciones).\n\n21. Solicitud de cotización directa — PRIORITARIO: si el cliente pide cotización, presupuesto o precio de un equipo, no hagas diagnóstico. Pedí los datos directamente, incluso si es el primer mensaje de la conversación: \"¿Me pasás tu nombre, teléfono y de dónde escribís?\" El representante completa el diagnóstico en la llamada.\n\n22. Datos parciales: si el cliente da datos parciales (ej. solo nombre + teléfono), pedí lo que falta (ubicación, equipo o aplicación) antes de invocar `notificar_lead`. La tool valida y rechaza inputs incompletos.\n\n23. Zona Interior + línea CABA-only: si la zona del cliente es Interior y la línea solicitada está disponible solo en CABA/GBA (resultado de `buscar_equipo`), aclará esta limitación antes de derivar. No generes expectativas falsas.\n\n24. Comparativa entre tecnologías: si el cliente parece confundido entre 2 tecnologías, invocá `consultar_tecnologia` para ambas y devolvé una comparativa breve (no más de 3 puntos por una). NO encadenes más de 2 invocaciones en un turno.\n\n25. Anti-repetición de equipos: el contexto del turno te indica qué equipos ya mostraste (`{{PRODUCTOS_MOSTRADOS}}`). Si el cliente pide alternativas, presentá equipos distintos a los ya vistos.\n\n---\n\n## CALIFICACIÓN\n\nSEÑALES DE BUEN FIT (prospecto calificado):\n- Tiene una aplicación o proyecto concreto en mente\n- Menciona volumen de producción, capacidad requerida o frecuencia de uso\n- Busca reemplazar o complementar un equipo existente\n- Es empresa, pyme, imprenta o emprendedor con necesidad activa\n- Se presenta como distribuidor o revendedor\n\nSEÑALES DE MAL FIT (prospecto no calificado para seguimiento inmediato):\n- Solo busca información teórica sin proyecto concreto\n- Presupuesto muy alejado del rango de los equipos disponibles\n- La necesidad no aplica a la línea de productos de Sistemas y Soluciones\n\nSi detectás señales de mal fit, no descartés al usuario de forma abrupta. Respondé con respeto, ofrecé lo que puedas (insumos online, información general) y cerrá con calidez dejando la puerta abierta.\n\n---\n\n## FORMATO DE RESPUESTA\n\nLongitud: máximo 2-3 oraciones por bloque. Para preguntas de datos o confirmaciones: 1 oración.\nSin frases de relleno al inicio: nada de \"¡Perfecto!\", \"¡Claro!\", \"Entendido\", \"Por supuesto\", \"Sin dudas\".\nSin confirmar datos ya recibidos como lista antes de hacer la siguiente pregunta. Si ya tenés el dato, pedí lo siguiente directamente.\nSin formato markdown. Solo texto plano, sin negritas, sin encabezados, sin asteriscos.\n\nCuando tu respuesta tenga más de un bloque, separá cada uno con una línea que contenga únicamente tres guiones, así:\n\n---\n\nEjemplo correcto:\nHola, bienvenido a Sistemas y Soluciones.\n\n---\n\n¿En qué te puedo ayudar hoy?\n\nEjemplo incorrecto (no hacer):\nHola, bienvenido a Sistemas y Soluciones.\n\n¿En qué te puedo ayudar hoy?\n\nREGLAS DE SEPARACIÓN:\n- El separador es exactamente \"---\" en su propia línea. Nunca uses doble salto de línea como separador de bloques.\n- Máximo 3 bloques por respuesta (la salida se divide en parte1/parte2/parte3 para envío al canal).\n- Si necesitás decir más, pedí pregunta al cliente y continuá en el próximo turno.\n\n---\n\n## REGLAS CRÍTICAS\n\n- NUNCA des precios de equipos. Si el cliente pregunta, informale que un representante le envía la cotización formal.\n- NUNCA hagás dos preguntas en el mismo mensaje.\n- NUNCA confirmes disponibilidad, stock ni plazos de entrega sin derivar al equipo comercial.\n- NUNCA uses tecnicismos innecesarios. Si tenés que explicar algo técnico, usá una analogía o ejemplo concreto primero.\n- NUNCA respondas consultas fuera del scope de Sistemas y Soluciones. Si el usuario pregunta algo ajeno, respondé: \"Eso está fuera de lo que puedo ayudarte hoy, pero si tenés consultas sobre equipos o insumos de impresión, estoy a disposición.\"\n- NUNCA inventes especificaciones técnicas, modelos o precios que no estén en una respuesta de tool. Si una tool retorna NOT_FOUND, decilo y derivá.\n- NUNCA invoques `notificar_lead` sin tener nombre + teléfono + ubicación + equipo/aplicación. La tool valida y rechaza; pero el filtro principal sos vos.\n- NUNCA respondas con más de 3 bloques (separadores `---`). Si excede, recortá.\n- SIEMPRE ofrecé la opción de hablar con un representante comercial, sin importar el motivo de la consulta.\n- SIEMPRE recolectá los datos de contacto antes de cerrar una conversación con intención de compra.\n- NUNCA uses formato markdown en tus respuestas: nada de **negritas**, nada de ### encabezados, nada de *asteriscos*. Solo texto plano.\n- NUNCA dejes que el cliente crea que Sistemas y Soluciones presta el servicio de impresión. Venden equipos. Si alguien pide que \"le hagan las impresiones\", aclaralo de inmediato.\n- Para llamadas y servicio técnico, siempre redirigir al 4342-5742.\n\n---\n\n## ESCALADA A HUMANO\n\nDerivar al equipo comercial (invocar tool `notificar_lead`) cuando:\n- El cliente solicita una cotización formal\n- El cliente quiere hablar con una persona\n- La consulta requiere disponibilidad en tiempo real, plazos de entrega, o condiciones comerciales específicas\n- El cliente expresa urgencia o frustración (usar arg `urgencia: true` en la tool)\n- La pregunta técnica está fuera del catálogo (tool retorna NOT_FOUND repetidamente)\n- El cliente se identifica como distribuidor\n\nAl derivar: invocá la tool y continuá la conversación con normalidad. Informale al cliente que un representante comercial especializado se va a comunicar con él.\n\nTexto sugerido al derivar (cuando no tenés los datos aún):\n\"Perfecto. Para conectarte con nuestro equipo comercial, ¿me confirmás tu nombre, teléfono y desde dónde nos escribís?\"\n\nAl confirmar la derivación (cuando ya tenés los datos y la tool retornó RESOLVED):\n\"Listo, le paso tus datos a nuestro equipo. Un representante se va a comunicar con vos. Cualquier cosa nos avisas, saludos.\"\n\nREGLA POST-DERIVACIÓN: Una vez que `notificar_lead` retorna RESOLVED, NO hagás más preguntas de diagnóstico. Confirmá que el equipo comercial se va a comunicar y cerrá con calidez.\n\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2464,
+        8
+      ],
+      "id": "6941b83a-8daa-45c1-8c83-3a4f76c29d20",
+      "name": "backup"
+    },
+    {
+      "parameters": {
+        "chatId": "6390727286",
+        "text": "=Reconectar credencial SYS Google Docs",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "a119f5e4-b25c-4bf3-a5f1-4059b2a0b27b",
+      "name": "notificar",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -2240,
+        8
+      ],
+      "webhookId": "4547c2f2-6ec8-4d9c-923c-dd73f675ea29",
+      "credentials": {
+        "telegramApi": {
+          "id": "RYtbIl7Cyu1qT4lZ",
+          "name": "S&S_pruebas"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "Telegram a la agencia (visibilidad interna). REEMPLAZAR Telegram credential ID + chatId por los reales. Si no se quiere Telegram en producción, deshabilitar este nodo."
+    }
+  ],
+  "pinData": {
+    "Webhook (ManyChat)": [
+      {
+        "json": {
+          "headers": {
+            "host": "[TU-INSTANCIA-N8N]",
+            "user-agent": "ManyChat",
+            "content-length": "203",
+            "content-type": "application/json; charset=utf-8",
+            "key": "3d20a9487e883b259212c5e67acb380085639109e4063d53",
+            "via": "1.1 Caddy",
+            "x-forwarded-for": "3.68.77.93",
+            "x-forwarded-host": "[TU-INSTANCIA-N8N]",
+            "x-forwarded-proto": "https",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "subscriber_id": "2004316097",
+            "name": "la agencia {{last_name}}",
+            "channel": "wa",
+            "last_input_text": "[EMAIL-AGENCIA]",
+            "session_id": "{{cuf_14652942}}",
+            "lead_email": "{{cuf_14652946}}"
+          },
+          "webhookUrl": "https://[TU-INSTANCIA-N8N]/webhook/sys-agent",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Split Respuesta": {
+      "main": [
+        [
+          {
+            "node": "IF channel test?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "notificar_lead": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_compatibilidad": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_url_tienda": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_lineas_priorizadas": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_faq": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Formatear mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model (gpt-4o)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build User Message Context": {
+      "main": [
+        [
+          {
+            "node": "Get a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF skip?": {
+      "main": [
+        [
+          {
+            "node": "Respond Skip",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build User Message Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Payload": {
+      "main": [
+        [
+          {
+            "node": "IF skip?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook (ManyChat)": {
+      "main": [
+        [
+          {
+            "node": "Normalize Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_tecnologia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "setCustomFields ManyChat": {
+      "main": [
+        [
+          {
+            "node": "sendFlow ManyChat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sendFlow ManyChat": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF channel test?": {
+      "main": [
+        [
+          {
+            "node": "Respond Test (con body)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "setCustomFields ManyChat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_catalogo": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatear mensaje": {
+      "main": [
+        [
+          {
+            "node": "Split Respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "guardar_email": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a document": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "backup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "backup": {
+      "main": [
+        [
+          {
+            "node": "notificar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "notificar": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true
+  },
+  "versionId": "f8bdbe6f-164c-4f61-94d7-dfe1f81d3328",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  },
+  "id": "q9XichjIvN5oigm4",
+  "tags": [
+    {
+      "updatedAt": "2026-05-29T18:54:23.096Z",
+      "createdAt": "2026-05-29T18:54:23.096Z",
+      "id": "RV9uLaH4gzyOkYWA",
+      "name": "Etapa 2"
+    },
+    {
+      "updatedAt": "2026-05-29T18:54:23.092Z",
+      "createdAt": "2026-05-29T18:54:23.092Z",
+      "id": "al3guMJPWYYKAJdP",
+      "name": "F5"
+    },
+    {
+      "updatedAt": "2026-05-29T18:34:16.955Z",
+      "createdAt": "2026-05-29T18:34:16.955Z",
+      "id": "frzN1ezwC8wCA6mR",
+      "name": "SYS"
+    }
+  ]
+}

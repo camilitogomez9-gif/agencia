@@ -1,0 +1,1873 @@
+{
+  "updatedAt": "2026-08-14T16:15:41.922Z",
+  "createdAt": "2026-08-08T19:23:15.534Z",
+  "id": "fpKvo0ECWIhFcckE",
+  "name": "HPF·GHL · W10 Seguimientos",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "id": "31bbf0cc-6746-49dd-b45b-bde6fe481b11",
+      "name": "Cada 5 minutos",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1400,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "dc862636-c063-4a0f-9247-107cefde017d",
+      "name": "Disparo manual",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1400,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hpf-w10-seguimientos",
+        "authentication": "headerAuth",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "0a4bdc0f-cf8a-4172-937e-07cddcc52751",
+      "name": "Webhook (carril de prueba)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1400,
+        320
+      ],
+      "webhookId": "031f552a-0ef5-478e-b4d4-11f5a39c333b",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jUb7ZjztncX5ACpc",
+          "name": "HPF GHL Webhook Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "CREATE TABLE IF NOT EXISTS hpf_seguimientos (\n  session_id          text PRIMARY KEY,\n  contact_id          text NOT NULL,\n  opportunity_id      text,\n  campania            text,\n  etapa_al_armar      text,\n  evento              text,\n  ola                 int         NOT NULL DEFAULT 0,\n  proximo_at          timestamptz,\n  desde_at            timestamptz NOT NULL DEFAULT now(),\n  evaluacion_at       timestamptz,\n  evaluacion_desde_at timestamptz,\n  ultimo_inbound_at   timestamptz NOT NULL DEFAULT now(),\n  ultimo_toque_at     timestamptz,\n  cerrado_at          timestamptz,\n  cerrado_motivo      text,\n  bloqueado_hasta     timestamptz,\n  actualizado_at      timestamptz NOT NULL DEFAULT now()\n);\nCREATE INDEX IF NOT EXISTS hpf_seg_due_idx\n  ON hpf_seguimientos (proximo_at) WHERE cerrado_at IS NULL;\nUPDATE hpf_seguimientos SET bloqueado_hasta = now() + interval '4 minutes'\nWHERE session_id IN (\n  SELECT session_id FROM hpf_seguimientos\n  WHERE cerrado_at IS NULL\n    AND (bloqueado_hasta IS NULL OR bloqueado_hasta < now())\n    AND ( (proximo_at    IS NOT NULL AND proximo_at    <= now())\n       OR (evaluacion_at IS NOT NULL AND evaluacion_at <= now()) )\n  ORDER BY COALESCE(proximo_at, evaluacion_at)\n  LIMIT 25\n  FOR UPDATE SKIP LOCKED)\nRETURNING *;",
+        "options": {}
+      },
+      "id": "1ec1e710-fa65-485d-9a57-cf2a325a4f08",
+      "name": "Reclamar vencidos",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        -1160,
+        100
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "aa302f7f-d2fa-4f00-b16f-dc7ede00f7c4",
+              "leftValue": "={{ !!$json.session_id }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "665d9ca3-9ddf-4160-b1f0-d5e521b416cc",
+      "name": "¿Hay pendientes?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -940,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "beea499f-1749-4800-bf00-50748e167e12",
+      "name": "Por lead",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -720,
+        100
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "4ddbc137-7be2-43ff-ac0c-ac0f6785ce24",
+      "name": "Lead en curso",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -500,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VK4M7VQm8CMefbty",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W0 Client"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "op": "get_opportunity",
+            "args": "={{ {opportunityId: $json.opportunity_id} }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "863064a3-11b2-4293-b8e2-b1199782359c",
+      "name": "W0 · leer oportunidad",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -280,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const CAMPANIAS = {\n  \"rebeca\": {\n    \"etapa\": \"Saludo Enviado\",\n    \"olas\": [\n      60,\n      240,\n      300\n    ],\n    \"eval_h\": 24,\n    \"silencio\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"desinteres\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"interes\": null\n  },\n  \"imagen\": {\n    \"etapa\": \"Evento Identificado\",\n    \"olas\": [\n      60,\n      240,\n      300\n    ],\n    \"eval_h\": 24,\n    \"silencio\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"desinteres\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"interes\": null\n  },\n  \"cotizacion\": {\n    \"etapa\": \"Productos Mostrados\",\n    \"olas\": [\n      60,\n      240,\n      300\n    ],\n    \"eval_h\": 24,\n    \"silencio\": {\n      \"tag\": \"r1_sin_informacion\"\n    },\n    \"desinteres\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"interes\": {\n      \"tag\": \"r1_sin_informacion\"\n    }\n  },\n  \"7pasos\": {\n    \"etapa\": \"Cotizado\",\n    \"olas\": [],\n    \"eval_h\": 24,\n    \"silencio\": {\n      \"tag\": \"r1_con_informacion\"\n    },\n    \"desinteres\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"interes\": {\n      \"tag\": \"r1_con_informacion\"\n    }\n  }\n};\nconst TEXTOS = {\n  \"rebeca\": [\n    [\n      \"A\",\n      \"60864\",\n      true,\n      \"Hola 👋, sigues por aquí? Solo necesito que me cuentes qué tipo de evento tienes para poder ayudarte a elegir lo mejor para ti 🎉\"\n    ],\n    [\n      \"B\",\n      \"60866\",\n      true,\n      \"Hola! 😄 Cuéntame, es para boda, XV años u otro evento? Así puedo enviarte las opciones de productos 💡\"\n    ],\n    [\n      \"C\",\n      \"60868\",\n      true,\n      \"Hola 😊, no quiero que se te pase la oportunidad de encontrar los recuerdos perfectos para tu evento. De que es tu evento? 💍🎂🎈\"\n    ]\n  ],\n  \"imagen\": [\n    [\n      \"D\",\n      \"60870\",\n      false,\n      \"Hola 😄, vi que me comentaste {evento} 🎉. Qué productos quieres que te recomiende para esa linda ocasión? 💡\"\n    ],\n    [\n      \"E\",\n      \"60872\",\n      false,\n      \"Hola 👋, sigues ahi? 🎊 De lo que te compartí, hay algún producto que te haya llamado la atención para mostrartelo?\"\n    ],\n    [\n      \"F\",\n      \"60874\",\n      false,\n      \"Hola 👋, para {evento} puedo ayudarte a elegir lo más bonito y útil. Simplemente dime que productos te interesan y te muestro todo de ellos 🎈\"\n    ]\n  ],\n  \"cotizacion\": [\n    [\n      \"G\",\n      \"60878\",\n      true,\n      \"Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦\"\n    ],\n    [\n      \"H\",\n      \"60880\",\n      true,\n      \"Hola! 👋 Ya tengo tus productos seleccionados, solo me falta saber cuántas piezas necesitas y tu código postal para calcular el envío 🚚\"\n    ],\n    [\n      \"I\",\n      \"60882\",\n      true,\n      \"Hola 😊, para apartar y cotizar tus productos necesito esos dos datos: cantidad y código postal. Así puedo enviarte tu cotización 📄\"\n    ]\n  ],\n  \"7pasos\": []\n};\n\nconst fila = $('Lead en curso').first().json;\nconst opp = ($input.first().json.data || {}).opportunity || {};\nconst ETAPAS = {\n  \"Lead Nuevo\": \"cf8fc770-81b1-422c-8394-d00bfb97a3f0\",\n  \"Saludo Enviado\": \"f9709293-d03c-47f1-949f-0c03ab077a45\",\n  \"Evento Identificado\": \"fec50c94-fba0-444b-8c75-7a97da9e0daa\",\n  \"Productos Mostrados\": \"49c7401f-8af1-4d8f-a1b4-e989b6d0a5e2\",\n  \"Cotizado\": \"96fa0ade-c853-4db3-97f4-56d58d69af8c\",\n  \"Esperando Pago\": \"843a06f1-1214-4baa-a3a0-f197cb240b5d\",\n  \"Pago Confirmado\": \"96d760e5-f290-456c-a117-57e61ce6c27d\",\n  \"Diseño en Proceso\": \"d35bb30d-97d5-48c4-81f8-5ecabf32e57d\",\n  \"En Producción\": \"008689c6-80d8-4712-981b-1d800e1e6137\",\n  \"Enviado\": \"218b9b41-4007-4b1c-bbe4-4e775ddf00b5\",\n  \"En Espera\": \"48de80e9-31a9-472a-b030-5b9fe9174810\",\n  \"Ganado\": \"909a816d-997e-4d90-8dc1-dc4b0dcd16d7\",\n  \"Ventas Perdidas\": \"6abfe419-adf2-4df5-87c5-ef4f62e01464\"\n};\nconst nombreDe = Object.fromEntries(Object.entries(ETAPAS).map(([k, v]) => [v, k]));\nconst etapaActual = nombreDe[opp.pipelineStageId] || null;\n\nconst cfg = CAMPANIAS[fila.campania];\nconst ahora = Date.now();\nconst t = x => (x ? new Date(x).getTime() : 0);\n\nfunction salida(o) { return [{ json: { ...fila, etapa_actual: etapaActual, ...o } }]; }\n\n// ── Cortes que ganan sobre todo lo demás ────────────────────────────────────────\nif (!cfg) return salida({ accion: 'cerrar', motivo: 'sin_campania' });\n\n// Etapas donde el agente no habla: no se re-engancha a alguien que está con una\n// persona, pagando o en producción. Va ANTES del chequeo de \"cambió la etapa\" porque\n// es el motivo más informativo de los dos: ambos cortan, pero éste dice por qué.\nconst MUDAS = ['En Espera', 'Pago Confirmado', 'En Producción', 'Diseño en Proceso',\n               'Enviado', 'Ganado', 'Ventas Perdidas'];\nif (MUDAS.includes(etapaActual)) {\n  return salida({ accion: 'cerrar', motivo: 'bloqueado' });\n}\n\n// La etapa se movió: la campaña dejó de tener sentido. Réplica de los Get_Entity*+If.\nif (etapaActual !== fila.etapa_al_armar) {\n  return salida({ accion: 'cerrar', motivo: 'etapa_cambio' });\n}\n\n// ── ¿Toca evaluar el cierre? ────────────────────────────────────────────────────\n// Va ANTES del corte por respuesta a propósito. En el origen el `Wait3` de 24 h se\n// cumple aunque el lead haya escrito, y justamente ahí es donde corre el clasificador\n// de desinterés: \"respondió\" no es motivo para cerrar en silencio, es la ENTRADA de la\n// decisión. Poniéndolo después, el clasificador no corría nunca.\nconst vencidaEval = fila.evaluacion_at && t(fila.evaluacion_at) <= ahora;\nif (vencidaEval) {\n  const hablo = t(fila.ultimo_inbound_at) > t(fila.evaluacion_desde_at || fila.desde_at);\n  if (!hablo) return salida({ accion: 'cerrar', motivo: 'silencio',\n                              efecto: cfg.silencio });\n  return salida({ accion: 'clasificar' });\n}\n\n// El lead respondió después de que se armó la campaña: no se le manda ninguna ola más.\n// El caso normal ni llega acá — cuando el lead escribe, W1 REESCRIBE la fila con una\n// campaña nueva y la vieja desaparece. Esto es la red por si esa escritura no ocurre\n// (por ejemplo un turno que murió después de `Evidencia del turno`).\nif (t(fila.ultimo_inbound_at) > t(fila.desde_at)) {\n  return salida({ accion: 'cerrar', motivo: 'respondio' });\n}\n\n// ── ¿Toca mandar una ola? ───────────────────────────────────────────────────────\nconst vencidoToque = fila.proximo_at && t(fila.proximo_at) <= ahora;\nif (vencidoToque && fila.ola < cfg.olas.length) {\n  const i = fila.ola;                       // 0-based: la ola que toca mandar\n  const [id, bot, verificado, txt] = TEXTOS[fila.campania][i];\n  const texto = txt.replace('{evento}', fila.evento || 'tu evento');\n  const esUltima = (i + 1) >= cfg.olas.length;\n\n  // El siguiente toque se agenda desde que se armó la campaña, no desde ahora: así un\n  // cron que corre tarde no corre toda la cadencia hacia adelante.\n  const base = t(fila.desde_at);\n  const prox = esUltima ? null\n    : new Date(base + cfg.olas[i + 1] * 60000).toISOString();\n  const evalAt = esUltima\n    ? new Date(ahora + cfg.eval_h * 3600000).toISOString() : null;\n\n  return salida({ accion: 'toque', ola_nueva: i + 1, texto, texto_id: id,\n                  bot_kommo: bot, texto_verificado: verificado,\n                  proximo_at_nuevo: prox, evaluacion_at_nueva: evalAt,\n                  evaluacion_desde_at_nueva: esUltima ? new Date(ahora).toISOString() : null });\n}\n\n// ── ¿Toca evaluar el cierre? ────────────────────────────────────────────────────\nif (vencidaEval) {\n  // Silencio: el lead no escribió desde que arrancó la ventana de evaluación.\n  const hablo = t(fila.ultimo_inbound_at) > t(fila.evaluacion_desde_at || fila.desde_at);\n  if (!hablo) return salida({ accion: 'cerrar', motivo: 'silencio',\n                              efecto: cfg.silencio });\n  // Habló: hay que clasificar si fue desinterés. Lo decide el LLM, como el origen.\n  return salida({ accion: 'clasificar' });\n}\n\n// Nada que hacer todavía: se suelta el lock y se deja como estaba.\nreturn salida({ accion: 'nada' });"
+      },
+      "id": "f36fce8c-f425-4d7c-bd8f-56194f02332c",
+      "name": "Decidir acción",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -60,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "0fb5b2e4-db8a-4780-b367-f7cf3a35d034",
+                    "leftValue": "={{ $json.accion }}",
+                    "rightValue": "toque",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "toque"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "6ea92547-3a96-4f70-8599-d099a8784479",
+                    "leftValue": "={{ $json.accion }}",
+                    "rightValue": "clasificar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "clasificar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "8b55aae5-0237-4c11-b47a-08d41ceab90f",
+                    "leftValue": "={{ $json.accion }}",
+                    "rightValue": "cerrar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "cerrar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "f8ae9078-23fc-4cae-b514-1c27d5be4ffb",
+                    "leftValue": "={{ $json.accion }}",
+                    "rightValue": "nada",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "nada"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0e102aa3-1ea3-4762-8f84-be939199056d",
+      "name": "Ruteo",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        160,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "MdbOREN56lfQTYlM",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W2 Salida"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "contactId": "={{ $json.contact_id }}",
+            "partes": "={{ JSON.stringify([{texto: $json.texto, adjuntos: []}]) }}",
+            "pausa_seg": "=0"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "9e0a35a8-713d-4877-b48b-443e53e15f7e",
+      "name": "W2 · enviar toque",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE hpf_seguimientos\nSET ola = $2::int, ultimo_toque_at = now(), proximo_at = $3::timestamptz,\n    evaluacion_at = COALESCE($4::timestamptz, evaluacion_at),\n    evaluacion_desde_at = COALESCE($5::timestamptz, evaluacion_desde_at),\n    bloqueado_hasta = NULL, actualizado_at = now()\nWHERE session_id = $1\nRETURNING session_id, ola, proximo_at, evaluacion_at;",
+        "options": {
+          "queryReplacement": "={{ [ $('Decidir acción').first().json.session_id, $('Decidir acción').first().json.ola_nueva, $('Decidir acción').first().json.proximo_at_nuevo, $('Decidir acción').first().json.evaluacion_at_nueva, $('Decidir acción').first().json.evaluacion_desde_at_nueva ] }}"
+        }
+      },
+      "id": "661b4316-28de-40b2-9ebd-7c1475af06aa",
+      "name": "Registrar toque",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        640,
+        -60
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COALESCE(json_agg(t.c ORDER BY t.id DESC), '[]'::json) AS mensajes\nFROM (\n  SELECT id, left(message->>'content', 400) AS c\n  FROM n8n_chat_histories\n  WHERE session_id = $1 AND message->>'type' = 'human'\n  ORDER BY id DESC LIMIT 7\n) t;",
+        "options": {
+          "queryReplacement": "={{ [ $json.session_id ] }}"
+        }
+      },
+      "id": "d81b6ba8-236d-4bba-be82-7b34e7dc49e1",
+      "name": "Últimos mensajes del lead",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        400,
+        140
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=# Rol\nSos un clasificador binario. Decidís si los mensajes del usuario muestran desinterés\nexplícito respecto a una cotización que le enviamos.\n\n# Entrada\nUn array de textos, donde el primero es el MÁS RECIENTE y crece hacia atrás en el tiempo:\n\n{{ JSON.stringify($json.mensajes) }}\n\n# Reglas\n- Evaluá del más reciente al más antiguo. Si después de un desinterés el usuario volvió\n  a preguntar, a pedir cotización o a mostrar interés, la respuesta es \"No\".\n- En cuanto detectes un desinterés explícito y no haya interés posterior, respondé \"Si\".\n- Cuentan como desinterés: \"no me interesa\", \"no gracias\", \"paso\", \"dejá así\", \"ya lo\n  compré con otro\", \"no necesito\", \"cancelar\", \"dar de baja\", \"muy caro, no sigo\",\n  \"no me sirve\", \"borrame\", \"quita mi número\", \"no quiero avanzar\" y similares.\n- Una duda, una objeción de precio con pregunta, o un \"después te aviso\" NO son\n  desinterés.\n\n# Salida\nRespondé ÚNICAMENTE con la palabra Si o No. Sin explicación, sin puntuación."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c39f4682-9da8-430a-8a8b-83ee45ea1a91",
+      "name": "Clasificar desinterés",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        620,
+        140
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "a1k3E4C9uRRHxngs",
+          "name": "H.F"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const CAMPANIAS = {\n  \"rebeca\": {\n    \"etapa\": \"Saludo Enviado\",\n    \"olas\": [\n      60,\n      240,\n      300\n    ],\n    \"eval_h\": 24,\n    \"silencio\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"desinteres\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"interes\": null\n  },\n  \"imagen\": {\n    \"etapa\": \"Evento Identificado\",\n    \"olas\": [\n      60,\n      240,\n      300\n    ],\n    \"eval_h\": 24,\n    \"silencio\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"desinteres\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"interes\": null\n  },\n  \"cotizacion\": {\n    \"etapa\": \"Productos Mostrados\",\n    \"olas\": [\n      60,\n      240,\n      300\n    ],\n    \"eval_h\": 24,\n    \"silencio\": {\n      \"tag\": \"r1_sin_informacion\"\n    },\n    \"desinteres\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"interes\": {\n      \"tag\": \"r1_sin_informacion\"\n    }\n  },\n  \"7pasos\": {\n    \"etapa\": \"Cotizado\",\n    \"olas\": [],\n    \"eval_h\": 24,\n    \"silencio\": {\n      \"tag\": \"r1_con_informacion\"\n    },\n    \"desinteres\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"interes\": {\n      \"tag\": \"r1_con_informacion\"\n    }\n  }\n};\nconst d = $('Decidir acción').first().json;\nconst cfg = CAMPANIAS[d.campania] || {};\n\nlet efecto = d.efecto || null;\nlet motivo = d.motivo || 'cerrado';\n\n// Viene del clasificador de desinterés (réplica de `Message a model` + If4 del origen).\nif (d.accion === 'clasificar') {\n  const c = $input.first().json || {};\n  const crudo = String(c.message?.content ?? c.content ?? c.text ?? '').trim();\n  // El prompt del origen contesta \"Si\" / \"No\". Cualquier otra cosa se trata como\n  // desinterés, que es lo que hace su `If4` (compara contra \"No\"; si no matchea, pierde).\n  const desinteres = !/^no\\b/i.test(crudo);\n  efecto = desinteres ? cfg.desinteres : cfg.interes;\n  motivo = desinteres ? 'desinteres' : 'sin_desinteres';\n}\n\nreturn [{ json: { ...d, motivo, efecto,\n                  mover_etapa: !!(efecto && efecto.etapa),\n                  etapa_destino: (efecto && efecto.etapa) || null,\n                  tag: (efecto && efecto.tag) || null } }];"
+      },
+      "id": "0c91b179-877f-4444-97e2-dcecf959ef03",
+      "name": "Armar cierre",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        840,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "ca28f0fd-fc2f-49c2-880f-80b27a9f922e",
+              "leftValue": "={{ !!($json.tag || $json.etapa_destino) }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c3dcbdd9-f3e6-4da6-9d17-b528252897ba",
+      "name": "¿Hay efecto?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1060,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VK4M7VQm8CMefbty",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W0 Client"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "op": "add_tag",
+            "args": "={{ {contactId: $json.contact_id, tags: [$json.tag || ('seg_' + $json.motivo)]} }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "609ba65f-b7c7-416b-a14f-3634b08e8b97",
+      "name": "W0 · tag de cierre",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1280,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "58816f2f-aff1-4213-b864-7508f5acaff4",
+              "leftValue": "={{ $('Armar cierre').first().json.mover_etapa }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "160ac37f-a442-4b68-ad05-ca278db8e5ea",
+      "name": "¿Mover a Ventas Perdidas?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1500,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VK4M7VQm8CMefbty",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W0 Client"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "op": "update_stage",
+            "args": "={{ {opportunityId: $('Armar cierre').first().json.opportunity_id, etapa: $('Armar cierre').first().json.etapa_destino} }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "97519feb-7291-4db6-8990-09e321e7dbfc",
+      "name": "W0 · etapa perdida",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1720,
+        140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE hpf_seguimientos\nSET cerrado_at = now(), cerrado_motivo = $2, proximo_at = NULL, evaluacion_at = NULL,\n    bloqueado_hasta = NULL, actualizado_at = now()\nWHERE session_id = $1\nRETURNING session_id, cerrado_motivo;",
+        "options": {
+          "queryReplacement": "={{ [ $('Armar cierre').first().json.session_id, $('Armar cierre').first().json.motivo ] }}"
+        }
+      },
+      "id": "03436a4d-45f6-4be0-aae0-bc65d6cc06af",
+      "name": "Registrar cierre",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1940,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE hpf_seguimientos\nSET bloqueado_hasta = NULL, actualizado_at = now(), proximo_at = $2::timestamptz,\n    evaluacion_at = $3::timestamptz\nWHERE session_id = $1\nRETURNING session_id;",
+        "options": {
+          "queryReplacement": "={{ [ $json.session_id, $json.proximo_at, $json.evaluacion_at ] }}"
+        }
+      },
+      "id": "25305a79-25a9-4e1d-bcb3-a79525248f01",
+      "name": "Soltar lock",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        400,
+        420
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {},
+      "id": "390d22d2-be16-4554-8ede-a8b2dc09d7b7",
+      "name": "Fin",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        -80
+      ]
+    }
+  ],
+  "connections": {
+    "Cada 5 minutos": {
+      "main": [
+        [
+          {
+            "node": "Reclamar vencidos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Disparo manual": {
+      "main": [
+        [
+          {
+            "node": "Reclamar vencidos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook (carril de prueba)": {
+      "main": [
+        [
+          {
+            "node": "Reclamar vencidos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reclamar vencidos": {
+      "main": [
+        [
+          {
+            "node": "¿Hay pendientes?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay pendientes?": {
+      "main": [
+        [
+          {
+            "node": "Por lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Por lead": {
+      "main": [
+        [
+          {
+            "node": "Fin",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Lead en curso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lead en curso": {
+      "main": [
+        [
+          {
+            "node": "W0 · leer oportunidad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "W0 · leer oportunidad": {
+      "main": [
+        [
+          {
+            "node": "Decidir acción",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decidir acción": {
+      "main": [
+        [
+          {
+            "node": "Ruteo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ruteo": {
+      "main": [
+        [
+          {
+            "node": "W2 · enviar toque",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Últimos mensajes del lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Armar cierre",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Soltar lock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "W2 · enviar toque": {
+      "main": [
+        [
+          {
+            "node": "Registrar toque",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar toque": {
+      "main": [
+        [
+          {
+            "node": "Por lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Últimos mensajes del lead": {
+      "main": [
+        [
+          {
+            "node": "Clasificar desinterés",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clasificar desinterés": {
+      "main": [
+        [
+          {
+            "node": "Armar cierre",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Armar cierre": {
+      "main": [
+        [
+          {
+            "node": "¿Hay efecto?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay efecto?": {
+      "main": [
+        [
+          {
+            "node": "W0 · tag de cierre",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Registrar cierre",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "W0 · tag de cierre": {
+      "main": [
+        [
+          {
+            "node": "¿Mover a Ventas Perdidas?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Mover a Ventas Perdidas?": {
+      "main": [
+        [
+          {
+            "node": "W0 · etapa perdida",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Registrar cierre",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "W0 · etapa perdida": {
+      "main": [
+        [
+          {
+            "node": "Registrar cierre",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar cierre": {
+      "main": [
+        [
+          {
+            "node": "Por lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Soltar lock": {
+      "main": [
+        [
+          {
+            "node": "Por lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Cada 5 minutos": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": null,
+  "pinData": null,
+  "versionId": "3384d8a3-76b0-4a8d-8b92-a43b4ffc729c",
+  "activeVersionId": "3384d8a3-76b0-4a8d-8b92-a43b4ffc729c",
+  "versionCounter": 11,
+  "triggerCount": 2,
+  "shared": [
+    {
+      "updatedAt": "2026-08-08T19:23:15.534Z",
+      "createdAt": "2026-08-08T19:23:15.534Z",
+      "role": "workflow:owner",
+      "workflowId": "fpKvo0ECWIhFcckE",
+      "projectId": "g2TpxqLMiC0UsUBj",
+      "project": {
+        "updatedAt": "2025-05-10T12:26:37.475Z",
+        "createdAt": "2025-05-10T12:24:10.921Z",
+        "id": "g2TpxqLMiC0UsUBj",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-05-10T12:24:10.921Z",
+            "createdAt": "2025-05-10T12:24:10.921Z",
+            "userId": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+            "projectId": "g2TpxqLMiC0UsUBj",
+            "user": {
+              "updatedAt": "2026-08-25T13:07:17.187Z",
+              "createdAt": "2025-05-10T12:24:07.518Z",
+              "id": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "lastName": "AI",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-05-10T12:26:59.729Z",
+                "personalization_survey_n8n_version": "1.91.3",
+                "companySize": "<20",
+                "companyType": "systems-integrator",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "6fpcC3iGwfEYO3Eu",
+                "userActivatedAt": 1757033385622,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1773184568459
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "aiAgentStarterCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-08-25",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-08-14T16:15:41.902Z",
+    "createdAt": "2026-08-14T16:15:41.902Z",
+    "versionId": "3384d8a3-76b0-4a8d-8b92-a43b4ffc729c",
+    "workflowId": "fpKvo0ECWIhFcckE",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "minutes",
+                "minutesInterval": 5
+              }
+            ]
+          }
+        },
+        "id": "31bbf0cc-6746-49dd-b45b-bde6fe481b11",
+        "name": "Cada 5 minutos",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -1400,
+          0
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "dc862636-c063-4a0f-9247-107cefde017d",
+        "name": "Disparo manual",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -1400,
+          160
+        ]
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "hpf-w10-seguimientos",
+          "authentication": "headerAuth",
+          "responseMode": "lastNode",
+          "options": {}
+        },
+        "id": "0a4bdc0f-cf8a-4172-937e-07cddcc52751",
+        "name": "Webhook (carril de prueba)",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -1400,
+          320
+        ],
+        "webhookId": "031f552a-0ef5-478e-b4d4-11f5a39c333b",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "jUb7ZjztncX5ACpc",
+            "name": "HPF GHL Webhook Auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "CREATE TABLE IF NOT EXISTS hpf_seguimientos (\n  session_id          text PRIMARY KEY,\n  contact_id          text NOT NULL,\n  opportunity_id      text,\n  campania            text,\n  etapa_al_armar      text,\n  evento              text,\n  ola                 int         NOT NULL DEFAULT 0,\n  proximo_at          timestamptz,\n  desde_at            timestamptz NOT NULL DEFAULT now(),\n  evaluacion_at       timestamptz,\n  evaluacion_desde_at timestamptz,\n  ultimo_inbound_at   timestamptz NOT NULL DEFAULT now(),\n  ultimo_toque_at     timestamptz,\n  cerrado_at          timestamptz,\n  cerrado_motivo      text,\n  bloqueado_hasta     timestamptz,\n  actualizado_at      timestamptz NOT NULL DEFAULT now()\n);\nCREATE INDEX IF NOT EXISTS hpf_seg_due_idx\n  ON hpf_seguimientos (proximo_at) WHERE cerrado_at IS NULL;\nUPDATE hpf_seguimientos SET bloqueado_hasta = now() + interval '4 minutes'\nWHERE session_id IN (\n  SELECT session_id FROM hpf_seguimientos\n  WHERE cerrado_at IS NULL\n    AND (bloqueado_hasta IS NULL OR bloqueado_hasta < now())\n    AND ( (proximo_at    IS NOT NULL AND proximo_at    <= now())\n       OR (evaluacion_at IS NOT NULL AND evaluacion_at <= now()) )\n  ORDER BY COALESCE(proximo_at, evaluacion_at)\n  LIMIT 25\n  FOR UPDATE SKIP LOCKED)\nRETURNING *;",
+          "options": {}
+        },
+        "id": "1ec1e710-fa65-485d-9a57-cf2a325a4f08",
+        "name": "Reclamar vencidos",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          -1160,
+          100
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "uK59P60DJmOJc4Lm",
+            "name": "H.F"
+          }
+        },
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "version": 2,
+              "typeValidation": "loose"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "aa302f7f-d2fa-4f00-b16f-dc7ede00f7c4",
+                "leftValue": "={{ !!$json.session_id }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "665d9ca3-9ddf-4160-b1f0-d5e521b416cc",
+        "name": "¿Hay pendientes?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          -940,
+          100
+        ]
+      },
+      {
+        "parameters": {
+          "batchSize": 1,
+          "options": {}
+        },
+        "id": "beea499f-1749-4800-bf00-50748e167e12",
+        "name": "Por lead",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -720,
+          100
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "4ddbc137-7be2-43ff-ac0c-ac0f6785ce24",
+        "name": "Lead en curso",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          -500,
+          200
+        ]
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "VK4M7VQm8CMefbty",
+            "mode": "id",
+            "cachedResultName": "HPF·GHL · W0 Client"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "op": "get_opportunity",
+              "args": "={{ {opportunityId: $json.opportunity_id} }}"
+            },
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "id": "863064a3-11b2-4293-b8e2-b1199782359c",
+        "name": "W0 · leer oportunidad",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          -280,
+          200
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const CAMPANIAS = {\n  \"rebeca\": {\n    \"etapa\": \"Saludo Enviado\",\n    \"olas\": [\n      60,\n      240,\n      300\n    ],\n    \"eval_h\": 24,\n    \"silencio\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"desinteres\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"interes\": null\n  },\n  \"imagen\": {\n    \"etapa\": \"Evento Identificado\",\n    \"olas\": [\n      60,\n      240,\n      300\n    ],\n    \"eval_h\": 24,\n    \"silencio\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"desinteres\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"interes\": null\n  },\n  \"cotizacion\": {\n    \"etapa\": \"Productos Mostrados\",\n    \"olas\": [\n      60,\n      240,\n      300\n    ],\n    \"eval_h\": 24,\n    \"silencio\": {\n      \"tag\": \"r1_sin_informacion\"\n    },\n    \"desinteres\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"interes\": {\n      \"tag\": \"r1_sin_informacion\"\n    }\n  },\n  \"7pasos\": {\n    \"etapa\": \"Cotizado\",\n    \"olas\": [],\n    \"eval_h\": 24,\n    \"silencio\": {\n      \"tag\": \"r1_con_informacion\"\n    },\n    \"desinteres\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"interes\": {\n      \"tag\": \"r1_con_informacion\"\n    }\n  }\n};\nconst TEXTOS = {\n  \"rebeca\": [\n    [\n      \"A\",\n      \"60864\",\n      true,\n      \"Hola 👋, sigues por aquí? Solo necesito que me cuentes qué tipo de evento tienes para poder ayudarte a elegir lo mejor para ti 🎉\"\n    ],\n    [\n      \"B\",\n      \"60866\",\n      true,\n      \"Hola! 😄 Cuéntame, es para boda, XV años u otro evento? Así puedo enviarte las opciones de productos 💡\"\n    ],\n    [\n      \"C\",\n      \"60868\",\n      true,\n      \"Hola 😊, no quiero que se te pase la oportunidad de encontrar los recuerdos perfectos para tu evento. De que es tu evento? 💍🎂🎈\"\n    ]\n  ],\n  \"imagen\": [\n    [\n      \"D\",\n      \"60870\",\n      false,\n      \"Hola 😄, vi que me comentaste {evento} 🎉. Qué productos quieres que te recomiende para esa linda ocasión? 💡\"\n    ],\n    [\n      \"E\",\n      \"60872\",\n      false,\n      \"Hola 👋, sigues ahi? 🎊 De lo que te compartí, hay algún producto que te haya llamado la atención para mostrartelo?\"\n    ],\n    [\n      \"F\",\n      \"60874\",\n      false,\n      \"Hola 👋, para {evento} puedo ayudarte a elegir lo más bonito y útil. Simplemente dime que productos te interesan y te muestro todo de ellos 🎈\"\n    ]\n  ],\n  \"cotizacion\": [\n    [\n      \"G\",\n      \"60878\",\n      true,\n      \"Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦\"\n    ],\n    [\n      \"H\",\n      \"60880\",\n      true,\n      \"Hola! 👋 Ya tengo tus productos seleccionados, solo me falta saber cuántas piezas necesitas y tu código postal para calcular el envío 🚚\"\n    ],\n    [\n      \"I\",\n      \"60882\",\n      true,\n      \"Hola 😊, para apartar y cotizar tus productos necesito esos dos datos: cantidad y código postal. Así puedo enviarte tu cotización 📄\"\n    ]\n  ],\n  \"7pasos\": []\n};\n\nconst fila = $('Lead en curso').first().json;\nconst opp = ($input.first().json.data || {}).opportunity || {};\nconst ETAPAS = {\n  \"Lead Nuevo\": \"cf8fc770-81b1-422c-8394-d00bfb97a3f0\",\n  \"Saludo Enviado\": \"f9709293-d03c-47f1-949f-0c03ab077a45\",\n  \"Evento Identificado\": \"fec50c94-fba0-444b-8c75-7a97da9e0daa\",\n  \"Productos Mostrados\": \"49c7401f-8af1-4d8f-a1b4-e989b6d0a5e2\",\n  \"Cotizado\": \"96fa0ade-c853-4db3-97f4-56d58d69af8c\",\n  \"Esperando Pago\": \"843a06f1-1214-4baa-a3a0-f197cb240b5d\",\n  \"Pago Confirmado\": \"96d760e5-f290-456c-a117-57e61ce6c27d\",\n  \"Diseño en Proceso\": \"d35bb30d-97d5-48c4-81f8-5ecabf32e57d\",\n  \"En Producción\": \"008689c6-80d8-4712-981b-1d800e1e6137\",\n  \"Enviado\": \"218b9b41-4007-4b1c-bbe4-4e775ddf00b5\",\n  \"En Espera\": \"48de80e9-31a9-472a-b030-5b9fe9174810\",\n  \"Ganado\": \"909a816d-997e-4d90-8dc1-dc4b0dcd16d7\",\n  \"Ventas Perdidas\": \"6abfe419-adf2-4df5-87c5-ef4f62e01464\"\n};\nconst nombreDe = Object.fromEntries(Object.entries(ETAPAS).map(([k, v]) => [v, k]));\nconst etapaActual = nombreDe[opp.pipelineStageId] || null;\n\nconst cfg = CAMPANIAS[fila.campania];\nconst ahora = Date.now();\nconst t = x => (x ? new Date(x).getTime() : 0);\n\nfunction salida(o) { return [{ json: { ...fila, etapa_actual: etapaActual, ...o } }]; }\n\n// ── Cortes que ganan sobre todo lo demás ────────────────────────────────────────\nif (!cfg) return salida({ accion: 'cerrar', motivo: 'sin_campania' });\n\n// Etapas donde el agente no habla: no se re-engancha a alguien que está con una\n// persona, pagando o en producción. Va ANTES del chequeo de \"cambió la etapa\" porque\n// es el motivo más informativo de los dos: ambos cortan, pero éste dice por qué.\nconst MUDAS = ['En Espera', 'Pago Confirmado', 'En Producción', 'Diseño en Proceso',\n               'Enviado', 'Ganado', 'Ventas Perdidas'];\nif (MUDAS.includes(etapaActual)) {\n  return salida({ accion: 'cerrar', motivo: 'bloqueado' });\n}\n\n// La etapa se movió: la campaña dejó de tener sentido. Réplica de los Get_Entity*+If.\nif (etapaActual !== fila.etapa_al_armar) {\n  return salida({ accion: 'cerrar', motivo: 'etapa_cambio' });\n}\n\n// ── ¿Toca evaluar el cierre? ────────────────────────────────────────────────────\n// Va ANTES del corte por respuesta a propósito. En el origen el `Wait3` de 24 h se\n// cumple aunque el lead haya escrito, y justamente ahí es donde corre el clasificador\n// de desinterés: \"respondió\" no es motivo para cerrar en silencio, es la ENTRADA de la\n// decisión. Poniéndolo después, el clasificador no corría nunca.\nconst vencidaEval = fila.evaluacion_at && t(fila.evaluacion_at) <= ahora;\nif (vencidaEval) {\n  const hablo = t(fila.ultimo_inbound_at) > t(fila.evaluacion_desde_at || fila.desde_at);\n  if (!hablo) return salida({ accion: 'cerrar', motivo: 'silencio',\n                              efecto: cfg.silencio });\n  return salida({ accion: 'clasificar' });\n}\n\n// El lead respondió después de que se armó la campaña: no se le manda ninguna ola más.\n// El caso normal ni llega acá — cuando el lead escribe, W1 REESCRIBE la fila con una\n// campaña nueva y la vieja desaparece. Esto es la red por si esa escritura no ocurre\n// (por ejemplo un turno que murió después de `Evidencia del turno`).\nif (t(fila.ultimo_inbound_at) > t(fila.desde_at)) {\n  return salida({ accion: 'cerrar', motivo: 'respondio' });\n}\n\n// ── ¿Toca mandar una ola? ───────────────────────────────────────────────────────\nconst vencidoToque = fila.proximo_at && t(fila.proximo_at) <= ahora;\nif (vencidoToque && fila.ola < cfg.olas.length) {\n  const i = fila.ola;                       // 0-based: la ola que toca mandar\n  const [id, bot, verificado, txt] = TEXTOS[fila.campania][i];\n  const texto = txt.replace('{evento}', fila.evento || 'tu evento');\n  const esUltima = (i + 1) >= cfg.olas.length;\n\n  // El siguiente toque se agenda desde que se armó la campaña, no desde ahora: así un\n  // cron que corre tarde no corre toda la cadencia hacia adelante.\n  const base = t(fila.desde_at);\n  const prox = esUltima ? null\n    : new Date(base + cfg.olas[i + 1] * 60000).toISOString();\n  const evalAt = esUltima\n    ? new Date(ahora + cfg.eval_h * 3600000).toISOString() : null;\n\n  return salida({ accion: 'toque', ola_nueva: i + 1, texto, texto_id: id,\n                  bot_kommo: bot, texto_verificado: verificado,\n                  proximo_at_nuevo: prox, evaluacion_at_nueva: evalAt,\n                  evaluacion_desde_at_nueva: esUltima ? new Date(ahora).toISOString() : null });\n}\n\n// ── ¿Toca evaluar el cierre? ────────────────────────────────────────────────────\nif (vencidaEval) {\n  // Silencio: el lead no escribió desde que arrancó la ventana de evaluación.\n  const hablo = t(fila.ultimo_inbound_at) > t(fila.evaluacion_desde_at || fila.desde_at);\n  if (!hablo) return salida({ accion: 'cerrar', motivo: 'silencio',\n                              efecto: cfg.silencio });\n  // Habló: hay que clasificar si fue desinterés. Lo decide el LLM, como el origen.\n  return salida({ accion: 'clasificar' });\n}\n\n// Nada que hacer todavía: se suelta el lock y se deja como estaba.\nreturn salida({ accion: 'nada' });"
+        },
+        "id": "f36fce8c-f425-4d7c-bd8f-56194f02332c",
+        "name": "Decidir acción",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -60,
+          200
+        ]
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "version": 2,
+                    "typeValidation": "loose"
+                  },
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "0fb5b2e4-db8a-4780-b367-f7cf3a35d034",
+                      "leftValue": "={{ $json.accion }}",
+                      "rightValue": "toque",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ]
+                },
+                "renameOutput": true,
+                "outputKey": "toque"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "version": 2,
+                    "typeValidation": "loose"
+                  },
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "6ea92547-3a96-4f70-8599-d099a8784479",
+                      "leftValue": "={{ $json.accion }}",
+                      "rightValue": "clasificar",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ]
+                },
+                "renameOutput": true,
+                "outputKey": "clasificar"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "version": 2,
+                    "typeValidation": "loose"
+                  },
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "8b55aae5-0237-4c11-b47a-08d41ceab90f",
+                      "leftValue": "={{ $json.accion }}",
+                      "rightValue": "cerrar",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ]
+                },
+                "renameOutput": true,
+                "outputKey": "cerrar"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "version": 2,
+                    "typeValidation": "loose"
+                  },
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "f8ae9078-23fc-4cae-b514-1c27d5be4ffb",
+                      "leftValue": "={{ $json.accion }}",
+                      "rightValue": "nada",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ]
+                },
+                "renameOutput": true,
+                "outputKey": "nada"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "0e102aa3-1ea3-4762-8f84-be939199056d",
+        "name": "Ruteo",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3,
+        "position": [
+          160,
+          200
+        ]
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "MdbOREN56lfQTYlM",
+            "mode": "id",
+            "cachedResultName": "HPF·GHL · W2 Salida"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "contactId": "={{ $json.contact_id }}",
+              "partes": "={{ JSON.stringify([{texto: $json.texto, adjuntos: []}]) }}",
+              "pausa_seg": "=0"
+            },
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "id": "9e0a35a8-713d-4877-b48b-443e53e15f7e",
+        "name": "W2 · enviar toque",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          400,
+          -60
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE hpf_seguimientos\nSET ola = $2::int, ultimo_toque_at = now(), proximo_at = $3::timestamptz,\n    evaluacion_at = COALESCE($4::timestamptz, evaluacion_at),\n    evaluacion_desde_at = COALESCE($5::timestamptz, evaluacion_desde_at),\n    bloqueado_hasta = NULL, actualizado_at = now()\nWHERE session_id = $1\nRETURNING session_id, ola, proximo_at, evaluacion_at;",
+          "options": {
+            "queryReplacement": "={{ [ $('Decidir acción').first().json.session_id, $('Decidir acción').first().json.ola_nueva, $('Decidir acción').first().json.proximo_at_nuevo, $('Decidir acción').first().json.evaluacion_at_nueva, $('Decidir acción').first().json.evaluacion_desde_at_nueva ] }}"
+          }
+        },
+        "id": "661b4316-28de-40b2-9ebd-7c1475af06aa",
+        "name": "Registrar toque",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          640,
+          -60
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "uK59P60DJmOJc4Lm",
+            "name": "H.F"
+          }
+        },
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT COALESCE(json_agg(t.c ORDER BY t.id DESC), '[]'::json) AS mensajes\nFROM (\n  SELECT id, left(message->>'content', 400) AS c\n  FROM n8n_chat_histories\n  WHERE session_id = $1 AND message->>'type' = 'human'\n  ORDER BY id DESC LIMIT 7\n) t;",
+          "options": {
+            "queryReplacement": "={{ [ $json.session_id ] }}"
+          }
+        },
+        "id": "d81b6ba8-236d-4bba-be82-7b34e7dc49e1",
+        "name": "Últimos mensajes del lead",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          400,
+          140
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "uK59P60DJmOJc4Lm",
+            "name": "H.F"
+          }
+        },
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "value": "gpt-4o",
+            "mode": "list",
+            "cachedResultName": "GPT-4O"
+          },
+          "messages": {
+            "values": [
+              {
+                "content": "=# Rol\nSos un clasificador binario. Decidís si los mensajes del usuario muestran desinterés\nexplícito respecto a una cotización que le enviamos.\n\n# Entrada\nUn array de textos, donde el primero es el MÁS RECIENTE y crece hacia atrás en el tiempo:\n\n{{ JSON.stringify($json.mensajes) }}\n\n# Reglas\n- Evaluá del más reciente al más antiguo. Si después de un desinterés el usuario volvió\n  a preguntar, a pedir cotización o a mostrar interés, la respuesta es \"No\".\n- En cuanto detectes un desinterés explícito y no haya interés posterior, respondé \"Si\".\n- Cuentan como desinterés: \"no me interesa\", \"no gracias\", \"paso\", \"dejá así\", \"ya lo\n  compré con otro\", \"no necesito\", \"cancelar\", \"dar de baja\", \"muy caro, no sigo\",\n  \"no me sirve\", \"borrame\", \"quita mi número\", \"no quiero avanzar\" y similares.\n- Una duda, una objeción de precio con pregunta, o un \"después te aviso\" NO son\n  desinterés.\n\n# Salida\nRespondé ÚNICAMENTE con la palabra Si o No. Sin explicación, sin puntuación."
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "c39f4682-9da8-430a-8a8b-83ee45ea1a91",
+        "name": "Clasificar desinterés",
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "typeVersion": 1.8,
+        "position": [
+          620,
+          140
+        ],
+        "credentials": {
+          "openAiApi": {
+            "id": "a1k3E4C9uRRHxngs",
+            "name": "H.F"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "jsCode": "const CAMPANIAS = {\n  \"rebeca\": {\n    \"etapa\": \"Saludo Enviado\",\n    \"olas\": [\n      60,\n      240,\n      300\n    ],\n    \"eval_h\": 24,\n    \"silencio\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"desinteres\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"interes\": null\n  },\n  \"imagen\": {\n    \"etapa\": \"Evento Identificado\",\n    \"olas\": [\n      60,\n      240,\n      300\n    ],\n    \"eval_h\": 24,\n    \"silencio\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"desinteres\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"interes\": null\n  },\n  \"cotizacion\": {\n    \"etapa\": \"Productos Mostrados\",\n    \"olas\": [\n      60,\n      240,\n      300\n    ],\n    \"eval_h\": 24,\n    \"silencio\": {\n      \"tag\": \"r1_sin_informacion\"\n    },\n    \"desinteres\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"interes\": {\n      \"tag\": \"r1_sin_informacion\"\n    }\n  },\n  \"7pasos\": {\n    \"etapa\": \"Cotizado\",\n    \"olas\": [],\n    \"eval_h\": 24,\n    \"silencio\": {\n      \"tag\": \"r1_con_informacion\"\n    },\n    \"desinteres\": {\n      \"etapa\": \"Ventas Perdidas\"\n    },\n    \"interes\": {\n      \"tag\": \"r1_con_informacion\"\n    }\n  }\n};\nconst d = $('Decidir acción').first().json;\nconst cfg = CAMPANIAS[d.campania] || {};\n\nlet efecto = d.efecto || null;\nlet motivo = d.motivo || 'cerrado';\n\n// Viene del clasificador de desinterés (réplica de `Message a model` + If4 del origen).\nif (d.accion === 'clasificar') {\n  const c = $input.first().json || {};\n  const crudo = String(c.message?.content ?? c.content ?? c.text ?? '').trim();\n  // El prompt del origen contesta \"Si\" / \"No\". Cualquier otra cosa se trata como\n  // desinterés, que es lo que hace su `If4` (compara contra \"No\"; si no matchea, pierde).\n  const desinteres = !/^no\\b/i.test(crudo);\n  efecto = desinteres ? cfg.desinteres : cfg.interes;\n  motivo = desinteres ? 'desinteres' : 'sin_desinteres';\n}\n\nreturn [{ json: { ...d, motivo, efecto,\n                  mover_etapa: !!(efecto && efecto.etapa),\n                  etapa_destino: (efecto && efecto.etapa) || null,\n                  tag: (efecto && efecto.tag) || null } }];"
+        },
+        "id": "0c91b179-877f-4444-97e2-dcecf959ef03",
+        "name": "Armar cierre",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          840,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "version": 2,
+              "typeValidation": "loose"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "ca28f0fd-fc2f-49c2-880f-80b27a9f922e",
+                "leftValue": "={{ !!($json.tag || $json.etapa_destino) }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "c3dcbdd9-f3e6-4da6-9d17-b528252897ba",
+        "name": "¿Hay efecto?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          1060,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "VK4M7VQm8CMefbty",
+            "mode": "id",
+            "cachedResultName": "HPF·GHL · W0 Client"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "op": "add_tag",
+              "args": "={{ {contactId: $json.contact_id, tags: [$json.tag || ('seg_' + $json.motivo)]} }}"
+            },
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "id": "609ba65f-b7c7-416b-a14f-3634b08e8b97",
+        "name": "W0 · tag de cierre",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          1280,
+          220
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "version": 2,
+              "typeValidation": "loose"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "58816f2f-aff1-4213-b864-7508f5acaff4",
+                "leftValue": "={{ $('Armar cierre').first().json.mover_etapa }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "160ac37f-a442-4b68-ad05-ca278db8e5ea",
+        "name": "¿Mover a Ventas Perdidas?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          1500,
+          220
+        ]
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "VK4M7VQm8CMefbty",
+            "mode": "id",
+            "cachedResultName": "HPF·GHL · W0 Client"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "op": "update_stage",
+              "args": "={{ {opportunityId: $('Armar cierre').first().json.opportunity_id, etapa: $('Armar cierre').first().json.etapa_destino} }}"
+            },
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "id": "97519feb-7291-4db6-8990-09e321e7dbfc",
+        "name": "W0 · etapa perdida",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          1720,
+          140
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE hpf_seguimientos\nSET cerrado_at = now(), cerrado_motivo = $2, proximo_at = NULL, evaluacion_at = NULL,\n    bloqueado_hasta = NULL, actualizado_at = now()\nWHERE session_id = $1\nRETURNING session_id, cerrado_motivo;",
+          "options": {
+            "queryReplacement": "={{ [ $('Armar cierre').first().json.session_id, $('Armar cierre').first().json.motivo ] }}"
+          }
+        },
+        "id": "03436a4d-45f6-4be0-aae0-bc65d6cc06af",
+        "name": "Registrar cierre",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          1940,
+          300
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "uK59P60DJmOJc4Lm",
+            "name": "H.F"
+          }
+        },
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE hpf_seguimientos\nSET bloqueado_hasta = NULL, actualizado_at = now(), proximo_at = $2::timestamptz,\n    evaluacion_at = $3::timestamptz\nWHERE session_id = $1\nRETURNING session_id;",
+          "options": {
+            "queryReplacement": "={{ [ $json.session_id, $json.proximo_at, $json.evaluacion_at ] }}"
+          }
+        },
+        "id": "25305a79-25a9-4e1d-bcb3-a79525248f01",
+        "name": "Soltar lock",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          400,
+          420
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "uK59P60DJmOJc4Lm",
+            "name": "H.F"
+          }
+        },
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {},
+        "id": "390d22d2-be16-4554-8ede-a8b2dc09d7b7",
+        "name": "Fin",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          -720,
+          -80
+        ]
+      }
+    ],
+    "connections": {
+      "Cada 5 minutos": {
+        "main": [
+          [
+            {
+              "node": "Reclamar vencidos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Disparo manual": {
+        "main": [
+          [
+            {
+              "node": "Reclamar vencidos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook (carril de prueba)": {
+        "main": [
+          [
+            {
+              "node": "Reclamar vencidos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Reclamar vencidos": {
+        "main": [
+          [
+            {
+              "node": "¿Hay pendientes?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Hay pendientes?": {
+        "main": [
+          [
+            {
+              "node": "Por lead",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Fin",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Por lead": {
+        "main": [
+          [
+            {
+              "node": "Fin",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Lead en curso",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Lead en curso": {
+        "main": [
+          [
+            {
+              "node": "W0 · leer oportunidad",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "W0 · leer oportunidad": {
+        "main": [
+          [
+            {
+              "node": "Decidir acción",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Decidir acción": {
+        "main": [
+          [
+            {
+              "node": "Ruteo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Ruteo": {
+        "main": [
+          [
+            {
+              "node": "W2 · enviar toque",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Últimos mensajes del lead",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Armar cierre",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Soltar lock",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "W2 · enviar toque": {
+        "main": [
+          [
+            {
+              "node": "Registrar toque",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Registrar toque": {
+        "main": [
+          [
+            {
+              "node": "Por lead",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Últimos mensajes del lead": {
+        "main": [
+          [
+            {
+              "node": "Clasificar desinterés",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Clasificar desinterés": {
+        "main": [
+          [
+            {
+              "node": "Armar cierre",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Armar cierre": {
+        "main": [
+          [
+            {
+              "node": "¿Hay efecto?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Hay efecto?": {
+        "main": [
+          [
+            {
+              "node": "W0 · tag de cierre",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Registrar cierre",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "W0 · tag de cierre": {
+        "main": [
+          [
+            {
+              "node": "¿Mover a Ventas Perdidas?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Mover a Ventas Perdidas?": {
+        "main": [
+          [
+            {
+              "node": "W0 · etapa perdida",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Registrar cierre",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "W0 · etapa perdida": {
+        "main": [
+          [
+            {
+              "node": "Registrar cierre",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Registrar cierre": {
+        "main": [
+          [
+            {
+              "node": "Por lead",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Soltar lock": {
+        "main": [
+          [
+            {
+              "node": "Por lead",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "la agencia",
+    "name": null,
+    "description": null
+  }
+}

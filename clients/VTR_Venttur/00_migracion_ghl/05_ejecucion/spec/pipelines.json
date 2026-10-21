@@ -1,0 +1,26 @@
+{
+  "_doc": "Pipelines VTR → GHL (03). Nombres de stage VERBATIM del snapshot; orden de la narrativa de 03 (⚠️ B-08: confirmar/reordenar en Clientify UI antes del go-live — GHL reordena por drag). 'legacy' = 0 vivos. El operativo del bot NO es 1:1 (03 §5). «sin pipeline»+«Por defecto» → 'Sin asignar / Default'. Viajes educativos comercial = B-09 (stages sin definir, no se inventa).",
+  "pipelines": [
+    {"name": "OP · Bot Venttur", "operativo": true, "stages": ["Nuevo Lead", "Contactado", "En diagnóstico", "Cualificado", "Cita agendada", "Cita confirmada", "Asistió", "Ganado", "Perdido", "Abandonado frío"], "_nota": "Cualificado 🔶 provisional (B-06)"},
+
+    {"name": "Campaña Internados Erika", "clientify": "Campaña Internados Erika", "stages": ["Dejo Sus Datos", "Contestó La llamada y continua seguimiento por Whatsapp", "Continuó Conversación WA", "Día 1 Seguimiento", "Día 5 Seguimiento", "Día 10 Seguimiento", "Día 15 Seguimiento", "Día 20 Seguimiento", "Agendar Cita de Venta.", "Agendar Cita Venta Cruzada", "Cita de Ventas concretada", "Cita Concretada de Venta Cruzada"]},
+    {"name": "VENTAS EMA METODOLOGÍA", "clientify": "VENTAS EMA METODOLOGÍA", "stages": ["AA PUBLICO", "PERFILAMIENTO INDIVIDUAL", "AGENDÓ REUNIÓN", "RE-AGENDÓ LA REUNIÓN", "NO ASISTIÓ A LA REUNIÓN", "ASISTIÓ A LA REUNIÓN", "PRESENTACIÓN", "PRESUPUESTO ABIERTO", "PRESUPUESTO ENVIADO", "SUMMER CAMP", "IDIOMAS", "PERDIDA DE CAMPAÑA PASADA"]},
+    {"name": "Campaña Australia Abril 25", "clientify": "Campaña Australia Abril 25", "legacy": true, "stages": ["Se registró", "Gracias por asistir"]},
+    {"name": "Venta SPE - Internados", "clientify": "Venta SPE - Internados", "stages": ["No contesto - se envió Whatsapp", "Contactar para agendar cita", "Llamar de nuevo más tarde", "Agendó Reunión", "Seguimiento post reunión", "En espera de pago - cobranza"]},
+    {"name": "Afiliación Venttur", "clientify": "Afiliación Venttur", "stages": ["Envió Whatsapp", "Dejo sus datos", "Continúo Conversación", "Revisando requisitos", "Agendo Videollamada", "Asistió a Video Llamada", "Firma de contrato"]},
+    {"name": "Operativo Internados", "clientify": "Operativo Internados", "stages": ["Envío de aplicación a la familia y revisión", "Envío de aplicación a la institución", "Exámenes posicionamiento", "Aceptación del estudiante y recepción de facturas", "PRESENTACIÓN", "PRESUPUESTO ABIERTO", "PRESUPUESTO PAGADO", "Pago del programa", "Recepción de documentos oficiales para visado", "Gestión de visado", "Coordinar llegada", "JUNTA FAMILIA + ESCUELA", "Estudiante en destino"]},
+    {"name": "Reclutamiento de escuelas", "clientify": "Reclutamiento de escuelas", "legacy": true, "stages": ["Solicitud de cita"]},
+    {"name": "Academias Deportivas", "clientify": "Academias Deportivas", "legacy": true, "stages": ["Ingreso a la base de Datos", "Leyó Correo de Presentación", "Requisitos para firma de convenio"]},
+    {"name": "Operativo Año Académico", "clientify": "Operativo Año Académico", "stages": ["Recabar documentos y datos para la aplicación", "Realizar aplicación", "Recibir documentos de la escuela", "Enviar presupuesto final", "Cobrar programa", "Enviar comprobante de pago a la escuela", "Tramitar Visa (si aplica)", "Coordinar llegada", "Estudiante en destino"]},
+    {"name": "Seguimiento", "clientify": "Seguimiento", "stages": ["1er Seguimiento (1er día)", "4to Seguimiento (Mes 4)", "5to Seguimiento (Mes 6)"]},
+    {"name": "Operativo Idiomas", "clientify": "Operativo Idiomas", "stages": ["Realizar aplicación", "Cobrar programa", "Tramitar visa (Si aplica)", "Estudiante en destino"]},
+    {"name": "Operativo Summercamp", "clientify": "Operativo Summercamp", "stages": ["Trámites Migratorios", "Coordinar llegada", "Estudiante en destino"]},
+    {"name": "Viaje a Japón UP 2026", "clientify": "Viaje a Japón UP 2026", "stages": ["Inscripción y recepción de documentos", "Viaje liquidado"]},
+    {"name": "Operativo Gap Year", "clientify": "Operativo Gap Year", "stages": ["Cobrar inscripción", "Enviar presupuesto final", "Cobrar programa", "Enviar comprobante pago a la escuela y LOO Firmado por estudiante y Diploma de prepa traducido.", "Recepción CoE (Post Pago programa)", "Cobrar y tramitar seguro OSHC", "Estudiante en destino"]},
+    {"name": "Operativo Pathway", "clientify": "Operativo Pathway", "stages": ["Enviar documentación a la escuela para pre-evaluación", "Presentar ETA a estudiante y papás", "Cobrar Inscripción 1", "Cobrar inscripción 2 + inscripción escuela", "Recopilar documentación en físico para trámites", "Traducir + Copias Certificadas de Documentos Checklist", "Crear MEE (si aplica)", "Cobrar Programa", "Estudiante en destino"]},
+    {"name": "Operativo Educación superior", "clientify": "Operativo Educación superior", "stages": ["Cobro de inscripción", "Tramitar visa (Si aplica)", "Estudiante en destino"]},
+    {"name": "La Garenne CDMX", "clientify": "La Garenne CDMX", "legacy": true, "stages": ["Dejo sus datos", "Después del evento"]},
+    {"name": "La Garenne Leon", "clientify": "La Garenne Leon", "legacy": true, "stages": ["Dejo sus datos", "Dia del evento", "Después del evento"]},
+    {"name": "Sin asignar / Default", "clientify": "«sin pipeline»+Por defecto", "stages": ["Sin etapa", "Propuesta presentada"]}
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "probe_id": "sess_hpf_nrp_020_1785953083#816d0726e052",
+  "session_id": "sess_hpf_nrp_020_1785953083",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "cotizame 50",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 7.6,
+  "version_antes": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "version_despues": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "capturado_utc": "2026-08-05T18:05:35.148417+00:00",
+  "execution_id": "989439",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T18:05:23.391Z",
+  "stoppedAt": "2026-08-05T18:05:29.842Z",
+  "n_esperadas": 2,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Entendido! Solo me falta que me diga cuál de las dos prefiere: moño de satín o moño de peluche (blanca, negra, morada o rosa)?",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "Y si me puede compartir el código postal de entrega, le paso la cotización completa",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 206,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1690,
+      "chat_id": 6390727286,
+      "texto_entregado": "Entendido! Solo me falta que me diga cuál de las dos prefiere: moño de satín o moño de peluche (blanca, negra, morada o rosa)?",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 182,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1691,
+      "chat_id": 6390727286,
+      "texto_entregado": "Y si me puede compartir el código postal de entrega, le paso la cotización completa",
+      "error": null
+    }
+  ],
+  "n_entregadas": 2,
+  "cero_partes": false,
+  "agente": {
+    "output": "Entendido! Solo me falta que me diga cuál de las dos prefiere: ¿moño de satín o moño de peluche (blanca, negra, morada o rosa)? Y si me puede compartir el código postal de entrega, le paso la cotización completa.",
+    "tools": []
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-NRP-020"
+}

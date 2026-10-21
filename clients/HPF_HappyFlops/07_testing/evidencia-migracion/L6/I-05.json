@@ -1,0 +1,63 @@
+{
+  "caso": "I-05",
+  "titulo": "debounce: gana el último de la ráfaga",
+  "resultado": "CORROBORADO",
+  "detalle": "1º murió_en_debounce=True · 2º llegó_al_router=True",
+  "aristas": [
+    "pierde_debounce"
+  ],
+  "pasos": [
+    {
+      "m1": [
+        "Debounce · esperar",
+        "Debounce · leer",
+        "Debounce · push",
+        "Evaluar estado",
+        "Fin · superado por otro mensaje",
+        "Gana el último",
+        "Idempotencia",
+        "Normalizar entrada",
+        "Resolver identidad",
+        "Responder ack",
+        "Ruteo por estado",
+        "W0 · find or create",
+        "W0 · leer oportunidad",
+        "Webhook inbound",
+        "¿Hay historial?",
+        "¿Mensaje nuevo?",
+        "¿Soy el último?"
+      ],
+      "m2": [
+        "Debounce · esperar",
+        "Debounce · leer",
+        "Debounce · limpiar",
+        "Debounce · push",
+        "Decidir etapa",
+        "Decidir seguimiento",
+        "Evaluar estado",
+        "Evidencia del turno",
+        "Fin · procesado",
+        "Gana el último",
+        "Idempotencia",
+        "Marcar actividad",
+        "Normalizar entrada",
+        "Resolver identidad",
+        "Responder ack",
+        "Resultado del cerebro",
+        "Ruteo por estado",
+        "W0 · find or create",
+        "W0 · leer oportunidad",
+        "W2 · enviar",
+        "W6 · conversación",
+        "Webhook inbound",
+        "¿Avanza la etapa?",
+        "¿Es audio?",
+        "¿Es media?",
+        "¿Hay algo que enviar?",
+        "¿Hay historial?",
+        "¿Mensaje nuevo?",
+        "¿Soy el último?"
+      ]
+    }
+  ]
+}

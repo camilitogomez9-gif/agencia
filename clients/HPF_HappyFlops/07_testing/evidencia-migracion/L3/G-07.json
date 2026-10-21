@@ -1,0 +1,63 @@
+{
+  "caso": "G-07",
+  "titulo": "add_tag / remove_tag",
+  "resultado": "CORROBORADO",
+  "detalle": "tras_add=['lead_prueba', 'atencion_humana'] tras_remove=['lead_prueba']",
+  "pasos": [
+    {
+      "req": {
+        "op": "add_tag",
+        "args": {
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "tags": "atencion_humana"
+        }
+      },
+      "resp": [
+        {
+          "ok": true,
+          "op": "add_tag",
+          "http_status": 201,
+          "via": null,
+          "data": {
+            "tags": [
+              "lead_prueba",
+              "atencion_humana"
+            ],
+            "tagsAdded": [
+              "atencion_humana"
+            ],
+            "traceId": "6c058814-fca8-4394-8ca9-bd73f145ffc9"
+          },
+          "error": null
+        }
+      ]
+    },
+    {
+      "req": {
+        "op": "remove_tag",
+        "args": {
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "tags": "atencion_humana"
+        }
+      },
+      "resp": [
+        {
+          "ok": true,
+          "op": "remove_tag",
+          "http_status": 200,
+          "via": null,
+          "data": {
+            "tags": [
+              "lead_prueba"
+            ],
+            "tagsRemoved": [
+              "atencion_humana"
+            ],
+            "traceId": "a23be15c-7612-4359-9b66-5432c81265de"
+          },
+          "error": null
+        }
+      ]
+    }
+  ]
+}

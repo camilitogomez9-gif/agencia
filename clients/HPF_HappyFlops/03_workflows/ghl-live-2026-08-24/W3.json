@@ -1,0 +1,919 @@
+{
+  "updatedAt": "2026-08-21T12:31:53.577Z",
+  "createdAt": "2026-08-06T22:45:27.076Z",
+  "id": "vSLHOawn2bFVXyOK",
+  "name": "HPF·GHL · W3 Catálogo",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"evento\": \"Boda\",\n  \"subcategoria\": \"Producto Principal\",\n  \"productos\": [\n    \"sandalias\",\n    \"cilindros\"\n  ]\n}"
+      },
+      "id": "8b0939ae-2198-4577-bd45-29afec60cd57",
+      "name": "Ejecutado por otro workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -700,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hpf-w3-catalogo",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "3cd3fec7-da7d-4886-bf26-805eae25554a",
+      "name": "Webhook (carril de prueba)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -700,
+        200
+      ],
+      "webhookId": "a930259e-95f0-4014-acf4-ed4a2a9cb20e",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jUb7ZjztncX5ACpc",
+          "name": "HPF GHL Webhook Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Entrada: { evento, subcategoria?, productos? }\n//   evento       — Boda | XV | Otros  (o el nombre de la tabla origen)\n//   subcategoria — \"Producto Principal\" | \"Accesorios\"  (vacío = ambas)\n//   productos    — nombres sueltos a buscar (vacío = todas las del evento)\nconst j0 = $input.first().json || {};\nconst porWebhook = !!(j0.body && j0.body.evento !== undefined);\nconst src = porWebhook ? j0.body : j0;\n\nlet productos = src.productos ?? [];\nif (typeof productos === 'string') {\n  const t = productos.trim();\n  productos = t.startsWith('[') ? JSON.parse(t) : (t ? [t] : []);\n}\nif (!Array.isArray(productos)) productos = [productos];\nproductos = productos.map(p => String(p).trim()).filter(Boolean);\n\nreturn [{ json: {\n  _via: porWebhook ? 'webhook' : 'subworkflow',\n  evento: String(src.evento ?? '').trim(),\n  subcategoria: String(src.subcategoria ?? '').trim(),\n  productos,\n  ttl_seg: src.ttl_seg !== undefined ? Number(src.ttl_seg) : 900,\n} }];"
+      },
+      "id": "0b9bff20-839b-47cd-aac3-22e3ec98348c",
+      "name": "Normalizar entrada",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -460,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "CREATE TABLE IF NOT EXISTS hpf_fichas (\n  ficha_id      text PRIMARY KEY,\n  nombre        text NOT NULL,\n  evento        text,\n  subcategoria  text,\n  descripcion   text,\n  media_url     text,\n  media_tipo    text,\n  bot_id_kommo  text,\n  activo        boolean NOT NULL DEFAULT true,\n  refrescado_at timestamptz NOT NULL DEFAULT now()\n);\nCREATE INDEX IF NOT EXISTS hpf_fichas_evento_idx ON hpf_fichas (evento);\nCREATE INDEX IF NOT EXISTS hpf_fichas_nombre_lower_idx ON hpf_fichas (lower(nombre));\nSELECT count(*)::int AS n,\n       COALESCE(EXTRACT(EPOCH FROM (now() - max(refrescado_at))), 1e9)::int AS edad_seg\nFROM hpf_fichas;",
+        "options": {}
+      },
+      "id": "99ba94c1-b4df-465a-9987-4bbfc4bb0652",
+      "name": "Estado de caché",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        -240,
+        100
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2,
+            "typeValidation": "loose"
+          },
+          "combinator": "or",
+          "conditions": [
+            {
+              "id": "4a018e7e-bd10-48f1-94a4-1a276e1ae8f0",
+              "leftValue": "={{ $json.n }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "c1860b87-1a2c-40ff-8f60-2a2f7c9e30e4",
+              "leftValue": "={{ $json.edad_seg }}",
+              "rightValue": "={{ $('Normalizar entrada').first().json.ttl_seg }}",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "569ed424-841b-4669-bfdf-9db7f5e20b00",
+      "name": "¿Refrescar caché?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VK4M7VQm8CMefbty",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W0 Client"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "op": "search_fichas",
+            "args": "={{ {pageLimit: 100} }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "540a6127-9353-4340-8a1c-edaea051a938",
+      "name": "W0 · traer fichas",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aplana los records del custom object al shape de la tabla.\nconst recs = ($input.first().json.data || {}).records || [];\nconst filas = recs.map(r => {\n  const p = r.properties || {};\n  return {\n    ficha_id: p.ficha_id || r.id,\n    nombre: p.nombre || '',\n    evento: p.evento || '',\n    subcategoria: p.subcategoria || '',\n    descripcion: p.descripcion || '',\n    media_url: p.media_url || '',\n    media_tipo: p.media_tipo || '',\n    bot_id_kommo: p.bot_id_kommo || '',\n    activo: String(p.activo).toLowerCase() !== 'false',\n  };\n}).filter(f => f.ficha_id && f.nombre);\nif (filas.length === 0) {\n  // Nunca vaciar la caché por una respuesta vacía de GHL: sería quedarse sin catálogo\n  // en medio de una conversación.\n  throw new Error('W3: GHL devolvió 0 fichas; no se refresca la caché');\n}\nreturn [{ json: { filas_json: JSON.stringify(filas), cantidad: filas.length } }];"
+      },
+      "id": "e9354551-bdb5-462f-835b-5b406a1ecd4f",
+      "name": "Aplanar fichas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH entrada AS (\n  SELECT x->>'ficha_id' AS ficha_id, x->>'nombre' AS nombre, x->>'evento' AS evento,\n         x->>'subcategoria' AS subcategoria, x->>'descripcion' AS descripcion,\n         x->>'media_url' AS media_url, x->>'media_tipo' AS media_tipo,\n         x->>'bot_id_kommo' AS bot_id_kommo, (x->>'activo')::boolean AS activo\n  FROM jsonb_array_elements($1::jsonb) AS x\n), borrados AS (\n  DELETE FROM hpf_fichas WHERE ficha_id NOT IN (SELECT ficha_id FROM entrada)\n)\nINSERT INTO hpf_fichas (ficha_id, nombre, evento, subcategoria, descripcion,\n                        media_url, media_tipo, bot_id_kommo, activo, refrescado_at)\nSELECT ficha_id, nombre, evento, subcategoria, descripcion,\n       media_url, media_tipo, bot_id_kommo, activo, now()\nFROM entrada\nON CONFLICT (ficha_id) DO UPDATE SET\n  nombre = EXCLUDED.nombre, evento = EXCLUDED.evento,\n  subcategoria = EXCLUDED.subcategoria, descripcion = EXCLUDED.descripcion,\n  media_url = EXCLUDED.media_url, media_tipo = EXCLUDED.media_tipo,\n  bot_id_kommo = EXCLUDED.bot_id_kommo, activo = EXCLUDED.activo,\n  refrescado_at = now();",
+        "options": {
+          "queryReplacement": "={{ [ $json.filas_json ] }}"
+        }
+      },
+      "id": "fcc75271-4898-4edf-bdb4-8a5d08ae55c8",
+      "name": "Refrescar caché",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        660,
+        -40
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT ficha_id, nombre, evento, subcategoria, descripcion,\n       media_url, media_tipo, bot_id_kommo\nFROM hpf_fichas\nWHERE ($1 = '' OR lower(evento) = lower($1))\n  AND ($2 = '' OR lower(subcategoria) = lower($2))\n  AND ($3::jsonb = '[]'::jsonb OR EXISTS (\n        SELECT 1 FROM jsonb_array_elements_text($3::jsonb) AS t\n        WHERE lower(nombre) LIKE '%' || lower(t) || '%'))\n  AND activo\nORDER BY\n  -- La subcategoria sigue PRIMERO: cuando $2 viene vacio la query devuelve Producto\n  -- Principal y Accesorios juntos, y mezclarlos seria una regresion.\n  subcategoria NULLS FIRST,\n  -- FAMILIA de producto. El orden alfabetico partia las familias: el catalogo de\n  -- anticrudas caia bajo \"C\" y su ficha bajo \"K\", con 5 posiciones en el medio.\n  -- El viejo agrupa por producto: ficha -> catalogo(s) -> video (verificado en E4).\n  CASE\n    WHEN lower(nombre) LIKE '%sandalia%'  THEN 1\n    WHEN lower(nombre) LIKE '%cilindro%'  THEN 2\n    WHEN lower(nombre) LIKE '%mandil%'    THEN 3\n    WHEN lower(nombre) LIKE '%anticruda%' THEN 4\n    WHEN lower(nombre) LIKE '%pantufla%'  THEN 5\n    WHEN lower(nombre) LIKE '%vaso%'      THEN 6\n    ELSE 9\n  END,\n  -- ROL dentro de la familia: la ficha primero (lleva precio y minimo), despues el\n  -- catalogo de disenos y el video al final. `media_tipo` es senal limpia del catalogo\n  -- ('imagen' | 'video' | 'pdf') y los PDF de este catalogo SON catalogos de disenos.\n  -- Se matchean las dos grafias de \"catalogo\" porque no se puede contar con `unaccent`.\n  CASE\n    WHEN media_tipo = 'video' THEN 3\n    WHEN media_tipo = 'pdf'\n      OR lower(nombre) LIKE '%catalogo%'\n      OR lower(nombre) LIKE '%catálogo%' THEN 2\n    ELSE 1\n  END,\n  nombre;",
+        "options": {
+          "queryReplacement": "={{ [ $('Normalizar entrada').first().json.evento, $('Normalizar entrada').first().json.subcategoria, JSON.stringify($('Normalizar entrada').first().json.productos) ] }}"
+        }
+      },
+      "id": "22df82ba-e911-43ec-92fc-ae5675d35f2c",
+      "name": "Consultar caché",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        880,
+        100
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Salida: una tarjeta por ficha, en el orden en que hay que mandarlas.\nconst filas = $input.all().map(i => i.json).filter(f => f && f.ficha_id);\nconst ctx = $('Normalizar entrada').first().json;\nconst cards = filas.map(f => ({\n  ficha_id: f.ficha_id,\n  nombre: f.nombre,\n  texto: f.descripcion || '',\n  media_url: f.media_url || null,\n  media_tipo: f.media_tipo || null,\n  subcategoria: f.subcategoria || null,\n}));\nconst sin_media = cards.filter(c => !c.media_url).map(c => c.nombre);\nreturn [{ json: {\n  ok: true,\n  evento: ctx.evento,\n  subcategoria: ctx.subcategoria || null,\n  productos_pedidos: ctx.productos,\n  cantidad: cards.length,\n  cards,\n  // el llamador tiene que saber que estas fichas no tienen asset: su contenido\n  // vivía sólo dentro del salesbot de Kommo\n  sin_media,\n} }];"
+      },
+      "id": "83894a6f-049e-4d15-847c-0ed9b592ce46",
+      "name": "Armar cards",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "3484c109-700b-416c-8ff9-c4e27cbe14e0",
+              "leftValue": "={{ $('Normalizar entrada').first().json._via }}",
+              "rightValue": "webhook",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "842b45d0-a9bf-41b4-9b3a-79b4e9d29b97",
+      "name": "¿Vino por webhook?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "id": "f95b4f1b-bad4-4e86-aa8a-b29094dacea2",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1540,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "6e997f6f-e958-4c8d-90ab-de3092293687",
+      "name": "Devolver al llamador",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        200
+      ]
+    }
+  ],
+  "connections": {
+    "Ejecutado por otro workflow": {
+      "main": [
+        [
+          {
+            "node": "Normalizar entrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook (carril de prueba)": {
+      "main": [
+        [
+          {
+            "node": "Normalizar entrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar entrada": {
+      "main": [
+        [
+          {
+            "node": "Estado de caché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Estado de caché": {
+      "main": [
+        [
+          {
+            "node": "¿Refrescar caché?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Refrescar caché?": {
+      "main": [
+        [
+          {
+            "node": "W0 · traer fichas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Consultar caché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "W0 · traer fichas": {
+      "main": [
+        [
+          {
+            "node": "Aplanar fichas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aplanar fichas": {
+      "main": [
+        [
+          {
+            "node": "Refrescar caché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refrescar caché": {
+      "main": [
+        [
+          {
+            "node": "Consultar caché",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar caché": {
+      "main": [
+        [
+          {
+            "node": "Armar cards",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Armar cards": {
+      "main": [
+        [
+          {
+            "node": "¿Vino por webhook?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Vino por webhook?": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Devolver al llamador",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "a3d1a202-0671-4f95-9fbc-3dd80d5d5d86",
+  "activeVersionId": "a3d1a202-0671-4f95-9fbc-3dd80d5d5d86",
+  "versionCounter": 11,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-08-06T22:45:27.076Z",
+      "createdAt": "2026-08-06T22:45:27.076Z",
+      "role": "workflow:owner",
+      "workflowId": "vSLHOawn2bFVXyOK",
+      "projectId": "g2TpxqLMiC0UsUBj",
+      "project": {
+        "updatedAt": "2025-05-10T12:26:37.475Z",
+        "createdAt": "2025-05-10T12:24:10.921Z",
+        "id": "g2TpxqLMiC0UsUBj",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-05-10T12:24:10.921Z",
+            "createdAt": "2025-05-10T12:24:10.921Z",
+            "userId": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+            "projectId": "g2TpxqLMiC0UsUBj",
+            "user": {
+              "updatedAt": "2026-08-24T21:50:45.371Z",
+              "createdAt": "2025-05-10T12:24:07.518Z",
+              "id": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "lastName": "AI",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-05-10T12:26:59.729Z",
+                "personalization_survey_n8n_version": "1.91.3",
+                "companySize": "<20",
+                "companyType": "systems-integrator",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "6fpcC3iGwfEYO3Eu",
+                "userActivatedAt": 1757033385622,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1773184568459
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "aiAgentStarterCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-08-24",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-08-21T12:31:53.561Z",
+    "createdAt": "2026-08-21T12:31:53.561Z",
+    "versionId": "a3d1a202-0671-4f95-9fbc-3dd80d5d5d86",
+    "workflowId": "vSLHOawn2bFVXyOK",
+    "nodes": [
+      {
+        "parameters": {
+          "inputSource": "jsonExample",
+          "jsonExample": "{\n  \"evento\": \"Boda\",\n  \"subcategoria\": \"Producto Principal\",\n  \"productos\": [\n    \"sandalias\",\n    \"cilindros\"\n  ]\n}"
+        },
+        "id": "8b0939ae-2198-4577-bd45-29afec60cd57",
+        "name": "Ejecutado por otro workflow",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -700,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "hpf-w3-catalogo",
+          "authentication": "headerAuth",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "3cd3fec7-da7d-4886-bf26-805eae25554a",
+        "name": "Webhook (carril de prueba)",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -700,
+          200
+        ],
+        "webhookId": "a930259e-95f0-4014-acf4-ed4a2a9cb20e",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "jUb7ZjztncX5ACpc",
+            "name": "HPF GHL Webhook Auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Entrada: { evento, subcategoria?, productos? }\n//   evento       — Boda | XV | Otros  (o el nombre de la tabla origen)\n//   subcategoria — \"Producto Principal\" | \"Accesorios\"  (vacío = ambas)\n//   productos    — nombres sueltos a buscar (vacío = todas las del evento)\nconst j0 = $input.first().json || {};\nconst porWebhook = !!(j0.body && j0.body.evento !== undefined);\nconst src = porWebhook ? j0.body : j0;\n\nlet productos = src.productos ?? [];\nif (typeof productos === 'string') {\n  const t = productos.trim();\n  productos = t.startsWith('[') ? JSON.parse(t) : (t ? [t] : []);\n}\nif (!Array.isArray(productos)) productos = [productos];\nproductos = productos.map(p => String(p).trim()).filter(Boolean);\n\nreturn [{ json: {\n  _via: porWebhook ? 'webhook' : 'subworkflow',\n  evento: String(src.evento ?? '').trim(),\n  subcategoria: String(src.subcategoria ?? '').trim(),\n  productos,\n  ttl_seg: src.ttl_seg !== undefined ? Number(src.ttl_seg) : 900,\n} }];"
+        },
+        "id": "0b9bff20-839b-47cd-aac3-22e3ec98348c",
+        "name": "Normalizar entrada",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -460,
+          100
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "CREATE TABLE IF NOT EXISTS hpf_fichas (\n  ficha_id      text PRIMARY KEY,\n  nombre        text NOT NULL,\n  evento        text,\n  subcategoria  text,\n  descripcion   text,\n  media_url     text,\n  media_tipo    text,\n  bot_id_kommo  text,\n  activo        boolean NOT NULL DEFAULT true,\n  refrescado_at timestamptz NOT NULL DEFAULT now()\n);\nCREATE INDEX IF NOT EXISTS hpf_fichas_evento_idx ON hpf_fichas (evento);\nCREATE INDEX IF NOT EXISTS hpf_fichas_nombre_lower_idx ON hpf_fichas (lower(nombre));\nSELECT count(*)::int AS n,\n       COALESCE(EXTRACT(EPOCH FROM (now() - max(refrescado_at))), 1e9)::int AS edad_seg\nFROM hpf_fichas;",
+          "options": {}
+        },
+        "id": "99ba94c1-b4df-465a-9987-4bbfc4bb0652",
+        "name": "Estado de caché",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          -240,
+          100
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "uK59P60DJmOJc4Lm",
+            "name": "H.F"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "version": 2,
+              "typeValidation": "loose"
+            },
+            "combinator": "or",
+            "conditions": [
+              {
+                "id": "4a018e7e-bd10-48f1-94a4-1a276e1ae8f0",
+                "leftValue": "={{ $json.n }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "equals"
+                }
+              },
+              {
+                "id": "c1860b87-1a2c-40ff-8f60-2a2f7c9e30e4",
+                "leftValue": "={{ $json.edad_seg }}",
+                "rightValue": "={{ $('Normalizar entrada').first().json.ttl_seg }}",
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "569ed424-841b-4669-bfdf-9db7f5e20b00",
+        "name": "¿Refrescar caché?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          -20,
+          100
+        ]
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "VK4M7VQm8CMefbty",
+            "mode": "id",
+            "cachedResultName": "HPF·GHL · W0 Client"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "op": "search_fichas",
+              "args": "={{ {pageLimit: 100} }}"
+            },
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "id": "540a6127-9353-4340-8a1c-edaea051a938",
+        "name": "W0 · traer fichas",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          220,
+          -40
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Aplana los records del custom object al shape de la tabla.\nconst recs = ($input.first().json.data || {}).records || [];\nconst filas = recs.map(r => {\n  const p = r.properties || {};\n  return {\n    ficha_id: p.ficha_id || r.id,\n    nombre: p.nombre || '',\n    evento: p.evento || '',\n    subcategoria: p.subcategoria || '',\n    descripcion: p.descripcion || '',\n    media_url: p.media_url || '',\n    media_tipo: p.media_tipo || '',\n    bot_id_kommo: p.bot_id_kommo || '',\n    activo: String(p.activo).toLowerCase() !== 'false',\n  };\n}).filter(f => f.ficha_id && f.nombre);\nif (filas.length === 0) {\n  // Nunca vaciar la caché por una respuesta vacía de GHL: sería quedarse sin catálogo\n  // en medio de una conversación.\n  throw new Error('W3: GHL devolvió 0 fichas; no se refresca la caché');\n}\nreturn [{ json: { filas_json: JSON.stringify(filas), cantidad: filas.length } }];"
+        },
+        "id": "e9354551-bdb5-462f-835b-5b406a1ecd4f",
+        "name": "Aplanar fichas",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          440,
+          -40
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "WITH entrada AS (\n  SELECT x->>'ficha_id' AS ficha_id, x->>'nombre' AS nombre, x->>'evento' AS evento,\n         x->>'subcategoria' AS subcategoria, x->>'descripcion' AS descripcion,\n         x->>'media_url' AS media_url, x->>'media_tipo' AS media_tipo,\n         x->>'bot_id_kommo' AS bot_id_kommo, (x->>'activo')::boolean AS activo\n  FROM jsonb_array_elements($1::jsonb) AS x\n), borrados AS (\n  DELETE FROM hpf_fichas WHERE ficha_id NOT IN (SELECT ficha_id FROM entrada)\n)\nINSERT INTO hpf_fichas (ficha_id, nombre, evento, subcategoria, descripcion,\n                        media_url, media_tipo, bot_id_kommo, activo, refrescado_at)\nSELECT ficha_id, nombre, evento, subcategoria, descripcion,\n       media_url, media_tipo, bot_id_kommo, activo, now()\nFROM entrada\nON CONFLICT (ficha_id) DO UPDATE SET\n  nombre = EXCLUDED.nombre, evento = EXCLUDED.evento,\n  subcategoria = EXCLUDED.subcategoria, descripcion = EXCLUDED.descripcion,\n  media_url = EXCLUDED.media_url, media_tipo = EXCLUDED.media_tipo,\n  bot_id_kommo = EXCLUDED.bot_id_kommo, activo = EXCLUDED.activo,\n  refrescado_at = now();",
+          "options": {
+            "queryReplacement": "={{ [ $json.filas_json ] }}"
+          }
+        },
+        "id": "fcc75271-4898-4edf-bdb4-8a5d08ae55c8",
+        "name": "Refrescar caché",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          660,
+          -40
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "uK59P60DJmOJc4Lm",
+            "name": "H.F"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT ficha_id, nombre, evento, subcategoria, descripcion,\n       media_url, media_tipo, bot_id_kommo\nFROM hpf_fichas\nWHERE ($1 = '' OR lower(evento) = lower($1))\n  AND ($2 = '' OR lower(subcategoria) = lower($2))\n  AND ($3::jsonb = '[]'::jsonb OR EXISTS (\n        SELECT 1 FROM jsonb_array_elements_text($3::jsonb) AS t\n        WHERE lower(nombre) LIKE '%' || lower(t) || '%'))\n  AND activo\nORDER BY\n  -- La subcategoria sigue PRIMERO: cuando $2 viene vacio la query devuelve Producto\n  -- Principal y Accesorios juntos, y mezclarlos seria una regresion.\n  subcategoria NULLS FIRST,\n  -- FAMILIA de producto. El orden alfabetico partia las familias: el catalogo de\n  -- anticrudas caia bajo \"C\" y su ficha bajo \"K\", con 5 posiciones en el medio.\n  -- El viejo agrupa por producto: ficha -> catalogo(s) -> video (verificado en E4).\n  CASE\n    WHEN lower(nombre) LIKE '%sandalia%'  THEN 1\n    WHEN lower(nombre) LIKE '%cilindro%'  THEN 2\n    WHEN lower(nombre) LIKE '%mandil%'    THEN 3\n    WHEN lower(nombre) LIKE '%anticruda%' THEN 4\n    WHEN lower(nombre) LIKE '%pantufla%'  THEN 5\n    WHEN lower(nombre) LIKE '%vaso%'      THEN 6\n    ELSE 9\n  END,\n  -- ROL dentro de la familia: la ficha primero (lleva precio y minimo), despues el\n  -- catalogo de disenos y el video al final. `media_tipo` es senal limpia del catalogo\n  -- ('imagen' | 'video' | 'pdf') y los PDF de este catalogo SON catalogos de disenos.\n  -- Se matchean las dos grafias de \"catalogo\" porque no se puede contar con `unaccent`.\n  CASE\n    WHEN media_tipo = 'video' THEN 3\n    WHEN media_tipo = 'pdf'\n      OR lower(nombre) LIKE '%catalogo%'\n      OR lower(nombre) LIKE '%catálogo%' THEN 2\n    ELSE 1\n  END,\n  nombre;",
+          "options": {
+            "queryReplacement": "={{ [ $('Normalizar entrada').first().json.evento, $('Normalizar entrada').first().json.subcategoria, JSON.stringify($('Normalizar entrada').first().json.productos) ] }}"
+          }
+        },
+        "id": "22df82ba-e911-43ec-92fc-ae5675d35f2c",
+        "name": "Consultar caché",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          880,
+          100
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "uK59P60DJmOJc4Lm",
+            "name": "H.F"
+          }
+        },
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "jsCode": "// Salida: una tarjeta por ficha, en el orden en que hay que mandarlas.\nconst filas = $input.all().map(i => i.json).filter(f => f && f.ficha_id);\nconst ctx = $('Normalizar entrada').first().json;\nconst cards = filas.map(f => ({\n  ficha_id: f.ficha_id,\n  nombre: f.nombre,\n  texto: f.descripcion || '',\n  media_url: f.media_url || null,\n  media_tipo: f.media_tipo || null,\n  subcategoria: f.subcategoria || null,\n}));\nconst sin_media = cards.filter(c => !c.media_url).map(c => c.nombre);\nreturn [{ json: {\n  ok: true,\n  evento: ctx.evento,\n  subcategoria: ctx.subcategoria || null,\n  productos_pedidos: ctx.productos,\n  cantidad: cards.length,\n  cards,\n  // el llamador tiene que saber que estas fichas no tienen asset: su contenido\n  // vivía sólo dentro del salesbot de Kommo\n  sin_media,\n} }];"
+        },
+        "id": "83894a6f-049e-4d15-847c-0ed9b592ce46",
+        "name": "Armar cards",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1100,
+          100
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "version": 2,
+              "typeValidation": "loose"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "3484c109-700b-416c-8ff9-c4e27cbe14e0",
+                "leftValue": "={{ $('Normalizar entrada').first().json._via }}",
+                "rightValue": "webhook",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "842b45d0-a9bf-41b4-9b3a-79b4e9d29b97",
+        "name": "¿Vino por webhook?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          1320,
+          100
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "allIncomingItems",
+          "options": {}
+        },
+        "id": "f95b4f1b-bad4-4e86-aa8a-b29094dacea2",
+        "name": "Respond to Webhook",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          1540,
+          0
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "6e997f6f-e958-4c8d-90ab-de3092293687",
+        "name": "Devolver al llamador",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1540,
+          200
+        ]
+      }
+    ],
+    "connections": {
+      "Ejecutado por otro workflow": {
+        "main": [
+          [
+            {
+              "node": "Normalizar entrada",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook (carril de prueba)": {
+        "main": [
+          [
+            {
+              "node": "Normalizar entrada",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalizar entrada": {
+        "main": [
+          [
+            {
+              "node": "Estado de caché",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Estado de caché": {
+        "main": [
+          [
+            {
+              "node": "¿Refrescar caché?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Refrescar caché?": {
+        "main": [
+          [
+            {
+              "node": "W0 · traer fichas",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Consultar caché",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "W0 · traer fichas": {
+        "main": [
+          [
+            {
+              "node": "Aplanar fichas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aplanar fichas": {
+        "main": [
+          [
+            {
+              "node": "Refrescar caché",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Refrescar caché": {
+        "main": [
+          [
+            {
+              "node": "Consultar caché",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Consultar caché": {
+        "main": [
+          [
+            {
+              "node": "Armar cards",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Armar cards": {
+        "main": [
+          [
+            {
+              "node": "¿Vino por webhook?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Vino por webhook?": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Devolver al llamador",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "la agencia",
+    "name": null,
+    "description": null
+  }
+}

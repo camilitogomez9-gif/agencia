@@ -1,0 +1,355 @@
+{
+  "name": "CAPI Registro Folio - Venttur",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "capi-registro-folio-venttur",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "063cd0d6-d43e-4ae2-b7a0-46938c6d6635",
+      "name": "Webhook Registro Folio",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        224,
+        272
+      ],
+      "webhookId": "ca668e26-3352-4b4e-b1a9-dbfc3971e855"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]"
+        },
+        "table": {
+          "__rl": true,
+          "value": "[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "cachedResultName": "Folios CAPI",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]/[AIRTABLE_TABLE_ID]"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Folio": "={{ $json.folio }}",
+            "fbclid": "={{ $json.fbclid }}",
+            "fbc": "={{ $json.fbc }}",
+            "fbp": "={{ $json.fbp }}",
+            "Programa": "={{ $json.programa }}",
+            "Timestamp": "={{ $json.timestamp }}",
+            "Landing URL": "={{ $json.url }}",
+            "user_agent": "={{ $json.user_agent }}",
+            "ip": "={{ $json.ip }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Folio",
+              "displayName": "Folio",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false
+            },
+            {
+              "id": "fbclid",
+              "displayName": "fbclid",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false
+            },
+            {
+              "id": "Programa",
+              "displayName": "Programa",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false
+            },
+            {
+              "id": "Landing URL",
+              "displayName": "Landing URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false
+            },
+            {
+              "id": "fbc",
+              "displayName": "fbc",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false
+            },
+            {
+              "id": "fbp",
+              "displayName": "fbp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false
+            },
+            {
+              "id": "user_agent",
+              "displayName": "user_agent",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false
+            },
+            {
+              "id": "ip",
+              "displayName": "ip",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false
+            },
+            {
+              "id": "fbtrace_id",
+              "displayName": "fbtrace_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "28519634-1800-4e55-9039-7d8cd258b733",
+      "name": "Guardar Folio en Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        896,
+        192
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"ok\": true}",
+        "options": {}
+      },
+      "id": "72ab4d8b-5bc1-4eff-aed0-47f3cd6dd97f",
+      "name": "Responder OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1a2b3d4-0001-0001-0001-000000000001",
+              "leftValue": "={{ $json.body.folio }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c1a2b3d4-e5f6-7890-c1a2-b3d4e5f60010",
+      "name": "¿Folio válido?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body;\nconst headers = $json.headers;\n\n// Extraer fbclid: primero del body, si no de la URL\nlet fbclid = body.fbclid_completo || null;\nif (!fbclid && body.url) {\n  const m = body.url.match(/[?&]fbclid=([^&]+)/);\n  if (m) fbclid = decodeURIComponent(m[1]);\n}\n\n// Construir fbc: primero del body (si la landing lo mandó), si no desde fbclid\nconst ts = body.timestamp || Date.now();\nlet fbc = body.fbc || null;\nif (!fbc && fbclid) {\n  fbc = 'fb.1.' + ts + '.' + fbclid;\n}\n\nreturn [{\n  json: {\n    folio:      body.folio,\n    fbclid:     fbclid,\n    fbc:        fbc,\n    fbp:        body.fbp || null,\n    programa:   body.programa,\n    timestamp:  ts,\n    url:        body.url || null,\n    user_agent: body.user_agent || null,\n    ip:         (headers['x-forwarded-for'] || '').split(',')[0].trim() || null,\n  }\n}];"
+      },
+      "id": "e1e2e3e4-f5f6-7890-e1e2-e3e4f5f60020",
+      "name": "Extraer y Enriquecer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        192
+      ]
+    }
+  ],
+  "pinData": {
+    "Webhook Registro Folio": [
+      {
+        "json": {
+          "headers": {
+            "host": "[TU-INSTANCIA-N8N]",
+            "user-agent": "Mozilla/5.0 (Linux; Android 15; CPH2819 Build/AP3A.240617.008; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/146.0.7680.177 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/556.0.0.60.64;IABMV/1;]",
+            "content-length": "877",
+            "accept": "*/*",
+            "accept-encoding": "gzip, deflate, br, zstd",
+            "accept-language": "es-MX,es;q=0.9,en-US;q=0.8,en;q=0.7",
+            "content-type": "application/json",
+            "origin": "https://go.venttur.com",
+            "priority": "u=1, i",
+            "referer": "https://go.venttur.com/",
+            "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Android WebView\";v=\"146\"",
+            "sec-ch-ua-mobile": "?1",
+            "sec-ch-ua-platform": "\"Android\"",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "cross-site",
+            "via": "2.0 Caddy",
+            "x-forwarded-for": "200.68.153.32",
+            "x-forwarded-host": "[TU-INSTANCIA-N8N]",
+            "x-forwarded-proto": "https",
+            "x-requested-with": "com.facebook.katana"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "origen": "clic_whatsapp_directo",
+            "folio": "HHFSMG",
+            "programa": "BS",
+            "fbclid_completo": "IwZXh0bgNhZW0BMABhZGlkAasx2VBk_eZzcnRjBmFwcF9pZAwzNTA2ODU1MzE3MjgAAR4XxwQRmOTMA7JNHd8ZpPRyjfLc0MCvqRw7y4l9oc9vB2m4-Bi6Mp0vVBFOLA_aem_N76VshXSleu6stRMhHfSmg",
+            "fbp": "fb.1.1776220969208.525268586943021851",
+            "user_agent": "Mozilla/5.0 (Linux; Android 15; CPH2819 Build/AP3A.240617.008; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/146.0.7680.177 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/556.0.0.60.64;IABMV/1;]",
+            "timestamp": 1776220974786,
+            "url": "https://go.venttur.com/bs?fbclid=IwZXh0bgNhZW0BMABhZGlkAasx2VBk_eZzcnRjBmFwcF9pZAwzNTA2ODU1MzE3MjgAAR4XxwQRmOTMA7JNHd8ZpPRyjfLc0MCvqRw7y4l9oc9vB2m4-Bi6Mp0vVBFOLA_aem_N76VshXSleu6stRMhHfSmg&utm_medium=paid&utm_source=fb&utm_id=120244624338100246&utm_content=120244624338090246&utm_term=120244624338070246&utm_campaign=120244624338100246"
+          },
+          "webhookUrl": "https://[TU-INSTANCIA-N8N]/webhook/capi-registro-folio-venttur",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook Registro Folio": {
+      "main": [
+        [
+          {
+            "node": "¿Folio válido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Folio válido?": {
+      "main": [
+        [
+          {
+            "node": "Extraer y Enriquecer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer y Enriquecer": {
+      "main": [
+        [
+          {
+            "node": "Guardar Folio en Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar Folio en Airtable": {
+      "main": [
+        [
+          {
+            "node": "Responder OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder OK": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true,
+    "errorWorkflow": "OBkUyb8fuo30DzA9"
+  },
+  "versionId": "363b2304-515a-404b-8ccc-3ff5befb5793",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  },
+  "id": "9yCbynoKDt9hgiBq",
+  "tags": []
+}

@@ -1,0 +1,19 @@
+﻿Título,Imagen,curl
+vaca,WhatsApp Image 2025-12-15 at 18.22.20.jpeg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/ZnWcG9Y_ZUuBW6KpHMA03g/9a--u2pRL96NDIB3XL5ghM0JvPR6_pFuVJfKcWBeZQaB2VI89qXaMl0cSkOrDDwxt84p5gqTmb2fIpNmvItwV7Gf7AV6i9B93cCmvfq0tL0-aB91Mfs1I0sJsicaE4HufV0NBTz74tAe1GTA39kM4vrTb-rz9cHy8vPDgKZ8a57MQXQkN4_yq3CMNzg3BEp2/jeNa8A_AefoNK0hv_vCHXBYQFUGis9baRTgMpQTmPqI),"curl 'https://amojo.kommo.com/v2/cfc7e714-80be-4fc3-b1d9-2a7c3fb252ce/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36' \
+  -H 'X-Auth-Token: 94f98cc6-b7fe-4f5a-a91c-93691d6d8aee' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""143"", ""Chromium"";v=""143"", ""Not A(Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?1' \
+  -H 'sec-ch-ua-platform: ""Android""' \
+  --data-raw $'{""recipient_id"":""19ab3b6b-ad17-4b0e-b2bc-763508b0bec5"",""group_id"":null,""text"":""✨ Gracias por tu pago\u0021 ✨\\nLo recibimos correctamente 💳\\n\\nNos encontramos momentáneamente fuera de horario por receso, pero tu pago ya quedó registrado.\\nApenas retomemos la actividad, lo revisaremos y confirmaremos a la brevedad, respetando el orden de llegada.\\n\\nGracias por tu confianza 💛"",""crm_dialog_id"":206910,""crm_contact_id"":23876071,""crm_account_id"":33068423,""crm_entity"":{""id"":21789041,""type"":2},""attachments"":[{""external_file_id"":""168fd2ce-5fa6-4980-b098-69f81df91e90"",""external_file_vers_id"":""f4363f8f-54d5-4ec5-ba4c-1acd7a5cadf5"",""type"":""picture""}],""set_personalization"":false,""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'"
+,,
+,,

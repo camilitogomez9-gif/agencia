@@ -1,0 +1,52 @@
+{
+  "location": {
+    "status": 200,
+    "count": "",
+    "listkey": null
+  },
+  "customFields_contact": {
+    "status": 200,
+    "count": 0,
+    "listkey": "customFields"
+  },
+  "customFields_opp": {
+    "status": 200,
+    "count": 0,
+    "listkey": "customFields"
+  },
+  "customValues": {
+    "status": 200,
+    "count": 0,
+    "listkey": "customValues"
+  },
+  "tags": {
+    "status": 200,
+    "count": 3,
+    "listkey": "tags"
+  },
+  "pipelines": {
+    "status": 200,
+    "count": 1,
+    "listkey": "pipelines"
+  },
+  "calendars": {
+    "status": 200,
+    "count": 0,
+    "listkey": "calendars"
+  },
+  "calendarGroups": {
+    "status": 200,
+    "count": 0,
+    "listkey": "groups"
+  },
+  "users": {
+    "status": 200,
+    "count": 1,
+    "listkey": "users"
+  },
+  "businesses": {
+    "status": 200,
+    "count": 3,
+    "listkey": "businesses"
+  }
+}

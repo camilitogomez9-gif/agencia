@@ -1,0 +1,923 @@
+{
+  "name": "VTR Data Export Runner v1 (Clientify + ManyChat + Supabase)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1440,
+        560
+      ],
+      "name": "When clicking 'Execute workflow'",
+      "id": "f0d51302-7577-4bdc-9d48-2481289cb5e1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7c620f58-db9f-4438-a17f-9f8bba4d4821",
+              "name": "base_url",
+              "value": "https://api.clientify.net/v1",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1200,
+        560
+      ],
+      "notes": "URL base fija de Clientify. El token vive en la credencial 'Clientify API - Venttur' (Header Auth) -- a diferencia del patron actual en produccion donde el token esta hardcodeado en texto plano dentro del header del HTTP Request (ver 'Crear Contacto Clientify' en wf-crear-contacto-clientify-airtable.json). Crear la credencial antes de importar: Header Auth, Name=Authorization, Value='Token <el token real>'.",
+      "name": "Configurar Clientify",
+      "id": "c88566b8-fda2-4ea5-b4b1-59f6c44a785f"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Configurar Clientify').first().json.base_url + '/contacts/' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "100"
+            },
+            {
+              "name": "page_size",
+              "value": "100"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "nextURL": "={{ $response.body.next ? ($response.body.next.startsWith('http') ? $response.body.next : $('Configurar Clientify').first().json.base_url + $response.body.next) : '' }}",
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !$response.body.next }}",
+              "requestInterval": 1000
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "continueOnFail": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR_CREDENCIAL_ID",
+          "name": "Clientify API - Venttur"
+        }
+      },
+      "notes": "CONFIRMADO en produccion (usado por Formulario Clientify / Crear contacto Clientify).",
+      "position": [
+        -960,
+        80
+      ],
+      "name": "Fetch Contacts",
+      "id": "4c0c3173-bd29-4c54-a717-195714081c3e"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Configurar Clientify').first().json.base_url + '/deals/' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "100"
+            },
+            {
+              "name": "page_size",
+              "value": "100"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "nextURL": "={{ $response.body.next ? ($response.body.next.startsWith('http') ? $response.body.next : $('Configurar Clientify').first().json.base_url + $response.body.next) : '' }}",
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !$response.body.next }}",
+              "requestInterval": 1000
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "continueOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR_CREDENCIAL_ID",
+          "name": "Clientify API - Venttur"
+        }
+      },
+      "notes": "NO CONFIRMADO -- no se usa hoy en ningun workflow de VTR. Al importar, ejecutar este nodo solo ('Execute node') antes de correr el flujo completo: HTTP 200 con 'results'/'count' => existe, dejar continueOnFail en false. HTTP 403/404 => el recurso no existe con este nombre en el plan de Clientify del cliente -- desconectar el nodo o ajustar el path. Mencionado en comunidad Make.com con path /v1/deals/, no verificado con este token (probe directo fue bloqueado por Cloudflare desde este entorno de desarrollo).",
+      "position": [
+        -960,
+        280
+      ],
+      "name": "Fetch Deals",
+      "id": "116983d3-e87a-42bb-b13d-0909a810da9a"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Configurar Clientify').first().json.base_url + '/companies/' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "100"
+            },
+            {
+              "name": "page_size",
+              "value": "100"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "nextURL": "={{ $response.body.next ? ($response.body.next.startsWith('http') ? $response.body.next : $('Configurar Clientify').first().json.base_url + $response.body.next) : '' }}",
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !$response.body.next }}",
+              "requestInterval": 1000
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "continueOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR_CREDENCIAL_ID",
+          "name": "Clientify API - Venttur"
+        }
+      },
+      "notes": "NO CONFIRMADO -- no se usa hoy en ningun workflow de VTR. Al importar, ejecutar este nodo solo ('Execute node') antes de correr el flujo completo: HTTP 200 con 'results'/'count' => existe, dejar continueOnFail en false. HTTP 403/404 => el recurso no existe con este nombre en el plan de Clientify del cliente -- desconectar el nodo o ajustar el path.",
+      "position": [
+        -960,
+        480
+      ],
+      "name": "Fetch Companies",
+      "id": "6efb63c7-49bc-472f-ac07-2df187955413"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Configurar Clientify').first().json.base_url + '/custom-fields/' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "100"
+            },
+            {
+              "name": "page_size",
+              "value": "100"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "nextURL": "={{ $response.body.next ? ($response.body.next.startsWith('http') ? $response.body.next : $('Configurar Clientify').first().json.base_url + $response.body.next) : '' }}",
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !$response.body.next }}",
+              "requestInterval": 1000
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "continueOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR_CREDENCIAL_ID",
+          "name": "Clientify API - Venttur"
+        }
+      },
+      "notes": "NO CONFIRMADO -- no se usa hoy en ningun workflow de VTR. Al importar, ejecutar este nodo solo ('Execute node') antes de correr el flujo completo: HTTP 200 con 'results'/'count' => existe, dejar continueOnFail en false. HTTP 403/404 => el recurso no existe con este nombre en el plan de Clientify del cliente -- desconectar el nodo o ajustar el path. Si 404, probar tambien /customfields/ (sin guion) -- ambas variantes existen en integraciones de terceros documentadas.",
+      "position": [
+        -960,
+        680
+      ],
+      "name": "Fetch Custom Fields (Clientify)",
+      "id": "6f190349-b59f-4879-9820-4078d4cc7962"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH normalized AS (\n  SELECT\n    id,\n    session_id,\n    CASE\n      WHEN message->>'type' = 'human' THEN 'human'\n      WHEN message->>'type' = 'ai' THEN 'assistant'\n      ELSE COALESCE(message->>'type', 'unknown')\n    END AS role,\n    btrim(\n      regexp_replace(\n        regexp_replace(\n          regexp_replace(\n            regexp_replace(message->>'content', '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}', '[EMAIL]', 'g'),\n            '(https?://|www\\.)\\S+', '[URL]', 'g'\n          ),\n          '(\\+?\\d[\\d\\s().-]{7,}\\d)', '[PHONE]', 'g'\n        ),\n        '\\s+', ' ', 'g'\n      )\n    ) AS content\n  FROM public.n8n_chat_histories\n  WHERE message ? 'content'\n    AND message->>'type' IN ('human', 'ai')\n    AND btrim(message->>'content') <> ''\n), eligible_sessions AS (\n  SELECT\n    session_id,\n    COUNT(*) AS message_count,\n    COUNT(*) FILTER (WHERE role = 'human') AS human_count,\n    COUNT(*) FILTER (WHERE role = 'assistant') AS assistant_count,\n    MIN(id) AS first_message_id,\n    MAX(id) AS last_message_id\n  FROM normalized\n  GROUP BY session_id\n  HAVING COUNT(*) BETWEEN 4 AND 80\n     AND COUNT(*) FILTER (WHERE role = 'human') >= 2\n     AND COUNT(*) FILTER (WHERE role = 'assistant') >= 2\n  ORDER BY MAX(id) DESC\n  LIMIT 10\n)\nSELECT\n  'sample_' || ROW_NUMBER() OVER (ORDER BY e.last_message_id DESC) AS sample_id,\n  md5(e.session_id::text) AS session_hash,\n  e.message_count,\n  e.human_count,\n  e.assistant_count,\n  e.first_message_id,\n  e.last_message_id,\n  jsonb_agg(\n    jsonb_build_object('role', n.role, 'content', n.content)\n    ORDER BY n.id ASC\n  ) AS transcript\nFROM eligible_sessions e\nJOIN normalized n ON n.session_id = e.session_id\nGROUP BY\n  e.session_id, e.message_count, e.human_count, e.assistant_count, e.first_message_id, e.last_message_id\nORDER BY e.last_message_id DESC;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -960,
+        880
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "ihpvM7nYMdLCwWDP",
+          "name": "Venttur"
+        }
+      },
+      "notes": "CONFIRMADO -- misma tabla/columnas que usa 'Resumen, etiquetas, seguimientos' en produccion (n8n_chat_histories, credencial Venttur). session_id = telefono sin '+'. Anonimiza email/url/telefono en SQL antes de salir del servidor.",
+      "name": "Fetch Conversation Samples",
+      "id": "b7db794c-e863-43d9-9721-d8b1202f9b47"
+    },
+    {
+      "parameters": {
+        "url": "https://api.manychat.com/fb/page/getFlows",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "continueOnFail": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR_CREDENCIAL_ID",
+          "name": "ManyChat API - Venttur"
+        }
+      },
+      "notes": "CONFIRMADO -- mismo endpoint usado en manychat-venttur-export-snapshot-v1.json (03_workflows/).",
+      "position": [
+        -960,
+        1080
+      ],
+      "name": "Fetch ManyChat Flows",
+      "id": "345f0e3c-8be7-4206-9fb2-e991cb11dcb7"
+    },
+    {
+      "parameters": {
+        "url": "https://api.manychat.com/fb/page/getTags",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "continueOnFail": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR_CREDENCIAL_ID",
+          "name": "ManyChat API - Venttur"
+        }
+      },
+      "notes": "Endpoint /fb/page/getTags (corregido 2026-07-24). El snapshot manychat-venttur-export-snapshot-v1.json tiene /fb/data/getTags que devuelve 404 -- path invalido en la API de ManyChat. NO copiar el path del snapshot.",
+      "position": [
+        -960,
+        1280
+      ],
+      "name": "Fetch ManyChat Tags",
+      "id": "c11172a7-124d-45f6-be5a-be8281125be4"
+    },
+    {
+      "parameters": {
+        "url": "https://api.manychat.com/fb/page/getInfo",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "continueOnFail": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR_CREDENCIAL_ID",
+          "name": "ManyChat API - Venttur"
+        }
+      },
+      "notes": "CONFIRMADO -- mismo endpoint usado en manychat-venttur-export-snapshot-v1.json (03_workflows/).",
+      "position": [
+        -960,
+        1480
+      ],
+      "name": "Fetch ManyChat Page Info",
+      "id": "79543407-4d68-4f67-a87f-309f8e3b101b"
+    },
+    {
+      "parameters": {
+        "url": "https://api.manychat.com/fb/page/getWidgets",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "continueOnFail": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR_CREDENCIAL_ID",
+          "name": "ManyChat API - Venttur"
+        }
+      },
+      "notes": "CONFIRMADO -- mismo endpoint usado en manychat-venttur-export-snapshot-v1.json (03_workflows/).",
+      "position": [
+        -960,
+        1680
+      ],
+      "name": "Fetch ManyChat Widgets",
+      "id": "77a6b092-32d6-4fdc-8ef5-41ed38c502d5"
+    },
+    {
+      "parameters": {
+        "url": "https://api.manychat.com/fb/page/getCustomFields",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "continueOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR_CREDENCIAL_ID",
+          "name": "ManyChat API - Venttur"
+        }
+      },
+      "notes": "Endpoint estandar documentado de ManyChat (mismo patron que getTags/getFlows), pero no estaba en el runner anterior -- verificar primer test. El snapshot 2026-05-13 tiene 13 custom fields documentados pero no via este runner -- posiblemente se obtuvieron manualmente. getCustomFields es el endpoint estandar de ManyChat para esto.",
+      "position": [
+        -960,
+        1880
+      ],
+      "name": "Fetch ManyChat Custom Fields",
+      "id": "3eed8c2c-4d85-452c-b6ef-733f2667e680"
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'contacts';\n\nreturn [\n  {\n    json: {\n      section: SECTION,\n      pages: $input.all().map(item => item.json)\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        80
+      ],
+      "name": "Code in JavaScript",
+      "id": "dd6eb076-68bc-4d16-bded-884ce21e67ad"
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'deals';\n\nreturn [\n  {\n    json: {\n      section: SECTION,\n      pages: $input.all().map(item => item.json)\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        280
+      ],
+      "name": "Code in JavaScript1",
+      "id": "c2fb5af6-d377-4fef-9cc5-b82666d381e5"
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'companies';\n\nreturn [\n  {\n    json: {\n      section: SECTION,\n      pages: $input.all().map(item => item.json)\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        480
+      ],
+      "name": "Code in JavaScript2",
+      "id": "162692dc-b3df-4b36-94dc-85b8e563985e"
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'custom_fields_clientify';\n\nreturn [\n  {\n    json: {\n      section: SECTION,\n      pages: $input.all().map(item => item.json)\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        680
+      ],
+      "name": "Code in JavaScript3",
+      "id": "b36ce4a2-511a-4b3a-86e5-607e0e29e128"
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'conversation_samples';\n\nreturn [\n  {\n    json: {\n      section: SECTION,\n      pages: $input.all().map(item => item.json)\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        880
+      ],
+      "name": "Code in JavaScript4",
+      "id": "db249e22-b110-4f59-a141-16c5622e900e"
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'manychat_flows';\n\nreturn [\n  {\n    json: {\n      section: SECTION,\n      pages: $input.all().map(item => item.json)\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        1080
+      ],
+      "name": "Code in JavaScript5",
+      "id": "e9c6e256-bb54-403d-82a6-6722361c10ca"
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'manychat_tags';\n\nreturn [\n  {\n    json: {\n      section: SECTION,\n      pages: $input.all().map(item => item.json)\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        1280
+      ],
+      "name": "Code in JavaScript6",
+      "id": "7949332d-916d-4cba-ac4d-7f07ced9ed84"
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'manychat_page_info';\n\nreturn [\n  {\n    json: {\n      section: SECTION,\n      pages: $input.all().map(item => item.json)\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        1480
+      ],
+      "name": "Code in JavaScript7",
+      "id": "21049613-8b96-42c4-add4-e55bd6146746"
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'manychat_widgets';\n\nreturn [\n  {\n    json: {\n      section: SECTION,\n      pages: $input.all().map(item => item.json)\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        1680
+      ],
+      "name": "Code in JavaScript8",
+      "id": "45755b07-a908-4db8-8b8a-d7fbd0050946"
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'manychat_custom_fields';\n\nreturn [\n  {\n    json: {\n      section: SECTION,\n      pages: $input.all().map(item => item.json)\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        1880
+      ],
+      "name": "Code in JavaScript9",
+      "id": "e1a583b5-265c-4439-aad7-5fa241796018"
+    },
+    {
+      "parameters": {
+        "numberInputs": 10
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -480,
+        980
+      ],
+      "name": "Merge",
+      "id": "205a6bd5-4dd3-4725-ab3b-7c34037ab4c1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const PACK_NODES = {\n  contacts: 'Code in JavaScript',\n  deals: 'Code in JavaScript1',\n  companies: 'Code in JavaScript2',\n  custom_fields_clientify: 'Code in JavaScript3',\n  conversation_samples: 'Code in JavaScript4',\n  manychat_flows: 'Code in JavaScript5',\n  manychat_tags: 'Code in JavaScript6',\n  manychat_page_info: 'Code in JavaScript7',\n  manychat_widgets: 'Code in JavaScript8',\n  manychat_custom_fields: 'Code in JavaScript9'\n};\n\nfunction readNodeItems(nodeName) {\n  try {\n    return $(nodeName).all().map(item => item.json);\n  } catch {\n    return [];\n  }\n}\n\nfunction unwrapDrfPage(page) {\n  // Clientify (DRF-style): {count,next,previous,results:[...]} o lista simple\n  if (Array.isArray(page)) return page;\n  if (page && Array.isArray(page.results)) return page.results;\n  if (page && Array.isArray(page.data)) return page.data;\n  return [];\n}\n\nfunction unwrapManyChatPage(page) {\n  // ManyChat: {status:'success', data: [...] | {...}}\n  const d = page && page.data !== undefined ? page.data : page;\n  if (Array.isArray(d)) return d;\n  if (d && typeof d === 'object') return [d];\n  return [];\n}\n\nfunction collect(section, unwrapFn) {\n  const packItems = readNodeItems(PACK_NODES[section]);\n  const pages = packItems.flatMap(item => (item.pages || []));\n  return pages.flatMap(unwrapFn);\n}\n\nconst contacts = collect('contacts', unwrapDrfPage);\nconst deals = collect('deals', unwrapDrfPage);\nconst companies = collect('companies', unwrapDrfPage);\nconst custom_fields_clientify = collect('custom_fields_clientify', unwrapDrfPage);\n\nconst manychat_flows = collect('manychat_flows', unwrapManyChatPage);\nconst manychat_tags = collect('manychat_tags', unwrapManyChatPage);\nconst manychat_page_info_arr = collect('manychat_page_info', unwrapManyChatPage);\nconst manychat_widgets = collect('manychat_widgets', unwrapManyChatPage);\nconst manychat_custom_fields = collect('manychat_custom_fields', unwrapManyChatPage);\n\nconst conversation_samples_raw = readNodeItems(PACK_NODES.conversation_samples).flatMap(item => (item.pages || []));\n\nfunction transcriptRoleLabel(role) {\n  if (role === 'human') return 'CLIENTE';\n  if (role === 'assistant' || role === 'ai') return 'AGENTE';\n  return String(role || 'UNKNOWN').toUpperCase();\n}\n\nconst conversation_samples = conversation_samples_raw.map(row => {\n  const turns = (row.transcript || []).map((m, i) => ({\n    turn: i + 1,\n    role: m.role,\n    speaker: transcriptRoleLabel(m.role),\n    text: String(m.content || '').trim()\n  }));\n  const transcript_text = turns\n    .map(m => String(m.turn).padStart(2, '0') + '. ' + m.speaker + ': ' + m.text)\n    .join('\\n');\n  return {\n    sample_id: row.sample_id ?? null,\n    session_hash: row.session_hash ?? null,\n    message_count: Number(row.message_count ?? turns.length),\n    human_count: Number(row.human_count ?? 0),\n    assistant_count: Number(row.assistant_count ?? 0),\n    turns,\n    transcript_text,\n    raw: row\n  };\n});\n\nreturn [\n  {\n    json: {\n      clientify: {\n        contacts,\n        deals,\n        companies,\n        custom_fields: custom_fields_clientify\n      },\n      manychat: {\n        page_info: manychat_page_info_arr[0] || {},\n        flows: manychat_flows,\n        tags: manychat_tags,\n        widgets: manychat_widgets,\n        custom_fields: manychat_custom_fields\n      },\n      conversation_samples,\n      _metadata: {\n        exported_at: new Date().toISOString(),\n        source: 'Clientify API v1 + ManyChat API v2 + Supabase Postgres (n8n_chat_histories)',\n        counts: {\n          clientify_contacts: contacts.length,\n          clientify_deals: deals.length,\n          clientify_companies: companies.length,\n          clientify_custom_fields: custom_fields_clientify.length,\n          manychat_flows: manychat_flows.length,\n          manychat_tags: manychat_tags.length,\n          manychat_widgets: manychat_widgets.length,\n          manychat_custom_fields: manychat_custom_fields.length,\n          conversation_samples: conversation_samples.length\n        },\n        confirmed_endpoints: {\n          clientify_contacts: true,\n          clientify_deals: 'VERIFICAR -- ver notes del nodo Fetch Deals',\n          clientify_companies: 'VERIFICAR -- ver notes del nodo Fetch Companies',\n          clientify_custom_fields: 'VERIFICAR -- ver notes del nodo Fetch Custom Fields (Clientify)',\n          manychat_flows: true,\n          manychat_tags: true,\n          manychat_page_info: true,\n          manychat_widgets: true,\n          manychat_custom_fields: 'VERIFICAR -- no estaba en el runner anterior, ver notes del nodo',\n          conversation_samples: true\n        }\n      }\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        980
+      ],
+      "executeOnce": true,
+      "notes": "Salida final combinada Clientify + ManyChat + muestras de conversacion, con _metadata.confirmed_endpoints marcando que secciones estan confirmadas vs a verificar en el primer test dentro de n8n.",
+      "name": "Consolidate VTR Snapshot",
+      "id": "54009cf9-9abb-4959-b76e-0b4a1ff1b21c"
+    }
+  ],
+  "connections": {
+    "Configurar Clientify": {
+      "main": [
+        [
+          {
+            "node": "Fetch Contacts",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Deals",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Companies",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Custom Fields (Clientify)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Conversation Samples",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch ManyChat Flows",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch ManyChat Tags",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch ManyChat Page Info",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch ManyChat Widgets",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch ManyChat Custom Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Contacts": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Deals": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Companies": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Custom Fields (Clientify)": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Conversation Samples": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch ManyChat Flows": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch ManyChat Tags": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch ManyChat Page Info": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch ManyChat Widgets": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch ManyChat Custom Fields": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript5": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript6": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 6
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript7": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 7
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript8": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 8
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript9": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 9
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Consolidate VTR Snapshot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking 'Execute workflow'": {
+      "main": [
+        [
+          {
+            "node": "Configurar Clientify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5a54cc75-66ab-48c0-b59e-2f5d58f4f7df",
+  "meta": {
+    "instanceId": "venttur-migration-ghl"
+  },
+  "tags": []
+}

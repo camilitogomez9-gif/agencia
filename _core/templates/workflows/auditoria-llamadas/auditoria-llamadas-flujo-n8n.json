@@ -1,0 +1,163 @@
+{
+  "name": "Call Audit — Transcripcion → Modal → Airtable",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "call-audit",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "node-webhook",
+      "name": "Recibir Transcripción",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "call-audit-webhook"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.MODAL_ENDPOINT_URL}}",
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={\n  \"transcript\": \"{{ $json.body.transcript }}\",\n  \"closer_name\": \"{{ $json.body.closer_name }}\",\n  \"call_date\": \"{{ $json.body.call_date }}\",\n  \"call_outcome\": \"{{ $json.body.call_outcome }}\",\n  \"duration_minutes\": {{ $json.body.duration_minutes ?? 'null' }},\n  \"business_context\": \"{{ $json.body.business_context ?? '' }}\",\n  \"_api_key\": \"={{ $env.CALL_AUDIT_API_KEY }}\"\n}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "node-http-modal",
+      "name": "Analizar con IA (Modal)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "={{$env.AIRTABLE_BASE_ID}}",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "Llamadas",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Closer": "={{ $json.closer_name }}",
+            "Fecha": "={{ $json.call_date }}",
+            "Resultado": "={{ $json.call_outcome }}",
+            "Duración (min)": "={{ $json.duration_minutes }}",
+            "Score Total": "={{ $json.score_total }}",
+            "Resumen Ejecutivo": "={{ $json.resumen_ejecutivo }}",
+            "Fortalezas": "={{ $json.fortalezas.join('\\n') }}",
+            "Próximas Acciones": "={{ $json.proximas_acciones.join('\\n') }}",
+            "Score Rapport": "={{ $json.metricas_universales.rapport_control_conversacion.score }}",
+            "Score Discovery": "={{ $json.metricas_universales.calidad_discovery.score }}",
+            "Score Gap/Problema": "={{ $json.metricas_universales.claridad_problema_y_gap.score }}",
+            "Score Presentación": "={{ $json.metricas_universales.presentacion_solucion.score }}",
+            "Score Objeciones": "={{ $json.metricas_universales.manejo_objeciones.score }}",
+            "Score Estructura": "={{ $json.metricas_universales.seguimiento_estructura.score }}",
+            "Score Cierre": "={{ $json.metricas_universales.cierre_y_cta.score }}",
+            "Score Mecanismo": "={{ $json.metricas_especificas.menciona_mecanismo.score }}",
+            "Score Conexión Oferta": "={{ $json.metricas_especificas.conecta_oferta_con_lead.score }}",
+            "Score Casos Éxito": "={{ $json.metricas_especificas.usa_casos_de_exito.score }}",
+            "Score Precio": "={{ $json.metricas_especificas.explica_precio_y_condiciones.score }}",
+            "Score Calificación": "={{ $json.metricas_especificas.calificacion_del_prospecto.score }}",
+            "Modelo IA": "={{ $json.modelo_usado }}",
+            "Procesado En (seg)": "={{ $json.procesado_en_segundos }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "node-airtable",
+      "name": "Guardar en Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($('Analizar con IA (Modal)').item.json) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "node-respond",
+      "name": "Devolver JSON al Caller",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [960, 300]
+    }
+  ],
+  "connections": {
+    "Recibir Transcripción": {
+      "main": [
+        [
+          {
+            "node": "Analizar con IA (Modal)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analizar con IA (Modal)": {
+      "main": [
+        [
+          {
+            "node": "Guardar en Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar en Airtable": {
+      "main": [
+        [
+          {
+            "node": "Devolver JSON al Caller",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "call-audit-la agencia"
+  },
+  "_instructions": {
+    "setup": [
+      "1. Importar este JSON en n8n: Settings → Import Workflow",
+      "2. En n8n Environment Variables (o Settings > Variables), configurar:",
+      "   - MODAL_ENDPOINT_URL: la URL que devuelve Modal al hacer 'modal deploy main.py'",
+      "   - CALL_AUDIT_API_KEY: el mismo valor que pusiste en el secret de Modal",
+      "   - AIRTABLE_BASE_ID: el ID de tu base de Airtable (aparece en la URL: airtable.com/[BASE_ID]/...)",
+      "3. En el nodo 'Guardar en Airtable', configurar las credenciales de Airtable",
+      "4. Activar el workflow y copiar la URL del webhook",
+      "5. Testear con un cURL de prueba (ver README.md)"
+    ],
+    "test_curl": "curl -X POST [WEBHOOK_URL] -H 'Content-Type: application/json' -d '{\"transcript\": \"Closer: Hola...\", \"closer_name\": \"Test\", \"call_date\": \"2026-02-18\", \"call_outcome\": \"pendiente\", \"duration_minutes\": 30}'"
+  }
+}

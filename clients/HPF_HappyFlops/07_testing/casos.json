@@ -1,0 +1,865 @@
+{
+ "_meta": {
+  "congelado": "2026-08-05",
+  "build": "hpf-inbound-handler-testbuild-nodebounce-2026-08-05.json",
+  "sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "versionId": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "nota": "Los needles no se transcriben: se resuelven por nombre desde el jsCode del build congelado (regla 7). Ver resolver_needles() en el runner.",
+  "asserts": {
+   "entrega": "todas las partes que emitió el Sanitize tienen acuse, y al chat correcto",
+   "tiene": "byte-exacto sobre message_part, sin normalizar. n=needle del build, lit=literal",
+   "no": "negativo; devuelve SIN-EVIDENCIA si no hay partes que inspeccionar",
+   "tool": "igualdad sobre action.tool de intermediateSteps",
+   "notool": "idem, negado",
+   "minpartes": "el Sanitize emitió al menos N partes (regla 2: cero partes es FALLA)"
+  }
+ },
+ "casos": [
+  {
+   "id": "HPF-SAL-001",
+   "sev": "S2",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "hola"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "minpartes",
+     "v": 3
+    },
+    {
+     "t": "tiene",
+     "n": "SALUDO_0"
+    },
+    {
+     "t": "tiene",
+     "n": "SALUDO_1"
+    },
+    {
+     "t": "tiene",
+     "n": "SALUDO_2"
+    }
+   ]
+  },
+  {
+   "id": "HPF-SAL-002",
+   "sev": "S1",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "Hola buenos días me puedes dar información acerca del precio de sandalias"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "minpartes",
+     "v": 1
+    },
+    {
+     "t": "tiene",
+     "lit": "sandalia",
+     "ci": true
+    }
+   ]
+  },
+  {
+   "id": "HPF-EVT-003",
+   "sev": "S1",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "hola",
+    "xv años"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tiene",
+     "n": "MENU_XV"
+    },
+    {
+     "t": "no",
+     "lit": "*Mandiles para Boda*"
+    }
+   ]
+  },
+  {
+   "id": "HPF-EVT-004",
+   "sev": "S1",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "hola",
+    "boda"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tiene",
+     "n": "MENU_BODA"
+    },
+    {
+     "t": "tiene",
+     "lit": "*Mandiles para Boda*"
+    }
+   ]
+  },
+  {
+   "id": "HPF-EVT-005",
+   "sev": "S2",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "hola",
+    "es para un bautizo"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tiene",
+     "n": "MENU_OTROS"
+    }
+   ]
+  },
+  {
+   "id": "HPF-EVT-006",
+   "sev": "S3",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "hola",
+    "graduación"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tiene",
+     "n": "MENU_OTROS"
+    }
+   ]
+  },
+  {
+   "id": "HPF-FIC-007",
+   "sev": "S1",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "hola",
+    "xv años",
+    "quiero sandalias"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tool",
+     "v": "MOSTRAR_PRODUCTOS"
+    },
+    {
+     "t": "tiene",
+     "n": "FICHA_sandalias"
+    }
+   ],
+   "depende_de_memo": true,
+   "nota": "warm-up \"hola\" agregado: resetea el memo del chat (jsCode:280), sin esto el caso es order-dependent"
+  },
+  {
+   "id": "HPF-FIC-008",
+   "sev": "S1",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "boda",
+    "quiero sandalias y cilindros"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "minpartes",
+     "v": 4
+    },
+    {
+     "t": "media",
+     "v": "photo_url"
+    },
+    {
+     "t": "media",
+     "v": "doc_url"
+    },
+    {
+     "t": "media",
+     "v": "video_url"
+    }
+   ]
+  },
+  {
+   "id": "HPF-FIC-009",
+   "sev": "S1",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "xv años",
+    "Precio de todos"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "no",
+     "lit": "Mandiles"
+    }
+   ]
+  },
+  {
+   "id": "HPF-FIC-010",
+   "sev": "S1",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "xv años",
+    "quiero mandiles"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "no",
+     "lit": "✨ Mandiles"
+    }
+   ]
+  },
+  {
+   "id": "HPF-FIC-011",
+   "sev": "S2",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "hola",
+    "boda",
+    "quiero mandiles"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tiene",
+     "n": "FICHA_mandiles"
+    }
+   ],
+   "depende_de_memo": true,
+   "nota": "warm-up \"hola\" agregado: resetea el memo del chat (jsCode:280), sin esto el caso es order-dependent"
+  },
+  {
+   "id": "HPF-FIC-012",
+   "sev": "S3",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "hola",
+    "boda",
+    "qué colores de tapas hay"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tiene",
+     "n": "FICHA_tapas"
+    }
+   ],
+   "depende_de_memo": true,
+   "nota": "warm-up \"hola\" agregado: resetea el memo del chat (jsCode:280), sin esto el caso es order-dependent"
+  },
+  {
+   "id": "HPF-COT-013",
+   "sev": "S1",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "xv años",
+    "quiero sandalias",
+    "50 piezas suela delgada, cp 61800"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tool",
+     "v": "COTIZADOR"
+    },
+    {
+     "t": "no",
+     "lit": "código postal",
+     "ci": true
+    },
+    {
+     "t": "no",
+     "lit": "cuántas piezas",
+     "ci": true
+    },
+    {
+     "t": "tiene",
+     "lit": "⏳(7 DIAS DE PROMO)⏳"
+    },
+    {
+     "t": "tiene",
+     "lit": "$25"
+    },
+    {
+     "t": "no",
+     "lit": "$24"
+    }
+   ],
+   "nota": "corregido tras el baseline: la entrada no declaraba el grosor, así que el agente preguntaba (conducta correcta según Oscar 31/7) y el assert lo leía como falla · asserts agregados tras el gate de mutación: header de promo y precio cotizado"
+  },
+  {
+   "id": "HPF-COT-014",
+   "sev": "S1",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "boda",
+    "quiero cilindros",
+    "35 cilindros, cp 44680"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tiene",
+     "lit": "40",
+     "ci": false
+    },
+    {
+     "t": "notool",
+     "v": "COTIZADOR"
+    }
+   ]
+  },
+  {
+   "id": "HPF-COT-015",
+   "sev": "S2",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "boda",
+    "quiero sandalias",
+    "50 pares, cp 44680"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tool",
+     "v": "COTIZADOR"
+    },
+    {
+     "t": "tiene",
+     "lit": "⏳(7 DIAS DE PROMO)⏳"
+    },
+    {
+     "t": "tiene",
+     "lit": "$25"
+    },
+    {
+     "t": "no",
+     "lit": "$24"
+    }
+   ],
+   "nota": "asserts agregados tras el gate de mutación: header de promo y precio cotizado"
+  },
+  {
+   "id": "HPF-COT-016",
+   "sev": "S1",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "boda",
+    "ya hice la transferencia, les paso el comprobante"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "minpartes",
+     "v": 1
+    }
+   ]
+  },
+  {
+   "id": "HPF-COT-017",
+   "sev": "S2",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "boda",
+    "cómo hago el pedido"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tiene",
+     "n": "SIETE_PASOS"
+    }
+   ]
+  },
+  {
+   "id": "HPF-NRP-020",
+   "sev": "S1",
+   "canal": "telegram",
+   "intencion": "NO-REPLICAR",
+   "turnos": [
+    "hola",
+    "boda",
+    "quiero las pantuflas de moño",
+    "cotizame 50"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tiene",
+     "lit": "peluche",
+     "ci": true
+    }
+   ],
+   "depende_de_memo": true,
+   "nota": "warm-up \"hola\" agregado: resetea el memo del chat (jsCode:280), sin esto el caso es order-dependent"
+  },
+  {
+   "id": "HPF-NRP-021",
+   "sev": "S2",
+   "canal": "telegram",
+   "intencion": "NO-REPLICAR",
+   "turnos": [
+    "boda",
+    "me pueden mandar la cotización formal en PDF por correo"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "no",
+     "lit": "tu correo",
+     "ci": true
+    },
+    {
+     "t": "no",
+     "lit": "tu email",
+     "ci": true
+    }
+   ]
+  },
+  {
+   "id": "HPF-NRP-022",
+   "sev": "S1",
+   "canal": "telegram",
+   "intencion": "NO-REPLICAR",
+   "turnos": [
+    "boda",
+    "me pasas el catálogo de cilindros"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "notool",
+     "v": "ATENCION_PERSONALIZADA"
+    },
+    {
+     "t": "tiene",
+     "lit": "catalogo de diseños"
+    }
+   ],
+   "nota": "corregido tras el baseline: el catálogo de cilindros viaja como photo_url, no como doc_url"
+  },
+  {
+   "id": "HPF-NRP-023",
+   "sev": "S2",
+   "canal": "telegram",
+   "intencion": "NO-REPLICAR",
+   "turnos": [
+    "boda",
+    "quiero pantuflas",
+    "me mandas fotos de las de moño"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "notool",
+     "v": "ATENCION_PERSONALIZADA"
+    },
+    {
+     "t": "media",
+     "v": "photo_url"
+    }
+   ]
+  },
+  {
+   "id": "HPF-NRP-025",
+   "sev": "S1",
+   "canal": "telegram",
+   "intencion": "NO-REPLICAR",
+   "turnos": [
+    "xv años",
+    "hola?",
+    "sigues ahi?"
+   ],
+   "asserts": [
+    {
+     "t": "minpartes",
+     "v": 1
+    },
+    {
+     "t": "entrega"
+    }
+   ]
+  },
+  {
+   "id": "HPF-COT-026",
+   "sev": "S1",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "boda",
+    "quiero sandalias",
+    "50 pares delgadas, cp 44680"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "no",
+     "lit": "tapa",
+     "ci": true
+    },
+    {
+     "t": "tool",
+     "v": "COTIZADOR"
+    }
+   ]
+  },
+  {
+   "id": "HPF-FIC-027",
+   "sev": "S1",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "hola",
+    "boda",
+    "quiero sandalias"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "no",
+     "lit": "mandil",
+     "ci": true
+    },
+    {
+     "t": "tiene",
+     "n": "FICHA_sandalias"
+    }
+   ],
+   "depende_de_memo": true,
+   "nota": "warm-up \"hola\" agregado: resetea el memo del chat (jsCode:280), sin esto el caso es order-dependent"
+  },
+  {
+   "id": "HPF-NRP-028",
+   "sev": "S1",
+   "canal": "telegram",
+   "intencion": "NO-REPLICAR",
+   "turnos": [
+    "xv años",
+    "quiero pantuflas de satín",
+    "50 pares, cp 44680"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "no",
+     "n": "FICHA_pantuflas"
+    },
+    {
+     "t": "tool",
+     "v": "COTIZADOR"
+    }
+   ]
+  },
+  {
+   "id": "HPF-EVT-029",
+   "sev": "S1",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "hola",
+    "quiero precio de todos"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tiene",
+     "lit": "evento",
+     "ci": true
+    }
+   ]
+  },
+  {
+   "id": "HPF-FIC-030",
+   "sev": "S1",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "hola",
+    "xv años",
+    "quiero pantuflas"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tiene",
+     "n": "FICHA_pantuflas"
+    },
+    {
+     "t": "tiene",
+     "lit": "moño de satín"
+    },
+    {
+     "t": "tiene",
+     "lit": "moño de peluche"
+    }
+   ],
+   "nota": "regresión de F-1: sin variante declarada TIENEN que salir las 3 · warm-up \"hola\" agregado: resetea el memo del chat (jsCode:280), sin esto el caso es order-dependent",
+   "depende_de_memo": true
+  },
+  {
+   "id": "HPF-FIC-031",
+   "sev": "S2",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "hola",
+    "boda",
+    "quiero cilindros"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tiene",
+     "lit": "catalogo de diseños"
+    }
+   ],
+   "nota": "corregido tras el baseline: el catálogo de cilindros viaja como photo_url, no como doc_url · warm-up \"hola\" agregado: resetea el memo del chat (jsCode:280), sin esto el caso es order-dependent",
+   "depende_de_memo": true
+  },
+  {
+   "id": "HPF-FIC-032",
+   "sev": "S2",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "hola",
+    "boda",
+    "quiero las pantuflas de moño de satín"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tiene",
+     "lit": "moño de satín"
+    },
+    {
+     "t": "nomedia",
+     "v": "video_url"
+    },
+    {
+     "t": "no",
+     "lit": "✨ Pantuflas de satín personalizadas"
+    }
+   ],
+   "nota": "assert reforzado tras el baseline: no chequeaba la ausencia de la pantufla lisa · warm-up \"hola\" agregado: resetea el memo del chat (jsCode:280), sin esto el caso es order-dependent",
+   "depende_de_memo": true
+  },
+  {
+   "id": "HPF-FIC-033",
+   "sev": "S2",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "hola",
+    "boda",
+    "quiero pantuflas de peluche"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tiene",
+     "lit": "moño de peluche"
+    },
+    {
+     "t": "tiene",
+     "lit": "$35 el par"
+    },
+    {
+     "t": "no",
+     "lit": "✨ Pantuflas de satín personalizadas"
+    }
+   ],
+   "nota": "FALSO VERDE en el baseline: pasaba exhibiendo el defecto de F-1 porque no chequeaba ausencias · warm-up \"hola\" agregado: resetea el memo del chat (jsCode:280), sin esto el caso es order-dependent",
+   "depende_de_memo": true
+  },
+  {
+   "id": "HPF-FIC-034",
+   "sev": "S2",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "hola",
+    "boda",
+    "quiero kit anticruda"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tiene",
+     "n": "FICHA_kit_anticruda"
+    }
+   ],
+   "depende_de_memo": true,
+   "nota": "warm-up \"hola\" agregado: resetea el memo del chat (jsCode:280), sin esto el caso es order-dependent"
+  },
+  {
+   "id": "HPF-FIC-035",
+   "sev": "S1",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "nota": "corrección de Oscar del 3/8 sin aplicar; se espera FALLA en el baseline · warm-up \"hola\" agregado: resetea el memo del chat (jsCode:280), sin esto el caso es order-dependent",
+   "turnos": [
+    "hola",
+    "boda",
+    "quiero pantuflas de peluche"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tiene",
+     "lit": "Colores disponibles: blanca, negra, morada, rosa"
+    }
+   ],
+   "depende_de_memo": true
+  },
+  {
+   "id": "HPF-TOP-018b",
+   "sev": "S2",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "fuera_denominador": true,
+   "turnos": [
+    {
+     "texto": "👍",
+     "message_type": "sticker"
+    }
+   ],
+   "asserts": [
+    {
+     "t": "minpartes",
+     "v": 1
+    }
+   ],
+   "nota": "corregido: el runner no pasaba message_type, así que el caso probaba 'texto vacío' y no 'tipo desconocido'"
+  },
+  {
+   "id": "HPF-CAN-023",
+   "sev": "S2",
+   "canal": "telegram",
+   "intencion": "PARIDAD",
+   "fuera_denominador": true,
+   "turnos": [
+    "boda",
+    {
+     "texto": "te mando una foto del producto que quiero",
+     "media_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf41b86ae4203405cbf9.jpeg"
+    }
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "minpartes",
+     "v": 1
+    }
+   ]
+  },
+  {
+   "id": "HPF-CAN-025",
+   "sev": "S1",
+   "canal": "ghl",
+   "intencion": "PARIDAD",
+   "turnos": [
+    "hola",
+    "boda"
+   ],
+   "asserts": [
+    {
+     "t": "entrega"
+    },
+    {
+     "t": "tiene",
+     "n": "MENU_BODA"
+    }
+   ]
+  }
+ ]
+}

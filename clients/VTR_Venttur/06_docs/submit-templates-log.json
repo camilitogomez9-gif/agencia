@@ -1,0 +1,91 @@
+{
+  "submitted": {
+    "rescate2_noshow_aafamilia|es_MX": {
+      "ts": "2026-09-18T22:35:54.051954+00:00",
+      "id": "3914650542009594",
+      "status": "APPROVED",
+      "http": 200,
+      "approved_confirmed_at": "2026-09-19T15:47:00+00:00"
+    },
+    "rescate2_noshow_internado|es_MX": {
+      "ts": "2026-09-18T22:36:04.054936+00:00",
+      "id": "1643250814164639",
+      "status": "APPROVED",
+      "http": 200,
+      "approved_confirmed_at": "2026-09-19T15:47:00+00:00"
+    },
+    "rescate2_noshow_pathway|es_MX": {
+      "ts": "2026-09-18T22:36:13.148283+00:00",
+      "id": "1561327501870801",
+      "status": "APPROVED",
+      "http": 200,
+      "approved_confirmed_at": "2026-09-19T15:47:00+00:00"
+    },
+    "rescate2_noshow_summercamp|es_MX": {
+      "ts": "2026-09-18T22:36:22.097185+00:00",
+      "id": "1767659601140295",
+      "status": "APPROVED",
+      "http": 200,
+      "approved_confirmed_at": "2026-09-19T15:47:00+00:00"
+    },
+    "mensaje_1_seguimiento_ema|es_MX": {
+      "ts": "2026-09-18T22:43:43.684541+00:00",
+      "id": "1408719648015137",
+      "status": "APPROVED",
+      "http": 200,
+      "approved_confirmed_at": "2026-09-19T15:47:00+00:00"
+    },
+    "seguimiento_ema_dia_15|es_MX": {
+      "ts": "2026-09-18T22:43:43.684541+00:00",
+      "id": "1739362373984911",
+      "status": "APPROVED",
+      "http": 200,
+      "approved_confirmed_at": "2026-09-19T15:47:00+00:00"
+    },
+    "confirmacion_p1_boarding|es_MX": {
+      "ts": "2026-09-18T23:24:29.735338+00:00",
+      "id": null,
+      "status": "CONSOLIDATED",
+      "note": "Idéntica a confirmacion_0_cita_internados_2026 — la agencia subió esta última manualmente al WABA del bot (18/9)"
+    },
+    "confirmacion_0_cita_internados_2026|es_MX": {
+      "ts": "2026-09-18T23:24:29.735338+00:00",
+      "id": "1080865437917945",
+      "status": "APPROVED",
+      "note": "subida manual desde Meta BM UI (18/9). Consolida confirmacion_p1_boarding.",
+      "approved_confirmed_at": "2026-09-19T15:47:00+00:00"
+    },
+    "seguimiento_ema_dia_10_3|es_MX": {
+      "ts": "2026-09-18T??:??:00+00:00",
+      "id": "2242284289902844",
+      "status": "APPROVED",
+      "note": "🎉 Detectada APPROVED el 2026-09-19 durante poll. NO se ejecutó la guía Resumable Upload (guia-destrabar-seguimiento-ema-dia-10-3.md) — alguien la submitió manualmente entre el 18 y el 19/9 y Meta la aprobó. HEADER IMAGE quedó resuelto sin nuestra intervención.",
+      "approved_confirmed_at": "2026-09-19T15:47:00+00:00"
+    },
+    "formulario_aa_v2|es_MX": {
+      "ts": "2026-09-18T23:35:08.534415+00:00",
+      "id": "957822883356755",
+      "status": "APPROVED",
+      "note": "subida manual desde Meta BM UI con sufijo _v2 (cooldown en originales)",
+      "approved_confirmed_at": "2026-09-19T15:47:00+00:00"
+    },
+    "formulario_aafamilia_v2|es_MX": {
+      "ts": "2026-09-18T23:35:08.534415+00:00",
+      "id": "3502037379971638",
+      "status": "APPROVED",
+      "note": "subida manual desde Meta BM UI con sufijo _v2 (cooldown en originales)",
+      "approved_confirmed_at": "2026-09-19T15:47:00+00:00"
+    },
+    "formulario_boarding_v2|es_MX": {
+      "ts": "2026-09-18T23:35:08.534415+00:00",
+      "id": "1045049661731842",
+      "status": "APPROVED",
+      "note": "subida manual desde Meta BM UI con sufijo _v2 (cooldown en originales)",
+      "approved_confirmed_at": "2026-09-19T15:47:00+00:00"
+    }
+  },
+  "last_run": "2026-09-19T15:47:00+00:00",
+  "notes": {
+    "2026-09-19-poll-recap": "Poll del sábado 19/9 confirma que TODAS las 11 plantillas relevantes están APPROVED (10 originales + confirmacion_0_cita_internados_2026 que consolida a confirmacion_p1_boarding, + seguimiento_ema_dia_10_3 detectada como APPROVED). Bloqueante B-07 CERRADO. El script quiere retry-submit de formulario_aa/aafamilia/boarding (sin _v2) pero NO se aplica porque los _v2 ya cubren la funcionalidad; aplicar solo agregaría 3 duplicados PENDING innecesarios. La guía guia-destrabar-seguimiento-ema-dia-10-3.md queda como referencia para futuros templates con HEADER IMAGE — no se ejecutó."
+  }
+}

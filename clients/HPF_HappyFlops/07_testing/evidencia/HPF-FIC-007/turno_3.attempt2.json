@@ -1,0 +1,73 @@
+{
+  "probe_id": "sess_hpf_fic_007_1785961086#068f4e0b033d",
+  "session_id": "sess_hpf_fic_007_1785961086",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "quiero sandalias",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 62.5,
+  "version_antes": "11fa22c6-1ef3-4562-a909-ceedec83eabe",
+  "version_despues": "11fa22c6-1ef3-4562-a909-ceedec83eabe",
+  "capturado_utc": "2026-08-05T20:21:47.040733+00:00",
+  "execution_id": "990308",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T20:20:39.597Z",
+  "stoppedAt": "2026-08-05T20:21:41.201Z",
+  "n_esperadas": 2,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Perfecto! Las sandalias para XV son súper cómodas y un detalle que todos van a agradecer",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "Cuántos pares te gustaría pedir y a qué código postal sería el envío? También dime si prefieres la suela delgada o gruesa para poder cotizarle",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 376,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2186,
+      "chat_id": 6390727286,
+      "texto_entregado": "Perfecto! Las sandalias para XV son súper cómodas y un detalle que todos van a agradecer",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 380,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2187,
+      "chat_id": 6390727286,
+      "texto_entregado": "Cuántos pares te gustaría pedir y a qué código postal sería el envío? También dime si prefieres la suela delgada o gruesa para poder cotizarle",
+      "error": null
+    }
+  ],
+  "n_entregadas": 2,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Perfecto! Las sandalias para XV son súper cómodas y un detalle que todos van a agradecer. ¿Cuántos pares te gustaría pedir y a qué código postal sería el envío? También dime si prefieres la suela delgada o gruesa para poder cotizarle.",
+    "tools": [
+      "IDENTIFICAR_EVENTO",
+      "MOSTRAR_PRODUCTOS"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-FIC-007"
+}

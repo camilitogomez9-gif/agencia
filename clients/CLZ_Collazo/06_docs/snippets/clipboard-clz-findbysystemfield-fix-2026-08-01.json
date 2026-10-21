@@ -1,0 +1,44 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.manychat.com/fb/subscriber/findBySystemField",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "phone",
+              "value": "={{ $('Split In Batches (1)').item.json.telefono.replace('+', '') }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "mcf-find-0001",
+      "name": "findBySystemField (ya existe)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -340,
+        560
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vF5lC1UM2oXdatjQ",
+          "name": "CLZ Manychat API Header Auth"
+        }
+      },
+      "notes": "Se invoca solo cuando createSubscriber rechaza el duplicado. El endpoint acepta UNICAMENTE 'phone' o 'email' ('whatsapp_phone' devuelve Validation error). El numero va SIN '+': en un query string el '+' se decodifica como espacio, y con '+' el endpoint devolvia data:[] vacio. Si con phone sin '+' TAMBIEN devuelve vacio, significa que el system field Phone no se puebla para subscribers creados por WhatsApp -- en ese caso hay que exportar los subscribers desde la UI de ManyChat y embeber un mapa telefono->id."
+    }
+  ],
+  "connections": {}
+}

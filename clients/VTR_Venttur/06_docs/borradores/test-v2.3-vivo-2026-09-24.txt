@@ -1,0 +1,52 @@
+✅ [1] M1 Mauricio: hola → quiero agendar nuevamente
+    lead: Hola
+    bot: ¡Hola Mauricio! Espero que estés bien. Veo que ya habías agendado una asesoría con nosotros. Si necesitas reagendar o tienes alguna pregunta antes de la cita, estoy aquí para ayudarte. ¿Cómo te gustaría proceder?
+    lead: Quiero agendar nuevamente
+    bot (link ok): Claro, Mauricio. Aquí te dejo el enlace para que elijas un nuevo horario que te acomode: vtr.[TU-DOMINIO]/agendar-ema. Rodrigo, uno de nuestros fundadores y especialista en internados, estará encantado de ayudarte a encontrar la mejor opción para tu hijo.
+✅ [1] M2 Mauricio: ¿cuándo es mi cita?
+    lead: Según tú cuando está agendada mi cita?
+    bot (nocorreo ok): Hola Mauricio, no veo la fecha de tu cita registrada en mi sistema. Para asegurarnos de que puedas elegir un horario que te acomode, te recomiendo que uses este enlace para agendar o reagendar tu asesoría: vtr.[TU-DOMINIO]/agendar-ema. Así podrás seleccionar el día y la hora que mejor te convengan.
+✅ [1] M3 Mauricio: ya pasó, quiero otra
+    lead: Ya pasó la fecha quiero volver a agendar una nueva
+    bot (link ok): Claro, Mauricio. Aquí te dejo el enlace para que elijas un nuevo horario: vtr.[TU-DOMINIO]/agendar-ema. Rodrigo, uno de nuestros fundadores y especialista en internados, estará encantado de ayudarte a encontrar la mejor opción para tu hijo.
+✅ [1] D1 Daiana (cita futura): ¿cuándo es?
+    lead: Hola, me recuerdas cuándo es mi cita?
+    bot (fecha+nolink ok): Hola Daiana, claro que sí. Tu cita está agendada para mañana, viernes 25 de septiembre, a las 9:45 a. m. (hora de CDMX). Si tienes alguna otra duda o necesitas algo antes de la llamada, aquí estoy para ayudarte.
+✅ [1] D2 Daiana (cita futura): cambiarla
+    lead: Necesito cambiar mi cita, ese día no puedo
+    bot (link ok): Entiendo, Daiana. Aquí te dejo el enlace para que elijas un nuevo horario que te acomode mejor: vtr.[TU-DOMINIO]/SummerCamp-Agendar. Si tienes alguna otra duda o necesitas ayuda, estoy aquí para asistirte.
+✅ [1] D3 Daiana (cita futura): gracias
+    lead: Muchas gracias!
+    bot (nolink ok): ¡Hola Daiana! Ya quedó agendada tu asesoría para el viernes 25 de septiembre a las 9:45 a. m. con Rodrigo. Si te surge cualquier duda antes, no dudes en escribirme por aquí. ¡Nos vemos pronto! 😊
+✅ [1] P1 cita pasada: quiero otra
+    lead: No pude conectarme a la llamada, quiero otra
+    bot (link ok): Entiendo, Daiana. Aquí te dejo el enlace para que elijas un nuevo horario para la asesoría sobre los campamentos de verano: vtr.[TU-DOMINIO]/SummerCamp-Agendar. Rodrigo, uno de nuestros fundadores y especialista en internados, estará encantado de ayudarte a encontrar la mejor opción para tu hijo.
+✅ [1] V1 link sin cita: propone horario
+    lead: ¿El lunes a las 11 podemos hablar?
+    bot (link ok): ¡Hola Viri! Claro, te dejo el enlace otra vez para que elijas el horario que te acomode: vtr.[TU-DOMINIO]/agendar-ema. Tú eliges día y hora, y me llega la confirmación automáticamente. Rodrigo, uno de nuestros fundadores y especialista en internados, estará encantado de ayudarte a encontrar la mejor opción para tu hijo.
+✅ [1] R1 precio: rango + propuesta de día
+    lead: ¿Cuánto cuesta un internado más o menos?
+    bot (precio ok): ¡Hola Viri! Entiendo perfecto, es una inversión importante y es de las primeras cosas que hay que aterrizar. Los internados rondan entre USD $50,000 y $130,000 al año, dependiendo del país y la escuela. Este costo incluye campus, colegiatura, deportes e inmersión total en el idioma.  /  / Para darte el número exacto de las opciones que le calzan a tu hijo, lo vemos en la asesoría con Rodrigo. ¿Te queda mejor hoy o ma
+✅ [1] R2 moneda: confirma pesos o dólares
+    lead: Tengo 250 mil de presupuesto, ¿me alcanza?
+    bot (moneda ok): Para orientarte bien, ¿esos 250 mil son pesos o dólares?
+✅ [1] R3 una sola pregunta por mensaje
+    lead: Hola, me interesa un intercambio para mi hija
+    bot (unapregunta ok): ¡Hola! Soy Mauricio de Venttur 😊 ¿Con quién tengo el gusto?
+❌ [1] S1 cita futura: comprobante de pago → asesor
+    lead: Ya hice el pago de la inscripción, ¿a quién le mando el comprobante?
+    bot (elevar FALLA): ¡Hola Daiana! Qué bueno saber que ya realizaste el pago de la inscripción. Para enviar el comprobante, por favor mándalo al correo de contacto que te proporcionaron en la confirmación de la cita. Si no lo tienes a mano, puedo ayudarte a verificarlo. ¿Te gustaría que te lo confirme?
+✅ [1] S2 link no abre → lo reenvía
+    lead: No me abre el link que me mandaste
+    bot (link ok): ¡Hola, Viri! Lamento que hayas tenido problemas con el enlace. Te lo voy a reenviar para que puedas elegir el horario que te acomode. Aquí está: vtr.[TU-DOMINIO]/agendar-ema. Si sigues teniendo problemas, házmelo saber y vemos cómo solucionarlo.
+✅ [1] S3 contacto viejo saluda → ofrece ayuda
+    lead: Hola
+    bot (resuelve ok): ¡Hola Mauricio! Espero que estés bien. Veo que ya habías agendado una cita con nosotros. Si necesitas reagendarla o si ya pasó y quieres programar otra, avísame y te envío el enlace para que elijas un nuevo horario. Si tienes alguna otra pregunta o necesitas más información, aquí estoy para ayudarte.
+✅ [1] S4 cita futura: cambio de programa
+    lead: Necesito cambiar el campamento que elegí por otro de otra fecha, ¿cómo le hago?
+    bot (resuelve ok): Hola Daiana, entiendo que necesitas cambiar el campamento que elegiste. Para hacer eso, te recomiendo que lo veas directamente en la asesoría que tienes agendada con Rodrigo mañana a las 9:45 a. m. Ahí podrán revisar las opciones y ajustar lo necesario. Si prefieres cambiar la fecha de la asesoría, aquí te dejo el enlace para que elijas un nuevo horario: vtr.[TU-DOMINIO]/SummerCamp-Agendar.
+✅ [1] N1 lead nuevo: no manda link de entrada
+    lead: Hola! Quiero agendar una asesoría para encontrar el internado ideal de mi hijo
+    bot (nolink ok): ¡Hola! Soy Mauricio de Venttur 😊. Me alegra que estés considerando una experiencia internacional para tu hijo. ¿Con quién tengo el gusto?
+
+15/16 casos OK · prompt=agente-venttur-system-prompt-v2.3.md · estado=nuevo

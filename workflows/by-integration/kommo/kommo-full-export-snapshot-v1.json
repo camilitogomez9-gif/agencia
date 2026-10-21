@@ -1,0 +1,704 @@
+{
+  "name": "Kommo Full Export Snapshot v1",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        16
+      ],
+      "id": "6b7659c5-1b44-49e9-9d9c-96fe8e85962d",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f56e2db1-3d02-468d-9abc-c82f082cf994",
+              "name": "kommo_base_url",
+              "value": "={{ (($env.KOMMO_BASE_URL || $json.body?.['account[_links][self]'] || ($json.body?.['account[subdomain]'] ? 'https://' + $json.body['account[subdomain]'] + '.kommo.com' : ($env.KOMMO_ACCOUNT_SUBDOMAIN ? 'https://' + $env.KOMMO_ACCOUNT_SUBDOMAIN + '.kommo.com' : 'https://REEMPLAZAR_SUBDOMINIO.kommo.com')))).replace(/\\/$/, '') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ab462d91-b245-4de5-bd66-00942ced8d8e",
+      "name": "Configurar Cuenta Kommo1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        16
+      ],
+      "notes": "Single source of truth for the Kommo domain. Priority: KOMMO_BASE_URL, incoming body['account[_links][self]'], incoming body['account[subdomain]'], KOMMO_ACCOUNT_SUBDOMAIN, placeholder. Webhooks can still send legacy *.amocrm.com URLs, so account[_links][self] is preserved when present."
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Configurar Cuenta Kommo1').first().json.kommo_base_url + '/api/v4/leads/pipelines' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "250"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "nextURL": "={{ $response.body._links?.next?.href ? ($response.body._links.next.href.startsWith('http') ? $response.body._links.next.href : $('Configurar Cuenta Kommo1').first().json.kommo_base_url + $response.body._links.next.href) : '' }}",
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !$response.body._links?.next?.href }}",
+              "requestInterval": 300
+            }
+          }
+        }
+      },
+      "id": "f0547612-d8ec-43ca-b69d-0085afba6f34",
+      "name": "Fetch Pipelines1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        -368
+      ],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      },
+      "notes": "GET /api/v4/leads/pipelines. Pagination follows _links.next.href and preserves all returned IDs and stages."
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Configurar Cuenta Kommo1').first().json.kommo_base_url + '/api/v4/leads/custom_fields' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "250"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "nextURL": "={{ $response.body._links?.next?.href ? ($response.body._links.next.href.startsWith('http') ? $response.body._links.next.href : $('Configurar Cuenta Kommo1').first().json.kommo_base_url + $response.body._links.next.href) : '' }}",
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !$response.body._links?.next?.href }}",
+              "requestInterval": 300
+            }
+          }
+        }
+      },
+      "id": "4b45d27b-c31d-43a4-856c-964ee546ef4a",
+      "name": "Fetch Custom Fields1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        -176
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      },
+      "notes": "GET /api/v4/leads/custom_fields. Includes required_statuses and enum metadata."
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Configurar Cuenta Kommo1').first().json.kommo_base_url + '/api/v4/leads/tags' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "250"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "nextURL": "={{ $response.body._links?.next?.href ? ($response.body._links.next.href.startsWith('http') ? $response.body._links.next.href : $('Configurar Cuenta Kommo1').first().json.kommo_base_url + $response.body._links.next.href) : '' }}",
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !$response.body._links?.next?.href }}",
+              "requestInterval": 300
+            }
+          }
+        }
+      },
+      "id": "33aef4ec-5eeb-4a23-9cd2-29e191dec5f9",
+      "name": "Fetch Tags1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        16
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      },
+      "notes": "GET /api/v4/leads/tags. Paginates through all tags."
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Configurar Cuenta Kommo1').first().json.kommo_base_url + '/api/v4/bots' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "250"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/hal+json"
+            }
+          ]
+        },
+        "options": {
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "nextURL": "={{ $response.body._links?.next?.href ? ($response.body._links.next.href.startsWith('http') ? $response.body._links.next.href : $('Configurar Cuenta Kommo1').first().json.kommo_base_url + $response.body._links.next.href) : '' }}",
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !$response.body._links?.next?.href }}",
+              "requestInterval": 300
+            }
+          }
+        }
+      },
+      "id": "cdd681f6-ca35-4265-bf64-5239bbaffd88",
+      "name": "Fetch Salesbots1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        208
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      },
+      "notes": "GET /api/v4/bots. Critical migration export: scripts, triggers, actions, and raw internal bot logic are preserved."
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Configurar Cuenta Kommo1').first().json.kommo_base_url + '/api/v4/leads' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "50"
+            },
+            {
+              "name": "with",
+              "value": "contacts"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "nextURL": "={{ $response.body._links?.next?.href ? ($response.body._links.next.href.startsWith('http') ? $response.body._links.next.href : $('Configurar Cuenta Kommo1').first().json.kommo_base_url + $response.body._links.next.href) : '' }}",
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ true }}",
+              "limitPagesFetched": true,
+              "maxRequests": 1,
+              "requestInterval": 300
+            }
+          }
+        }
+      },
+      "id": "d6ea85e3-1ba8-4799-8ced-374e9dfbb00a",
+      "name": "Fetch Leads Sample1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        400
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      },
+      "notes": "GET /api/v4/leads?limit=50&with=contacts. This intentionally captures one sample page of 50 leads for schema validation and edge-case detection. Kommo's Leads list docs currently document contacts in the with parameter; company links are preserved when present in the raw lead payload."
+    },
+    {
+      "parameters": {
+        "jsCode": "const PACK_NODES = {\n  pipelines: 'Code in JavaScript',\n  custom_fields: 'Code in JavaScript1',\n  tags: 'Code in JavaScript2',\n  salesbots: 'Code in JavaScript3',\n  leads_sample: 'Code in JavaScript4',\n  conversation_samples: 'Code in JavaScript5'\n};\n\nfunction readNodeItems(nodeName) {\n  try {\n    return $(nodeName).all().map(item => item.json);\n  } catch {\n    return [];\n  }\n}\n\nfunction parseJsonMaybe(value) {\n  if (typeof value !== 'string') return value;\n\n  const trimmed = value.trim();\n  if (!trimmed) return value;\n\n  if (\n    (trimmed.startsWith('{') && trimmed.endsWith('}')) ||\n    (trimmed.startsWith('[') && trimmed.endsWith(']'))\n  ) {\n    try {\n      return JSON.parse(trimmed);\n    } catch {\n      return value;\n    }\n  }\n\n  return value;\n}\n\nfunction unwrap(value) {\n  if (!value) return value;\n\n  const parsed = parseJsonMaybe(value);\n\n  if (parsed !== value) {\n    return unwrap(parsed);\n  }\n\n  if (value.data != null) {\n    const parsedData = parseJsonMaybe(value.data);\n    if (parsedData && typeof parsedData === 'object') return unwrap(parsedData);\n  }\n\n  if (value.body != null) {\n    const parsedBody = parseJsonMaybe(value.body);\n    if (parsedBody && typeof parsedBody === 'object') return unwrap(parsedBody);\n  }\n\n  return value;\n}\n\nfunction arr(value) {\n  if (value == null) return [];\n  if (Array.isArray(value)) return value;\n  const parsed = unwrap(value);\n  if (Array.isArray(parsed)) return parsed;\n  if (parsed && typeof parsed === 'object') return Object.values(parsed);\n  return [];\n}\n\nfunction asArrayPreserveObjects(value) {\n  if (value == null) return [];\n  if (Array.isArray(value)) return value;\n  const parsed = unwrap(value);\n  if (Array.isArray(parsed)) return parsed;\n  return [];\n}\n\nfunction looksLikeEntity(value, section) {\n  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;\n\n  if (section === 'pipelines') {\n    return value.id != null && (value._embedded?.statuses || value.statuses || value.name);\n  }\n\n  if (section === 'custom_fields') {\n    return value.id != null && (value.type || value.name || value.code || value.entity_type === 'leads');\n  }\n\n  if (section === 'tags') {\n    return value.id != null && value.name != null;\n  }\n\n  if (section === 'salesbots') {\n    return value.id != null && (value.name || value.script || value.scenario || value.type || value.type_functionality);\n  }\n\n  if (section === 'leads_sample') {\n    return value.id != null && (value.pipeline_id != null || value.status_id != null || value.name);\n  }\n\n  return false;\n}\n\nfunction embeddedList(page, keys, section) {\n  const body = unwrap(page);\n  const keyList = Array.isArray(keys) ? keys : [keys];\n\n  if (!body) return [];\n\n  if (Array.isArray(body)) {\n    return body.flatMap(item => embeddedList(item, keyList, section));\n  }\n\n  for (const key of keyList) {\n    if (body[key] != null) return arr(body[key]);\n    if (body._embedded?.[key] != null) return arr(body._embedded[key]);\n  }\n\n  if (body.data != null) {\n    const data = unwrap(body.data);\n    if (Array.isArray(data)) return data;\n    return embeddedList(data, keyList, section);\n  }\n\n  if (looksLikeEntity(body, section)) return [body];\n\n  return [];\n}\n\nfunction collectFromPack(section, keys) {\n  const packItems = readNodeItems(PACK_NODES[section]);\n\n  const pages = packItems.flatMap(item => {\n    if (item.pages != null) return arr(item.pages);\n    return [item];\n  });\n\n  return pages.flatMap(page => embeddedList(page, keys, section));\n}\n\nfunction normalizeEnums(enums) {\n  if (!enums) return [];\n\n  return arr(enums).map(e => ({\n    value: e?.value ?? e?.name ?? e,\n    id: e?.id ?? e?.enum_id ?? null,\n    sort: e?.sort ?? null,\n    raw: e\n  }));\n}\n\nfunction walk(value, visitor, path = []) {\n  visitor(value, path);\n\n  if (Array.isArray(value)) {\n    value.forEach((item, index) => walk(item, visitor, path.concat(index)));\n    return;\n  }\n\n  if (value && typeof value === 'object') {\n    Object.entries(value).forEach(([key, child]) => walk(child, visitor, path.concat(key)));\n  }\n}\n\nfunction pathText(path) {\n  return path.map(String).join('.');\n}\n\nfunction unique(items) {\n  const seen = new Set();\n\n  return items.filter(item => {\n    const key = JSON.stringify(item);\n    if (seen.has(key)) return false;\n    seen.add(key);\n    return true;\n  });\n}\n\nfunction scanIds(value, ids) {\n  const found = {\n    pipeline_ids: [],\n    stage_ids: [],\n    custom_field_ids: []\n  };\n\n  walk(value, (child, path) => {\n    const n =\n      typeof child === 'number'\n        ? child\n        : /^\\d+$/.test(String(child))\n          ? Number(child)\n          : null;\n\n    if (n == null) return;\n\n    if (ids.pipelineIds.has(n)) {\n      found.pipeline_ids.push({ id: n, path: pathText(path) });\n    }\n\n    if (ids.stageIds.has(n)) {\n      found.stage_ids.push({ id: n, path: pathText(path) });\n    }\n\n    if (ids.customFieldIds.has(n)) {\n      found.custom_field_ids.push({ id: n, path: pathText(path) });\n    }\n  });\n\n  return {\n    pipeline_ids: unique(found.pipeline_ids),\n    stage_ids: unique(found.stage_ids),\n    custom_field_ids: unique(found.custom_field_ids)\n  };\n}\n\nfunction extractTriggers(bot) {\n  const out = [];\n\n  if (Array.isArray(bot.triggers)) out.push(...bot.triggers);\n  if (Array.isArray(bot._embedded?.triggers)) out.push(...bot._embedded.triggers);\n\n  walk(bot, (value, path) => {\n    if (String(path[path.length - 1] ?? '').toLowerCase().includes('trigger')) {\n      out.push({ path: pathText(path), raw: value });\n    }\n  });\n\n  return unique(out);\n}\n\nfunction extractActions(bot) {\n  const out = [];\n\n  walk(bot, (value, path) => {\n    if (!value || typeof value !== 'object' || Array.isArray(value)) return;\n\n    const last = String(path[path.length - 1] ?? '').toLowerCase();\n\n    if (\n      last.includes('action') ||\n      value.handler === 'action' ||\n      value.action != null ||\n      value.action_type != null\n    ) {\n      out.push({\n        id: value.id ?? value.uuid ?? null,\n        type: value.params?.name ?? value.name ?? value.action ?? value.action_type ?? value.handler ?? null,\n        path: pathText(path),\n        raw: value\n      });\n    }\n  });\n\n  return unique(out);\n}\n\nfunction extractNodes(bot) {\n  const out = [];\n  const script = bot.script ?? bot.scenario ?? bot.schema ?? bot._embedded?.script ?? bot;\n\n  walk(script, (value, path) => {\n    if (!value || typeof value !== 'object' || Array.isArray(value)) return;\n\n    const p = pathText(path).toLowerCase();\n\n    if (\n      (p.includes('node') ||\n        p.includes('block') ||\n        p.includes('step') ||\n        p.includes('question') ||\n        p.includes('answer')) &&\n      (value.id != null || value.uuid != null || value.type != null || value.handler != null)\n    ) {\n      out.push({\n        id: value.id ?? value.uuid ?? null,\n        type: value.type ?? value.handler ?? value.kind ?? null,\n        name: value.name ?? value.title ?? value.params?.name ?? null,\n        path: pathText(path),\n        raw: value\n      });\n    }\n  });\n\n  return unique(out);\n}\n\nfunction extractFieldRefs(bot, customFieldIds) {\n  const out = [];\n\n  walk(bot, (value, path) => {\n    const last = String(path[path.length - 1] ?? '').toLowerCase();\n\n    const n =\n      typeof value === 'number'\n        ? value\n        : /^\\d+$/.test(String(value))\n          ? Number(value)\n          : null;\n\n    if (n != null && customFieldIds.has(n)) {\n      out.push({\n        custom_field_id: n,\n        path: pathText(path),\n        evidence: 'value_matches_custom_field_id'\n      });\n    }\n\n    if (last.includes('custom') || last.includes('field')) {\n      out.push({\n        path: pathText(path),\n        key: path[path.length - 1],\n        value,\n        evidence: 'field_like_key'\n      });\n    }\n  });\n\n  return unique(out);\n}\n\nconst rawPipelines = collectFromPack('pipelines', 'pipelines');\nconst rawCustomFields = collectFromPack('custom_fields', 'custom_fields');\nconst rawTags = collectFromPack('tags', 'tags');\nconst rawSalesbots = collectFromPack('salesbots', ['items', 'bots', 'salesbots']);\nconst rawLeadsSample = collectFromPack('leads_sample', 'leads');\nconst rawConversationSamples = readNodeItems(PACK_NODES.conversation_samples).flatMap(item => {\n  if (item.pages != null) return asArrayPreserveObjects(item.pages);\n  return [item];\n}).map(unwrap);\n\nconst pipelines = rawPipelines.map(pipeline => {\n  const statuses = arr(pipeline._embedded?.statuses ?? pipeline.statuses);\n\n  return {\n    id: pipeline.id,\n    name: pipeline.name,\n    sort: pipeline.sort ?? null,\n    is_main: pipeline.is_main ?? null,\n    is_unsorted_on: pipeline.is_unsorted_on ?? null,\n    stages: statuses.map(stage => ({\n      pipeline_id: pipeline.id,\n      pipeline_name: pipeline.name,\n      id: stage.id,\n      name: stage.name,\n      sort: stage.sort ?? null,\n      color: stage.color ?? null,\n      type: stage.type ?? null,\n      raw: stage\n    })),\n    raw: pipeline\n  };\n});\n\nconst stages_flat = pipelines.flatMap(p => p.stages);\n\nconst custom_fields = rawCustomFields.map(field => ({\n  id: field.id,\n  name: field.name,\n  type: field.type,\n  code: field.code ?? null,\n  sort: field.sort ?? null,\n  is_api_only: field.is_api_only ?? null,\n  enums: normalizeEnums(field.enums),\n  required_statuses: arr(field.required_statuses),\n  raw: field\n}));\n\nconst tags = rawTags.map(tag => ({\n  id: tag.id,\n  name: tag.name,\n  color: tag.color ?? null,\n  raw: tag\n}));\n\nconst ids = {\n  pipelineIds: new Set(pipelines.map(p => p.id).filter(Boolean)),\n  stageIds: new Set(stages_flat.map(s => s.id).filter(Boolean)),\n  customFieldIds: new Set(custom_fields.map(f => f.id).filter(Boolean))\n};\n\nconst salesbots = rawSalesbots.map(bot => {\n  const refs = scanIds(bot, ids);\n\n  return {\n    id: bot.id,\n    name: bot.name,\n    type: bot.type ?? bot.type_functionality ?? null,\n    is_active: bot.is_active ?? bot.active ?? null,\n    created_at: bot.created_at ?? null,\n    updated_at: bot.updated_at ?? null,\n    triggers: extractTriggers(bot),\n    actions: extractActions(bot),\n    nodes: extractNodes(bot),\n    custom_field_references: extractFieldRefs(bot, ids.customFieldIds),\n    pipeline_references: refs.pipeline_ids,\n    stage_references: refs.stage_ids,\n    raw: bot\n  };\n});\n\nconst leads_sample = rawLeadsSample.map(lead => ({\n  id: lead.id,\n  name: lead.name,\n  pipeline_id: lead.pipeline_id ?? null,\n  status_id: lead.status_id ?? null,\n  responsible_user_id: lead.responsible_user_id ?? null,\n  price: lead.price ?? null,\n  tags: arr(lead._embedded?.tags ?? lead.tags),\n  contacts: arr(lead._embedded?.contacts ?? lead.contacts),\n  companies: arr(lead._embedded?.companies ?? lead.companies),\n  custom_fields_values: arr(lead.custom_fields_values),\n  raw: lead\n}));\n\nfunction transcriptRoleLabel(role) {\n  if (role === 'human') return 'CLIENTE';\n  if (role === 'assistant' || role === 'ai') return 'AGENTE';\n  return String(role || 'UNKNOWN').toUpperCase();\n}\n\nfunction normalizeTranscriptMessages(transcript) {\n  return asArrayPreserveObjects(transcript)\n    .map((message, index) => {\n      const normalizedMessage = unwrap(message);\n      return {\n        turn: index + 1,\n        role: normalizedMessage.role ?? 'unknown',\n        speaker: transcriptRoleLabel(normalizedMessage.role),\n        text: String(normalizedMessage.content ?? '').trim()\n      };\n    })\n    .filter(message => message.text !== '');\n}\n\nconst conversation_samples = rawConversationSamples.map(row => {\n  const turns = normalizeTranscriptMessages(row.transcript);\n  const transcript_text = turns\n    .map(message => String(message.turn).padStart(2, '0') + '. ' + message.speaker + ': ' + message.text)\n    .join('\\n');\n\n  return {\n    sample_id: row.sample_id ?? null,\n    session_hash: row.session_hash ?? null,\n    purpose: 'golden_test_transcript_for_migration_parity',\n    format: 'numbered_transcript_with_structured_turns',\n    message_count: Number(row.message_count ?? turns.length),\n    human_count: Number(row.human_count ?? turns.filter(message => message.role === 'human').length),\n    assistant_count: Number(row.assistant_count ?? turns.filter(message => message.role === 'assistant' || message.role === 'ai').length),\n    first_message_id: row.first_message_id ?? null,\n    last_message_id: row.last_message_id ?? null,\n    turns,\n    transcript_text,\n    analysis_hint: 'Usar turns para evaluacion estructurada y transcript_text para lectura humana. Roles: CLIENTE=usuario final, AGENTE=respuesta del bot/IA. Datos sensibles fueron anonimizados en SQL.',\n    raw: row\n  };\n});\n\nreturn [\n  {\n    json: {\n      pipelines,\n      stages_flat,\n      custom_fields,\n      tags,\n      salesbots,\n      leads_sample,\n      conversation_samples,\n      relationships: {\n        pipeline_salesbot: salesbots.flatMap(bot =>\n          bot.pipeline_references.map(ref => ({\n            salesbot_id: bot.id,\n            salesbot_name: bot.name,\n            pipeline_id: ref.id,\n            path: ref.path\n          }))\n        ),\n        stage_salesbot: salesbots.flatMap(bot =>\n          bot.stage_references.map(ref => ({\n            salesbot_id: bot.id,\n            salesbot_name: bot.name,\n            stage_id: ref.id,\n            path: ref.path\n          }))\n        ),\n        custom_field_salesbot: salesbots.flatMap(bot =>\n          bot.custom_field_references\n            .filter(ref => ref.custom_field_id)\n            .map(ref => ({\n              salesbot_id: bot.id,\n              salesbot_name: bot.name,\n              custom_field_id: ref.custom_field_id,\n              path: ref.path,\n              evidence: ref.evidence\n            }))\n        ),\n        implicit_automations: salesbots.flatMap(bot =>\n          bot.triggers\n            .filter(t => JSON.stringify(t).match(/status|stage|pipeline|lead_status|change/i))\n            .map(trigger => ({\n              salesbot_id: bot.id,\n              salesbot_name: bot.name,\n              likely_trigger: 'stage_or_pipeline_related',\n              trigger\n            }))\n        )\n      },\n      _debug: {\n        raw_counts: {\n          pipelines: rawPipelines.length,\n          custom_fields: rawCustomFields.length,\n          tags: rawTags.length,\n          salesbots: rawSalesbots.length,\n          leads_sample: rawLeadsSample.length,\n          conversation_samples: rawConversationSamples.length\n        },\n        first_page_shapes: Object.fromEntries(\n          Object.entries(PACK_NODES).map(([section, nodeName]) => {\n            const pages = readNodeItems(nodeName).flatMap(item => {\n              if (item.pages != null) return arr(item.pages);\n              return [item];\n            });\n\n            const first = unwrap(pages[0]);\n\n            return [\n              section,\n              {\n                pack_items: readNodeItems(nodeName).length,\n                pages: pages.length,\n                first_type: typeof first,\n                first_keys: first && typeof first === 'object' ? Object.keys(first).slice(0, 30) : [],\n                embedded_keys:\n                  first?._embedded && typeof first._embedded === 'object'\n                    ? Object.keys(first._embedded)\n                    : []\n              }\n            ];\n          })\n        )\n      },\n      _metadata: {\n        exported_at: new Date().toISOString(),\n        source: 'Kommo API v4',\n        counts: {\n          pipelines: pipelines.length,\n          stages: stages_flat.length,\n          custom_fields: custom_fields.length,\n          tags: tags.length,\n          salesbots: salesbots.length,\n          leads_sample: leads_sample.length,\n          conversation_samples: conversation_samples.length\n        }\n      }\n    }\n  }\n];\n"
+      },
+      "id": "b5bf8c20-ba39-4b9a-b942-21080e868cf1",
+      "name": "Consolidate Kommo Snapshot1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        16
+      ],
+      "executeOnce": true,
+      "notes": "Final single output item. Normalizes structures while preserving the raw object for each pipeline, field, tag, salesbot, and sample lead."
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'pipelines'; // cambiar: pipelines | custom_fields | tags | salesbots | leads_sample\n\nreturn [\n  {\n    json: {\n      section: SECTION,\n      pages: $input.all().map(item => item.json)\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        -368
+      ],
+      "id": "1313c2f7-af51-43d7-b29f-2c9bf5eeed24",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'custom_fields'; // cambiar: pipelines | custom_fields | tags | salesbots | leads_sample\n\nreturn [\n  {\n    json: {\n      section: SECTION,\n      pages: $input.all().map(item => item.json)\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        -176
+      ],
+      "id": "de7d1bb7-e10f-4eb7-a891-41c63f09aa25",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'tags'; // cambiar: pipelines | custom_fields | tags | salesbots | leads_sample\n\nreturn [\n  {\n    json: {\n      section: SECTION,\n      pages: $input.all().map(item => item.json)\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        16
+      ],
+      "id": "af49b97b-b86d-4c5c-a7e5-1fa91eb23df6",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'salesbots'; // cambiar: pipelines | custom_fields | tags | salesbots | leads_sample\n\nreturn [\n  {\n    json: {\n      section: SECTION,\n      pages: $input.all().map(item => item.json)\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        208
+      ],
+      "id": "18f7636b-c6d9-46a2-b3cb-64929d5409e8",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'leads_sample'; // cambiar: pipelines | custom_fields | tags | salesbots | leads_sample\n\nreturn [\n  {\n    json: {\n      section: SECTION,\n      pages: $input.all().map(item => item.json)\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        400
+      ],
+      "id": "799ab7eb-87cb-40d3-bc3f-33a17c2c5f0b",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "numberInputs": 6
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        896,
+        -32
+      ],
+      "id": "aff30abe-57bb-4410-b428-9ab641236c80",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH normalized AS (\n  SELECT\n    id,\n    session_id,\n    CASE\n      WHEN message->>'type' = 'human' THEN 'human'\n      WHEN message->>'type' = 'ai' THEN 'assistant'\n      ELSE COALESCE(message->>'type', 'unknown')\n    END AS role,\n    btrim(\n      regexp_replace(\n        regexp_replace(\n          regexp_replace(\n            regexp_replace(\n              regexp_replace(message->>'content', '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}', '[EMAIL]', 'g'),\n              '(https?://|www\\.)\\S+', '[URL]', 'g'\n            ),\n            '(\\+?\\d[\\d\\s().-]{7,}\\d)', '[PHONE]', 'g'\n          ),\n          '\\b\\d{6,}\\b', '[NUMBER]', 'g'\n        ),\n        '\\s+', ' ', 'g'\n      )\n    ) AS content\n  FROM public.n8n_chat_histories\n  WHERE message ? 'content'\n    AND message->>'type' IN ('human', 'ai')\n    AND btrim(message->>'content') <> ''\n), eligible_sessions AS (\n  SELECT\n    session_id,\n    COUNT(*) AS message_count,\n    COUNT(*) FILTER (WHERE role = 'human') AS human_count,\n    COUNT(*) FILTER (WHERE role = 'assistant') AS assistant_count,\n    MIN(id) AS first_message_id,\n    MAX(id) AS last_message_id\n  FROM normalized\n  GROUP BY session_id\n  HAVING COUNT(*) BETWEEN 4 AND 80\n     AND COUNT(*) FILTER (WHERE role = 'human') >= 2\n     AND COUNT(*) FILTER (WHERE role = 'assistant') >= 2\n  ORDER BY MAX(id) DESC\n  LIMIT 10\n)\nSELECT\n  'sample_' || ROW_NUMBER() OVER (ORDER BY e.last_message_id DESC) AS sample_id,\n  md5(e.session_id::text) AS session_hash,\n  e.message_count,\n  e.human_count,\n  e.assistant_count,\n  e.first_message_id,\n  e.last_message_id,\n  jsonb_agg(\n    jsonb_build_object(\n      'role', n.role,\n      'content', n.content\n    )\n    ORDER BY n.id ASC\n  ) AS transcript\nFROM eligible_sessions e\nJOIN normalized n ON n.session_id = e.session_id\nGROUP BY\n  e.session_id,\n  e.message_count,\n  e.human_count,\n  e.assistant_count,\n  e.first_message_id,\n  e.last_message_id\nORDER BY e.last_message_id DESC;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        448,
+        592
+      ],
+      "id": "8ee0c37a-d28f-4de3-bf5f-0f41ed6940d0",
+      "name": "Fetch Conversation Samples",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      },
+      "notes": "Samples 5-10 real chat transcripts from n8n_chat_histories. Session IDs are hashed and message content is anonymized in SQL for golden test set use."
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'conversation_samples';\n\nreturn [\n  {\n    json: {\n      section: SECTION,\n      pages: $input.all().map(item => item.json)\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        592
+      ],
+      "id": "a9d8110e-d6a5-49c7-a588-f1d54dd2a8bb",
+      "name": "Code in JavaScript5"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "headers": {
+            "host": "[TU-INSTANCIA-N8N]",
+            "user-agent": "amoCRM-Webhooks/3.0",
+            "content-length": "928",
+            "accept-encoding": "gzip",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-amocrm-requestid": "869cf45b-9b5b-41aa-a120-b3f81496245e",
+            "x-forwarded-for": "142.0.204.92",
+            "x-forwarded-host": "[TU-INSTANCIA-N8N]",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "82733732dae0",
+            "x-real-ip": "142.0.204.92"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "account[subdomain]": "happyflopss",
+            "account[id]": "33068423",
+            "account[_links][self]": "https://happyflopss.amocrm.com",
+            "message[add][0][id]": "10e6140e-b1c5-490a-aa4d-6fd53072b117",
+            "message[add][0][chat_id]": "b3e77e17-a810-46b4-a833-5f871a7cdf16",
+            "message[add][0][talk_id]": "281234",
+            "message[add][0][contact_id]": "29211952",
+            "message[add][0][text]": "70piezas\nC.p. 16450",
+            "message[add][0][created_at]": "1777823916",
+            "message[add][0][element_type]": "2",
+            "message[add][0][entity_type]": "lead",
+            "message[add][0][element_id]": "27224736",
+            "message[add][0][entity_id]": "27224736",
+            "message[add][0][type]": "incoming",
+            "message[add][0][author][id]": "33024c1b-647f-40c7-ac9e-2b31b473ed1e",
+            "message[add][0][author][type]": "external",
+            "message[add][0][author][name]": "borre",
+            "message[add][0][origin]": "waba"
+          },
+          "webhookUrl": "https://[TU-INSTANCIA-N8N]/webhook/1bfb19eb-2157-42d0-84d7-23ea334699ec",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Configurar Cuenta Kommo1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configurar Cuenta Kommo1": {
+      "main": [
+        [
+          {
+            "node": "Fetch Pipelines1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Custom Fields1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Tags1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Salesbots1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Leads Sample1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Conversation Samples",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Pipelines1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Custom Fields1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Tags1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Salesbots1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Leads Sample1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Consolidate Kommo Snapshot1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Conversation Samples": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript5": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7ac07c35-16f2-456b-8bae-819ded09c9e0",
+  "meta": {
+    "instanceId": "2fb601f29b5c700d2141654e4608e081bd1e5daa9614999069a9eb314029edc9"
+  },
+  "id": "bYMfYToYsZMFpVDw",
+  "tags": []
+}

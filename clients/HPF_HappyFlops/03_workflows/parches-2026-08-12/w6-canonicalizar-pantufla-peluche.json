@@ -1,0 +1,15 @@
+{
+  "wf": "W6",
+  "descripcion": "item 4 de la reunión: la pantufla de peluche no debe recibir el catálogo de satín. W3 ya distingue si se le pide el nombre específico; lo que faltaba era vocabulario en el canonicalizador.",
+  "cita_oscar": "En esta de peluche, este no tiene catálogo. Le están mandando el catálogo igual que acá el de satín, para que en esa de moño de peluche se lo quiten, porque son diferentes diseños. El video está bien, nada más el catálogo hay que quitarlo.",
+  "verificado": "W3 con productos=['pantuflas mono peluche'] devuelve 1 card (solo la imagen de peluche) en Boda y XV; con ['pantuflas'] devuelve 5 incluyendo el catálogo de satín. 'satín' con tilde devuelve 0. En Otros no existe ninguna mono.",
+  "ediciones": [
+    {
+      "nodo": "Canonicalizar productos",
+      "campo": "parameters.messages.values[1].content",
+      "anchor": "- sandalias\n- cilindros\n- mandiles\n- anticruda\n- pantuflas\n- pantuflas mono\n- vasos",
+      "reemplazo": "- sandalias\n- cilindros\n- mandiles\n- anticruda\n- pantuflas\n- pantuflas mono\n- pantuflas mono peluche\n- pantuflas mono satin\n- vasos\n\n## Cuándo usar los valores específicos de pantuflas\n- \"pantuflas\" → el usuario habló de pantuflas en general, sin decir el material.\n- \"pantuflas mono peluche\" → SOLO si el usuario nombró el peluche (\"de peluche\", \"peluchito\",\n  \"pantufla de moño de peluche\"). Es importante: la de peluche y la de satín son diseños\n  distintos y el catálogo de diseños es sólo de la de satín, así que pedir la genérica le manda\n  al cliente un catálogo que no corresponde.\n- \"pantuflas mono satin\" → SOLO si el usuario nombró el satín. Escribilo SIN TILDE: \"satin\".\n  Con tilde no matchea nada y el cliente no recibe ninguna imagen.\n- Si el evento es \"Otros\", NO uses ninguna de las dos específicas ni \"pantuflas mono\": para ese\n  evento no existen cargadas y el cliente se quedaría sin ver nada. Usá \"pantuflas\".",
+      "motivo": "agrega los dos valores específicos + cuándo usarlos + las dos trampas medidas (tilde y evento Otros)"
+    }
+  ]
+}

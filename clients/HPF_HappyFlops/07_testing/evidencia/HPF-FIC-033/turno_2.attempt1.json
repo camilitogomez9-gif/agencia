@@ -1,0 +1,204 @@
+{
+  "probe_id": "sess_hpf_fic_033_1785953619#0fbd63271dc4",
+  "session_id": "sess_hpf_fic_033_1785953619",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "quiero pantuflas de peluche",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 11.1,
+  "version_antes": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "version_despues": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "capturado_utc": "2026-08-05T18:14:15.610587+00:00",
+  "execution_id": "989497",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T18:13:59.786Z",
+  "stoppedAt": "2026-08-05T18:14:09.917Z",
+  "n_esperadas": 9,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Perfecto! Las pantuflas moño peluche son súper cómodas y quedan increíbles como recuerdo de boda",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "✨ Pantuflas de satín personalizadas\n💖 Un detalle elegante y cómodo para tu evento\n🥿 Suela y esponja más gruesa\n🎨 Personalizadas con nombre y fecha\n\n📏 Unitalla (les queda del 23 al 26)\n💰 Precio promo: $30 el par\n📦 Pedido mínimo de 50 pares\n\n🎁 Opción de bolsa:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 2,
+      "message_part": "Mira este video para que veas cómo se ve 🎥",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+    },
+    {
+      "idx": 3,
+      "message_part": "Aquí tienes el catálogo completo 📋",
+      "photo_url": null,
+      "doc_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a70185632db2dd1572c1f9d.pdf",
+      "video_url": null
+    },
+    {
+      "idx": 4,
+      "message_part": "✨ Pantufla de moño de peluche para boda\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada y rosa\n\n💰 Precio promo: $35 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 5,
+      "message_part": "Mira este video para que veas cómo se ve 🎥",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a70184d32db2dd1572bec04.mp4"
+    },
+    {
+      "idx": 6,
+      "message_part": "Aquí tienes el catálogo completo 📋",
+      "photo_url": null,
+      "doc_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701855188345b27e310918.pdf",
+      "video_url": null
+    },
+    {
+      "idx": 7,
+      "message_part": "Me podrías decir cuántos pares Así te preparo la cotización",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 8,
+      "message_part": "¿Le interesa sumarlas a la cotización?\nDígame:\n- Cantidad\n- Código postal\n\n¡Gracias!",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 0,
+      "ms": 433,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1821,
+      "chat_id": 6390727286,
+      "texto_entregado": "✨ Pantuflas de satín personalizadas\n💖 Un detalle elegante y cómodo para tu evento\n🥿 Suela y esponja más gruesa\n🎨 Personalizadas con nombre y fecha\n\n📏 Unitalla (les queda del 23 al 26)\n💰 Precio promo: $30 el par\n📦 Pedido mínimo de 50 pares\n\n🎁 Opción de bolsa:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "error": null
+    },
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 1,
+      "ms": 422,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1824,
+      "chat_id": 6390727286,
+      "texto_entregado": "✨ Pantufla de moño de peluche para boda\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada y rosa\n\n💰 Precio promo: $35 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "error": null
+    },
+    {
+      "emisor": "Send Document (Telegram)",
+      "run": 0,
+      "ms": 345,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1823,
+      "chat_id": 6390727286,
+      "texto_entregado": "Aquí tienes el catálogo completo 📋",
+      "error": null
+    },
+    {
+      "emisor": "Send Document (Telegram)",
+      "run": 1,
+      "ms": 428,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1826,
+      "chat_id": 6390727286,
+      "texto_entregado": "Aquí tienes el catálogo completo 📋",
+      "error": null
+    },
+    {
+      "emisor": "Send Video (Telegram)",
+      "run": 0,
+      "ms": 509,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1822,
+      "chat_id": 6390727286,
+      "texto_entregado": "Mira este video para que veas cómo se ve 🎥",
+      "error": null
+    },
+    {
+      "emisor": "Send Video (Telegram)",
+      "run": 1,
+      "ms": 369,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1825,
+      "chat_id": 6390727286,
+      "texto_entregado": "Mira este video para que veas cómo se ve 🎥",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 525,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1820,
+      "chat_id": 6390727286,
+      "texto_entregado": "Perfecto! Las pantuflas moño peluche son súper cómodas y quedan increíbles como recuerdo de boda",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 446,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1827,
+      "chat_id": 6390727286,
+      "texto_entregado": "Me podrías decir cuántos pares Así te preparo la cotización",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 2,
+      "ms": 396,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1828,
+      "chat_id": 6390727286,
+      "texto_entregado": "¿Le interesa sumarlas a la cotización?\nDígame:\n- Cantidad\n- Código postal\n\n¡Gracias!",
+      "error": null
+    }
+  ],
+  "n_entregadas": 9,
+  "cero_partes": false,
+  "agente": {
+    "output": "Perfecto! Las pantuflas moño peluche son súper cómodas y quedan increíbles como recuerdo de boda.\n\nMe podrías decir cuántos pares necesitas y a qué código postal sería el envío? Así te preparo la cotización.",
+    "tools": [
+      "IDENTIFICAR_EVENTO",
+      "MOSTRAR_PRODUCTOS"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-FIC-033"
+}

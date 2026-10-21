@@ -1,0 +1,8 @@
+{
+  "ficha_id": "Otros::Otros::Pantuflas XV",
+  "record": "6a7507435a8cdd94859ff094",
+  "campo": "media_url",
+  "valor_anterior": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf40b86ae4203405cbd3.jpeg",
+  "valor_nuevo": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6b88c190-7235-44cc-90f3-1a815a8009af.jpeg",
+  "nota": "Para revertir: PUT con valor_anterior + refrescar la caché de W3 con ttl_seg 0 + sincronizar catalogo-airtable.json."
+}

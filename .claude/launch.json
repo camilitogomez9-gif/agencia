@@ -1,0 +1,29 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "webapp",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--prefix",
+        "webapp"
+      ],
+      "port": 3000,
+      "autoPort": false
+    },
+    {
+      "name": "sag-landings",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4180",
+        "--directory",
+        "salidas"
+      ],
+      "port": 4180
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "wf": "W1",
+  "descripcion": "3.6 — la nota de voz nunca llegaba a Whisper: se subia como .oga y GHL la rechaza.",
+  "medicion": "Prueba controlada 2026-08-20 contra medias/upload-file de la location del cliente: test.oga y test.ogg BYTE-IDENTICOS (Ogg/Opus generado con ffmpeg). .oga -> 400 INVALID_FILE_TYPE | .ogg -> 201 | .mp3 -> 201 | .m4a -> 400 | .wav -> 201. Los 3 archivos de prueba se borraron de la Media Library despues de medir.",
+  "efecto": "Hoy la nota de voz muere en el upload, antes de '¿Es audio?', asi que la rama Descargar audio -> Transcribir audio no corre nunca en el carril de Telegram.",
+  "nota": "DOC_OK todavia acepta 'oga' y 'm4a' para `document`, y GHL rechaza las dos. Es un borde menor (un documento adjunto con esa extension) y queda anotado, no tocado.",
+  "ediciones": [
+    {
+      "nodo": "TG → payload GHL",
+      "campo": "parameters.jsCode",
+      "anchor": "} else if (msg.voice) {\n  // Las notas de voz de Telegram son OGG/Opus. '.oga' matchea el regex de audio de W1.\n  media = { file_id: msg.voice.file_id, ext: 'oga', clase: 'nota de voz',\n            bytes: Number(msg.voice.file_size || 0) };",
+      "reemplazo": "} else if (msg.voice) {\n  // Las notas de voz de Telegram son OGG/Opus. Va como '.ogg' y NO '.oga': la Media Library\n  // de GHL valida por EXTENSIÓN, no por contenido, y rechaza .oga con\n  // 400 INVALID_FILE_TYPE. Medido el 2026-08-20 subiendo el MISMO archivo dos veces,\n  // byte por byte idéntico, cambiando sólo el nombre: .oga → 400, .ogg → 201.\n  // (También aceptan .mp3 y .wav; .m4a también da 400.)\n  // Con .oga el audio moría en el upload y NUNCA llegaba a Whisper.\n  // El regex de audio de `Normalizar entrada` matchea .ogg igual, así que no cambia nada aguas abajo.\n  media = { file_id: msg.voice.file_id, ext: 'ogg', clase: 'nota de voz',\n            bytes: Number(msg.voice.file_size || 0) };"
+    }
+  ]
+}

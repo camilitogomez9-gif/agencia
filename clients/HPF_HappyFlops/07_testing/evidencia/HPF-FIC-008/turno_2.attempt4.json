@@ -1,0 +1,70 @@
+{
+  "probe_id": "sess_hpf_fic_008_1785961766#363069713a93",
+  "session_id": "sess_hpf_fic_008_1785961766",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "quiero sandalias y cilindros",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 61.6,
+  "version_antes": "c3d93a2a-bf63-4275-9691-781199e86690",
+  "version_despues": "c3d93a2a-bf63-4275-9691-781199e86690",
+  "capturado_utc": "2026-08-05T20:31:50.924310+00:00",
+  "execution_id": "990359",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T20:30:44.498Z",
+  "stoppedAt": "2026-08-05T20:31:45.234Z",
+  "n_esperadas": 2,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Perfecto! Para tu boda tenemos sandalias y cilindros personalizados, son un detalle que todos van a agradecer",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "Cuántos pares de sandalias y cuántos cilindros te gustaría cotizar? También me podría indicar su código postal para calcular el envío",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 183,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2211,
+      "chat_id": 6390727286,
+      "texto_entregado": "Perfecto! Para tu boda tenemos sandalias y cilindros personalizados, son un detalle que todos van a agradecer",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 188,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2212,
+      "chat_id": 6390727286,
+      "texto_entregado": "Cuántos pares de sandalias y cuántos cilindros te gustaría cotizar? También me podría indicar su código postal para calcular el envío",
+      "error": null
+    }
+  ],
+  "n_entregadas": 2,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Perfecto! Para tu boda tenemos sandalias y cilindros personalizados, son un detalle que todos van a agradecer. ¿Cuántos pares de sandalias y cuántos cilindros te gustaría cotizar? También me podría indicar su código postal para calcular el envío.",
+    "tools": []
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-FIC-008"
+}

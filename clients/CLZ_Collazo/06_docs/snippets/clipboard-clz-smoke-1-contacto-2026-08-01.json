@@ -1,0 +1,19 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "// TEMPORAL -- SMOKE DE 1 CONTACTO. Restaurar el codigo original antes del envio real.\n// El original vive en:\n// clients/CLZ_Collazo/03_workflows/clz-notificacion-cambio-numero-v2-utility.json\n\nconst staticData = $getWorkflowStaticData('global');\nstaticData.resultados = []; // reset para que el Resumen Final cuente solo este smoke\n\nconst CONTACTOS = [\n  {\n    \"nombre\": \"la agencia\",\n    \"apellido\": \"\",\n    \"telefono\": \"59899999999\",\n    \"telefono_original\": null,\n    \"servicio\": \"reparación de aire acondicionado\",\n    \"fecha_servicio\": \"15/07/2026\",\n    \"revisar\": false\n  }\n];\n\n// Sin slicing por dia: con 1 contacto no aplica. El nodo \"Config Envio (dia 1 o 2)\"\n// sigue conectado arriba pero su valor se ignora mientras dure el smoke.\nreturn CONTACTOS.map(c => ({ json: c }));"
+      },
+      "id": "cod-smoke-1contacto-0001",
+      "name": "SMOKE 1 contacto (temporal)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1000,
+        300
+      ],
+      "notes": "Reemplazo temporal de 'Contactos cal.com (426, con variables)' para smokear con 1 solo contacto. Al pegarlo se crea un nodo NUEVO: copiar el jsCode al nodo original, o borrar el original y recablear este con el mismo nombre."
+    }
+  ],
+  "connections": {}
+}

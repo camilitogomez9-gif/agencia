@@ -1,0 +1,2076 @@
+{
+  "test_id": "T-08",
+  "punto": "PM-CRM-01",
+  "titulo": "move-stage: las 13 etapas con read-back",
+  "resultado": "CORROBORADO",
+  "detalle": "13/13 correctas",
+  "pasos": [
+    {
+      "paso": "PUT → Lead Nuevo",
+      "method": "PUT",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": {
+        "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+        "pipelineStageId": "cf8fc770-81b1-422c-8394-d00bfb97a3f0"
+      },
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "cf8fc770-81b1-422c-8394-d00bfb97a3f0",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:29:51.624Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:14.811Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:14.803Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "4e513bfd-4a8b-4839-a4b0-a7ea520836e2"
+      }
+    },
+    {
+      "paso": "GET ← Lead Nuevo",
+      "method": "GET",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": null,
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "cf8fc770-81b1-422c-8394-d00bfb97a3f0",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:29:51.624Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:14.821Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:14.803Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "30e28abf-b663-4730-804b-4e6e3c001285"
+      }
+    },
+    {
+      "paso": "PUT → Saludo Enviado",
+      "method": "PUT",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": {
+        "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+        "pipelineStageId": "f9709293-d03c-47f1-949f-0c03ab077a45"
+      },
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "f9709293-d03c-47f1-949f-0c03ab077a45",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:15.721Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:15.740Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:15.721Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "4508302c-9087-4059-b6e9-66a80aaddc1e"
+      }
+    },
+    {
+      "paso": "GET ← Saludo Enviado",
+      "method": "GET",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": null,
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "f9709293-d03c-47f1-949f-0c03ab077a45",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:15.721Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:15.746Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:15.721Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "470af902-a751-4f5d-a974-6dfc68e346b8"
+      }
+    },
+    {
+      "paso": "PUT → Evento Identificado",
+      "method": "PUT",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": {
+        "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+        "pipelineStageId": "fec50c94-fba0-444b-8c75-7a97da9e0daa"
+      },
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "fec50c94-fba0-444b-8c75-7a97da9e0daa",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:16.645Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:16.653Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:16.645Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "68e1be88-32b0-44ed-8a44-732a5e567a2e"
+      }
+    },
+    {
+      "paso": "GET ← Evento Identificado",
+      "method": "GET",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": null,
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "fec50c94-fba0-444b-8c75-7a97da9e0daa",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:16.645Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:16.657Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:16.645Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "cf583fb3-884e-4ad2-b1f2-d420aa691710"
+      }
+    },
+    {
+      "paso": "PUT → Productos Mostrados",
+      "method": "PUT",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": {
+        "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+        "pipelineStageId": "49c7401f-8af1-4d8f-a1b4-e989b6d0a5e2"
+      },
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "49c7401f-8af1-4d8f-a1b4-e989b6d0a5e2",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:17.346Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:17.359Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:17.346Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "b26d06fa-f459-4a37-882f-6b80732bf36c"
+      }
+    },
+    {
+      "paso": "GET ← Productos Mostrados",
+      "method": "GET",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": null,
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "49c7401f-8af1-4d8f-a1b4-e989b6d0a5e2",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:17.346Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:17.362Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:17.346Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "7bda293d-f63d-4019-9aab-bda5e3ea6360"
+      }
+    },
+    {
+      "paso": "PUT → Cotizado",
+      "method": "PUT",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": {
+        "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+        "pipelineStageId": "96fa0ade-c853-4db3-97f4-56d58d69af8c"
+      },
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "96fa0ade-c853-4db3-97f4-56d58d69af8c",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:18.271Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:18.282Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:18.271Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "e0fd7a5e-906e-4e8e-ad38-e894530cf996"
+      }
+    },
+    {
+      "paso": "GET ← Cotizado",
+      "method": "GET",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": null,
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "96fa0ade-c853-4db3-97f4-56d58d69af8c",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:18.271Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:18.287Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:18.271Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "ebcd5471-5566-4152-b85e-f82159e5de56"
+      }
+    },
+    {
+      "paso": "PUT → Esperando Pago",
+      "method": "PUT",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": {
+        "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+        "pipelineStageId": "843a06f1-1214-4baa-a3a0-f197cb240b5d"
+      },
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "843a06f1-1214-4baa-a3a0-f197cb240b5d",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:19.185Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:19.219Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:19.185Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "7a2e948f-8816-43e5-9dbb-47df6076d346"
+      }
+    },
+    {
+      "paso": "GET ← Esperando Pago",
+      "method": "GET",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": null,
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "843a06f1-1214-4baa-a3a0-f197cb240b5d",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:19.185Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:19.223Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:19.185Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "ca8f9dd7-db9f-4740-b9ba-3a067b92633c"
+      }
+    },
+    {
+      "paso": "PUT → Pago Confirmado",
+      "method": "PUT",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": {
+        "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+        "pipelineStageId": "96d760e5-f290-456c-a117-57e61ce6c27d"
+      },
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "96d760e5-f290-456c-a117-57e61ce6c27d",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:19.966Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:19.974Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:19.966Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "ecef33bf-463a-4d25-aad7-2e7b53fc06ef"
+      }
+    },
+    {
+      "paso": "GET ← Pago Confirmado",
+      "method": "GET",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": null,
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "96d760e5-f290-456c-a117-57e61ce6c27d",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:19.966Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:19.984Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:19.966Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "5a8b736c-bd4d-4f1d-aa30-d82be207b9f5"
+      }
+    },
+    {
+      "paso": "PUT → Diseño en Proceso",
+      "method": "PUT",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": {
+        "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+        "pipelineStageId": "d35bb30d-97d5-48c4-81f8-5ecabf32e57d"
+      },
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "d35bb30d-97d5-48c4-81f8-5ecabf32e57d",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:22.222Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:22.233Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:22.222Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "54c19729-4026-4b13-a5e0-71f3cae10515"
+      }
+    },
+    {
+      "paso": "GET ← Diseño en Proceso",
+      "method": "GET",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": null,
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "d35bb30d-97d5-48c4-81f8-5ecabf32e57d",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:22.222Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:22.237Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:22.222Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "f440df6e-b204-4f52-a9c0-c0c95ee92b3f"
+      }
+    },
+    {
+      "paso": "PUT → En Producción",
+      "method": "PUT",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": {
+        "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+        "pipelineStageId": "008689c6-80d8-4712-981b-1d800e1e6137"
+      },
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "008689c6-80d8-4712-981b-1d800e1e6137",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:23.808Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:23.819Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:23.808Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "eed9ba95-b64e-40bb-af7e-e930355c4b05"
+      }
+    },
+    {
+      "paso": "GET ← En Producción",
+      "method": "GET",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": null,
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "008689c6-80d8-4712-981b-1d800e1e6137",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:23.808Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:23.823Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:23.808Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "9a860aa8-ff40-492d-bf58-c427abbb9979"
+      }
+    },
+    {
+      "paso": "PUT → Enviado",
+      "method": "PUT",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": {
+        "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+        "pipelineStageId": "218b9b41-4007-4b1c-bbe4-4e775ddf00b5"
+      },
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "218b9b41-4007-4b1c-bbe4-4e775ddf00b5",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:24.937Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:24.946Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:24.937Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "d71d9837-2bb7-470b-a189-35f71d413860"
+      }
+    },
+    {
+      "paso": "GET ← Enviado",
+      "method": "GET",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": null,
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "218b9b41-4007-4b1c-bbe4-4e775ddf00b5",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:24.937Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:24.950Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:24.937Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "98310e56-adc7-4332-8a29-17b039bdfc22"
+      }
+    },
+    {
+      "paso": "PUT → En Espera",
+      "method": "PUT",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": {
+        "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+        "pipelineStageId": "48de80e9-31a9-472a-b030-5b9fe9174810"
+      },
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "48de80e9-31a9-472a-b030-5b9fe9174810",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:25.842Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:25.884Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:25.842Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "5b426560-eaef-45f6-a21c-ab3a3f0e786e"
+      }
+    },
+    {
+      "paso": "GET ← En Espera",
+      "method": "GET",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": null,
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "48de80e9-31a9-472a-b030-5b9fe9174810",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:25.842Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:25.888Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:25.842Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "481f8b8b-d5f9-4bee-a7e1-68a00773bf03"
+      }
+    },
+    {
+      "paso": "PUT → Ganado",
+      "method": "PUT",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": {
+        "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+        "pipelineStageId": "909a816d-997e-4d90-8dc1-dc4b0dcd16d7"
+      },
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "909a816d-997e-4d90-8dc1-dc4b0dcd16d7",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:26.804Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:26.816Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:26.805Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "9bec06bd-49c1-4f2b-93cc-d4bfb2a81759"
+      }
+    },
+    {
+      "paso": "GET ← Ganado",
+      "method": "GET",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": null,
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "909a816d-997e-4d90-8dc1-dc4b0dcd16d7",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:26.804Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:26.819Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:26.805Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "eac6c04c-043c-46c7-be76-8b6325faadf9"
+      }
+    },
+    {
+      "paso": "PUT → Ventas Perdidas",
+      "method": "PUT",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": {
+        "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+        "pipelineStageId": "6abfe419-adf2-4df5-87c5-ef4f62e01464"
+      },
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "6abfe419-adf2-4df5-87c5-ef4f62e01464",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:27.727Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:27.736Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:27.727Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "2ef5484e-ead0-4f7e-a5e9-28a6649e6641"
+      }
+    },
+    {
+      "paso": "GET ← Ventas Perdidas",
+      "method": "GET",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": null,
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "6abfe419-adf2-4df5-87c5-ef4f62e01464",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:27.727Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:27.740Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:27.727Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "58a51f45-8f65-497a-b4d1-9c2b91276e4a"
+      }
+    },
+    {
+      "paso": "reset",
+      "method": "PUT",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": {
+        "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+        "pipelineStageId": "cf8fc770-81b1-422c-8394-d00bfb97a3f0"
+      },
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "cf8fc770-81b1-422c-8394-d00bfb97a3f0",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.628Z",
+          "lastStageChangeAt": "2026-08-06T23:31:30.672Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:30.680Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:30.672Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "e47d4e78-c9ec-4b9a-927d-b87b72c131e2"
+      }
+    }
+  ]
+}

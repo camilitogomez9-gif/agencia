@@ -1,0 +1,31 @@
+❌ [1] M1 Mauricio: hola → quiero agendar nuevamente
+    lead: Hola
+    bot: ¡Hola, Mauricio! Espero que estés bien. Ya tienes tu asesoría agendada con Rodrigo. Si te surge cualquier duda antes de la cita, no dudes en escribirme por aquí. ¿Hay algo en particular que te gustaría saber o preparar antes de la llamada?
+    lead: Quiero agendar nuevamente
+    bot (link FALLA): Mauricio, ya tienes una asesoría agendada con Rodrigo. Si necesitas cambiar el horario o tienes alguna otra consulta, por favor házmelo saber y con gusto te ayudaré.
+❌ [1] M2 Mauricio: ¿cuándo es mi cita?
+    lead: Según tú cuando está agendada mi cita?
+    bot (nocorreo FALLA): Tu cita está agendada con Rodrigo. Si necesitas confirmar la fecha y hora exacta, te recomiendo revisar el correo de confirmación que debiste haber recibido al momento de agendar. Si tienes alguna otra pregunta o necesitas algo más antes de la cita, estoy aquí para ayudarte.
+✅ [1] M3 Mauricio: ya pasó, quiero otra
+    lead: Ya pasó la fecha quiero volver a agendar una nueva
+    bot (link ok): Mauricio, entiendo que quieres volver a agendar la asesoría. Te dejo el enlace otra vez para que elijas el horario que te acomode: vtr.[TU-DOMINIO]/agendar-ema. Tú eliges día y hora, y me llega la confirmación automáticamente. Si necesitas algo más, aquí estoy para ayudarte.
+❌ [1] D1 Daiana (cita futura): ¿cuándo es?
+    lead: Hola, me recuerdas cuándo es mi cita?
+    bot (fecha+nolink FALLA): ¡Hola Daiana! Claro, tu cita está agendada para el [inserta aquí la fecha y hora de la cita]. Si tienes alguna otra pregunta o necesitas algo antes de la asesoría, no dudes en escribirme.
+❌ [1] D2 Daiana (cita futura): cambiarla
+    lead: Necesito cambiar mi cita, ese día no puedo
+    bot (link FALLA): Hola Daiana, entiendo que necesitas cambiar la cita. Para hacerlo, te recomiendo que uses el mismo enlace que te envié anteriormente. Ahí puedes seleccionar un nuevo día y hora que te acomode mejor. Si tienes alguna otra pregunta o necesitas ayuda, aquí estoy para asistirte.
+✅ [1] D3 Daiana (cita futura): gracias
+    lead: Muchas gracias!
+    bot (nolink ok): ¡De nada, Daiana! Ya tienes tu cita agendada para la asesoría. Si te surge cualquier duda antes de la llamada, no dudes en escribirme por aquí. ¡Que tengas un excelente día! 😊
+✅ [1] P1 cita pasada: quiero otra
+    lead: No pude conectarme a la llamada, quiero otra
+    bot (link ok): Hola Daiana, entiendo que no pudiste conectarte a la llamada. No te preocupes, podemos reprogramarla. Te dejo el enlace otra vez para que elijas el horario que te acomode: vtr.[TU-DOMINIO]/SummerCamp-Agendar. Vos elegís día y hora, y me llega la confirmación automáticamente. Si necesitas ayuda con algo más, aquí estoy.
+✅ [1] V1 link sin cita: propone horario
+    lead: ¿El lunes a las 11 podemos hablar?
+    bot (link ok): ¡Hola, Viri! Claro, te dejo el enlace otra vez para que elijas el horario que te acomode: vtr.[TU-DOMINIO]/agendar-ema. Tú eliges el día y hora, y me llega la confirmación automáticamente. Si tienes alguna otra pregunta, aquí estoy para ayudarte.
+✅ [1] N1 lead nuevo: no manda link de entrada
+    lead: Hola! Quiero agendar una asesoría para encontrar el internado ideal de mi hijo
+    bot (nolink ok): ¡Hola! Soy Mauricio de Venttur 😊. Me alegra que estés considerando una experiencia internacional para tu hijo. ¿Con quién tengo el gusto?
+
+5/9 casos OK · prompt=new.txt · estado=viejo

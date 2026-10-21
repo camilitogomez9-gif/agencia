@@ -1,0 +1,27 @@
+{
+  "wf": "W7",
+  "descripcion": "Delta 10 (vocabulario mexicano en nombres de colores) aplicado por API — sesión 2026-08-27. Espejo del delta 09 sobre Recolector1 de W7 (rama de imagen). W7 divergió de W6: Camilo aplicó los reemplazos de la línea 'Correa de Sandalia' en W6 pero NO en W7 — este parche también incluye ese edit para volver a la paridad. Recolector (W6) y Recolector1 (W7) tienen systemMessage distintos que comparten trozos textuales; todo cambio léxico tiene que replicarse en los dos para evitar drift. Mismo patrón que el fix 'mandiles se eligen' del 17/08 (w6-mandiles-se-eligen.json + w7-mandiles-se-eligen.json).",
+  "ediciones": [
+    {
+      "nodo": "Recolector1",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "Fachada Fucsia, Portones Negros",
+      "reemplazo": "Fachada Fiusha, Portones Negros",
+      "motivo": "Idem w6-vocabulario-mexicano-colores.json."
+    },
+    {
+      "nodo": "Recolector1",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "COLORES DE TAPAS DE CILINDROS: FIUSHA O FUCSIA, NARANJA O ANARANJADO, NEGRO, MORADO, VERDE, ORO O DORADO, AMARILLO, ROJO, AZUL CIELO, AZUL MARINO, BLANCA, LILA, PLATA O PLATEADO.",
+      "reemplazo": "COLORES DE TAPAS DE CILINDROS: FIUSHA, NARANJA O ANARANJADO, NEGRO, MORADO, VERDE, ORO O DORADO, AMARILLO, ROJO, AZUL CIELO, AZUL MARINO, BLANCA, PLATA O PLATEADO.",
+      "motivo": "Idem w6-vocabulario-mexicano-colores.json."
+    },
+    {
+      "nodo": "Recolector1",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "- Correa de Sandalia: Negro, Blanco, Lila, Plata, Oro, Rojo, Fuxia, Rosado",
+      "reemplazo": "- Correa de Sandalia: Negro, Blanco, Morado, Plata, Oro, Rojo, Fiusha, Rosa",
+      "motivo": "Enumeración de colores de correa de sandalia. Tres reemplazos en la misma línea (Lila→Morado, Fuxia→Fiusha, Rosado→Rosa). Camilo YA lo había aplicado en W6 pero NO en W7 — este edit devuelve la paridad entre las dos ramas."
+    }
+  ]
+}

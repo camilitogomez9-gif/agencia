@@ -1,0 +1,82 @@
+{
+  "pYtiBlhOTr7HVPmr": {
+    "id": "pYtiBlhOTr7HVPmr",
+    "name": "[Happy Flops]",
+    "nodes": 239,
+    "active": true,
+    "versionId": "9d99397c-152a-439c-a9df-e216727f9402",
+    "updatedAt": "2026-07-31T22:31:49.337Z",
+    "sha256": "8eca0e746385cd33f8b347497dde0d632728bd400861b760742674f006b83a93",
+    "archivo": "main-happy-flops.json"
+  },
+  "YR8yBPNdgVl0TxT1": {
+    "id": "YR8yBPNdgVl0TxT1",
+    "name": "HappyFlops - Seg. Rebeca",
+    "nodes": 31,
+    "active": false,
+    "versionId": "99c47d4e-4a34-4ccf-bb08-d2bb87f942e8",
+    "updatedAt": "2026-04-22T20:22:10.333Z",
+    "sha256": "d86c5fb9486af8ac9b9a1e39b835871664f25fc859bb8af89e9c8f09bb31c174",
+    "archivo": "seg-rebeca.json"
+  },
+  "D04kO8VPKoAKL004": {
+    "id": "D04kO8VPKoAKL004",
+    "name": "Happy Flops - Seg. Imagen",
+    "nodes": 38,
+    "active": false,
+    "versionId": "c8f2caaa-31ab-4602-a4b3-08cdbf5c59d5",
+    "updatedAt": "2026-04-22T20:21:46.727Z",
+    "sha256": "1e66be70a7c050175e4acde39559e8b0ffb7fbe019695bbef041b25cdfde23bd",
+    "archivo": "seg-imagen.json"
+  },
+  "dNzLtCZFJnIqjlZx": {
+    "id": "dNzLtCZFJnIqjlZx",
+    "name": "Happy Flops - Seg. Cotización",
+    "nodes": 42,
+    "active": false,
+    "versionId": "e8fc176e-1e5a-4ebd-986b-c83d1ee7e4b7",
+    "updatedAt": "2026-02-19T22:54:40.783Z",
+    "sha256": "0a71549ada93f87e7e864b5dd90f34a0eae0e9539f5bf1247315df295905ae93",
+    "archivo": "seg-cotizacion.json"
+  },
+  "xo1sLt9cAhFAC6k3": {
+    "id": "xo1sLt9cAhFAC6k3",
+    "name": "Happpy Flops - Seg. 7 pasos",
+    "nodes": 20,
+    "active": false,
+    "versionId": "5ee3d40b-6548-48c1-8ac8-9c2ec02d0796",
+    "updatedAt": "2026-05-12T19:24:13.370Z",
+    "sha256": "62a6a6532d833f79af3fa8c1395a83a7d5608dc922daee1275e73ed9c3c4bacd",
+    "archivo": "seg-7pasos.json"
+  },
+  "SUgT7UPYyQ3NDgRp": {
+    "id": "SUgT7UPYyQ3NDgRp",
+    "name": "ATENCION_PERSONALIZADA",
+    "nodes": 3,
+    "active": false,
+    "versionId": "49648cd8-d4bc-46cb-b79f-046ca6a53caf",
+    "updatedAt": "2026-04-30T05:45:56.043Z",
+    "sha256": "be3cae8c35f45776cf66c208bc96078ab72dcc94932b3ab69b8103bf6f85f367",
+    "archivo": "atencion-personalizada.json"
+  },
+  "OPiuPFwRmq6QgACL": {
+    "id": "OPiuPFwRmq6QgACL",
+    "name": "HPF - Calculadora",
+    "nodes": 5,
+    "active": false,
+    "versionId": "0aa6a1ed-c5e9-49e7-92f7-4a69c2eb999b",
+    "updatedAt": "2026-07-24T14:42:31.285Z",
+    "sha256": "f82adfa7f4db405416fdc764589d4fc9da0ff97c1c6eb988cf3fdadb662f01ac",
+    "archivo": "tool-calculadora.json"
+  },
+  "bYMfYToYsZMFpVDw": {
+    "id": "bYMfYToYsZMFpVDw",
+    "name": "Kommo Salesbot Text Capture Runner v1",
+    "nodes": 25,
+    "active": false,
+    "versionId": "3710d127-0fa0-4fa3-af1f-9e169330acc3",
+    "updatedAt": "2026-07-31T22:54:46.276Z",
+    "sha256": "13ab1ed3eae39295925d1724a62862f1413c133d9245c994a1724273efe644b5",
+    "archivo": "kommo-salesbot-text-capture-runner.json"
+  }
+}

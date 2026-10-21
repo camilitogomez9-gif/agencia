@@ -1,0 +1,13 @@
+{
+  "wf": "W6",
+  "descripcion": "P4 refuerzo (smoke reveló que la regla en prosa no ganaba sobre 'correas'): agrega Ejemplo 9 few-shot que mapea 'colores de correas/sandalias' → productos ['colores de correas'] (la ficha de paleta), no a las correas por grosor.",
+  "ediciones": [
+    {
+      "nodo": "Products",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "## Ejemplo 8:\n- Usuario menciona algo como: \"Este diseño puedo cambiarle el color?\" (o similar). Haciendo alusion a si puede cambiarle el color a determiados diseños y ya viene de antes habiendooslas elegido el evento de boda.\n- Sistema: {\n  \"evento\": \"Boda\",\n  \"subcategoria\": \"Accesorios\",\n  \"productos\": [\"tintas\"],\n  \"texto_dinamico\": \"\"\n}",
+      "reemplazo": "## Ejemplo 8:\n- Usuario menciona algo como: \"Este diseño puedo cambiarle el color?\" (o similar). Haciendo alusion a si puede cambiarle el color a determiados diseños y ya viene de antes habiendooslas elegido el evento de boda.\n- Sistema: {\n  \"evento\": \"Boda\",\n  \"subcategoria\": \"Accesorios\",\n  \"productos\": [\"tintas\"],\n  \"texto_dinamico\": \"\"\n}\n\n## Ejemplo 9:\n- Usuario menciona: \"de qué colores son las correas\", \"colores de correas\", \"qué colores de sandalias hay\", \"de qué color son las sandalias\", \"colores de las sandalias\" o similar, haciendo alusión a los COLORES disponibles de las correas/sandalias (NO al grosor de la correa ni a cotizarlas).\n- Sistema: {\n  \"evento\": \"Boda\",\n  \"subcategoria\": \"Accesorios\",\n  \"productos\": [\"colores de correas\"],\n  \"texto_dinamico\": \"\"\n}",
+      "motivo": "Los ejemplos few-shot pegan más que las reglas en prosa en este prompt. El input 'de qué colores son las correas' caía en el mapeo de correas por grosor; este ejemplo lo redirige a la ficha de colores."
+    }
+  ]
+}

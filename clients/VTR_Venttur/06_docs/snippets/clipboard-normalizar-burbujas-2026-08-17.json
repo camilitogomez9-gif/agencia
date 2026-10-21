@@ -1,0 +1,18 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "// Normalizar burbujas — guardrail determinístico entre el formatter y ManyChat.\n// Cierra H6 (una sola pregunta) y P1 (repetición del nombre) sin depender del LLM,\n// y arma el body de ManyChat de forma segura (hoy `Settear variables` lo concatena\n// como string y borra TODAS las comillas del mensaje del agente).\n\nconst content = $json.message?.content ?? $json;\nconst subscriberId = $('Webhook').first().json.body.id;\n\n// Nombre del lead: se usa para detectar repetición. Si no lo tenemos, no se toca nada.\nlet nombre = '';\ntry {\n  const lead = $('Buscar si ya existe').first().json;\n  nombre = String(lead?.Nombre || '').trim().split(' ')[0];\n} catch (e) { nombre = ''; }\n\nconst partes = [content.parte1, content.parte2, content.parte3]\n  .map(p => (p == null ? '' : String(p)))\n  .map(p => p.replace(/\\*/g, '').trim());\n\n// ── H6 · una sola pregunta en todo el mensaje ────────────────────────────────\n// Se conserva la PRIMERA oración interrogativa y se descartan las siguientes.\n// Motivo: la última pregunta suele ser la que el flujo quiere, pero la primera es\n// la que el lead lee antes de responder — dos preguntas bajan la tasa de respuesta.\nlet vistas = 0;\nconst sinExtras = partes.map(parte => {\n  if (!parte) return '';\n  // corta en oraciones conservando el signo de cierre\n  const oraciones = parte.match(/[^.!?]+[.!?]*/g) || [parte];\n  const out = [];\n  for (const o of oraciones) {\n    if (o.includes('?')) {\n      vistas++;\n      if (vistas > 1) continue; // se descarta la pregunta sobrante\n    }\n    out.push(o);\n  }\n  return out.join('').replace(/\\s+/g, ' ').trim();\n});\n\n// ── P1 · el nombre del lead aparece como mucho una vez ───────────────────────\nlet nombreUsado = 0;\nconst sinRepetirNombre = sinExtras.map(parte => {\n  if (!parte || !nombre || nombre.length < 3) return parte;\n  const re = new RegExp(`\\\\b${nombre.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}\\\\b`, 'gi');\n  return parte.replace(re, (m) => {\n    nombreUsado++;\n    if (nombreUsado === 1) return m;\n    return '';                       // se quita la repetición\n  })\n   .replace(/\\s+([,.!?])/g, '$1')      // espacio huérfano antes de un signo\n   .replace(/,\\s*([.!?])/g, '$1')      // coma pegada a un signo de cierre: \"Te sirve,?\" -> \"Te sirve?\"\n   .replace(/\\s*,\\s*,/g, ',')          // comas dobles\n   .replace(/\\s{2,}/g, ' ')\n   .replace(/^[\\s,]+/, '')             // coma o espacio al inicio\n   .replace(/[\\s,]+$/, '')             // coma o espacio al final\n   .trim();\n});\n\n// Si al quitar el nombre la frase quedó empezando en minúscula, se restituye la mayúscula.\nconst finales = sinRepetirNombre\n  .map(p => (p ? p.charAt(0).toUpperCase() + p.slice(1) : p))\n  .filter(p => p && p.length > 0);\nif (finales.length === 0) {\n  throw new Error('Normalizar burbujas: quedaron 0 partes con contenido');\n}\n\n// ── Body seguro: objeto real, no concatenación de strings ───────────────────\nconst mcBody = {\n  subscriber_id: subscriberId,\n  fields: finales.map((valor, i) => ({ field_name: `parte${i + 1}`, field_value: valor })),\n};\n\nreturn [{ json: {\n  mcBody,\n  preguntas: Math.min(vistas, 1),\n  partes_emitidas: finales.length,\n  texto_completo: finales.join('\\n\\n'),\n}}];\n"
+      },
+      "id": "normalizar-burbujas",
+      "name": "Normalizar burbujas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ]
+    }
+  ],
+  "connections": {}
+}

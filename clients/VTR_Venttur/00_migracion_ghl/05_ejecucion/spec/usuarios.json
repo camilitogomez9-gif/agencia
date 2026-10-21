@@ -1,0 +1,18 @@
+{
+  "_doc": "Usuarios GHL. Cliente (2026-09-03): crear todos MENOS Diego Matus (ya no está); sus deals → Juan José Alfaro. Mauricio ya existe (admin). GHL no cobra por asiento (usuarios ilimitados). Crear un usuario envía email de invitación al correo real.",
+  "companyId": "WbuYAfjKqOU9k7R5t9RL",
+  "crear": [
+    {"firstName": "Rodrigo", "lastName": "Garcia de la Vega", "email": "rgarcia@venttur.com", "role": "user", "owner_name": "Rodrigo Garcia de la Vega"},
+    {"firstName": "Andrés", "lastName": "García de la Vega", "email": "agarcia@venttur.com", "role": "user", "owner_name": "Andrés García de la Vega"},
+    {"firstName": "Max", "lastName": "Almonte", "email": "malmonte@venttur.com", "role": "user", "owner_name": "Max Almonte"},
+    {"firstName": "Diego", "lastName": "García de la Vega Delfín", "email": "dgarcia@venttur.com", "role": "user", "owner_name": "Diego García de la Vega Delfín"},
+    {"firstName": "Juan José", "lastName": "Alfaro", "email": "jalfaro@venttur.com", "role": "user", "owner_name": "Juan José Alfaro"},
+    {"firstName": "Niza", "lastName": "Valeriano", "email": "nvaleriano@venttur.com", "role": "user", "owner_name": "Niza Valeriano"}
+  ],
+  "ya_existe": [
+    {"email": "administracion@venttur.com", "owner_name": "Mauricio Garcia de la Vega Delfin", "role": "admin"}
+  ],
+  "no_crear": [
+    {"email": "dmatus@venttur.com", "owner_name": "Diego Matus", "reasignar_a": "jalfaro@venttur.com", "motivo": "ya no está; su trabajo lo tomó Juan José Alfaro (cliente 2026-09-03)"}
+  ]
+}

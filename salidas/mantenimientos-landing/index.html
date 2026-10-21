@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Planes de Mantenimiento · la agencia.AI</title>
+<meta name="description" content="Elegí el plan de mantenimiento la agencia ideal para tu negocio: soporte, mejoras y optimización continua. Planes desde USD 250/mes. Sin contratos largos." />
+<link rel="icon" type="image/png" href="assets/la agencia-favicon.png" />
+<link rel="apple-touch-icon" href="assets/la agencia-favicon.png" />
+<meta property="og:title" content="Planes de Mantenimiento · la agencia.AI" />
+<meta property="og:description" content="Soporte, mejoras y optimización continua para tu sistema de IA. Desde USD 250/mes." />
+<meta property="og:image" content="assets/la agencia-favicon.png" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="stylesheet" href="tokens.css" />
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<style>
+/* ============ THEME TOKENS ============ */
+:root{
+  --accent: var(--nex-purple-700);
+  --accent-strong: var(--nex-purple-800);
+  --accent-soft: var(--nex-purple-300);
+}
+html[data-theme="dark"]{
+  --page:#000;
+  --surface: rgba(255,255,255,.03);
+  --surface-2:#0d0b13;
+  --surface-3: rgba(255,255,255,.05);
+  --bd: rgba(255,255,255,.10);
+  --bd-strong: rgba(255,255,255,.18);
+  --tx:#fff;
+  --tx-muted: rgba(255,255,255,.68);
+  --tx-faint: rgba(255,255,255,.42);
+  --mesh-op:.55;
+  --hero-mesh: var(--nex-grad-mesh);
+}
+html[data-theme="light"]{
+  --page: var(--nex-snow);
+  --surface: var(--nex-snow);
+  --surface-2: var(--nex-gray-50);
+  --surface-3: var(--nex-gray-50);
+  --bd: var(--nex-gray-200);
+  --bd-strong: var(--nex-gray-300);
+  --tx: var(--nex-ink);
+  --tx-muted: var(--nex-gray-500);
+  --tx-faint: var(--nex-fog);
+  --mesh-op:.16;
+  --hero-mesh: var(--nex-grad-mesh);
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{
+  background:var(--page);
+  color:var(--tx);
+  font-family:var(--nex-font-sans);
+  font-size:var(--nex-fs-body);
+  line-height:var(--nex-lh-body);
+  letter-spacing:var(--nex-tr-body);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  transition:background .3s var(--nex-ease), color .3s var(--nex-ease);
+}
+a{color:inherit;text-decoration:none;}
+.wrap{max-width:1240px;margin:0 auto;padding:0 40px;}
+.grad-text{background:linear-gradient(120deg,var(--accent) 0%, var(--nex-pink) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.mono-eye{font-family:var(--nex-font-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-soft);}
+html[data-theme="light"] .mono-eye{color:var(--accent);}
+
+/* ============ BUTTONS ============ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;border-radius:var(--nex-r-md);padding:12px 20px;font:500 14px/1 var(--nex-font-sans);letter-spacing:-.005em;cursor:pointer;transition:all .2s var(--nex-ease);white-space:nowrap;}
+.btn-lg{padding:15px 24px;font-size:15px;}
+.btn-brand{background:var(--accent);color:#fff;box-shadow:var(--nex-shadow-glow);}
+.btn-brand:hover{background:var(--accent-strong);transform:translateY(-1px);}
+.btn-snow{background:#fff;color:var(--nex-ink);}
+.btn-snow:hover{background:var(--nex-gray-100);transform:translateY(-1px);}
+.btn-ink{background:var(--nex-ink);color:#fff;}
+.btn-ink:hover{background:var(--nex-gray-800);}
+.btn-ghost{background:transparent;color:var(--tx-muted);border-color:transparent;}
+.btn-ghost:hover{color:var(--tx);background:var(--surface-3);}
+.btn-outline{background:transparent;border-color:var(--bd-strong);color:var(--tx);}
+.btn-outline:hover{border-color:var(--tx);}
+
+/* ============ NAV ============ */
+.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:color-mix(in srgb,var(--page) 72%, transparent);border-bottom:1px solid var(--bd);}
+.nav-in{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;max-width:1240px;margin:0 auto;}
+.logo{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:500;letter-spacing:-.015em;}
+.logo svg{width:24px;height:24px;color:var(--tx);}
+.logo img{width:28px;height:28px;object-fit:contain;display:block;}
+.nav-links{display:flex;gap:30px;}
+.nav-links a{font-size:14px;color:var(--tx-muted);transition:color .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--tx);}
+.nav-actions{display:flex;gap:8px;align-items:center;}
+@media(max-width:880px){.nav-links{display:none;}.nav-actions .btn-ghost{display:none;}}
+
+/* ============ HERO ============ */
+.hero{position:relative;padding:90px 0 80px;overflow:hidden;}
+.hero::before{content:"";position:absolute;inset:-160px -120px 30%;background:var(--hero-mesh);filter:blur(90px);opacity:var(--mesh-op);pointer-events:none;z-index:0;}
+.hero-in{position:relative;z-index:1;text-align:center;max-width:860px;margin:0 auto;}
+.pill{display:inline-flex;align-items:center;gap:9px;padding:7px 14px;border-radius:var(--nex-r-pill);background:var(--surface-3);border:1px solid var(--bd);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--tx-muted);margin-bottom:28px;}
+.pill .dot{width:7px;height:7px;border-radius:50%;background:var(--nex-pink);box-shadow:0 0 0 4px color-mix(in srgb,var(--nex-pink) 18%, transparent);}
+.hero h1{font-size:clamp(44px,6.4vw,84px);line-height:1.0;letter-spacing:-.045em;font-weight:400;margin:0 0 26px;}
+.hero .lede{font-size:clamp(17px,2.1vw,21px);line-height:1.5;color:var(--tx-muted);max-width:620px;margin:0 auto 36px;}
+.hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.hero-stats{display:flex;gap:48px;justify-content:center;margin-top:64px;flex-wrap:wrap;}
+.hstat{display:flex;flex-direction:column;gap:4px;}
+.hstat .n{font-size:34px;font-weight:500;letter-spacing:-.03em;}
+.hstat .n .grad-text{font-weight:500;}
+.hstat .l{font-size:13px;color:var(--tx-faint);}
+.hstat-sep{width:1px;background:var(--bd);align-self:stretch;}
+@media(max-width:680px){.hstat-sep{display:none;}.hero-stats{gap:28px;}}
+
+/* ============ SECTION SHELL ============ */
+.sec{padding:100px 0;position:relative;}
+.sec-head{max-width:680px;margin:0 auto 56px;text-align:center;}
+.sec-head h2{font-size:clamp(34px,4.6vw,52px);line-height:1.08;letter-spacing:-.04em;font-weight:400;margin:14px 0 0;}
+.sec-head p{color:var(--tx-muted);font-size:18px;margin:18px auto 0;max-width:560px;line-height:1.55;}
+
+/* ============ BILLING TOGGLE ============ */
+.billing{display:flex;align-items:center;justify-content:center;gap:14px;margin:34px 0 8px;}
+.bseg{display:inline-flex;padding:4px;border-radius:var(--nex-r-pill);background:var(--surface-3);border:1px solid var(--bd);}
+.bseg button{border:0;background:transparent;color:var(--tx-muted);font:500 14px var(--nex-font-sans);padding:9px 20px;border-radius:var(--nex-r-pill);cursor:pointer;transition:all .2s var(--nex-ease);}
+.bseg button.on{background:var(--tx);color:var(--page);}
+.save-tag{font-size:12px;color:var(--accent-soft);background:color-mix(in srgb,var(--accent) 16%, transparent);border:1px solid color-mix(in srgb,var(--accent) 28%, transparent);padding:5px 11px;border-radius:var(--nex-r-pill);font-weight:500;}
+html[data-theme="light"] .save-tag{color:var(--accent-strong);}
+
+/* ============ PRICING ============ */
+.tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:start;}
+.tier{position:relative;border:1px solid var(--bd);border-radius:var(--nex-r-2xl);padding:30px 24px;background:var(--surface);display:flex;flex-direction:column;gap:20px;transition:border-color .2s, transform .2s;}
+.tier:hover{border-color:var(--bd-strong);}
+.tier.feat{background:var(--nex-grad-night);border-color:var(--accent);box-shadow:var(--nex-shadow-glow);transform:translateY(-8px);}
+html[data-theme="light"] .tier.feat{color:#fff;}
+html[data-theme="light"] .tier.feat .t-name{color:var(--accent-soft);}
+.feat-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);font-size:11px;background:var(--nex-pink);color:#fff;padding:5px 14px;border-radius:var(--nex-r-pill);font-weight:500;letter-spacing:.04em;white-space:nowrap;box-shadow:var(--nex-shadow-glow-pink);}
+.t-name{font-family:var(--nex-font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--tx-faint);}
+.tier.feat .t-name{color:var(--accent-soft);}
+.t-price{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;}
+.t-cur{font-size:20px;font-weight:500;color:var(--tx-muted);}
+.tier.feat .t-cur{color:rgba(255,255,255,.7);}
+.t-amt{font-size:48px;line-height:1;letter-spacing:-.045em;font-weight:400;font-variant-numeric:tabular-nums;}
+.t-per{font-size:14px;color:var(--tx-faint);}
+.tier.feat .t-per{color:rgba(255,255,255,.6);}
+.t-price{margin-bottom:12px;}
+.t-bill-note{font-size:12px;color:var(--tx-faint);min-height:16px;}
+.tier.feat .t-bill-note{color:rgba(255,255,255,.55);}
+.t-desc{font-size:14px;line-height:1.55;color:var(--tx-muted);}
+.tier.feat .t-desc{color:rgba(255,255,255,.78);}
+.t-feats{list-style:none;margin:0;padding:20px 0 0;border-top:1px solid var(--bd);display:flex;flex-direction:column;gap:13px;}
+.tier.feat .t-feats{border-top-color:rgba(255,255,255,.14);}
+.t-feats li{font-size:14px;line-height:1.4;color:var(--tx-muted);display:flex;align-items:flex-start;gap:11px;}
+.tier.feat .t-feats li{color:rgba(255,255,255,.82);}
+.t-feats li svg{width:16px;height:16px;flex:0 0 auto;color:var(--accent);margin-top:1px;}
+.tier.feat .t-feats li svg{color:var(--accent-soft);}
+.t-feats li.muted{color:var(--tx-faint);}
+.t-feats li.muted svg{color:var(--tx-faint);opacity:.6;}
+.tier .btn{width:100%;margin-top:auto;}
+.tier.feat .btn-outline{border-color:rgba(255,255,255,.28);color:#fff;}
+@media(max-width:1180px){.tiers{grid-template-columns:repeat(2,1fr);max-width:760px;margin:0 auto;}.tier.feat{transform:none;}}
+@media(max-width:620px){.tiers{grid-template-columns:1fr;max-width:460px;}}
+
+/* ============ INCLUDES GRID ============ */
+.inc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.inc{border:1px solid var(--bd);border-radius:var(--nex-r-xl);padding:28px;background:var(--surface);display:flex;flex-direction:column;gap:14px;transition:border-color .2s,transform .2s;}
+.inc:hover{border-color:var(--bd-strong);transform:translateY(-3px);}
+.inc .ico{width:44px;height:44px;border-radius:var(--nex-r-md);display:grid;place-items:center;border:1px solid var(--bd);background:var(--surface-3);color:var(--accent);}
+html[data-theme="dark"] .inc .ico{color:var(--accent-soft);}
+.inc .ico svg{width:22px;height:22px;}
+.inc h4{margin:0;font-size:18px;font-weight:500;letter-spacing:-.02em;}
+.inc p{margin:0;font-size:14px;line-height:1.55;color:var(--tx-muted);}
+@media(max-width:880px){.inc-grid{grid-template-columns:1fr;}}
+
+/* ============ COMPARISON ============ */
+.cmp-section{background:var(--surface-2);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);}
+.cmp{width:100%;border-collapse:collapse;}
+.cmp th,.cmp td{text-align:center;padding:18px 16px;border-bottom:1px solid var(--bd);}
+.cmp thead th{font-size:13px;font-weight:500;}
+.cmp thead .plan-h{font-family:var(--nex-font-mono);text-transform:uppercase;letter-spacing:.1em;font-size:12px;color:var(--tx-faint);}
+.cmp thead .plan-h.feat{color:var(--accent-soft);}
+html[data-theme="light"] .cmp thead .plan-h.feat{color:var(--accent);}
+.cmp tbody th{text-align:left;font-weight:400;font-size:14px;color:var(--tx-muted);}
+.cmp .grp td,.cmp .grp th{font-family:var(--nex-font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx-faint);padding-top:30px;padding-bottom:10px;border-bottom:1px solid var(--bd-strong);}
+.cmp td .ck{color:var(--accent);}
+html[data-theme="dark"] .cmp td .ck{color:var(--accent-soft);}
+.cmp td .dash{color:var(--tx-faint);opacity:.5;}
+.cmp td.cell{font-size:13px;color:var(--tx);font-variant-numeric:tabular-nums;}
+.cmp col.featcol,.cmp th.featcol{background:color-mix(in srgb,var(--accent) 9%, transparent);}
+@media(max-width:760px){.cmp-scroll{overflow-x:auto;}.cmp{min-width:640px;}}
+
+/* ============ FAQ ============ */
+.faq{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:0;}
+.qa{border-bottom:1px solid var(--bd);}
+.qa-q{width:100%;background:transparent;border:0;color:var(--tx);font:500 18px var(--nex-font-sans);letter-spacing:-.02em;text-align:left;padding:24px 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:20px;}
+.qa-q .ic{flex:0 0 auto;width:22px;height:22px;position:relative;transition:transform .25s var(--nex-ease);color:var(--accent);}
+html[data-theme="dark"] .qa-q .ic{color:var(--accent-soft);}
+.qa.open .qa-q .ic{transform:rotate(45deg);}
+.qa-a{max-height:0;overflow:hidden;transition:max-height .3s var(--nex-ease);}
+.qa-a p{margin:0;padding:0 0 24px;color:var(--tx-muted);font-size:15px;line-height:1.6;max-width:640px;}
+
+/* ============ FINAL CTA ============ */
+.final{background:var(--nex-grad-aurora);color:#fff;text-align:center;padding:120px 0;}
+.final h2{font-size:clamp(40px,6vw,72px);line-height:1.02;letter-spacing:-.04em;font-weight:400;margin:0 auto 22px;max-width:780px;}
+.final p{font-size:19px;color:rgba(255,255,255,.85);max-width:520px;margin:0 auto 36px;line-height:1.5;}
+.final .micro{margin-top:22px;font-size:13px;color:rgba(255,255,255,.7);}
+
+/* ============ FOOTER ============ */
+.foot{padding:64px 0 40px;border-top:1px solid var(--bd);}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;}
+.foot .tag{font-size:14px;color:var(--tx-muted);max-width:300px;margin:14px 0 0;line-height:1.55;}
+.foot h5{margin:0 0 14px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--tx-faint);font-family:var(--nex-font-mono);font-weight:400;}
+.foot ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px;}
+.foot ul a{color:var(--tx-muted);font-size:14px;transition:color .2s;}
+.foot ul a:hover{color:var(--tx);}
+.foot-bottom{margin-top:48px;padding-top:24px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;font-size:12px;color:var(--tx-faint);flex-wrap:wrap;gap:12px;}
+@media(max-width:760px){.foot-grid{grid-template-columns:1fr 1fr;}}
+
+/* entrance */
+@media (prefers-reduced-motion: no-preference){
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s var(--nex-ease),transform .6s var(--nex-ease);}
+  .reveal.in{opacity:1;transform:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <div class="nav-in">
+    <a class="logo" href="#top">
+      <img src="assets/la agencia-monogram.png" alt="" width="28" height="28" />
+      la agencia.AI
+    </a>
+    <nav class="nav-links">
+      <a href="#planes">Planes</a>
+      <a href="#incluye">Qué incluye</a>
+      <a href="#comparar">Comparar</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="wrap hero-in">
+      <span class="pill"><span class="dot"></span>Mantenimiento · Soporte continuo</span>
+      <h1>Tu sistema de IA,<br>siempre en su <span class="grad-text">mejor versión</span>.</h1>
+      <p class="lede">Soporte, mejoras y optimización continua para las soluciones de inteligencia artificial que ya operan en tu negocio. Desde USD&nbsp;250/mes. Sin contratos largos.</p>
+      <div class="hero-stats">
+        <div class="hstat"><span class="n">4</span><span class="l">Niveles de servicio</span></div>
+        <div class="hstat-sep"></div>
+        <div class="hstat"><span class="n grad-text">99.9%</span><span class="l">Uptime objetivo</span></div>
+        <div class="hstat-sep"></div>
+        <div class="hstat"><span class="n">&lt;1h</span><span class="l">Respuesta crítica</span></div>
+        <div class="hstat-sep"></div>
+        <div class="hstat"><span class="n">0</span><span class="l">Permanencia mínima</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRICING ============ -->
+  <section class="sec" id="planes">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="mono-eye">Planes</span>
+        <h2>Elegí cómo querés que cuidemos tu IA.</h2>
+        <div class="billing">
+          <div class="bseg" role="tablist" aria-label="Frecuencia de facturación">
+            <button id="bm" class="on" type="button">Mensual</button>
+            <button id="ba" type="button">Anual</button>
+          </div>
+          <span class="save-tag">2 meses gratis</span>
+        </div>
+      </div>
+
+      <div class="tiers">
+        <!-- Esencial -->
+        <div class="tier" data-tier="esencial">
+          <div class="t-name">Esencial</div>
+          <div>
+            <div class="t-price"><span class="t-cur">USD</span><span class="t-amt" data-m="250" data-a="208">250</span><span class="t-per">/ mes</span></div>
+            <div class="t-bill-note" data-note></div>
+          </div>
+          <p class="t-desc">Para 1 sistema estable que necesita vigilancia y soporte reactivo.</p>
+          <ul class="t-feats">
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>1 sistema cubierto</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Monitoreo diario + alertas</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Soporte email · 48&nbsp;h</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Actualizaciones de seguridad</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Reporte trimestral</li>
+          </ul>
+          <a class="btn btn-brand" href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-8DY1876960876494BNIYVMGQ" target="_blank" rel="noopener">Adquirir Esencial</a>
+        </div>
+
+        <!-- Pro (featured) -->
+        <div class="tier feat" data-tier="pro">
+          <span class="feat-badge">Más elegido</span>
+          <div class="t-name">Pro</div>
+          <div>
+            <div class="t-price"><span class="t-cur">USD</span><span class="t-amt" data-m="750" data-a="625">750</span><span class="t-per">/ mes</span></div>
+            <div class="t-bill-note" data-note></div>
+          </div>
+          <p class="t-desc">Para sistemas en evolución con optimización proactiva y arquitecto cerca.</p>
+          <ul class="t-feats">
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Hasta 3 sistemas cubiertos</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Monitoreo en tiempo real</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Soporte prioritario · 8&nbsp;h</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Iteración proactiva de prompts</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Optimización de costos LLM</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>1 integración nueva / mes</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Call mensual con arquitecto</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Reporte mensual de KPIs</li>
+          </ul>
+          <button type="button" class="btn btn-snow" data-plan-soon="pro">Adquirir Pro</button>
+        </div>
+
+        <!-- Business (anchor) -->
+        <div class="tier" data-tier="business">
+          <div class="t-name">Business</div>
+          <div>
+            <div class="t-price"><span class="t-cur">USD</span><span class="t-amt" data-m="1.800" data-a="1.500">1.800</span><span class="t-per">/ mes</span></div>
+            <div class="t-bill-note" data-note></div>
+          </div>
+          <p class="t-desc">Para operaciones con múltiples sistemas críticos y alta cadencia de cambio.</p>
+          <ul class="t-feats">
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Hasta 6 sistemas cubiertos</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Monitoreo + alertas en Slack/WA</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>SLA crítico · 2&nbsp;h</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>2 integraciones nuevas / mes</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Suite automatizada de QA</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Backups diarios *</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Call quincenal con arquitecto</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Reporte quincenal de KPIs</li>
+          </ul>
+          <button type="button" class="btn btn-outline" data-plan-soon="business">Adquirir Business</button>
+        </div>
+
+        <!-- A medida -->
+        <div class="tier" data-tier="enterprise">
+          <div class="t-name">A medida</div>
+          <div>
+            <div class="t-price"><span class="t-amt" style="font-size:36px;">Consultar</span></div>
+            <div class="t-bill-note">Precio según alcance y SLA.</div>
+          </div>
+          <p class="t-desc">Operaciones críticas con cumplimiento, múltiples integraciones y arquitecto on-call.</p>
+          <ul class="t-feats">
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Sistemas ilimitados</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>SLA dedicado · &lt;1&nbsp;h crítico</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Integraciones a medida</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Suite QA + casos críticos</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Arquitecto dedicado on-call</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>Call semanal ejecutiva</li>
+            <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8 L7 12 L13 4"/></svg>DPA · SSO · cumplimiento</li>
+          </ul>
+          <button type="button" class="btn btn-outline" data-plan-soon="enterprise">Hablemos</button>
+        </div>
+      </div>
+      <p style="text-align:center;color:var(--tx-faint);font-size:13px;margin-top:28px;">Todos los planes son mes a mes. Cambiás o cancelás cuando quieras.</p>
+    </div>
+  </section>
+
+  <!-- ============ INCLUDES ============ -->
+  <section class="sec" id="incluye" style="padding-top:40px;">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="mono-eye">Qué incluye</span>
+        <h2>Mantener no es solo que no se rompa.</h2>
+        <p>Es que mejore. Cada plan combina vigilancia, manos humanas y optimización continua sobre tu solución de IA.</p>
+      </div>
+      <div class="inc-grid">
+        <div class="inc reveal"><div class="ico"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18 L11 18 L14 8 L18 24 L21 18 L28 18"/></svg></div><h4>Monitoring 24/7</h4><p>Vigilamos latencia, errores y deriva del modelo en tiempo real. Si algo se sale de rango, lo sabemos antes que vos.</p></div>
+        <div class="inc reveal"><div class="ico"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="11" r="5"/><path d="M6 27 Q6 19 16 19 Q26 19 26 27"/></svg></div><h4>Soporte humano</h4><p>Personas que conocen tu sistema, no un bot de tickets. Tiempos de respuesta según tu plan.</p></div>
+        <div class="inc reveal"><div class="ico"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4 V10 M16 22 V28 M4 16 H10 M22 16 H28 M8 8 L12 12 M24 24 L20 20 M24 8 L20 12 M8 24 L12 20"/><circle cx="16" cy="16" r="4"/></svg></div><h4>Mejoras continuas</h4><p>Horas mensuales de desarrollo para evolucionar prompts, flujos e integraciones a medida que tu negocio cambia.</p></div>
+        <div class="inc reveal"><div class="ico"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4 L8 8 V16 Q8 24 16 28 Q24 24 24 16 V8 Z"/><path d="M12 16 L15 19 L21 12"/></svg></div><h4>Seguridad y updates</h4><p>Parches, rotación de credenciales y actualización de dependencias y modelos sin que tengas que pensarlo.</p></div>
+        <div class="inc reveal"><div class="ico"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 26 V6 M6 26 H26 M11 21 L16 14 L20 18 L25 9"/></svg></div><h4>Optimización de costos</h4><p>Revisamos consumo de tokens, modelos y proveedores para que tu sistema rinda más gastando menos.</p></div>
+        <div class="inc reveal"><div class="ico"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="5" width="20" height="22" rx="2"/><path d="M11 12 H21 M11 17 H21 M11 22 H17"/></svg></div><h4>Reportes claros</h4><p>Un informe periódico con lo que pasó, lo que mejoramos y lo que recomendamos. Sin jerga, en lenguaje de negocio.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COMPARISON ============ -->
+  <section class="sec cmp-section" id="comparar">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="mono-eye">Comparar</span>
+        <h2>Todo lado a lado.</h2>
+      </div>
+      <div class="cmp-scroll reveal">
+        <table class="cmp">
+          <colgroup><col><col><col class="featcol"><col><col></colgroup>
+          <thead>
+            <tr>
+              <th style="text-align:left;"></th>
+              <th class="plan-h">Esencial</th>
+              <th class="plan-h feat featcol">Pro</th>
+              <th class="plan-h">Business</th>
+              <th class="plan-h">A medida</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="grp"><th>Soporte</th><td></td><td class="featcol"></td><td></td><td></td></tr>
+            <tr><th>Sistemas incluidos</th><td class="cell">1</td><td class="cell featcol">Hasta 3</td><td class="cell">Hasta 6</td><td class="cell">Ilimitados</td></tr>
+            <tr><th>Tiempo de respuesta crítico</th><td class="cell">48&nbsp;h</td><td class="cell featcol">8&nbsp;h</td><td class="cell">2&nbsp;h</td><td class="cell">&lt;1&nbsp;h</td></tr>
+            <tr><th>Monitoreo</th><td class="cell">Diario</td><td class="cell featcol">Tiempo real</td><td class="cell">Tiempo real + alertas</td><td class="cell">24/7 dedicado</td></tr>
+            <tr><th>Canal prioritario</th><td><span class="dash">—</span></td><td class="featcol"><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td></tr>
+            <tr><th>Arquitecto on-call</th><td><span class="dash">—</span></td><td class="featcol"><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="ck">✓</span></td></tr>
+
+            <tr class="grp"><th>Mejoras</th><td></td><td class="featcol"></td><td></td><td></td></tr>
+            <tr><th>Iteración de prompts</th><td class="cell">Reactiva</td><td class="cell featcol">Proactiva</td><td class="cell">Continua</td><td class="cell">Continua</td></tr>
+            <tr><th>Optimización de costos LLM</th><td><span class="dash">—</span></td><td class="featcol"><span class="ck">✓</span></td><td><span class="ck">✓</span></td><td><span class="ck">✓</span></td></tr>
+            <tr><th>Integraciones nuevas</th><td class="cell">$ aparte</td><td class="cell featcol">1 / mes</td><td class="cell">2 / mes</td><td class="cell">A medida</td></tr>
+            <tr><th>Suite de QA / testing</th><td class="cell">—</td><td class="cell featcol">Smoke trimestral</td><td class="cell">Automatizada</td><td class="cell">+ casos críticos</td></tr>
+
+            <tr class="grp"><th>Gobierno</th><td></td><td class="featcol"></td><td></td><td></td></tr>
+            <tr><th>Calls de revisión</th><td class="cell">—</td><td class="cell featcol">Mensual</td><td class="cell">Quincenal</td><td class="cell">Semanal</td></tr>
+            <tr><th>Reportes KPI</th><td class="cell">Trimestral</td><td class="cell featcol">Mensual</td><td class="cell">Quincenal</td><td class="cell">Semanal ejec.</td></tr>
+            <tr><th>Backups *</th><td class="cell">—</td><td class="cell featcol">Semanales</td><td class="cell">Diarios</td><td class="cell">Continuos</td></tr>
+            <tr><th>DPA · SSO · cumplimiento</th><td><span class="dash">—</span></td><td class="featcol"><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="ck">✓</span></td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top:16px;font-size:12px;color:var(--tx-faint);">* Los backups aplican únicamente a sistemas alojados en servidores de la agencia.AI.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="sec" id="faq">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="mono-eye">FAQ</span>
+        <h2>Preguntas frecuentes.</h2>
+      </div>
+      <div class="faq reveal">
+        <div class="qa open">
+          <button class="qa-q" type="button">¿Hay permanencia o contratos largos?<span class="ic"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4 V18 M4 11 H18"/></svg></span></button>
+          <div class="qa-a"><p>No. Todos los planes son mes a mes. Podés cambiar de nivel o cancelar cuando quieras, sin penalizaciones ni cláusulas escondidas.</p></div>
+        </div>
+        <div class="qa">
+          <button class="qa-q" type="button">¿Qué pasa si necesito más horas de mejora un mes?<span class="ic"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4 V18 M4 11 H18"/></svg></span></button>
+          <div class="qa-a"><p>Podés sumar bloques de horas puntuales al precio acordado, o subir de plan ese mes. Te avisamos antes de superar lo incluido — nunca hay sorpresas en la factura.</p></div>
+        </div>
+        <div class="qa">
+          <button class="qa-q" type="button">¿Mantienen sistemas que no construyeron ustedes?<span class="ic"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4 V18 M4 11 H18"/></svg></span></button>
+          <div class="qa-a"><p>Sí. Empezamos con un diagnóstico técnico para entender tu solución actual y, a partir de ahí, la monitoreamos y mejoramos como si fuera nuestra.</p></div>
+        </div>
+        <div class="qa">
+          <button class="qa-q" type="button">¿Cómo manejan la seguridad y mis datos?<span class="ic"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4 V18 M4 11 H18"/></svg></span></button>
+          <div class="qa-a"><p>Trabajamos con accesos mínimos, credenciales rotadas y registros de auditoría. En el plan A medida sumamos SSO, DPA y los acuerdos de cumplimiento que tu organización requiera.</p></div>
+        </div>
+        <div class="qa">
+          <button class="qa-q" type="button">¿Atienden incidencias fuera del horario laboral?<span class="ic"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4 V18 M4 11 H18"/></svg></span></button>
+          <div class="qa-a"><p>El monitoreo automático corre en todos los planes. La atención humana fuera de horario está incluida en A medida vía soporte on-call; en Esencial, Pro y Business respondemos dentro del SLA de cada nivel.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="foot">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <a class="logo" href="#top">
+            <img src="assets/la agencia-monogram.png" alt="" width="28" height="28" />
+            la agencia.AI
+          </a>
+          <p class="tag">Sistemas de inteligencia artificial aplicados a negocio — diseñados, implementados y mantenidos.</p>
+        </div>
+        <div><h5>Mantenimiento</h5><ul><li><a href="#planes">Planes</a></li><li><a href="#incluye">Qué incluye</a></li><li><a href="#comparar">Comparar</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+      </div>
+      <div class="foot-bottom">
+        <span>© 2026 la agencia.AI · Todos los derechos reservados</span>
+        <span>Planes desde USD 250/mes · Sin contratos largos</span>
+      </div>
+    </div>
+  </footer>
+
+</main>
+
+<!-- ============ PAGE INTERACTIONS ============ -->
+<script>
+(function(){
+  // Billing toggle
+  var bm = document.getElementById('bm'), ba = document.getElementById('ba');
+  window.__billing = 'm';
+  window.applyBilling = function(mode){
+    window.__billing = mode;
+    var annual = mode === 'a';
+    bm.classList.toggle('on', !annual);
+    ba.classList.toggle('on', annual);
+    document.querySelectorAll('.t-amt[data-m]').forEach(function(el){
+      var v = annual ? el.getAttribute('data-a') : el.getAttribute('data-m');
+      el.textContent = v;
+    });
+    document.querySelectorAll('.tier[data-tier] [data-note]').forEach(function(el){
+      el.textContent = annual ? 'Facturado anual · ahorrás 2 meses' : 'Facturado mensual';
+    });
+  };
+  bm.addEventListener('click', function(){ window.applyBilling('m'); });
+  ba.addEventListener('click', function(){ window.applyBilling('a'); });
+  window.applyBilling('m');
+
+  // FAQ accordion
+  document.querySelectorAll('.qa-q').forEach(function(q){
+    q.addEventListener('click', function(){
+      var qa = q.parentElement;
+      var open = qa.classList.contains('open');
+      document.querySelectorAll('.qa').forEach(function(o){ o.classList.remove('open'); o.querySelector('.qa-a').style.maxHeight = null; });
+      if(!open){ qa.classList.add('open'); var a = qa.querySelector('.qa-a'); a.style.maxHeight = a.scrollHeight + 'px'; }
+    });
+  });
+  // init open first
+  var first = document.querySelector('.qa.open .qa-a'); if(first){ first.style.maxHeight = first.scrollHeight + 'px'; }
+
+  // Featured plan switch (used by tweaks)
+  window.applyFeatured = function(which){
+    document.querySelectorAll('.tier[data-tier]').forEach(function(t){
+      var isFeat = t.getAttribute('data-tier') === which;
+      t.classList.toggle('feat', isFeat);
+      var badge = t.querySelector('.feat-badge');
+      if(isFeat && !badge){ var b=document.createElement('span'); b.className='feat-badge'; b.textContent='Más elegido'; t.insertBefore(b, t.firstChild); }
+      if(!isFeat && badge){ badge.remove(); }
+    });
+  };
+
+  // Reveal on scroll
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:.12});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+
+  // recompute open FAQ height on resize
+  window.addEventListener('resize', function(){
+    var open = document.querySelector('.qa.open .qa-a');
+    if(open){ open.style.maxHeight = open.scrollHeight + 'px'; }
+  });
+})();
+</script>
+
+<!-- ============ TWEAKS PANEL ============ -->
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "theme": "light",
+  "accent": "#8943E3",
+  "featured": "pro",
+  "billing": "m"
+}/*EDITMODE-END*/;
+
+const ACCENTS = {
+  "#8943E3": { strong:"#6024AD", soft:"#C9A4F7" },
+  "#F239FF": { strong:"#A46BED", soft:"#F8B6FF" },
+  "#6024AD": { strong:"#3A1270", soft:"#A46BED" }
+};
+
+function applyAll(t){
+  document.documentElement.setAttribute('data-theme', t.theme);
+  var a = ACCENTS[t.accent] || ACCENTS["#8943E3"];
+  document.documentElement.style.setProperty('--accent', t.accent);
+  document.documentElement.style.setProperty('--accent-strong', a.strong);
+  document.documentElement.style.setProperty('--accent-soft', a.soft);
+  if(window.applyFeatured) window.applyFeatured(t.featured);
+  if(window.applyBilling) window.applyBilling(t.billing);
+}
+
+function App(){
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  React.useEffect(function(){ applyAll(t); }, [t.theme, t.accent, t.featured, t.billing]);
+  return (
+    <TweaksPanel>
+      <TweakSection label="Apariencia" />
+      <TweakColor label="Acento" value={t.accent}
+        options={["#8943E3","#F239FF","#6024AD"]}
+        onChange={(v)=>setTweak('accent', v)} />
+      <TweakSection label="Planes" />
+      <TweakRadio label="Plan destacado" value={t.featured}
+        options={["esencial","pro","business","enterprise"]}
+        onChange={(v)=>setTweak('featured', v)} />
+      <TweakRadio label="Facturación" value={t.billing} options={["m","a"]}
+        onChange={(v)=>setTweak('billing', v)} />
+    </TweaksPanel>
+  );
+}
+
+const mount = document.createElement('div');
+document.body.appendChild(mount);
+ReactDOM.createRoot(mount).render(<App />);
+</script>
+
+<!-- ============ CTA PLANES · placeholder no-Esencial ============ -->
+<script>
+(function(){
+  document.querySelectorAll('[data-plan-soon]').forEach(function(b){
+    b.addEventListener('click', function(){
+      alert('Este plan estará disponible para contratación online muy pronto. Mientras tanto, escribinos para activarlo manualmente.');
+    });
+  });
+})();
+</script>
+
+<template id="__bundler_thumbnail">
+  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="#000"/>
+    <g stroke="#C9A4F7" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" fill="none" transform="translate(40 40) scale(0.6)">
+      <path d="M45 150 L45 50 Q100 100 155 50 L155 150"/>
+      <path d="M45 50 Q100 100 155 150"/>
+    </g>
+  </svg>
+</template>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+{
+  "caso": "I-08",
+  "titulo": "sessionKey compatible con la memoria de Kommo",
+  "resultado": "CORROBORADO",
+  "detalle": "obtenido='+52133000001992131' esperado='+52133000001992131' → los leads en curso no pierden el historial en el cutover",
+  "aristas": [],
+  "pasos": [
+    {
+      "router": {
+        "contactId": "3tzzBVjsKlOF2RJjKNOL",
+        "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+        "messageId": "4b9d84ad-8e3a-4b36-b400-f517cd4ccfb5",
+        "messageId_derivado": false,
+        "phone": "+5213300000199",
+        "canal": "WhatsApp",
+        "texto": "chequeo de sesión",
+        "adjuntos": [],
+        "tipo": "texto",
+        "debounce_seg": 0,
+        "recibido_at": "2026-08-24T19:01:38.162-03:00",
+        "_forzar_fuera_horario": false,
+        "sessionId": "+52133000001992131",
+        "opportunityId": "vzYAb3P86uJ08CI9jKyV",
+        "etapa_id": "48de80e9-31a9-472a-b030-5b9fe9174810",
+        "etapa": "En Espera",
+        "via_oportunidad": "existente",
+        "ruta": "bloqueado",
+        "motivo_bloqueo": "atencion_humana",
+        "primer_contacto": false,
+        "turnos_previos": 113,
+        "gates": {
+          "etapa": "En Espera",
+          "bloqueo": "atencion_humana",
+          "via": "existente",
+          "cliente_vuelve": false,
+          "primer_contacto": false
+        }
+      }
+    }
+  ]
+}

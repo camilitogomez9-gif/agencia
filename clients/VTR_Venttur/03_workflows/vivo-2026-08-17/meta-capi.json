@@ -1,0 +1,1766 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Buscar Config Programa1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Buscar Lead por Teléfono (id)1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Buscar Config Programa2": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Folio (N/A)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Buscar Folio en Airtable1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Buscar Config Programa1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Buscar Lead por Teléfono (id)1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "existe1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Extraer Folio + Hashear (compacto)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Buscar Folio en Airtable1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Extraer Folio + Hashear1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Buscar Folio en Airtable1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Folio (N/A)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Preparar CAPI Data2",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "HTTP Request Meta CAPI1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Update record2",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "HTTP Request Meta CAPI2": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send a text message",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Preparar CAPI Data1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "HTTP Request Meta CAPI1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Preparar CAPI Data2": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "HTTP Request Meta CAPI2",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Trigger": {
+      "main": [
+        []
+      ]
+    },
+    "Update record2": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Send a text message1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Update record3": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Preparar CAPI Data1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "contiene_folio1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extraer Folio + Hashear1",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Buscar Config Programa2",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "contiene_folio_compacto": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extraer Folio + Hashear (compacto)",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "contiene_folio1",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "existe1": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Update record3",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Preparar CAPI Data1",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-03-10T16:40:53.204Z",
+  "description": null,
+  "id": "z98w2yWVEMOfifMl",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Meta CAPI - Venttur",
+  "nodes": [
+    {
+      "disabled": true,
+      "id": "25421ce7-e618-4109-bfbd-be78d0034036",
+      "name": "Trigger",
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "position": [
+        -304,
+        -144
+      ],
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1
+    },
+    {
+      "alwaysOutputData": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      },
+      "id": "276a7d8c-ba61-416b-b67b-bfef9137e838",
+      "name": "Buscar Folio en Airtable1",
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "value": "[AIRTABLE_BASE_ID]"
+        },
+        "filterByFormula": "={Folio} = \"{{ $('Extraer Folio + Hashear1').first().json.folio }}\"",
+        "limit": 1,
+        "operation": "search",
+        "options": {},
+        "returnAll": false,
+        "table": {
+          "__rl": true,
+          "cachedResultName": "Folios CAPI",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]/[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "value": "[AIRTABLE_TABLE_ID]"
+        }
+      },
+      "position": [
+        592,
+        -160
+      ],
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1
+    },
+    {
+      "id": "33641e64-5e34-478f-a0f5-be5a60c1c547",
+      "name": "Preparar CAPI Data1",
+      "parameters": {
+        "jsCode": "const folioData   = $('Extraer Folio + Hashear1').first().json;\nconst folioLookup = $('Buscar Folio en Airtable1').first().json;\nconst config      = $(\"Buscar Config Programa1\").first().json; // viene de Buscar Config Programa\n\n// fbc: usar el guardado en Airtable (viene directo de la landing, más preciso)\n// fallback: construirlo desde fbclid + timestamp\nconst storedFbc = folioLookup.fbc || null;\nconst fbclid    = folioLookup.fbclid || null;\nconst airtableTs = folioLookup.Timestamp || null;\nconst fbc = storedFbc ||\n            (fbclid ? `fb.1.${airtableTs || Date.now()}.${fbclid}` : null);\n\n// user_data con todas las señales disponibles\nconst user_data_obj = {\n  ph: [folioData.hashed_phone],\n  fn: [folioData.hashed_fn],\n  ln: [folioData.hashed_ln],\n};\n\nif (fbc)                         user_data_obj.fbc                = fbc;\nif (folioLookup.fbp)             user_data_obj.fbp                = folioLookup.fbp;\nif (folioLookup.user_agent)      user_data_obj.client_user_agent  = folioLookup.user_agent;\nif (folioLookup.ip) {\n  // x-forwarded-for puede traer múltiples IPs separadas por coma — tomar la primera\n  user_data_obj.client_ip_address = folioLookup.ip.split(',')[0].trim();\n}\n\n// event_source_url: Landing URL real > default_url del programa\nconst event_source_url = folioLookup['Landing URL'] || config.default_url || '';\n\nreturn [{\n  json: {\n    folio:            folioData.folio,\n    programa:         folioData.programa,\n    event_time:       folioData.event_time,\n    user_data_obj,\n    pixel_id:         config.pixel_id,\n    access_token:     config.access_token,\n    event_source_url,\n  }\n}];"
+      },
+      "position": [
+        1712,
+        -160
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "c22b0205-79d1-48f0-bed3-2f0c5e029560",
+      "name": "HTTP Request Meta CAPI1",
+      "parameters": {
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "jsonBody": "={\n  \"data\": [{\n    \"event_name\": \"Lead\",\n    \"event_time\": {{ $json.event_time }},\n    \"event_id\": \"{{ $json.folio }}\",\n    \"action_source\": \"website\",\n    \"event_source_url\": \"{{ $json.event_source_url }}\",\n    \"user_data\": {{ JSON.stringify($json.user_data_obj) }},\n    \"custom_data\": {\n      \"folio\": \"{{ $json.folio }}\"\n    }\n  }],\n  \"access_token\": \"{{ $json.access_token }}\"\n}",
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "url": "=https://graph.facebook.com/v21.0/{{ $json.pixel_id }}/events"
+      },
+      "position": [
+        1936,
+        -160
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      },
+      "id": "d51ab7c8-245e-4bc3-8a72-725476336318",
+      "name": "Buscar Config Programa1",
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "value": "[AIRTABLE_BASE_ID]"
+        },
+        "filterByFormula": "={Programa} = \"{{ $('Extraer Folio + Hashear1').first().json.programa }}\"",
+        "limit": 1,
+        "operation": "search",
+        "options": {},
+        "returnAll": false,
+        "table": {
+          "__rl": true,
+          "cachedResultName": "Programas CAPI",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]/[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "value": "[AIRTABLE_TABLE_ID]"
+        }
+      },
+      "position": [
+        816,
+        -160
+      ],
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1
+    },
+    {
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      },
+      "id": "cae9e1e2-c856-45a7-9911-f79c6b2fdf5b",
+      "name": "Update record2",
+      "onError": "continueRegularOutput",
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "value": "[AIRTABLE_BASE_ID]"
+        },
+        "columns": {
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "Folio"
+          ],
+          "schema": [
+            {
+              "defaultMatch": true,
+              "display": true,
+              "displayName": "id",
+              "id": "id",
+              "readOnly": true,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Folio",
+              "id": "Folio",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "fbclid",
+              "id": "fbclid",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Programa",
+              "id": "Programa",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Timestamp",
+              "id": "Timestamp",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "number"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Landing URL",
+              "id": "Landing URL",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "fbc",
+              "id": "fbc",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "fbp",
+              "id": "fbp",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "user_agent",
+              "id": "user_agent",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "ip",
+              "id": "ip",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "fbtrace_id",
+              "id": "fbtrace_id",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "Folio": "={{ $('Extraer Folio + Hashear1').first().json.folio }}",
+            "fbtrace_id": "={{ $json.fbtrace_id }}"
+          }
+        },
+        "operation": "update",
+        "options": {},
+        "table": {
+          "__rl": true,
+          "cachedResultName": "Folios CAPI",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]/[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "value": "[AIRTABLE_TABLE_ID]"
+        }
+      },
+      "position": [
+        2160,
+        -160
+      ],
+      "retryOnFail": true,
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "waitBetweenTries": 3000
+    },
+    {
+      "alwaysOutputData": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      },
+      "id": "1d9a73b2-1a77-4e48-862a-4e95c3666e0d",
+      "name": "Buscar Lead por Teléfono (id)1",
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "value": "[AIRTABLE_BASE_ID]"
+        },
+        "filterByFormula": "={id} = \"{{ $('Extraer Folio + Hashear1').item.json.whatsapp_phone.replace('+','') }}\"",
+        "operation": "search",
+        "options": {},
+        "table": {
+          "__rl": true,
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]/[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "value": "[AIRTABLE_TABLE_ID]"
+        }
+      },
+      "position": [
+        1040,
+        -160
+      ],
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1
+    },
+    {
+      "id": "540be86c-cf4e-4296-9888-fd4d6f06eb9d",
+      "name": "existe1",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "b70fd967-7034-4e2b-a6f9-10ec8ee39100",
+              "leftValue": "={{ $json.id }}",
+              "operator": {
+                "operation": "notEmpty",
+                "singleValue": true,
+                "type": "string"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        1264,
+        -160
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      },
+      "id": "cdfbeb5c-903e-4f8f-adb8-2c14b88a418a",
+      "name": "Update record3",
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "value": "[AIRTABLE_BASE_ID]"
+        },
+        "columns": {
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "id_2"
+          ],
+          "schema": [
+            {
+              "defaultMatch": true,
+              "display": true,
+              "displayName": "id",
+              "id": "id",
+              "readOnly": true,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "id",
+              "id": "id",
+              "readOnly": true,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "id_2",
+              "id": "id_2",
+              "readOnly": true,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Link asesoría enviado",
+              "id": "Link asesoría enviado",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "boolean"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Asistió",
+              "id": "Asistió",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "boolean"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Agendan cita",
+              "id": "Agendan cita",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "boolean"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Programa interés",
+              "id": "Programa interés",
+              "options": [
+                {
+                  "name": "No definido",
+                  "value": "No definido"
+                },
+                {
+                  "name": "Boarding IA",
+                  "value": "Boarding IA"
+                },
+                {
+                  "name": "Gap Year IA",
+                  "value": "Gap Year IA"
+                },
+                {
+                  "name": "Pathway IA",
+                  "value": "Pathway IA"
+                },
+                {
+                  "name": "Summer Camp IA",
+                  "value": "Summer Camp IA"
+                },
+                {
+                  "name": "AA Familiar IA",
+                  "value": "AA Familiar IA"
+                },
+                {
+                  "name": "Francia IA",
+                  "value": "Francia IA"
+                },
+                {
+                  "name": "Automatización - Comentarios",
+                  "value": "Automatización - Comentarios"
+                }
+              ],
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "options"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Tipo",
+              "id": "Tipo",
+              "options": [
+                {
+                  "name": "Padre/Madre",
+                  "value": "Padre/Madre"
+                },
+                {
+                  "name": "Estudiante",
+                  "value": "Estudiante"
+                },
+                {
+                  "name": "No especificado",
+                  "value": "No especificado"
+                }
+              ],
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "options"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Creada",
+              "id": "Creada",
+              "readOnly": true,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "ID Clientify",
+              "id": "ID Clientify",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "number"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "ID Manychat",
+              "id": "ID Manychat",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "number"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Nombre Completo",
+              "id": "Nombre Completo",
+              "readOnly": true,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Fuente lead",
+              "id": "Fuente lead",
+              "options": [
+                {
+                  "name": "Francia / P. México/ Advantage",
+                  "value": "Francia / P. México/ Advantage"
+                },
+                {
+                  "name": "Francia / P. México / P1",
+                  "value": "Francia / P. México / P1"
+                },
+                {
+                  "name": "Francia / P. Jalisco/ P1",
+                  "value": "Francia / P. Jalisco/ P1"
+                },
+                {
+                  "name": "Formulario - LANDING",
+                  "value": "Formulario - LANDING"
+                },
+                {
+                  "name": "Estudiantes Locales",
+                  "value": "Estudiantes Locales"
+                },
+                {
+                  "name": "Estudiantes Foraneos",
+                  "value": "Estudiantes Foraneos"
+                },
+                {
+                  "name": "Papas locales",
+                  "value": "Papas locales"
+                },
+                {
+                  "name": "Papas Foraneos",
+                  "value": "Papas Foraneos"
+                },
+                {
+                  "name": "Internados / Público México / 3",
+                  "value": "Internados / Público México / 3"
+                },
+                {
+                  "name": "Internados / Público Advantage / 3",
+                  "value": "Internados / Público Advantage / 3"
+                },
+                {
+                  "name": "Internados / formulario",
+                  "value": "Internados / formulario"
+                },
+                {
+                  "name": "Facebook - Instagram",
+                  "value": "Facebook - Instagram"
+                },
+                {
+                  "name": "Web",
+                  "value": "Web"
+                },
+                {
+                  "name": "BOARD-PRES-V1",
+                  "value": "BOARD-PRES-V1"
+                },
+                {
+                  "name": "BOARD-GIRL-V1",
+                  "value": "BOARD-GIRL-V1"
+                },
+                {
+                  "name": "BOARD-DEP-V2",
+                  "value": "BOARD-DEP-V2"
+                },
+                {
+                  "name": "BOARD-PRES-V2",
+                  "value": "BOARD-PRES-V2"
+                },
+                {
+                  "name": "BOARD-GIRL-V2",
+                  "value": "BOARD-GIRL-V2"
+                },
+                {
+                  "name": "AA-PUBLICO",
+                  "value": "AA-PUBLICO"
+                },
+                {
+                  "name": "BOARD-GIRL-V3",
+                  "value": "BOARD-GIRL-V3"
+                },
+                {
+                  "name": "BOARD-PRES-V3",
+                  "value": "BOARD-PRES-V3"
+                },
+                {
+                  "name": "AA_PROSP_WA_2026-04",
+                  "value": "AA_PROSP_WA_2026-04"
+                }
+              ],
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "options"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Folio",
+              "id": "Folio",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "fbclid",
+              "id": "fbclid",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Nombre",
+              "id": "Nombre",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Apellido",
+              "id": "Apellido",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Telefono",
+              "id": "Telefono",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Contestan 1er mensaje",
+              "id": "Contestan 1er mensaje",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "boolean"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Cualificado",
+              "id": "Cualificado",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "boolean"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Tabla métricas",
+              "id": "Tabla métricas",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Reporte semanal",
+              "id": "Reporte semanal",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "array"
+            }
+          ],
+          "value": {
+            "Folio": "={{ $('Extraer Folio + Hashear1').first().json.folio }}",
+            "fbclid": "={{ $('Buscar Folio en Airtable1').first().json.fbclid }}",
+            "id_2": "={{ $json.id }}"
+          }
+        },
+        "operation": "update",
+        "options": {},
+        "table": {
+          "__rl": true,
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]/[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "value": "[AIRTABLE_TABLE_ID]"
+        }
+      },
+      "position": [
+        1488,
+        -240
+      ],
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1
+    },
+    {
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      },
+      "id": "bcd9b452-da17-4fc5-bc23-4c5a99cee21b",
+      "name": "Buscar Config Programa2",
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "value": "[AIRTABLE_BASE_ID]"
+        },
+        "filterByFormula": "={Programa} = \"BS\"",
+        "limit": 1,
+        "operation": "search",
+        "options": {},
+        "returnAll": false,
+        "table": {
+          "__rl": true,
+          "cachedResultName": "Programas CAPI",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]/[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "value": "[AIRTABLE_TABLE_ID]"
+        }
+      },
+      "position": [
+        368,
+        224
+      ],
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1
+    },
+    {
+      "id": "50e6dddc-1a05-4afc-93e1-5b5476f20657",
+      "name": "Preparar CAPI Data2",
+      "parameters": {
+        "jsCode": "function sha256(input) {\n  const msg = (input || '').toLowerCase().trim();\n  const bytes = [];\n  for (let i = 0; i < msg.length; i++) {\n    const c = msg.charCodeAt(i);\n    if (c < 0x80) { bytes.push(c); }\n    else if (c < 0x800) { bytes.push(0xC0|(c>>6), 0x80|(c&0x3F)); }\n    else if (c < 0x10000) { bytes.push(0xE0|(c>>12), 0x80|((c>>6)&0x3F), 0x80|(c&0x3F)); }\n    else { bytes.push(0xF0|(c>>18), 0x80|((c>>12)&0x3F), 0x80|((c>>6)&0x3F), 0x80|(c&0x3F)); }\n  }\n  const K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];\n  let h0=0x6a09e667,h1=0xbb67ae85,h2=0x3c6ef372,h3=0xa54ff53a,h4=0x510e527f,h5=0x9b05688c,h6=0x1f83d9ab,h7=0x5be0cd19;\n  const origLen = bytes.length;\n  bytes.push(0x80);\n  while ((bytes.length%64)!==56) bytes.push(0x00);\n  const bitLen = origLen*8;\n  bytes.push(0,0,0,0,(bitLen>>>24)&0xFF,(bitLen>>>16)&0xFF,(bitLen>>>8)&0xFF,bitLen&0xFF);\n  const rotr=(x,n)=>(x>>>n)|(x<<(32-n));\n  for (let i=0;i<bytes.length;i+=64) {\n    const w=[];\n    for (let j=0;j<16;j++) w[j]=((bytes[i+j*4]<<24)|(bytes[i+j*4+1]<<16)|(bytes[i+j*4+2]<<8)|bytes[i+j*4+3])>>>0;\n    for (let j=16;j<64;j++) { const s0=rotr(w[j-15],7)^rotr(w[j-15],18)^(w[j-15]>>>3); const s1=rotr(w[j-2],17)^rotr(w[j-2],19)^(w[j-2]>>>10); w[j]=(w[j-16]+s0+w[j-7]+s1)>>>0; }\n    let a=h0,b=h1,c=h2,d=h3,e=h4,f=h5,g=h6,h=h7;\n    for (let j=0;j<64;j++) { const S1=rotr(e,6)^rotr(e,11)^rotr(e,25); const ch=(e&f)^(~e&g); const t1=(h+S1+ch+K[j]+w[j])>>>0; const S0=rotr(a,2)^rotr(a,13)^rotr(a,22); const maj=(a&b)^(a&c)^(b&c); const t2=(S0+maj)>>>0; h=g;g=f;f=e;e=(d+t1)>>>0;d=c;c=b;b=a;a=(t1+t2)>>>0; }\n    h0=(h0+a)>>>0;h1=(h1+b)>>>0;h2=(h2+c)>>>0;h3=(h3+d)>>>0;h4=(h4+e)>>>0;h5=(h5+f)>>>0;h6=(h6+g)>>>0;h7=(h7+h)>>>0;\n  }\n  return [h0,h1,h2,h3,h4,h5,h6,h7].map(x=>x.toString(16).padStart(8,'0')).join('');\n}\n\nconst trigger = $('Trigger').first().json;\nconst body    = trigger.body || {};\nconst config = $('Buscar Config Programa2').first().json;\n\nconst whatsapp_phone = body.whatsapp_phone || '';\nconst first_name     = body.first_name     || '';\nconst last_name      = body.last_name      || '';\nconst phone          = whatsapp_phone.replace(/\\D/g, '');\n\nconst event_time = Math.floor(Date.now() / 1000);\n\n// Sin folio: event_id construido desde teléfono + timestamp (único y trazable)\nconst event_id = `CTWA_${phone}_${event_time}`;\n\nconst user_data_obj = {\n  ph: [sha256(phone)],\n  fn: [sha256(first_name)],\n  ln: [sha256(last_name)],\n};\n\nreturn [{\n  json: {\n    event_id,\n    event_time,\n    user_data_obj,\n    pixel_id:          config.pixel_id,\n    access_token:      config.access_token,\n    event_source_url:  config.default_url || '',\n  }\n}];\n"
+      },
+      "position": [
+        816,
+        224
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "dd176c11-21b4-4a57-b1f4-39d2fc266627",
+      "name": "HTTP Request Meta CAPI2",
+      "parameters": {
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "jsonBody": "={\n  \"data\": [{\n    \"event_name\": \"Lead\",\n    \"event_time\": {{ $json.event_time }},\n    \"event_id\": \"{{ $json.event_id }}\",\n    \"action_source\": \"system_generated\",\n    \"event_source_url\": \"{{ $json.event_source_url }}\",\n    \"user_data\": {{ JSON.stringify($json.user_data_obj) }},\n    \"custom_data\": {\n      \"origen\": \"CTWA\"\n    }\n  }],\n  \"access_token\": \"{{ $json.access_token }}\"\n}\n",
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "url": "=https://graph.facebook.com/v21.0/{{ $json.pixel_id }}/events\n"
+      },
+      "position": [
+        1040,
+        224
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "980f01ce-88a3-4cf2-8910-54a662c52833",
+      "name": "Sticky Note2",
+      "parameters": {
+        "color": 5,
+        "content": "## WhatsApp\nEsta rama se activa cuando los leads llegan a WA por anuncio CTWA (no pasa por landing)",
+        "height": 112
+      },
+      "position": [
+        1456,
+        224
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      },
+      "id": "945af701-5045-409a-825d-fba2d661d56c",
+      "name": "Folio (N/A)",
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "value": "[AIRTABLE_BASE_ID]"
+        },
+        "columns": {
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "ID Manychat"
+          ],
+          "schema": [
+            {
+              "defaultMatch": true,
+              "display": true,
+              "displayName": "id",
+              "id": "id",
+              "readOnly": true,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "id",
+              "id": "id",
+              "readOnly": true,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "id_2",
+              "id": "id_2",
+              "readOnly": true,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Link asesoría enviado",
+              "id": "Link asesoría enviado",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "boolean"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Asistió",
+              "id": "Asistió",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "boolean"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Agendan cita",
+              "id": "Agendan cita",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "boolean"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Programa interés",
+              "id": "Programa interés",
+              "options": [
+                {
+                  "name": "No definido",
+                  "value": "No definido"
+                },
+                {
+                  "name": "Boarding IA",
+                  "value": "Boarding IA"
+                },
+                {
+                  "name": "Gap Year IA",
+                  "value": "Gap Year IA"
+                },
+                {
+                  "name": "Pathway IA",
+                  "value": "Pathway IA"
+                },
+                {
+                  "name": "Summer Camp IA",
+                  "value": "Summer Camp IA"
+                },
+                {
+                  "name": "AA Familiar IA",
+                  "value": "AA Familiar IA"
+                },
+                {
+                  "name": "Francia IA",
+                  "value": "Francia IA"
+                },
+                {
+                  "name": "Automatización - Comentarios",
+                  "value": "Automatización - Comentarios"
+                }
+              ],
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "options"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Tipo",
+              "id": "Tipo",
+              "options": [
+                {
+                  "name": "Padre/Madre",
+                  "value": "Padre/Madre"
+                },
+                {
+                  "name": "Estudiante",
+                  "value": "Estudiante"
+                },
+                {
+                  "name": "No especificado",
+                  "value": "No especificado"
+                }
+              ],
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "options"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Creada",
+              "id": "Creada",
+              "readOnly": true,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "ID Clientify",
+              "id": "ID Clientify",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "number"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "ID Manychat",
+              "id": "ID Manychat",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "number"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Nombre Completo",
+              "id": "Nombre Completo",
+              "readOnly": true,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Fuente lead",
+              "id": "Fuente lead",
+              "options": [
+                {
+                  "name": "Francia / P. México/ Advantage",
+                  "value": "Francia / P. México/ Advantage"
+                },
+                {
+                  "name": "Francia / P. México / P1",
+                  "value": "Francia / P. México / P1"
+                },
+                {
+                  "name": "Francia / P. Jalisco/ P1",
+                  "value": "Francia / P. Jalisco/ P1"
+                },
+                {
+                  "name": "Formulario - LANDING",
+                  "value": "Formulario - LANDING"
+                },
+                {
+                  "name": "Estudiantes Locales",
+                  "value": "Estudiantes Locales"
+                },
+                {
+                  "name": "Estudiantes Foraneos",
+                  "value": "Estudiantes Foraneos"
+                },
+                {
+                  "name": "Papas locales",
+                  "value": "Papas locales"
+                },
+                {
+                  "name": "Papas Foraneos",
+                  "value": "Papas Foraneos"
+                },
+                {
+                  "name": "Internados / Público México / 3",
+                  "value": "Internados / Público México / 3"
+                },
+                {
+                  "name": "Internados / Público Advantage / 3",
+                  "value": "Internados / Público Advantage / 3"
+                },
+                {
+                  "name": "Internados / formulario",
+                  "value": "Internados / formulario"
+                },
+                {
+                  "name": "Facebook - Instagram",
+                  "value": "Facebook - Instagram"
+                },
+                {
+                  "name": "Web",
+                  "value": "Web"
+                },
+                {
+                  "name": "BOARD-PRES-V1",
+                  "value": "BOARD-PRES-V1"
+                },
+                {
+                  "name": "BOARD-GIRL-V1",
+                  "value": "BOARD-GIRL-V1"
+                },
+                {
+                  "name": "BOARD-DEP-V2",
+                  "value": "BOARD-DEP-V2"
+                },
+                {
+                  "name": "BOARD-PRES-V2",
+                  "value": "BOARD-PRES-V2"
+                },
+                {
+                  "name": "BOARD-GIRL-V2",
+                  "value": "BOARD-GIRL-V2"
+                },
+                {
+                  "name": "AA-PUBLICO",
+                  "value": "AA-PUBLICO"
+                },
+                {
+                  "name": "BOARD-GIRL-V3",
+                  "value": "BOARD-GIRL-V3"
+                },
+                {
+                  "name": "BOARD-PRES-V3",
+                  "value": "BOARD-PRES-V3"
+                },
+                {
+                  "name": "AA_PROSP_WA_2026-04",
+                  "value": "AA_PROSP_WA_2026-04"
+                }
+              ],
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "options"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Folio",
+              "id": "Folio",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "fbclid",
+              "id": "fbclid",
+              "readOnly": false,
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Nombre",
+              "id": "Nombre",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Apellido",
+              "id": "Apellido",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Telefono",
+              "id": "Telefono",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Contestan 1er mensaje",
+              "id": "Contestan 1er mensaje",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "boolean"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Cualificado",
+              "id": "Cualificado",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "boolean"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Tabla métricas",
+              "id": "Tabla métricas",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Reporte semanal",
+              "id": "Reporte semanal",
+              "readOnly": false,
+              "removed": true,
+              "required": false,
+              "type": "array"
+            }
+          ],
+          "value": {
+            "Folio": "N/A (WA)",
+            "ID Manychat": "={{ $('Trigger').item.json.body.id }}",
+            "fbclid": "-"
+          }
+        },
+        "operation": "update",
+        "options": {},
+        "table": {
+          "__rl": true,
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]/[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "value": "[AIRTABLE_TABLE_ID]"
+        }
+      },
+      "position": [
+        592,
+        224
+      ],
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "V5k84z3AjQc9Y5yg",
+          "name": "botla agencia"
+        }
+      },
+      "id": "8e816146-b4b7-48f9-8990-56c3051106bb",
+      "name": "Send a text message",
+      "parameters": {
+        "additionalFields": {
+          "appendAttribution": false
+        },
+        "chatId": "6390727286",
+        "text": "=Ejecución en  {{ $workflow.name }}\nRama WhatsApp\n{{ $now.format('MM-dd HH:mm') }}"
+      },
+      "position": [
+        1264,
+        224
+      ],
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "webhookId": "0fedf855-4dba-4dbb-886d-a61bfeb44bfe"
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "V5k84z3AjQc9Y5yg",
+          "name": "botla agencia"
+        }
+      },
+      "id": "f019f129-de7f-4ae2-aedd-8e4fd09ba69a",
+      "name": "Send a text message1",
+      "parameters": {
+        "additionalFields": {
+          "appendAttribution": false
+        },
+        "chatId": "6390727286",
+        "text": "=Ejecución en  {{ $workflow.name }}\nRama Normal\n{{ $now.format('MM-dd HH:mm') }}"
+      },
+      "position": [
+        2384,
+        -160
+      ],
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "webhookId": "0fedf855-4dba-4dbb-886d-a61bfeb44bfe"
+    },
+    {
+      "id": "64cd3111-b16e-470e-883d-e6908b1dc5cf",
+      "name": "Extraer Folio + Hashear1",
+      "parameters": {
+        "jsCode": "// SHA-256 en JavaScript puro (sin require, sin TextEncoder, sin crypto)\nfunction sha256(input) {\n  const msg = (input || '').toLowerCase().trim();\n  const bytes = [];\n  for (let i = 0; i < msg.length; i++) {\n    const c = msg.charCodeAt(i);\n    if (c < 0x80) {\n      bytes.push(c);\n    } else if (c < 0x800) {\n      bytes.push(0xC0 | (c >> 6), 0x80 | (c & 0x3F));\n    } else if (c < 0x10000) {\n      bytes.push(0xE0 | (c >> 12), 0x80 | ((c >> 6) & 0x3F), 0x80 | (c & 0x3F));\n    } else {\n      bytes.push(0xF0|(c>>18), 0x80|((c>>12)&0x3F), 0x80|((c>>6)&0x3F), 0x80|(c&0x3F));\n    }\n  }\n  const K = [\n    0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,\n    0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,\n    0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,\n    0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,\n    0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,\n    0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,\n    0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,\n    0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2\n  ];\n  let h0=0x6a09e667, h1=0xbb67ae85, h2=0x3c6ef372, h3=0xa54ff53a;\n  let h4=0x510e527f, h5=0x9b05688c, h6=0x1f83d9ab, h7=0x5be0cd19;\n  const origLen = bytes.length;\n  bytes.push(0x80);\n  while ((bytes.length % 64) !== 56) bytes.push(0x00);\n  const bitLen = origLen * 8;\n  bytes.push(0,0,0,0,(bitLen>>>24)&0xFF,(bitLen>>>16)&0xFF,(bitLen>>>8)&0xFF,bitLen&0xFF);\n  const rotr = (x, n) => (x >>> n) | (x << (32 - n));\n  for (let i = 0; i < bytes.length; i += 64) {\n    const w = [];\n    for (let j = 0; j < 16; j++) {\n      w[j] = ((bytes[i+j*4]<<24)|(bytes[i+j*4+1]<<16)|(bytes[i+j*4+2]<<8)|bytes[i+j*4+3])>>>0;\n    }\n    for (let j = 16; j < 64; j++) {\n      const s0 = rotr(w[j-15],7) ^ rotr(w[j-15],18) ^ (w[j-15]>>>3);\n      const s1 = rotr(w[j-2],17) ^ rotr(w[j-2],19)  ^ (w[j-2]>>>10);\n      w[j] = (w[j-16]+s0+w[j-7]+s1)>>>0;\n    }\n    let a=h0, b=h1, c=h2, d=h3, e=h4, f=h5, g=h6, h=h7;\n    for (let j = 0; j < 64; j++) {\n      const S1  = rotr(e,6)  ^ rotr(e,11) ^ rotr(e,25);\n      const ch  = (e&f) ^ (~e&g);\n      const t1  = (h+S1+ch+K[j]+w[j])>>>0;\n      const S0  = rotr(a,2)  ^ rotr(a,13) ^ rotr(a,22);\n      const maj = (a&b) ^ (a&c) ^ (b&c);\n      const t2  = (S0+maj)>>>0;\n      h=g; g=f; f=e; e=(d+t1)>>>0; d=c; c=b; b=a; a=(t1+t2)>>>0;\n    }\n    h0=(h0+a)>>>0; h1=(h1+b)>>>0; h2=(h2+c)>>>0; h3=(h3+d)>>>0;\n    h4=(h4+e)>>>0; h5=(h5+f)>>>0; h6=(h6+g)>>>0; h7=(h7+h)>>>0;\n  }\n  return [h0,h1,h2,h3,h4,h5,h6,h7].map(x => x.toString(16).padStart(8,'0')).join('');\n}\n\n// Leer campos: soporta tanto estructura plana (mapped inputs) como anidada (raw webhook)\nconst data = $input.item.json;\nconst body = data.body || {};\nconst cf   = body.custom_fields || {};\n\nconst msg            = data.respuesta_definitiva || cf.respuesta_definitiva || '';\nconst whatsapp_phone = data.whatsapp_phone       || body.whatsapp_phone    || '';\nconst first_name     = data.first_name           || body.first_name        || '';\nconst last_name      = data.last_name            || body.last_name         || '';\n\n// Captura todo lo que esté entre \"Folio:\" y \"|\" (trim), y entre \"Prog:\" y fin de paréntesis/línea\nconst folioMatch = msg.match(/Folio:\\s*(.+?)\\s*\\|/i);\nconst progMatch  = msg.match(/Prog:\\s*([^\\s)]+)/i);\n\nif (!folioMatch || !progMatch) throw new Error('Folio o Prog no encontrado en el mensaje: ' + msg);\n\nconst phone = whatsapp_phone.replace(/\\D/g, '');\n\nreturn [{\n  json: {\n    folio:          folioMatch[1],\n    programa:       progMatch[1].toUpperCase(),\n    hashed_phone:   sha256(phone),\n    hashed_fn:      sha256(first_name),\n    hashed_ln:      sha256(last_name),\n    event_time:     Math.floor(Date.now() / 1000),\n    whatsapp_phone: whatsapp_phone,\n    first_name:     first_name,\n    last_name:      last_name,\n  }\n}];"
+      },
+      "position": [
+        368,
+        32
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    },
+    {
+      "id": "e91c348e-2e61-479e-a09b-960439543f1a",
+      "name": "contiene_folio1",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "757c79ea-f241-4d1d-b297-7b798e7b83d6",
+              "leftValue": "={{ $json.body.custom_fields.respuesta_definitiva }}",
+              "operator": {
+                "operation": "contains",
+                "type": "string"
+              },
+              "rightValue": "Folio"
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        144,
+        48
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "d7f5b2ef-4c4d-4965-ac27-518366f225c9",
+      "name": "contiene_folio_compacto",
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c9e5f6a3-d0a4-6b1c-be7f-3a8b9c0d1e2f",
+              "leftValue": "={{ $json.body.custom_fields.respuesta_definitiva }}",
+              "operator": {
+                "operation": "regex",
+                "type": "string"
+              },
+              "rightValue": "\\[([A-Z0-9_-]{6})_(BS|BSG|HF|BSC)\\]"
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        -80,
+        -144
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "7d3f4e8b-8cc1-42c3-beee-5c0a764e1d4c",
+      "name": "Extraer Folio + Hashear (compacto)",
+      "parameters": {
+        "jsCode": "// SHA-256 en JavaScript puro (sin require, sin TextEncoder, sin crypto)\nfunction sha256(input) {\n  const msg = (input || '').toLowerCase().trim();\n  const bytes = [];\n  for (let i = 0; i < msg.length; i++) {\n    const c = msg.charCodeAt(i);\n    if (c < 0x80) {\n      bytes.push(c);\n    } else if (c < 0x800) {\n      bytes.push(0xC0 | (c >> 6), 0x80 | (c & 0x3F));\n    } else if (c < 0x10000) {\n      bytes.push(0xE0 | (c >> 12), 0x80 | ((c >> 6) & 0x3F), 0x80 | (c & 0x3F));\n    } else {\n      bytes.push(0xF0|(c>>18), 0x80|((c>>12)&0x3F), 0x80|((c>>6)&0x3F), 0x80|(c&0x3F));\n    }\n  }\n  const K = [\n    0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,\n    0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,\n    0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,\n    0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,\n    0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,\n    0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,\n    0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,\n    0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2\n  ];\n  let h0=0x6a09e667, h1=0xbb67ae85, h2=0x3c6ef372, h3=0xa54ff53a;\n  let h4=0x510e527f, h5=0x9b05688c, h6=0x1f83d9ab, h7=0x5be0cd19;\n  const origLen = bytes.length;\n  bytes.push(0x80);\n  while ((bytes.length % 64) !== 56) bytes.push(0x00);\n  const bitLen = origLen * 8;\n  bytes.push(0,0,0,0,(bitLen>>>24)&0xFF,(bitLen>>>16)&0xFF,(bitLen>>>8)&0xFF,bitLen&0xFF);\n  const rotr = (x, n) => (x >>> n) | (x << (32 - n));\n  for (let i = 0; i < bytes.length; i += 64) {\n    const w = [];\n    for (let j = 0; j < 16; j++) {\n      w[j] = ((bytes[i+j*4]<<24)|(bytes[i+j*4+1]<<16)|(bytes[i+j*4+2]<<8)|bytes[i+j*4+3])>>>0;\n    }\n    for (let j = 16; j < 64; j++) {\n      const s0 = rotr(w[j-15],7) ^ rotr(w[j-15],18) ^ (w[j-15]>>>3);\n      const s1 = rotr(w[j-2],17) ^ rotr(w[j-2],19)  ^ (w[j-2]>>>10);\n      w[j] = (w[j-16]+s0+w[j-7]+s1)>>>0;\n    }\n    let a=h0, b=h1, c=h2, d=h3, e=h4, f=h5, g=h6, h=h7;\n    for (let j = 0; j < 64; j++) {\n      const S1  = rotr(e,6)  ^ rotr(e,11) ^ rotr(e,25);\n      const ch  = (e&f) ^ (~e&g);\n      const t1  = (h+S1+ch+K[j]+w[j])>>>0;\n      const S0  = rotr(a,2)  ^ rotr(a,13) ^ rotr(a,22);\n      const maj = (a&b) ^ (a&c) ^ (b&c);\n      const t2  = (S0+maj)>>>0;\n      h=g; g=f; f=e; e=(d+t1)>>>0; d=c; c=b; b=a; a=(t1+t2)>>>0;\n    }\n    h0=(h0+a)>>>0; h1=(h1+b)>>>0; h2=(h2+c)>>>0; h3=(h3+d)>>>0;\n    h4=(h4+e)>>>0; h5=(h5+f)>>>0; h6=(h6+g)>>>0; h7=(h7+h)>>>0;\n  }\n  return [h0,h1,h2,h3,h4,h5,h6,h7].map(x => x.toString(16).padStart(8,'0')).join('');\n}\n\n// Leer campos: soporta estructura plana (mapped) o anidada (raw webhook)\nconst data = $input.item.json;\nconst body = data.body || {};\nconst cf   = body.custom_fields || {};\n\nconst msg            = data.respuesta_definitiva || cf.respuesta_definitiva || '';\nconst whatsapp_phone = data.whatsapp_phone       || body.whatsapp_phone    || '';\nconst first_name     = data.first_name           || body.first_name        || '';\nconst last_name      = data.last_name            || body.last_name         || '';\n\n// Formato compacto: [FFFFFF_PP] o [FFFFFF_PPP]\n// Folio: 6 chars [A-Z0-9_-]; Programa: BS | BSG | HF | BSC\nconst match = msg.match(/\\[([A-Z0-9_-]{6})_(BS|BSG|HF|BSC)\\]/);\n\nif (!match) throw new Error('Folio compacto no encontrado en el mensaje: ' + msg);\n\nconst folio    = match[1];\nconst programa = match[2];\n\nconst phone = whatsapp_phone.replace(/\\D/g, '');\n\nreturn [{\n  json: {\n    folio:          folio,\n    programa:       programa,\n    hashed_phone:   sha256(phone),\n    hashed_fn:      sha256(first_name),\n    hashed_ln:      sha256(last_name),\n    event_time:     Math.floor(Date.now() / 1000),\n    whatsapp_phone: whatsapp_phone,\n    first_name:     first_name,\n    last_name:      last_name,\n  }\n}];"
+      },
+      "position": [
+        368,
+        -160
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2
+    }
+  ],
+  "pinData": {
+    "Trigger": [
+      {
+        "json": {
+          "body": {
+            "custom_fields": {
+              "respuesta_definitiva": "Hola (Folio: PV5L3W | Prog: BS)"
+            },
+            "first_name": "Test",
+            "last_name": "Viejo",
+            "whatsapp_phone": "59899111111"
+          }
+        }
+      }
+    ]
+  },
+  "settings": {
+    "availableInMCP": false,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "OBkUyb8fuo30DzA9",
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2026-03-10T16:40:53.210Z",
+      "project": {
+        "createdAt": "2025-02-10T13:17:23.832Z",
+        "description": null,
+        "icon": null,
+        "id": "OZub3m3DGqbZefcZ",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "projectRelations": [
+          {
+            "createdAt": "2025-02-10T13:17:23.833Z",
+            "projectId": "OZub3m3DGqbZefcZ",
+            "updatedAt": "2025-02-10T13:17:23.833Z",
+            "user": {
+              "createdAt": "2025-02-10T13:17:22.713Z",
+              "disabled": false,
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "id": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+              "isPending": false,
+              "lastActiveAt": "2026-08-17",
+              "lastName": "AI",
+              "mfaEnabled": false,
+              "personalizationAnswers": {
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "personalization_survey_n8n_version": "1.77.3",
+                "personalization_survey_submitted_at": "2025-02-10T13:18:23.044Z",
+                "reportedSource": "youtube",
+                "role": "business-owner",
+                "version": "v4"
+              },
+              "settings": {
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "KFHNPOd9iRMDKpBc",
+                "npsSurvey": {
+                  "lastShownAt": 1773068538338,
+                  "responded": true
+                },
+                "userActivated": true,
+                "userActivatedAt": 1739194255698
+              },
+              "updatedAt": "2026-08-18T00:13:09.000Z"
+            },
+            "userId": "5365a906-5ad6-4773-b96f-9db06186b8c7"
+          }
+        ],
+        "type": "personal",
+        "updatedAt": "2025-02-10T13:18:00.403Z"
+      },
+      "projectId": "OZub3m3DGqbZefcZ",
+      "role": "workflow:owner",
+      "updatedAt": "2026-03-10T16:40:53.210Z",
+      "workflowId": "z98w2yWVEMOfifMl"
+    }
+  ],
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-06-24T00:27:24.000Z",
+  "versionCounter": 109,
+  "versionId": "c84bf7cb-c01e-4b91-b635-07962d6f65f1"
+}

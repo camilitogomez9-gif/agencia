@@ -1,0 +1,13 @@
+{
+  "wf": "W6",
+  "descripcion": "P3/P4 (Punto 3 Oscar): cuando el cliente pide colores/accesorios (colores de correas, tintas, tapas), el bot los muestra como dato informativo pero NO debe ofrecer sumarlos a la cotización (no son productos). Se excluye subcategoria='Accesorios' del CTA de step_3 en 'Cards a partes'.",
+  "ediciones": [
+    {
+      "nodo": "Cards a partes",
+      "campo": "parameters.jsCode",
+      "anchor": "} else if (step === 'step_3' && !sin_fichas) {\n  partes.push({ texto: CTA_STEP_3, adjuntos: [] });\n}",
+      "reemplazo": "} else if (step === 'step_3' && !sin_fichas && String(r.subcategoria || '').toLowerCase() !== 'accesorios') {\n  // Accesorios (colores de correas, colores de tinta, tapas) son informativos y NO se\n  // cotizan (pedido de Oscar, reunión 2026-08-27): no se les cuelga el CTA de cantidad + CP.\n  partes.push({ texto: CTA_STEP_3, adjuntos: [] });\n}",
+      "motivo": "El CTA '¿Le interesa sumarlos a la cotización? Dígame Cantidad + CP' se agregaba a TODO step_3 con fichas, incluidos los accesorios. Oscar: los colores no son productos, no se cotizan."
+    }
+  ]
+}

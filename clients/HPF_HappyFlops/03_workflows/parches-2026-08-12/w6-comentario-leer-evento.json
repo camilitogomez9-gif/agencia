@@ -1,0 +1,12 @@
+{
+  "wf": "W6",
+  "descripcion": "corrige el comentario de Leer Products: el nodo ya no está en una rama paralela sino en la cadena principal (fue justo la causa de que el fix no funcionara)",
+  "ediciones": [
+    {
+      "nodo": "Leer Products",
+      "campo": "parameters.jsCode",
+      "anchor": "// para el turno en que todavía no hay estado. isExecuted porque `Leer evento` corre en\n// una rama paralela — mismo patrón que `Partir en burbujas` usa con `Cards a partes`.",
+      "reemplazo": "// para el turno en que todavía no hay estado.\n//\n// `Leer evento` va INTERCALADO en la cadena principal (Normalizar entrada → Leer evento →\n// Router) y no en una rama paralela. El primer intento lo puso en paralelo y no funcionó:\n// con executionOrder v1, n8n recorre la rama del Router hasta el final antes de volver a\n// la otra, así que acá isExecuted daba false y el estado se ignoraba siempre. Se midió\n// sobre 6 ejecuciones: el nodo devolvía Boda/XV bien y evento_desde_estado era False en\n// todas. El isExecuted se conserva igual como cinturón, no como mecanismo."
+    }
+  ]
+}

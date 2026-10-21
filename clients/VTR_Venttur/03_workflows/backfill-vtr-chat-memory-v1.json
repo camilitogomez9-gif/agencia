@@ -1,0 +1,370 @@
+{
+  "name": "VTR — Backfill Chat Memory (manual one-shot)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trg-mem-0001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-128, 384]
+    },
+    {
+      "parameters": {
+        "content": "## 🧠 Backfill Chat Memory — Pre-carga memoria sintética para leads ya contactados\n\nWorkflow MANUAL one-shot. Por cada lead en Airtable con `Outreach Form Meta enviado = true` que NO tenga sesión en `n8n_chat_histories`, inserta:\n\n- 1 row `system` con datos del form en prosa natural\n- 1 row `ai` con texto del Touch 1\n- (si `Toques enviados >= 2`) 1 row `ai` con texto del Touch 2 (timestamp = Touch 1 + 24h)\n- (si `Toques enviados >= 3`) 1 row `ai` con texto del Touch 3 (timestamp = Touch 1 + 72h)\n\n**sessionKey:** `Telefono` sin caracteres no-numéricos. DEBE matchear el sessionKey del nodo `memoryPostgresChat` de `venttur-main-v1` (`whatsapp_phone.replace('+','')`).\n\n**Idempotente:** chequea si el session_id ya tiene rows en la tabla. Si tiene → skip total (no pisamos historial real de conversación).\n\n**Wait 0.5s** entre leads para no saturar Postgres si hay miles de leads.\n\n**Outcome:** cuando el lead responda al outreach, el `memoryPostgresChat` del main carga estos mensajes como turnos anteriores → agente no re-saluda ni repregunta nombre.\n\n**Textos canónicos:** los 3 templates Touch 1/2/3 están hardcoded en el nodo `Build Messages`. Coinciden con los textos aprobados por Meta en `06_docs/template-texts-canonical.md`.",
+        "height": 540,
+        "width": 480,
+        "color": 7
+      },
+      "id": "stk-mem-info",
+      "name": "📘 Info Backfill Memory",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-624, 64]
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]"
+        },
+        "table": {
+          "__rl": true,
+          "value": "[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "cachedResultName": "Leads"
+        },
+        "filterByFormula": "=AND({Outreach Form Meta enviado}=TRUE(), {Telefono}!=BLANK())",
+        "options": {
+          "fields": [
+            "Nombre",
+            "Apellido",
+            "Nombre Completo",
+            "Telefono",
+            "Email",
+            "Programa interés",
+            "Grado Escolar",
+            "Inicio Deseado",
+            "Nivel Inglés",
+            "Ad Name",
+            "Platform",
+            "Origen",
+            "Fuente lead",
+            "Tipo",
+            "Toques enviados",
+            "Outreach Form Meta enviado at",
+            "Ultimo toque at",
+            "ID Manychat",
+            "Folio"
+          ]
+        }
+      },
+      "id": "atb-mem-search",
+      "name": "Airtable: Search Leads",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [96, 384],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      },
+      "notes": "Filtra leads que recibieron al menos Touch 1 Y tienen teléfono. Page automáticamente hasta el final."
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "sib-mem-0001",
+      "name": "Split In Batches (1)",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [320, 384]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build context per lead: normalize sessionKey + extraer fields\nconst row = $input.first().json;\nconst fields = row.fields || row;\n\n// Normalización idéntica a normalize_phone() del script Python:\n// strip non-digits, validar longitud 10-15\nconst rawPhone = (fields.Telefono || '').toString();\nconst cleaned = rawPhone.replace(/[^0-9]/g, '');\nconst phoneValid = cleaned.length >= 10 && cleaned.length <= 15;\n\nreturn [{\n  json: {\n    session_key: phoneValid ? cleaned : null,\n    skip_reason: phoneValid ? null : 'phone_invalid',\n    lead_fields: fields,\n    airtable_id: row.id || null,\n    toques_enviados: Number(fields['Toques enviados'] || 0),\n    outreach_at_iso: fields['Outreach Form Meta enviado at'] || null,\n  }\n}];"
+      },
+      "id": "cod-mem-context",
+      "name": "Build Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [544, 384]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond-phone-valid",
+              "leftValue": "={{ $json.session_key }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-mem-phone",
+      "name": "IF (phone válido?)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [768, 384]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COUNT(*) AS row_count FROM n8n_chat_histories WHERE session_id = $1;",
+        "options": {
+          "queryReplacement": "={{ [$json.session_key] }}"
+        }
+      },
+      "id": "pg-mem-check",
+      "name": "Postgres: Check Session Exists",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [992, 288],
+      "credentials": {
+        "postgres": {
+          "id": "ihpvM7nYMdLCwWDP",
+          "name": "Venttur"
+        }
+      },
+      "alwaysOutputData": true,
+      "notes": "Devuelve siempre 1 row con row_count (0 o N). Si N > 0 → skip total."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond-skip",
+              "leftValue": "={{ Number($json.row_count) }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-mem-skip",
+      "name": "IF (sesión vacía?)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1216, 288]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build messages array — 2 a 4 items por lead\n// Inputs:\n//   - $('Build Context').first().json — { session_key, lead_fields, toques_enviados, outreach_at_iso }\n//   - $('Postgres: Check Session Exists').first().json — { row_count } (ya validado = 0)\n//\n// Output: array de items, cada uno con { session_id, message_json, created_at_iso }\n\nconst ctx = $('Build Context').first().json;\nconst fields = ctx.lead_fields;\nconst sessionKey = ctx.session_key;\nconst toques = ctx.toques_enviados;\n\n// === Texto canónico de templates (debe matchear template-texts-canonical.md) ===\n\nconst TOUCH_1_TEXT = `Hola {{first_name}}, gracias por tu interés en nuestros programas de Boarding School.\n\nVimos que recientemente solicitaste información sobre opciones de estudio en el extranjero.\n\nMe gustaría conocer un poco más sobre tu interés para poder orientarte mejor. ¿El programa sería para tu hijo(a) o para algún familiar?`;\n\nconst TOUCH_2_TEXT = `Hola {{first_name}},\n\nMuchos padres nos contactan porque quieren brindarles a sus hijos una experiencia internacional que los ayude a desarrollar independencia, confianza y una visión global para su futuro.\n\nCada estudiante tiene objetivos distintos, por eso nos gustaría entender mejor tu caso para orientarte adecuadamente.\n\n¿Para qué edad o grado escolar estás buscando opciones?`;\n\nconst TOUCH_3_TEXT = `Hola {{first_name}},\n\nSabemos que elegir una experiencia educativa internacional es una decisión importante y que normalmente surgen muchas preguntas sobre destinos, seguridad, costos, requisitos y beneficios para el futuro del estudiante.\n\nNuestro objetivo es ayudarte a encontrar la mejor opción según las metas y necesidades de tu familia.\n\nSi aún estás explorando alternativas, responde este mensaje y con gusto te orientaremos sin compromiso.`;\n\n// === Helpers ===\n\nfunction buildSystemMessage(d) {\n  const nombre = (d.Nombre || '').toString().trim();\n  const apellido = (d.Apellido || '').toString().trim();\n  const nombreCompleto = (d['Nombre Completo'] || [nombre, apellido].filter(Boolean).join(' ').trim()) || 'el lead';\n\n  const email = d.Email ? d.Email : null;\n  const tel = d.Telefono ? `tel +${d.Telefono}` : null;\n  const contact = [email, tel].filter(Boolean).join(', ');\n  const contactStr = contact ? ` (${contact})` : '';\n\n  const origenMap = {\n    'Form Meta': 'completó un formulario de Meta',\n    'Form Landing': 'completó el formulario de nuestra landing',\n    'CTWA': 'vino por un anuncio de WhatsApp',\n  };\n  const accion = origenMap[d.Origen] || 'mostró interés';\n\n  const programa = d['Programa interés']\n    ? ` interesado/a en ${d['Programa interés']}`\n    : ' interesado/a en uno de nuestros programas';\n\n  const cualif = [\n    d['Grado Escolar'] && `para ${d['Grado Escolar']}`,\n    d['Inicio Deseado'] && `con inicio deseado en ${d['Inicio Deseado']}`,\n    d['Nivel Inglés'] && `y nivel de inglés ${d['Nivel Inglés']}`,\n  ].filter(Boolean).join(' ');\n  const cualifStr = cualif ? ` ${cualif}` : '';\n\n  const campania = d['Ad Name']\n    ? ` Vino por la campaña ${d['Ad Name']}${d.Platform ? ' en ' + d.Platform : ''}.`\n    : '';\n\n  return `El lead ${nombreCompleto}${contactStr} ${accion}${programa}${cualifStr}.${campania}`;\n}\n\nfunction renderTemplate(tpl, firstName) {\n  const fn = (firstName || '').toString().trim() || 'hola';\n  return tpl.replace(/\\{\\{first_name\\}\\}/g, fn);\n}\n\n// === Timestamps ===\n\nconst baseAtRaw = ctx.outreach_at_iso;\nlet baseAt;\nif (baseAtRaw) {\n  baseAt = new Date(baseAtRaw);\n} else {\n  baseAt = new Date(Date.now() - 24 * 60 * 60 * 1000); // fallback: -24h\n}\nif (isNaN(baseAt.getTime())) {\n  baseAt = new Date(Date.now() - 24 * 60 * 60 * 1000);\n}\nconst systemAt = new Date(baseAt.getTime() - 1000); // 1s antes del Touch 1 para que quede ordenado primero\n\n// === Build mensajes ===\n\nconst systemText = buildSystemMessage(fields);\nconst firstName = (fields.Nombre || '').toString();\n\nconst messages = [\n  { session_id: sessionKey, type: 'system', content: systemText, created_at: systemAt.toISOString() },\n  { session_id: sessionKey, type: 'ai', content: renderTemplate(TOUCH_1_TEXT, firstName), created_at: baseAt.toISOString() },\n];\n\nif (toques >= 2) {\n  const t2 = new Date(baseAt.getTime() + 24 * 60 * 60 * 1000);\n  messages.push({ session_id: sessionKey, type: 'ai', content: renderTemplate(TOUCH_2_TEXT, firstName), created_at: t2.toISOString() });\n}\n\nif (toques >= 3) {\n  const t3 = new Date(baseAt.getTime() + 72 * 60 * 60 * 1000);\n  messages.push({ session_id: sessionKey, type: 'ai', content: renderTemplate(TOUCH_3_TEXT, firstName), created_at: t3.toISOString() });\n}\n\n// Devolver 1 item por mensaje (el Postgres node insertará N veces)\nreturn messages.map(m => ({ json: {\n  session_id: m.session_id,\n  message_json: JSON.stringify({ type: m.type, content: m.content }),\n  created_at: m.created_at,\n}}));"
+      },
+      "id": "cod-mem-build",
+      "name": "Build Messages",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1440, 192]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO n8n_chat_histories (session_id, message)\nVALUES ($1, $2::jsonb)\nRETURNING id;",
+        "options": {
+          "queryReplacement": "={{ [$json.session_id, $json.message_json] }}"
+        }
+      },
+      "id": "pg-mem-insert",
+      "name": "Postgres: Insert Message",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [1664, 192],
+      "credentials": {
+        "postgres": {
+          "id": "ihpvM7nYMdLCwWDP",
+          "name": "Venttur"
+        }
+      },
+      "notes": "Ejecuta una vez por item. Por lead nuevo: 2-4 inserts (system + 1-3 ai)."
+    },
+    {
+      "parameters": {
+        "amount": 0.5,
+        "unit": "seconds"
+      },
+      "id": "wait-mem-rate",
+      "name": "Wait 0.5s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1888, 192],
+      "webhookId": "wait-mem-backfill"
+    },
+    {
+      "parameters": {
+        "content": "## ⚠️ Antes de activar\n\n1. La credencial Postgres `Venttur` (id `ihpvM7nYMdLCwWDP`) debe estar activa.\n2. La credencial Airtable `Venttur Dashboard` (id `[N8N_CREDENTIAL_ID]`) debe estar activa.\n3. Verificar que la tabla `n8n_chat_histories` ya existe en Postgres (la creó el nodo `memoryPostgresChat` del venttur-main al primer uso).\n4. Smoke con **1 lead** primero: en el nodo `Airtable: Search Leads` agregar temporalmente un filtro extra `{Telefono}='<telefono test>'` para limitar a 1 lead, ejecutar, validar inserts, quitar filtro.\n5. Ejecución completa estimada: 1500 leads × 0.5s = ~13 min.\n\n## Verificación post-run\n\n```sql\nSELECT session_id, COUNT(*) as msg_count,\n       MIN(created_at) as first, MAX(created_at) as last\nFROM n8n_chat_histories\nWHERE created_at > NOW() - INTERVAL '1 hour'\nGROUP BY session_id\nORDER BY first DESC\nLIMIT 20;\n```\n\nEsperado: leads procesados con 2-4 rows cada uno (system + ai_touch_N).\n\n## Re-correr es seguro\n\nEl `Postgres: Check Session Exists` evita duplicados: si la sesión ya tiene rows (de un run previo O de una conversación real), skipea el lead.\n\n## Rollback\n\n```sql\n-- Borrar solo las rows insertadas hoy por este workflow\nDELETE FROM n8n_chat_histories\nWHERE created_at > '2026-06-23 00:00:00'\n  AND message->>'type' IN ('system', 'ai')\n  AND id NOT IN (\n    -- Excluir rows que NO sean del backfill (a definir según patrón\n    -- de detección — ej: timestamps que no encajan en +0/+24h/+72h del Outreach)\n    SELECT 0\n  );\n```\n\n(Refinar el filtro de exclusión según necesidad. Si se corre limpio, simplemente borrar todo lo creado en la ventana de tiempo.)",
+        "height": 680,
+        "width": 460,
+        "color": 5
+      },
+      "id": "stk-mem-checklist",
+      "name": "📕 Pre-run + verificación",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [2144, 64]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Airtable: Search Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable: Search Leads": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split In Batches (1)": {
+      "main": [
+        [
+          {
+            "node": "Build Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Context": {
+      "main": [
+        [
+          {
+            "node": "IF (phone válido?)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF (phone válido?)": {
+      "main": [
+        [
+          {
+            "node": "Postgres: Check Session Exists",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Split In Batches (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres: Check Session Exists": {
+      "main": [
+        [
+          {
+            "node": "IF (sesión vacía?)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF (sesión vacía?)": {
+      "main": [
+        [
+          {
+            "node": "Build Messages",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Split In Batches (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Messages": {
+      "main": [
+        [
+          {
+            "node": "Postgres: Insert Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres: Insert Message": {
+      "main": [
+        [
+          {
+            "node": "Wait 0.5s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 0.5s": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

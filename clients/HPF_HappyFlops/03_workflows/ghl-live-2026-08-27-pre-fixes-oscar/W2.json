@@ -1,0 +1,1643 @@
+{
+  "updatedAt": "2026-08-27T19:18:55.345Z",
+  "createdAt": "2026-08-06T21:32:24.607Z",
+  "id": "MdbOREN56lfQTYlM",
+  "name": "HPF·GHL · W2 Salida",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"contactId\": \"...\",\n  \"partes\": [\n    {\n      \"texto\": \"primera burbuja\"\n    },\n    {\n      \"texto\": \"con foto\",\n      \"adjuntos\": [\n        \"https://...\"\n      ]\n    }\n  ],\n  \"pausa_seg\": 2\n}"
+      },
+      "id": "00890f03-c7cf-48b4-bb8f-26cb35eaf772",
+      "name": "Ejecutado por otro workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -528,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hpf-w2-salida",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1f29c5bf-131a-4279-a158-7e67690b672f",
+      "name": "Webhook (carril de prueba)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -528,
+        480
+      ],
+      "webhookId": "590327f9-4226-4d07-a67a-4ba80bb6ef35",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jUb7ZjztncX5ACpc",
+          "name": "HPF GHL Webhook Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Entrada: { contactId, partes: [ {texto, adjuntos?} | \"texto suelto\" ], pausa_seg? }\n// Sale un item por parte, ya numerado. El orden es el contrato: parte1, parte2, parte3.\nconst j0 = $input.first().json || {};\nconst porWebhook = !!(j0.body && j0.body.contactId !== undefined);\nconst src = porWebhook ? j0.body : j0;\n\nif (!src.contactId) throw new Error('W2: falta \"contactId\"');\n\nlet partes = src.partes ?? [];\nif (typeof partes === 'string') {\n  // Puede ser un array serializado o, simplemente, el texto de una única burbuja.\n  const t = partes.trim();\n  if (t.startsWith('[') || t.startsWith('{')) {\n    try { partes = JSON.parse(t); }\n    catch (e) { throw new Error('W2: \"partes\" parece JSON pero no parsea'); }\n  } else {\n    partes = [partes];\n  }\n}\nif (!Array.isArray(partes)) partes = [partes];\n\n// normaliza: string suelto → {texto}; descarta vacías (el origen también las salteaba\n// con los If parte2/parte3 notEmpty)\nconst norm = [];\nfor (const p of partes) {\n  const o = (typeof p === 'string') ? { texto: p } : (p || {});\n  const texto = (o.texto ?? o.text ?? '').toString();\n  const adj = o.adjuntos ?? o.attachments ?? [];\n  const adjuntos = Array.isArray(adj) ? adj : (adj ? [adj] : []);\n  if (!texto.trim() && adjuntos.length === 0) continue;\n  norm.push({ texto, adjuntos });\n}\nif (norm.length === 0) throw new Error('W2: no quedó ninguna parte con contenido');\n\nconst pausa = src.pausa_seg !== undefined ? Number(src.pausa_seg) : 0;\n\nreturn norm.map((p, i) => ({ json: {\n  _via: porWebhook ? 'webhook' : 'subworkflow',\n  contactId: src.contactId,\n  seq: i + 1,\n  total: norm.length,\n  texto: p.texto,\n  adjuntos: p.adjuntos,\n  // la última parte no espera: la pausa va ENTRE burbujas, no después de la última\n  pausa_seg: (i + 1 < norm.length) ? pausa : 0,\n} }));"
+      },
+      "id": "7bade425-5b46-47fd-bdf6-00c6b751dc04",
+      "name": "Normalizar partes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -304,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "07a3ba89-8818-44de-b55d-65fc04d36f2d",
+      "name": "Recorrer partes",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -80,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Traduce la parte al contrato de W0. Una parte con adjuntos va por send_media.\nconst p = $input.first().json;\nconst conMedia = Array.isArray(p.adjuntos) && p.adjuntos.length > 0;\nreturn [{ json: {\n  ...p,\n  op: conMedia ? 'send_media' : 'send_text',\n  args: conMedia\n    ? { contactId: p.contactId, mensaje: p.texto, adjuntos: p.adjuntos }\n    : { contactId: p.contactId, mensaje: p.texto },\n} }];"
+      },
+      "id": "63be50ca-b9b8-47a1-a9eb-6ee5ef0ed568",
+      "name": "Preparar op",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        144,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VK4M7VQm8CMefbty",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W0 Client"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "op": "={{ $json.op }}",
+            "args": "={{ $json.args }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "5089254f-c4d9-48b9-8010-d79543a5c499",
+      "name": "W0 · enviar",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1488,
+        672
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// W0 devuelve sólo su resultado; le re-pegamos la parte para el resumen.\nconst p = $('Preparar op').first().json;\nconst r = $input.first().json || {};\nreturn [{ json: { ...r, seq: p.seq, texto: p.texto, adjuntos: p.adjuntos,\n                  pausa_seg: p.pausa_seg } }];"
+      },
+      "id": "e5abac3c-ada0-4ca0-8cbc-5f266dfedde3",
+      "name": "Arrastrar contexto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1712,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "amount": "={{ $json.pausa_seg }}"
+      },
+      "id": "8f51d88c-e041-4b0a-8614-e86fb93dcf55",
+      "name": "Pausa entre burbujas",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1936,
+        656
+      ],
+      "webhookId": "9a387aa6-e0e0-41f0-9225-c1ee1367a96a"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Junta lo que devolvió cada llamada a W0. Este objeto ES la evidencia del envío:\n// lleva el texto exacto que salió y el id que devolvió GHL, para poder releerlo.\nconst enviados = [];\nfor (const it of $input.all()) {\n  const j = it.json || {};\n  const d = (j.data || {});\n  // Un envío que falló llega acá por `onError: continueRegularOutput` con `j.error`\n  // poblado. Sin contarlo, el fallo pasa a ser SILENCIOSO: el lead recibe el turno\n  // incompleto y la ejecución queda en verde. Es la contrapartida de haber blindado los\n  // nodos de envío, y queda visible en el resumen en vez de haber que adivinarla.\n  if (j.error) {\n    enviados.push({ seq: j.seq ?? null, body: j.texto ?? null,\n                    attachments: j.adjuntos ?? [], fallo: String(\n                      (j.error && (j.error.message || j.error.description)) || j.error\n                    ).slice(0, 200) });\n    continue;\n  }\n  enviados.push({\n    seq: j.seq ?? null,\n    body: j.texto ?? null,\n    attachments: j.adjuntos ?? [],\n    ghl_message_id: d.messageId ?? null,\n    ghl_conversation_id: d.conversationId ?? null,\n    http_status: j.http_status ?? null,\n  });\n}\nenviados.sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0));\nconst fallidas = enviados.filter(e => e.fallo);\nreturn [{ json: {\n  // `ok` sigue significando lo mismo para el carril GHL. Se le suma que NINGUNA burbuja\n  // haya fallado: con los nodos blindados, \"no hubo excepción\" ya no implica \"salió todo\".\n  ok: enviados.every(e => e.ghl_message_id) && fallidas.length === 0,\n  partes_enviadas: enviados.length,\n  partes_fallidas: fallidas.length,\n  fallos: fallidas.map(e => ({ seq: e.seq, fallo: e.fallo })),\n  enviados,\n} }];"
+      },
+      "id": "ec28f695-faa1-4222-99f1-cee999b12505",
+      "name": "Armar resumen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        144,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "cc108077-fc63-40c7-ac72-c71336dd39e7",
+              "leftValue": "={{ $('Normalizar partes').first().json._via }}",
+              "rightValue": "webhook",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "793e22e1-e2ac-4f01-bcd0-71acde04647f",
+      "name": "¿Vino por webhook?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        368,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "id": "54012dc5-8b8c-42fc-8a54-74aae33e8ead",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        592,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "417ce564-e2c3-43d5-90b7-2f91226a03df",
+      "name": "Devolver al llamador",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        592,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- ¿este contacto es un tester de Telegram? El chat id vive en el teléfono\n-- sintético que le puso W1 (+999<chatid>), así que no hace falta ninguna tabla nueva.\nSELECT CASE WHEN phone_e164 LIKE '+999%'\n            THEN substring(phone_e164 from 5) ELSE NULL END AS chat_id\nFROM hpf_identity WHERE ghl_contact_id = $1 LIMIT 1;",
+        "options": {
+          "queryReplacement": "={{ [ $json.contactId ] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "id": "tg-785377506037",
+      "name": "¿Es Telegram?",
+      "position": [
+        368,
+        384
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Decide el transporte de esta burbuja: Telegram o GHL.\nconst p = $('Preparar op').first().json;\nconst filas = $input.all().map(i => i.json || {});\nconst chatId = (filas[0] || {}).chat_id || null;\n// Sin fila en hpf_identity o sin prefijo +999 → es un lead de verdad y sale por GHL.\n// El default es GHL a propósito: si algo falla en la detección, el peor caso es que un\n// tester no reciba el mensaje, no que un lead real lo reciba por el canal equivocado.\nreturn [{ json: { ...p, _chat_id: chatId, _por_telegram: !!chatId } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "id": "tg-352225988384",
+      "name": "Decidir transporte",
+      "position": [
+        592,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "t1",
+              "leftValue": "={{ $json._por_telegram }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "id": "tg-028169656402",
+      "name": "Ruteo transporte",
+      "position": [
+        816,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Una burbuja de W2 → los envíos de Telegram que le corresponden.\nconst p = $input.first().json;\nconst chatId = p._chat_id;\nconst adj = Array.isArray(p.adjuntos) ? p.adjuntos : [];\nconst tipoDe = (url) => {\n  const u = String(url).toLowerCase().split('?')[0];\n  if (/\\.(jpe?g|png|webp|gif)$/.test(u)) return 'foto';\n  if (/\\.(mp4|mov|m4v)$/.test(u)) return 'video';\n  return 'documento';\n};\nif (!adj.length) return [{ json: { chatId, tipo: 'texto', texto: p.texto || '' } }];\n// el texto va como caption del primer adjunto, así llegan juntos\nreturn adj.map((url, i) => ({ json: {\n  chatId, tipo: tipoDe(url), url, texto: i === 0 ? (p.texto || '') : '' } }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "id": "tg-787910365859",
+      "name": "TG · aplanar",
+      "position": [
+        1040,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "tipo-texto",
+                    "leftValue": "={{ $json.tipo }}",
+                    "rightValue": "texto",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "texto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "tipo-foto",
+                    "leftValue": "={{ $json.tipo }}",
+                    "rightValue": "foto",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "foto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "tipo-video",
+                    "leftValue": "={{ $json.tipo }}",
+                    "rightValue": "video",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "video"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "tipo-documento",
+                    "leftValue": "={{ $json.tipo }}",
+                    "rightValue": "documento",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "documento"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "id": "tg-604126917788",
+      "name": "TG · switch tipo",
+      "position": [
+        1264,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.texto }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "id": "tg-079781827478",
+      "name": "TG · texto",
+      "position": [
+        1488,
+        -96
+      ],
+      "webhookId": "fed2b9e1-f6d3-4e36-a9c7-0b144513adfd",
+      "alwaysOutputData": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $json.chatId }}",
+        "file": "={{ $json.url }}",
+        "additionalFields": {
+          "caption": "={{ $json.texto }}"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "id": "tg-395724853233",
+      "name": "TG · foto",
+      "position": [
+        1488,
+        96
+      ],
+      "webhookId": "1ff23964-d3b2-4215-8ecb-fb88cff3f811",
+      "alwaysOutputData": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "sendVideo",
+        "chatId": "={{ $json.chatId }}",
+        "file": "={{ $json.url }}",
+        "additionalFields": {
+          "caption": "={{ $json.texto }}"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "id": "tg-707609462987",
+      "name": "TG · video",
+      "position": [
+        1488,
+        288
+      ],
+      "webhookId": "ca34b201-0da4-4c96-8ae5-13731516f621",
+      "alwaysOutputData": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "sendDocument",
+        "chatId": "={{ $json.chatId }}",
+        "file": "={{ $json.url }}",
+        "additionalFields": {
+          "caption": "={{ $json.texto }}"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "id": "tg-024362013164",
+      "name": "TG · documento",
+      "position": [
+        1488,
+        480
+      ],
+      "webhookId": "b9046ea1-5c30-4d68-837f-8f48b732a9e4",
+      "alwaysOutputData": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## define pausa intervalos salida"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -352,
+        192
+      ],
+      "typeVersion": 1,
+      "id": "c1c3948a-d3e0-4d2d-9354-b5a47d75f790",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "Ejecutado por otro workflow": {
+      "main": [
+        [
+          {
+            "node": "Normalizar partes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook (carril de prueba)": {
+      "main": [
+        [
+          {
+            "node": "Normalizar partes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar partes": {
+      "main": [
+        [
+          {
+            "node": "Recorrer partes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recorrer partes": {
+      "main": [
+        [
+          {
+            "node": "Armar resumen",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Preparar op",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar op": {
+      "main": [
+        [
+          {
+            "node": "¿Es Telegram?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "W0 · enviar": {
+      "main": [
+        [
+          {
+            "node": "Arrastrar contexto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Arrastrar contexto": {
+      "main": [
+        [
+          {
+            "node": "Pausa entre burbujas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pausa entre burbujas": {
+      "main": [
+        [
+          {
+            "node": "Recorrer partes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Armar resumen": {
+      "main": [
+        [
+          {
+            "node": "¿Vino por webhook?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Vino por webhook?": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Devolver al llamador",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es Telegram?": {
+      "main": [
+        [
+          {
+            "node": "Decidir transporte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decidir transporte": {
+      "main": [
+        [
+          {
+            "node": "Ruteo transporte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ruteo transporte": {
+      "main": [
+        [
+          {
+            "node": "TG · aplanar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "W0 · enviar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG · aplanar": {
+      "main": [
+        [
+          {
+            "node": "TG · switch tipo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG · switch tipo": {
+      "main": [
+        [
+          {
+            "node": "TG · texto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "TG · foto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "TG · video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "TG · documento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG · texto": {
+      "main": [
+        [
+          {
+            "node": "Arrastrar contexto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG · foto": {
+      "main": [
+        [
+          {
+            "node": "Arrastrar contexto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG · video": {
+      "main": [
+        [
+          {
+            "node": "Arrastrar contexto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG · documento": {
+      "main": [
+        [
+          {
+            "node": "Arrastrar contexto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "0ee6165a-93aa-4162-98d3-c31fefe888a6",
+  "activeVersionId": "0ee6165a-93aa-4162-98d3-c31fefe888a6",
+  "versionCounter": 21,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-08-06T21:32:24.607Z",
+      "createdAt": "2026-08-06T21:32:24.607Z",
+      "role": "workflow:owner",
+      "workflowId": "MdbOREN56lfQTYlM",
+      "projectId": "g2TpxqLMiC0UsUBj",
+      "project": {
+        "updatedAt": "2025-05-10T12:26:37.475Z",
+        "createdAt": "2025-05-10T12:24:10.921Z",
+        "id": "g2TpxqLMiC0UsUBj",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-05-10T12:24:10.921Z",
+            "createdAt": "2025-05-10T12:24:10.921Z",
+            "userId": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+            "projectId": "g2TpxqLMiC0UsUBj",
+            "user": {
+              "updatedAt": "2026-08-27T18:52:56.937Z",
+              "createdAt": "2025-05-10T12:24:07.518Z",
+              "id": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "lastName": "AI",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-05-10T12:26:59.729Z",
+                "personalization_survey_n8n_version": "1.91.3",
+                "companySize": "<20",
+                "companyType": "systems-integrator",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "6fpcC3iGwfEYO3Eu",
+                "userActivatedAt": 1757033385622,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1773184568459
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "aiAgentStarterCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-08-27",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-08-27T19:18:55.317Z",
+    "createdAt": "2026-08-27T19:18:55.317Z",
+    "versionId": "0ee6165a-93aa-4162-98d3-c31fefe888a6",
+    "workflowId": "MdbOREN56lfQTYlM",
+    "nodes": [
+      {
+        "parameters": {
+          "inputSource": "jsonExample",
+          "jsonExample": "{\n  \"contactId\": \"...\",\n  \"partes\": [\n    {\n      \"texto\": \"primera burbuja\"\n    },\n    {\n      \"texto\": \"con foto\",\n      \"adjuntos\": [\n        \"https://...\"\n      ]\n    }\n  ],\n  \"pausa_seg\": 2\n}"
+        },
+        "id": "00890f03-c7cf-48b4-bb8f-26cb35eaf772",
+        "name": "Ejecutado por otro workflow",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -528,
+          288
+        ]
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "hpf-w2-salida",
+          "authentication": "headerAuth",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "1f29c5bf-131a-4279-a158-7e67690b672f",
+        "name": "Webhook (carril de prueba)",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -528,
+          480
+        ],
+        "webhookId": "590327f9-4226-4d07-a67a-4ba80bb6ef35",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "jUb7ZjztncX5ACpc",
+            "name": "HPF GHL Webhook Auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Entrada: { contactId, partes: [ {texto, adjuntos?} | \"texto suelto\" ], pausa_seg? }\n// Sale un item por parte, ya numerado. El orden es el contrato: parte1, parte2, parte3.\nconst j0 = $input.first().json || {};\nconst porWebhook = !!(j0.body && j0.body.contactId !== undefined);\nconst src = porWebhook ? j0.body : j0;\n\nif (!src.contactId) throw new Error('W2: falta \"contactId\"');\n\nlet partes = src.partes ?? [];\nif (typeof partes === 'string') {\n  // Puede ser un array serializado o, simplemente, el texto de una única burbuja.\n  const t = partes.trim();\n  if (t.startsWith('[') || t.startsWith('{')) {\n    try { partes = JSON.parse(t); }\n    catch (e) { throw new Error('W2: \"partes\" parece JSON pero no parsea'); }\n  } else {\n    partes = [partes];\n  }\n}\nif (!Array.isArray(partes)) partes = [partes];\n\n// normaliza: string suelto → {texto}; descarta vacías (el origen también las salteaba\n// con los If parte2/parte3 notEmpty)\nconst norm = [];\nfor (const p of partes) {\n  const o = (typeof p === 'string') ? { texto: p } : (p || {});\n  const texto = (o.texto ?? o.text ?? '').toString();\n  const adj = o.adjuntos ?? o.attachments ?? [];\n  const adjuntos = Array.isArray(adj) ? adj : (adj ? [adj] : []);\n  if (!texto.trim() && adjuntos.length === 0) continue;\n  norm.push({ texto, adjuntos });\n}\nif (norm.length === 0) throw new Error('W2: no quedó ninguna parte con contenido');\n\nconst pausa = src.pausa_seg !== undefined ? Number(src.pausa_seg) : 0;\n\nreturn norm.map((p, i) => ({ json: {\n  _via: porWebhook ? 'webhook' : 'subworkflow',\n  contactId: src.contactId,\n  seq: i + 1,\n  total: norm.length,\n  texto: p.texto,\n  adjuntos: p.adjuntos,\n  // la última parte no espera: la pausa va ENTRE burbujas, no después de la última\n  pausa_seg: (i + 1 < norm.length) ? pausa : 0,\n} }));"
+        },
+        "id": "7bade425-5b46-47fd-bdf6-00c6b751dc04",
+        "name": "Normalizar partes",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -304,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "options": {
+            "reset": false
+          }
+        },
+        "id": "07a3ba89-8818-44de-b55d-65fc04d36f2d",
+        "name": "Recorrer partes",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -80,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Traduce la parte al contrato de W0. Una parte con adjuntos va por send_media.\nconst p = $input.first().json;\nconst conMedia = Array.isArray(p.adjuntos) && p.adjuntos.length > 0;\nreturn [{ json: {\n  ...p,\n  op: conMedia ? 'send_media' : 'send_text',\n  args: conMedia\n    ? { contactId: p.contactId, mensaje: p.texto, adjuntos: p.adjuntos }\n    : { contactId: p.contactId, mensaje: p.texto },\n} }];"
+        },
+        "id": "63be50ca-b9b8-47a1-a9eb-6ee5ef0ed568",
+        "name": "Preparar op",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          144,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "VK4M7VQm8CMefbty",
+            "mode": "id",
+            "cachedResultName": "HPF·GHL · W0 Client"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "op": "={{ $json.op }}",
+              "args": "={{ $json.args }}"
+            },
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "id": "5089254f-c4d9-48b9-8010-d79543a5c499",
+        "name": "W0 · enviar",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          1488,
+          672
+        ],
+        "alwaysOutputData": true,
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "jsCode": "// W0 devuelve sólo su resultado; le re-pegamos la parte para el resumen.\nconst p = $('Preparar op').first().json;\nconst r = $input.first().json || {};\nreturn [{ json: { ...r, seq: p.seq, texto: p.texto, adjuntos: p.adjuntos,\n                  pausa_seg: p.pausa_seg } }];"
+        },
+        "id": "e5abac3c-ada0-4ca0-8cbc-5f266dfedde3",
+        "name": "Arrastrar contexto",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1712,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "amount": "={{ $json.pausa_seg }}"
+        },
+        "id": "8f51d88c-e041-4b0a-8614-e86fb93dcf55",
+        "name": "Pausa entre burbujas",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1936,
+          656
+        ],
+        "webhookId": "9a387aa6-e0e0-41f0-9225-c1ee1367a96a"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Junta lo que devolvió cada llamada a W0. Este objeto ES la evidencia del envío:\n// lleva el texto exacto que salió y el id que devolvió GHL, para poder releerlo.\nconst enviados = [];\nfor (const it of $input.all()) {\n  const j = it.json || {};\n  const d = (j.data || {});\n  // Un envío que falló llega acá por `onError: continueRegularOutput` con `j.error`\n  // poblado. Sin contarlo, el fallo pasa a ser SILENCIOSO: el lead recibe el turno\n  // incompleto y la ejecución queda en verde. Es la contrapartida de haber blindado los\n  // nodos de envío, y queda visible en el resumen en vez de haber que adivinarla.\n  if (j.error) {\n    enviados.push({ seq: j.seq ?? null, body: j.texto ?? null,\n                    attachments: j.adjuntos ?? [], fallo: String(\n                      (j.error && (j.error.message || j.error.description)) || j.error\n                    ).slice(0, 200) });\n    continue;\n  }\n  enviados.push({\n    seq: j.seq ?? null,\n    body: j.texto ?? null,\n    attachments: j.adjuntos ?? [],\n    ghl_message_id: d.messageId ?? null,\n    ghl_conversation_id: d.conversationId ?? null,\n    http_status: j.http_status ?? null,\n  });\n}\nenviados.sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0));\nconst fallidas = enviados.filter(e => e.fallo);\nreturn [{ json: {\n  // `ok` sigue significando lo mismo para el carril GHL. Se le suma que NINGUNA burbuja\n  // haya fallado: con los nodos blindados, \"no hubo excepción\" ya no implica \"salió todo\".\n  ok: enviados.every(e => e.ghl_message_id) && fallidas.length === 0,\n  partes_enviadas: enviados.length,\n  partes_fallidas: fallidas.length,\n  fallos: fallidas.map(e => ({ seq: e.seq, fallo: e.fallo })),\n  enviados,\n} }];"
+        },
+        "id": "ec28f695-faa1-4222-99f1-cee999b12505",
+        "name": "Armar resumen",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          144,
+          96
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "version": 2,
+              "typeValidation": "loose"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "cc108077-fc63-40c7-ac72-c71336dd39e7",
+                "leftValue": "={{ $('Normalizar partes').first().json._via }}",
+                "rightValue": "webhook",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "793e22e1-e2ac-4f01-bcd0-71acde04647f",
+        "name": "¿Vino por webhook?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          368,
+          96
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "allIncomingItems",
+          "options": {}
+        },
+        "id": "54012dc5-8b8c-42fc-8a54-74aae33e8ead",
+        "name": "Respond to Webhook",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          592,
+          0
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "417ce564-e2c3-43d5-90b7-2f91226a03df",
+        "name": "Devolver al llamador",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          592,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "-- ¿este contacto es un tester de Telegram? El chat id vive en el teléfono\n-- sintético que le puso W1 (+999<chatid>), así que no hace falta ninguna tabla nueva.\nSELECT CASE WHEN phone_e164 LIKE '+999%'\n            THEN substring(phone_e164 from 5) ELSE NULL END AS chat_id\nFROM hpf_identity WHERE ghl_contact_id = $1 LIMIT 1;",
+          "options": {
+            "queryReplacement": "={{ [ $json.contactId ] }}"
+          }
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "id": "tg-785377506037",
+        "name": "¿Es Telegram?",
+        "position": [
+          368,
+          384
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "postgres": {
+            "id": "uK59P60DJmOJc4Lm",
+            "name": "H.F"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Decide el transporte de esta burbuja: Telegram o GHL.\nconst p = $('Preparar op').first().json;\nconst filas = $input.all().map(i => i.json || {});\nconst chatId = (filas[0] || {}).chat_id || null;\n// Sin fila en hpf_identity o sin prefijo +999 → es un lead de verdad y sale por GHL.\n// El default es GHL a propósito: si algo falla en la detección, el peor caso es que un\n// tester no reciba el mensaje, no que un lead real lo reciba por el canal equivocado.\nreturn [{ json: { ...p, _chat_id: chatId, _por_telegram: !!chatId } }];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "id": "tg-352225988384",
+        "name": "Decidir transporte",
+        "position": [
+          592,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "version": 2,
+              "typeValidation": "loose"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "t1",
+                "leftValue": "={{ $json._por_telegram }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "equals"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "id": "tg-028169656402",
+        "name": "Ruteo transporte",
+        "position": [
+          816,
+          384
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Una burbuja de W2 → los envíos de Telegram que le corresponden.\nconst p = $input.first().json;\nconst chatId = p._chat_id;\nconst adj = Array.isArray(p.adjuntos) ? p.adjuntos : [];\nconst tipoDe = (url) => {\n  const u = String(url).toLowerCase().split('?')[0];\n  if (/\\.(jpe?g|png|webp|gif)$/.test(u)) return 'foto';\n  if (/\\.(mp4|mov|m4v)$/.test(u)) return 'video';\n  return 'documento';\n};\nif (!adj.length) return [{ json: { chatId, tipo: 'texto', texto: p.texto || '' } }];\n// el texto va como caption del primer adjunto, así llegan juntos\nreturn adj.map((url, i) => ({ json: {\n  chatId, tipo: tipoDe(url), url, texto: i === 0 ? (p.texto || '') : '' } }));"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "id": "tg-787910365859",
+        "name": "TG · aplanar",
+        "position": [
+          1040,
+          192
+        ]
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "version": 2,
+                    "typeValidation": "loose"
+                  },
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "tipo-texto",
+                      "leftValue": "={{ $json.tipo }}",
+                      "rightValue": "texto",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ]
+                },
+                "renameOutput": true,
+                "outputKey": "texto"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "version": 2,
+                    "typeValidation": "loose"
+                  },
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "tipo-foto",
+                      "leftValue": "={{ $json.tipo }}",
+                      "rightValue": "foto",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ]
+                },
+                "renameOutput": true,
+                "outputKey": "foto"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "version": 2,
+                    "typeValidation": "loose"
+                  },
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "tipo-video",
+                      "leftValue": "={{ $json.tipo }}",
+                      "rightValue": "video",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ]
+                },
+                "renameOutput": true,
+                "outputKey": "video"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "version": 2,
+                    "typeValidation": "loose"
+                  },
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "tipo-documento",
+                      "leftValue": "={{ $json.tipo }}",
+                      "rightValue": "documento",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ]
+                },
+                "renameOutput": true,
+                "outputKey": "documento"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "id": "tg-604126917788",
+        "name": "TG · switch tipo",
+        "position": [
+          1264,
+          176
+        ]
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $json.chatId }}",
+          "text": "={{ $json.texto }}",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "id": "tg-079781827478",
+        "name": "TG · texto",
+        "position": [
+          1488,
+          -96
+        ],
+        "webhookId": "fed2b9e1-f6d3-4e36-a9c7-0b144513adfd",
+        "alwaysOutputData": true,
+        "credentials": {
+          "telegramApi": {
+            "id": "yXtgg8Djbxglxq9H",
+            "name": "HPF"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "sendPhoto",
+          "chatId": "={{ $json.chatId }}",
+          "file": "={{ $json.url }}",
+          "additionalFields": {
+            "caption": "={{ $json.texto }}"
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "id": "tg-395724853233",
+        "name": "TG · foto",
+        "position": [
+          1488,
+          96
+        ],
+        "webhookId": "1ff23964-d3b2-4215-8ecb-fb88cff3f811",
+        "alwaysOutputData": true,
+        "credentials": {
+          "telegramApi": {
+            "id": "yXtgg8Djbxglxq9H",
+            "name": "HPF"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "sendVideo",
+          "chatId": "={{ $json.chatId }}",
+          "file": "={{ $json.url }}",
+          "additionalFields": {
+            "caption": "={{ $json.texto }}"
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "id": "tg-707609462987",
+        "name": "TG · video",
+        "position": [
+          1488,
+          288
+        ],
+        "webhookId": "ca34b201-0da4-4c96-8ae5-13731516f621",
+        "alwaysOutputData": true,
+        "credentials": {
+          "telegramApi": {
+            "id": "yXtgg8Djbxglxq9H",
+            "name": "HPF"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "sendDocument",
+          "chatId": "={{ $json.chatId }}",
+          "file": "={{ $json.url }}",
+          "additionalFields": {
+            "caption": "={{ $json.texto }}"
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "id": "tg-024362013164",
+        "name": "TG · documento",
+        "position": [
+          1488,
+          480
+        ],
+        "webhookId": "b9046ea1-5c30-4d68-837f-8f48b732a9e4",
+        "alwaysOutputData": true,
+        "credentials": {
+          "telegramApi": {
+            "id": "yXtgg8Djbxglxq9H",
+            "name": "HPF"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "content": "## define pausa intervalos salida"
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -352,
+          192
+        ],
+        "typeVersion": 1,
+        "id": "c1c3948a-d3e0-4d2d-9354-b5a47d75f790",
+        "name": "Sticky Note"
+      }
+    ],
+    "connections": {
+      "Ejecutado por otro workflow": {
+        "main": [
+          [
+            {
+              "node": "Normalizar partes",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook (carril de prueba)": {
+        "main": [
+          [
+            {
+              "node": "Normalizar partes",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalizar partes": {
+        "main": [
+          [
+            {
+              "node": "Recorrer partes",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Recorrer partes": {
+        "main": [
+          [
+            {
+              "node": "Armar resumen",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Preparar op",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Preparar op": {
+        "main": [
+          [
+            {
+              "node": "¿Es Telegram?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "W0 · enviar": {
+        "main": [
+          [
+            {
+              "node": "Arrastrar contexto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Arrastrar contexto": {
+        "main": [
+          [
+            {
+              "node": "Pausa entre burbujas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Pausa entre burbujas": {
+        "main": [
+          [
+            {
+              "node": "Recorrer partes",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Armar resumen": {
+        "main": [
+          [
+            {
+              "node": "¿Vino por webhook?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Vino por webhook?": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Devolver al llamador",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Es Telegram?": {
+        "main": [
+          [
+            {
+              "node": "Decidir transporte",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Decidir transporte": {
+        "main": [
+          [
+            {
+              "node": "Ruteo transporte",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Ruteo transporte": {
+        "main": [
+          [
+            {
+              "node": "TG · aplanar",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "W0 · enviar",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG · aplanar": {
+        "main": [
+          [
+            {
+              "node": "TG · switch tipo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG · switch tipo": {
+        "main": [
+          [
+            {
+              "node": "TG · texto",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "TG · foto",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "TG · video",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "TG · documento",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG · texto": {
+        "main": [
+          [
+            {
+              "node": "Arrastrar contexto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG · foto": {
+        "main": [
+          [
+            {
+              "node": "Arrastrar contexto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG · video": {
+        "main": [
+          [
+            {
+              "node": "Arrastrar contexto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG · documento": {
+        "main": [
+          [
+            {
+              "node": "Arrastrar contexto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "la agencia",
+    "name": null,
+    "description": null
+  }
+}

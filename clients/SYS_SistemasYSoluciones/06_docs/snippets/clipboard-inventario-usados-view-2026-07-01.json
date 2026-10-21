@@ -1,0 +1,43 @@
+{
+  "nodes": [
+    {
+      "id": "3ca61e44-8128-5575-9aed-159ed5e4e11e",
+      "name": "Search Inventario Konica",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        300
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "3zohdTBWzW8UUN6P",
+          "name": "Airtable SYS"
+        }
+      },
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": "appMD3g2HWxzBaZAM"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": "tbly3RP2QzBUnxdem"
+        },
+        "filterByFormula": "={{ $json._formula }}",
+        "limit": 25,
+        "options": {},
+        "view": {
+          "__rl": true,
+          "mode": "list",
+          "value": "viwKrFyMCZqQynwKF"
+        }
+      },
+      "notes": "Fix V-01 (auditoria-2026-07-01.md): cablea vista 'Para agente' viwKrFyMCZqQynwKF (antes view=None)."
+    }
+  ],
+  "connections": {}
+}

@@ -1,0 +1,68 @@
+{
+  "probe_id": "sess_hpf_cot_016_1785953014#1a4441385d24",
+  "session_id": "sess_hpf_cot_016_1785953014",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "ya hice la transferencia, les paso el comprobante",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 7.2,
+  "version_antes": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "version_despues": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "capturado_utc": "2026-08-05T18:04:08.135563+00:00",
+  "execution_id": "989428",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T18:03:56.455Z",
+  "stoppedAt": "2026-08-05T18:04:02.692Z",
+  "n_esperadas": 2,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Perfecto! Aguardamos el comprobante de su anticipo",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "Cualquier duda, aquí estoy para ayudarte. Gracias por confiar en Happy Flops! ✨",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 370,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1673,
+      "chat_id": 6390727286,
+      "texto_entregado": "Perfecto! Aguardamos el comprobante de su anticipo",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 366,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1674,
+      "chat_id": 6390727286,
+      "texto_entregado": "Cualquier duda, aquí estoy para ayudarte. Gracias por confiar en Happy Flops! ✨",
+      "error": null
+    }
+  ],
+  "n_entregadas": 2,
+  "cero_partes": false,
+  "agente": {
+    "output": "Perfecto! Aguardamos el comprobante de su anticipo. Cualquier duda, aquí estoy para ayudarte. Gracias por confiar en Happy Flops! ✨",
+    "tools": []
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-COT-016"
+}

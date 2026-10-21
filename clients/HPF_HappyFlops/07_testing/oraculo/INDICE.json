@@ -1,0 +1,97 @@
+[
+  {
+    "sample_id": "sample_1",
+    "turnos": 14,
+    "productos_mencionados": [
+      "anticrudas",
+      "cilindros",
+      "sandalias"
+    ],
+    "archivo": "oraculo/sample_1.md"
+  },
+  {
+    "sample_id": "sample_2",
+    "turnos": 39,
+    "productos_mencionados": [
+      "sandalias"
+    ],
+    "archivo": "oraculo/sample_2.md"
+  },
+  {
+    "sample_id": "sample_3",
+    "turnos": 14,
+    "productos_mencionados": [
+      "cilindros",
+      "pantuflas",
+      "sandalias",
+      "vasos"
+    ],
+    "archivo": "oraculo/sample_3.md"
+  },
+  {
+    "sample_id": "sample_4",
+    "turnos": 67,
+    "productos_mencionados": [
+      "sandalias"
+    ],
+    "archivo": "oraculo/sample_4.md"
+  },
+  {
+    "sample_id": "sample_5",
+    "turnos": 12,
+    "productos_mencionados": [
+      "pantuflas",
+      "sandalias"
+    ],
+    "archivo": "oraculo/sample_5.md"
+  },
+  {
+    "sample_id": "sample_6",
+    "turnos": 28,
+    "productos_mencionados": [
+      "cilindros",
+      "pantuflas",
+      "sandalias"
+    ],
+    "archivo": "oraculo/sample_6.md"
+  },
+  {
+    "sample_id": "sample_7",
+    "turnos": 26,
+    "productos_mencionados": [
+      "pantuflas"
+    ],
+    "archivo": "oraculo/sample_7.md"
+  },
+  {
+    "sample_id": "sample_8",
+    "turnos": 42,
+    "productos_mencionados": [
+      "pantuflas",
+      "sandalias"
+    ],
+    "archivo": "oraculo/sample_8.md"
+  },
+  {
+    "sample_id": "sample_9",
+    "turnos": 11,
+    "productos_mencionados": [
+      "anticrudas",
+      "cilindros",
+      "mandiles",
+      "pantuflas",
+      "sandalias",
+      "vasos"
+    ],
+    "archivo": "oraculo/sample_9.md"
+  },
+  {
+    "sample_id": "sample_10",
+    "turnos": 16,
+    "productos_mencionados": [
+      "sandalias",
+      "vasos"
+    ],
+    "archivo": "oraculo/sample_10.md"
+  }
+]

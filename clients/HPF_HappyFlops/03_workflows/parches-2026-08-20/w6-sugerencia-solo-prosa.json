@@ -1,0 +1,13 @@
+{
+  "wf": "W6",
+  "descripcion": "3.2 v2 — el nodo devolvia el JSON del agente, no la sugerencia en prosa.",
+  "medicion": "Ejecuciones 1139823 y 1139830: `Leer sugerencia anterior` devolvio '{\"evento\":\"Boda\",\"texto_dinamico\":\"Que padre!...\"}'. Es la salida estructurada de Main Image, no un mensaje al cliente.",
+  "ediciones": [
+    {
+      "nodo": "Leer sugerencia anterior",
+      "campo": "parameters.query",
+      "anchor": "  AND message->>'content' NOT LIKE '%step_%'\nORDER BY id DESC\nLIMIT 1;",
+      "reemplazo": "  AND message->>'content' NOT LIKE '%step_%'\n  -- ⚠️ Filtro que el origen NO necesitaba y acá SÍ. En W6 los agentes escriben su salida\n  -- ESTRUCTURADA en la memoria, no el texto que ve el cliente: Main Image guarda\n  -- {\"evento\":\"Boda\",\"texto_dinamico\":\"...\"} y Products guarda {\"productos\":[...]}.\n  -- Medido el 2026-08-21 sobre ejecuciones reales: sin este filtro el nodo devolvia ese\n  -- blob JSON, y el bloque \"Sugerencia anterior\" del prompt espera PROSA\n  -- (\"le gustaria agregar anticrudas?\"), no un objeto.\n  -- La unica salida en prosa es la del Recolector, que es la que de verdad le habla al lead.\n  AND left(ltrim(message->>'content'), 1) <> '{'\nORDER BY id DESC\nLIMIT 1;"
+    }
+  ]
+}

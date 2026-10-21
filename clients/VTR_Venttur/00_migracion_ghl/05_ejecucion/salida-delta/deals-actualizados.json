@@ -1,0 +1,1568 @@
+{
+ "26580501": {
+  "opp_id": "v1391krEWjZq9Ca7uZV0",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Enviar documentación a la escuela para pre-evaluación",
+    "Recopilar documentación en físico para trámites"
+   ]
+  },
+  "modified": "2026-09-23T02:32:45.026068+02:00",
+  "at": "2026-09-23T17:48:08",
+  "clientify": {
+   "pipeline_desc": "Operativo Pathway",
+   "pipeline_stage_desc": "Recopilar documentación en físico para trámites",
+   "status_desc": "Open",
+   "amount": "12500.00",
+   "owner_name": "Andrés García de la Vega",
+   "name": "Operativo Pathway Franco"
+  }
+ },
+ "24177849": {
+  "opp_id": "h4pMfSokwk3NaGZZW6fK",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Presentar ETA a estudiante y papás",
+    "Recopilar documentación en físico para trámites"
+   ]
+  },
+  "modified": "2026-09-23T02:32:43.698167+02:00",
+  "at": "2026-09-23T17:48:09",
+  "clientify": {
+   "pipeline_desc": "Operativo Pathway",
+   "pipeline_stage_desc": "Recopilar documentación en físico para trámites",
+   "status_desc": "Open",
+   "amount": "12500.00",
+   "owner_name": "Andrés García de la Vega",
+   "name": "Operativo Pathway Sara Ceron"
+  }
+ },
+ "23192293": {
+  "opp_id": "dFYXifnmAsll7m1Xi4N2",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Enviar comprobante de pago a la escuela",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-09-14T20:30:44.923134+02:00",
+  "at": "2026-09-23T17:48:11",
+  "clientify": {
+   "pipeline_desc": "Operativo Año Académico",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "34500.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Luis Ivandic"
+  }
+ },
+ "23185145": {
+  "opp_id": "We5I29NSjHHluI8exSkj",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Tramitar Visa (si aplica)",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-09-14T20:30:42.935198+02:00",
+  "at": "2026-09-23T17:48:12",
+  "clientify": {
+   "pipeline_desc": "Operativo Año Académico",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "33000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Maria Pulido"
+  }
+ },
+ "23129810": {
+  "opp_id": "tQqZASLY2RNWHgnsRQx4",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Coordinar llegada",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-09-14T20:30:40.808795+02:00",
+  "at": "2026-09-23T17:48:14",
+  "clientify": {
+   "pipeline_desc": "Operativo Año Académico",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "8620.68",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Alejandro Gonzalez Martinez"
+  }
+ },
+ "20810345": {
+  "opp_id": "GKjcrjtbhtqduSTS7eJ6",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "PRESUPUESTO PAGADO",
+    "PERFILAMIENTO (INDIVIDUAL & FAMILIAR)"
+   ]
+  },
+  "modified": "2026-09-14T20:27:16.943639+02:00",
+  "at": "2026-09-23T17:48:16",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "PERFILAMIENTO (INDIVIDUAL & FAMILIAR)",
+   "status_desc": "Expired",
+   "amount": "21551.72",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Ana Victoria Martinez Padilla"
+  }
+ },
+ "28801299": {
+  "opp_id": "jHRH26c9Ex6DkUzySIzC",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "PRESENTACIÓN",
+    "Envío de aplicación a la familia y revisión"
+   ]
+  },
+  "modified": "2026-09-14T19:43:33.123486+02:00",
+  "at": "2026-09-23T17:48:17",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Envío de aplicación a la familia y revisión",
+   "status_desc": "Expired",
+   "amount": "0.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Daniela Treviño"
+  }
+ },
+ "28801310": {
+  "opp_id": "P62RlZyjR6qSPezi2mDX",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "PRESENTACIÓN",
+    "Envío de aplicación a la familia y revisión"
+   ]
+  },
+  "modified": "2026-09-14T19:43:30.293055+02:00",
+  "at": "2026-09-23T17:48:19",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Envío de aplicación a la familia y revisión",
+   "status_desc": "Expired",
+   "amount": "8620.69",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Sofia Treviño"
+  }
+ },
+ "26994779": {
+  "opp_id": "SlTDAt29DAsrtK8yNCnz",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Coordinar llegada",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-09-14T19:40:02.849017+02:00",
+  "at": "2026-09-23T17:48:21",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "12931.03",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Milton Arcos Ochoa"
+  }
+ },
+ "26794830": {
+  "opp_id": "6eP1sd1GT6ovQeQOoTU1",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Gestión de visado",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-09-14T19:40:00.503059+02:00",
+  "at": "2026-09-23T17:48:22",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "8620.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Luis Balbin Tamés"
+  }
+ },
+ "25762695": {
+  "opp_id": "AyJuyfzmIIvoroFqWwcS",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Coordinar llegada",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-09-14T19:39:58.338682+02:00",
+  "at": "2026-09-23T17:48:24",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "8620.69",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Nicolas Morris"
+  }
+ },
+ "24654861": {
+  "opp_id": "8WXbV3wKHQrmj5NwoTsz",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Pago del programa",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-09-14T19:39:55.570598+02:00",
+  "at": "2026-09-23T17:48:25",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "8620.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Mateo Obregon"
+  }
+ },
+ "23790785": {
+  "opp_id": "6lVp9S146MDR6O4jPfXy",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Coordinar llegada",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-09-14T19:39:53.124427+02:00",
+  "at": "2026-09-23T17:48:27",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "8620.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Camilo Mazlum"
+  }
+ },
+ "22498770": {
+  "opp_id": "4HHZMDYgOIK3nKxEcvsD",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Coordinar llegada",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-09-14T19:39:51.001775+02:00",
+  "at": "2026-09-23T17:48:28",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "8620.69",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Ana Recamier"
+  }
+ },
+ "20979028": {
+  "opp_id": "tAptfaqXSefYS6ezGSkE",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Coordinar llegada",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-09-14T19:39:48.476464+02:00",
+  "at": "2026-09-23T17:48:30",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "15000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Diego Maldonado S"
+  }
+ },
+ "30339696": {
+  "opp_id": "Acp7fbnoY1adRynqquiO",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Coordinar llegada",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-31T20:21:47.636324+02:00",
+  "at": "2026-09-23T17:48:32",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "15000.00",
+   "owner_name": "Juan José Alfaro",
+   "name": "Romina Saikale"
+  }
+ },
+ "28322857": {
+  "opp_id": "b7MZJ9qzSQzDECUwEuNp",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Gestión de visado",
+    "Estudiante en destino"
+   ],
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-08-31T20:21:40.927325+02:00",
+  "at": "2026-09-23T17:48:33",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "10000.00",
+   "owner_name": "Andrés García de la Vega",
+   "name": "Mateo Fischer"
+  }
+ },
+ "26883875": {
+  "opp_id": "XJbCfXkAEZScDGMmoZiP",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Gestión de visado",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-31T20:21:38.214016+02:00",
+  "at": "2026-09-23T17:48:35",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "21551.72",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Emiliano Rodriguez Pineda"
+  }
+ },
+ "26353546": {
+  "opp_id": "p1Zt8mTxFSX4T22L7Pyv",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Coordinar llegada",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-31T20:21:35.443852+02:00",
+  "at": "2026-09-23T17:48:36",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "8620.69",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Alba Haces Teres"
+  }
+ },
+ "25223154": {
+  "opp_id": "pc1JXw3U5VgCYIuoVKZR",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Coordinar llegada",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-31T20:21:33.596893+02:00",
+  "at": "2026-09-23T17:48:38",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "8620.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Rodrigo Serratos"
+  }
+ },
+ "24677391": {
+  "opp_id": "LJDM5F7mYFXuLuZwo4ES",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Gestión de visado",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-31T20:21:32.465651+02:00",
+  "at": "2026-09-23T17:48:40",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "8620.69",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Paula Jaso"
+  }
+ },
+ "23465765": {
+  "opp_id": "DpVamlY5BnuOxzlttBte",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Coordinar llegada",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-31T20:21:23.681396+02:00",
+  "at": "2026-09-23T17:48:41",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "15000.00",
+   "owner_name": "Diego Matus",
+   "name": "Operativo Internado Elias Santiesteban"
+  }
+ },
+ "22619745": {
+  "opp_id": "LvX36VSa4GNhNmvEMYoT",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Coordinar llegada",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-31T20:21:22.121784+02:00",
+  "at": "2026-09-23T17:48:43",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "8620.69",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Lydia Gordillo Valencia"
+  }
+ },
+ "22446942": {
+  "opp_id": "ruoU39BBDEWRNHMOm4xe",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Coordinar llegada",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-31T20:21:18.632368+02:00",
+  "at": "2026-09-23T17:48:44",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "8620.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Isabella Muñoz"
+  }
+ },
+ "22224890": {
+  "opp_id": "8XNx0rslA23dpOYJtRF0",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Coordinar llegada",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-31T20:21:17.627599+02:00",
+  "at": "2026-09-23T17:48:46",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "8620.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Marcelo Guadiana"
+  }
+ },
+ "22071470": {
+  "opp_id": "Agjp8FIqQEdVhBBhmGHQ",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Gestión de visado",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-31T20:21:15.938713+02:00",
+  "at": "2026-09-23T17:48:48",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "8620.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Mateo Abal Gonzalez"
+  }
+ },
+ "14646952": {
+  "opp_id": "3VROVsrVWzNJI1KBSW7Z",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Gestión de visado",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-31T20:21:12.486009+02:00",
+  "at": "2026-09-23T17:48:49",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Diego Matus",
+   "name": "Operativo Internados Aitana Nogueira"
+  }
+ },
+ "24677753": {
+  "opp_id": "hqKYvi4pS6yHJ7epEKdz",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Gestión de visado",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-31T20:21:11.266798+02:00",
+  "at": "2026-09-23T17:48:51",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "0.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Lucca Peguero"
+  }
+ },
+ "26885502": {
+  "opp_id": "OYIVekZi04SJ0kiaXt4z",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Gestión de visado",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-31T20:21:09.560867+02:00",
+  "at": "2026-09-23T17:48:52",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "8620.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Elías  Córdova Castro"
+  }
+ },
+ "23037440": {
+  "opp_id": "qOtRcWFUJgn9r1eg8orr",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Tramitar visa (Si aplica)",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-24T20:58:29.097186+02:00",
+  "at": "2026-09-23T17:48:54",
+  "clientify": {
+   "pipeline_desc": "Operativo Idiomas",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "0.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Isabel Castillo"
+  }
+ },
+ "30068365": {
+  "opp_id": "jifmMPIORD7agY8pwMzJ",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Gestión de visado",
+    "Coordinar llegada"
+   ]
+  },
+  "modified": "2026-08-24T20:55:17.706545+02:00",
+  "at": "2026-09-23T17:48:56",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Coordinar llegada",
+   "status_desc": "Expired",
+   "amount": "15000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Carlo Escotto Lechuga"
+  }
+ },
+ "28475958": {
+  "opp_id": "WH67suDUXRJgTs4IzZ6F",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Recabar documentos y datos para la aplicación",
+    "Realizar aplicación"
+   ]
+  },
+  "modified": "2026-08-17T20:35:36.515857+02:00",
+  "at": "2026-09-23T17:48:57",
+  "clientify": {
+   "pipeline_desc": "Operativo Año Académico",
+   "pipeline_stage_desc": "Realizar aplicación",
+   "status_desc": "Open",
+   "amount": "34500.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Romulo Chavez"
+  }
+ },
+ "28484929": {
+  "opp_id": "qIncc5hc719PpHAYeeFw",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Tramitar Visa (si aplica)",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-17T20:35:29.224381+02:00",
+  "at": "2026-09-23T17:48:59",
+  "clientify": {
+   "pipeline_desc": "Operativo Año Académico",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "34500.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Matias Alarcon"
+  }
+ },
+ "26641277": {
+  "opp_id": "2SLZcd6H3qdZ3QCa7yiy",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Coordinar llegada",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-11T01:19:02.975481+02:00",
+  "at": "2026-09-23T17:49:00",
+  "clientify": {
+   "pipeline_desc": "Operativo Summercamp",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "6000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Renata, Iñaki y Andre Beltran"
+  }
+ },
+ "25954924": {
+  "opp_id": "Xez9EZbUhmHsgbUdhKnk",
+  "cambios": {
+   "status_desc": [
+    "Expired",
+    "Lost"
+   ]
+  },
+  "modified": "2026-08-11T00:46:52.690483+02:00",
+  "at": "2026-09-23T17:49:02",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Recepción de documentos oficiales para visado",
+   "status_desc": "Lost",
+   "amount": "10000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Patricio Durand"
+  }
+ },
+ "25954912": {
+  "opp_id": "FrFPvCyOfrg7SIKzPAm2",
+  "cambios": {
+   "status_desc": [
+    "Expired",
+    "Lost"
+   ]
+  },
+  "modified": "2026-08-11T00:46:42.959524+02:00",
+  "at": "2026-09-23T17:49:04",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Recepción de documentos oficiales para visado",
+   "status_desc": "Lost",
+   "amount": "10000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Diego Durand"
+  }
+ },
+ "24677868": {
+  "opp_id": "DFvoxYJa3UbFyiqzNQp8",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Coordinar llegada",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-10T18:56:08.568802+02:00",
+  "at": "2026-09-23T17:49:05",
+  "clientify": {
+   "pipeline_desc": "Operativo Año Académico",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "50000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Santiago Carrillo"
+  }
+ },
+ "24524911": {
+  "opp_id": "Gl55TZOD9aUff1bFz3F0",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Coordinar llegada",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-10T18:55:54.006660+02:00",
+  "at": "2026-09-23T17:49:07",
+  "clientify": {
+   "pipeline_desc": "Operativo Año Académico",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "0.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Valentina Lara"
+  }
+ },
+ "26883726": {
+  "opp_id": "InjGKuaZjSU4yFaTFiUO",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Tramitar Visa (si aplica)",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-10T18:55:50.893527+02:00",
+  "at": "2026-09-23T17:49:08",
+  "clientify": {
+   "pipeline_desc": "Operativo Año Académico",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "8620.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Rafael Del Paso"
+  }
+ },
+ "25348833": {
+  "opp_id": "y4QSjTaK8rdKr8EQAMzN",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Tramitar Visa (si aplica)",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-10T18:55:45.848018+02:00",
+  "at": "2026-09-23T17:49:10",
+  "clientify": {
+   "pipeline_desc": "Operativo Año Académico",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "34500.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Iriel Corona"
+  }
+ },
+ "29041628": {
+  "opp_id": "AsxYgFjJLC92MTv7IMw3",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Tramitar Visa (si aplica)",
+    "Estudiante en destino"
+   ],
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-08-10T18:55:38.334261+02:00",
+  "at": "2026-09-23T17:49:11",
+  "clientify": {
+   "pipeline_desc": "Operativo Año Académico",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "15000.00",
+   "owner_name": "Andrés García de la Vega",
+   "name": "Elias Contreras"
+  }
+ },
+ "25878087": {
+  "opp_id": "CKN92a9HF9rQ4FQ3JuLb",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Tramitar Visa (si aplica)",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-10T18:55:35.259831+02:00",
+  "at": "2026-09-23T17:49:13",
+  "clientify": {
+   "pipeline_desc": "Operativo Año Académico",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "33100.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Regina Tellez"
+  }
+ },
+ "25815229": {
+  "opp_id": "Qva4TlqXxcTKxMNPL6v4",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Tramitar Visa (si aplica)",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-10T18:55:31.945657+02:00",
+  "at": "2026-09-23T17:49:15",
+  "clientify": {
+   "pipeline_desc": "Operativo Año Académico",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "15000.00",
+   "owner_name": "Juan José Alfaro",
+   "name": "Miranda Valderrama"
+  }
+ },
+ "22754950": {
+  "opp_id": "Xpe5dwm4FwH9g4okptdc",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Tramitar Visa (si aplica)",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-10T18:55:25.511323+02:00",
+  "at": "2026-09-23T17:49:16",
+  "clientify": {
+   "pipeline_desc": "Operativo Año Académico",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Regina Olea Sada"
+  }
+ },
+ "27920267": {
+  "opp_id": "bHs1fYYVXw7Wso8kO2xA",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Coordinar llegada",
+    "Estudiante en destino"
+   ]
+  },
+  "modified": "2026-08-06T20:15:40.126280+02:00",
+  "at": "2026-09-23T17:49:18",
+  "clientify": {
+   "pipeline_desc": "Operativo Summercamp",
+   "pipeline_stage_desc": "Estudiante en destino",
+   "status_desc": "Expired",
+   "amount": "6000.00",
+   "owner_name": "Juan José Alfaro",
+   "name": "Lucia y José Escalante"
+  }
+ },
+ "30513868": {
+  "opp_id": "Dnsiw3hqMMv3eiQ8Uodb",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Enviar presupuesto final",
+    "Cobrar y tramitar seguro OSHC"
+   ]
+  },
+  "modified": "2026-07-21T21:15:18.070752+02:00",
+  "at": "2026-09-23T17:49:19",
+  "clientify": {
+   "pipeline_desc": "Operativo Gap Year",
+   "pipeline_stage_desc": "Cobrar y tramitar seguro OSHC",
+   "status_desc": "Expired",
+   "amount": "10000.00",
+   "owner_name": "Andrés García de la Vega",
+   "name": "Victor Manuel Noria"
+  }
+ },
+ "29902233": {
+  "opp_id": "r0O5tN4EsMjUcX6UiKpf",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Exámenes posicionamiento",
+    "Pago del programa"
+   ]
+  },
+  "modified": "2026-07-21T20:55:51.592617+02:00",
+  "at": "2026-09-23T17:49:21",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Pago del programa",
+   "status_desc": "Expired",
+   "amount": "15000.00",
+   "owner_name": "Juan José Alfaro",
+   "name": "Valeria Gonzalez"
+  }
+ },
+ "29902209": {
+  "opp_id": "zOU2LF55wbA3OdCSNScu",
+  "cambios": {
+   "pipeline_stage_desc": [
+    "Exámenes posicionamiento",
+    "Pago del programa"
+   ]
+  },
+  "modified": "2026-07-21T20:55:49.522720+02:00",
+  "at": "2026-09-23T17:49:22",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "Pago del programa",
+   "status_desc": "Expired",
+   "amount": "15000.00",
+   "owner_name": "Juan José Alfaro",
+   "name": "Gael Gonzalez"
+  }
+ },
+ "31085957": {
+  "opp_id": "lWESHOrnqlAX5GTg6LZf",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-20T01:02:06.934864+02:00",
+  "at": "2026-09-23T17:49:24",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Ricardo Ramirez"
+  }
+ },
+ "31080678": {
+  "opp_id": "oYXZ63u41OXl8lENL0UV",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-19T15:31:59.340594+02:00",
+  "at": "2026-09-23T17:49:25",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Nadia Canseco leon"
+  }
+ },
+ "31079155": {
+  "opp_id": "lfL5dmwuZz9HHbOgN6At",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-19T09:15:56.150027+02:00",
+  "at": "2026-09-23T17:49:27",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Mauricio Garcia de la Vega Delfin",
+   "name": "Aylin Megan Gonzalez Siles"
+  }
+ },
+ "31070479": {
+  "opp_id": "IF3SypqHDifW4UFYOOkH",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-19T00:01:23.480079+02:00",
+  "at": "2026-09-23T17:49:29",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Francisco Efraín Centeno velez"
+  }
+ },
+ "31062580": {
+  "opp_id": "HWE0pcstAK1wXsjYSsQu",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-18T17:52:17.785370+02:00",
+  "at": "2026-09-23T17:49:30",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Iván Leal"
+  }
+ },
+ "31041153": {
+  "opp_id": "eTORyhntfyYmQ7c2stCF",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-17T20:31:34.089464+02:00",
+  "at": "2026-09-23T17:49:32",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Julio Cesar Juárez Valenzuela"
+  }
+ },
+ "31021097": {
+  "opp_id": "Lk91T26wKz57Pn42UKCe",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-17T08:46:38.318083+02:00",
+  "at": "2026-09-23T17:49:33",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Mauricio Garcia de la Vega Delfin",
+   "name": "Monica Ferreyra"
+  }
+ },
+ "31020309": {
+  "opp_id": "pYxZRmIVO7xZ8NetGTJr",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-17T06:16:13.242171+02:00",
+  "at": "2026-09-23T17:49:35",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Antonio Breton"
+  }
+ },
+ "31000611": {
+  "opp_id": "r7kRyyvFXNcO9p07wy81",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-16T23:48:20.546652+02:00",
+  "at": "2026-09-23T17:49:36",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Francia Ayala"
+  }
+ },
+ "30985556": {
+  "opp_id": "BDrVoH1QpGMl9JvXs16A",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-16T15:33:11.065148+02:00",
+  "at": "2026-09-23T17:49:38",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Blanca Lobo"
+  }
+ },
+ "30946826": {
+  "opp_id": "BGUF2vB10MglmudaMF0A",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-15T18:22:58.331148+02:00",
+  "at": "2026-09-23T17:49:39",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Linda Von Calderón"
+  }
+ },
+ "30930013": {
+  "opp_id": "VTnmUjX5YkETKMnTJXKp",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-15T03:46:38.842420+02:00",
+  "at": "2026-09-23T17:49:41",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "claudia sanchez"
+  }
+ },
+ "30864350": {
+  "opp_id": "2GIu8ihiftYfkLDoptdN",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-13T07:16:21.687706+02:00",
+  "at": "2026-09-23T17:49:42",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Gina Razo Ramírez"
+  }
+ },
+ "30864164": {
+  "opp_id": "M6v8DLKM82cTagt1CZqg",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-13T07:01:01.188225+02:00",
+  "at": "2026-09-23T17:49:44",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Mauricio Garcia de la Vega Delfin",
+   "name": "Diana Barraza"
+  }
+ },
+ "30863208": {
+  "opp_id": "aqb6LEYlHpi7b7MiXGfM",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-13T06:00:40.677014+02:00",
+  "at": "2026-09-23T17:49:46",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Teresita Contreras"
+  }
+ },
+ "30855173": {
+  "opp_id": "xLP2GJLNY4bTc7AJ2VAr",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-12T22:46:28.779151+02:00",
+  "at": "2026-09-23T17:49:47",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Ivonne Andreu"
+  }
+ },
+ "30855002": {
+  "opp_id": "v8n8KHSBYriGe5evA71P",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-12T22:31:53.609338+02:00",
+  "at": "2026-09-23T17:49:49",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Ed Espinoza"
+  }
+ },
+ "30842083": {
+  "opp_id": "MGemifHsa1KRYRmVqbSL",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-12T04:00:57.152835+02:00",
+  "at": "2026-09-23T17:49:51",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "María Guadalupe Santoyo Pedraza"
+  }
+ },
+ "30840522": {
+  "opp_id": "MC1XbGHsM3tgWhsC0BDD",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-12T02:19:03.438374+02:00",
+  "at": "2026-09-23T17:49:52",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Ricardo Garrido cruz"
+  }
+ },
+ "30839986": {
+  "opp_id": "w6LJGtedl5rXFWnodYtU",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-12T01:46:07.297958+02:00",
+  "at": "2026-09-23T17:49:53",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Victor Cruz"
+  }
+ },
+ "30838626": {
+  "opp_id": "ZmJP4gXUD5bmVxEbXznJ",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-11T23:15:59.027528+02:00",
+  "at": "2026-09-23T17:49:55",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Israel Molina"
+  }
+ },
+ "30829907": {
+  "opp_id": "n0UtMxkjUl3juvZyrepV",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-11T16:31:45.235613+02:00",
+  "at": "2026-09-23T17:49:57",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Adriana Gonzalez Quiroz"
+  }
+ },
+ "30772193": {
+  "opp_id": "9x60EzSpgfPT0Z4Nbq4D",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-09T18:52:14.037553+02:00",
+  "at": "2026-09-23T17:49:58",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Hugo Hernandez"
+  }
+ },
+ "30768380": {
+  "opp_id": "ieU9uHFP0rfyupVxPto1",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-09T17:19:14.655242+02:00",
+  "at": "2026-09-23T17:50:00",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Daniela Silva"
+  }
+ },
+ "30765594": {
+  "opp_id": "fPCNnwTERjHv69aVu9N1",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-09T15:48:28.733375+02:00",
+  "at": "2026-09-23T17:50:02",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Noemí Sofia Flores Garduño"
+  }
+ },
+ "30756885": {
+  "opp_id": "NkR95qWPmfdK6V03Aw2C",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-09T07:01:20.229263+02:00",
+  "at": "2026-09-23T17:50:03",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Jeannethe Ruiz"
+  }
+ },
+ "30755625": {
+  "opp_id": "V6RxXZeRqVLa4IPWlE8C",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-07-09T04:32:29.732105+02:00",
+  "at": "2026-09-23T17:50:05",
+  "clientify": {
+   "pipeline_desc": "VENTAS EMA METODOLOGÍA",
+   "pipeline_stage_desc": "AGENDÓ REUNIÓN",
+   "status_desc": "Expired",
+   "amount": "25000.00",
+   "owner_name": "Rodrigo Garcia de la Vega",
+   "name": "Yazmin Safa"
+  }
+ },
+ "28706767": {
+  "opp_id": "I4mYU3tEGn6QurCcMXiM",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-06-15T21:27:17.180363+02:00",
+  "at": "2026-09-23T17:50:07",
+  "clientify": {
+   "pipeline_desc": "Operativo Educación superior",
+   "pipeline_stage_desc": "Tramitar visa (Si aplica)",
+   "status_desc": "Expired",
+   "amount": "10000.00",
+   "owner_name": "Andrés García de la Vega",
+   "name": "Fernando Villalever ESE Madrid"
+  }
+ },
+ "29429884": {
+  "opp_id": "f6fyA9C9mshN1MfZ1WKb",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-05-18T21:26:35.482895+02:00",
+  "at": "2026-09-23T17:50:08",
+  "clientify": {
+   "pipeline_desc": "Seguimiento",
+   "pipeline_stage_desc": "1er Seguimiento (1er día)",
+   "status_desc": "Expired",
+   "amount": "0.00",
+   "owner_name": "Diego Matus",
+   "name": "Seguimiento Pablo Fernandez Aguirre gap year"
+  }
+ },
+ "28453957": {
+  "opp_id": "8E59JZ653CXXvYG5OQTD",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-04-13T20:28:27.115138+02:00",
+  "at": "2026-09-23T17:50:09",
+  "clientify": {
+   "pipeline_desc": "Operativo Internados",
+   "pipeline_stage_desc": "PRESUPUESTO ABIERTO",
+   "status_desc": "Expired",
+   "amount": "15000.00",
+   "owner_name": "Andrés García de la Vega",
+   "name": "Traiana Zavala"
+  }
+ },
+ "26583707": {
+  "opp_id": "QEXI4oeiu2nFmaEWKm8D",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-03-02T20:07:56.831671+01:00",
+  "at": "2026-09-23T17:50:11",
+  "clientify": {
+   "pipeline_desc": "Operativo Año Académico",
+   "pipeline_stage_desc": "Recibir documentos de la escuela",
+   "status_desc": "Expired",
+   "amount": "10000.00",
+   "owner_name": "Andrés García de la Vega",
+   "name": "Op. Publico + Fatima Negrete"
+  }
+ },
+ "26316313": {
+  "opp_id": "ePd4jOeVwJAav5aj0au3",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-02-05T20:41:48.621851+01:00",
+  "at": "2026-09-23T17:50:13",
+  "clientify": {
+   "pipeline_desc": "Operativo Pathway",
+   "pipeline_stage_desc": "Crear MEE (si aplica)",
+   "status_desc": "Expired",
+   "amount": "12500.00",
+   "owner_name": "Andrés García de la Vega",
+   "name": "Operativo Pathway Violeta Morales"
+  }
+ },
+ "25904561": {
+  "opp_id": "GCtKZzVXCK0bw6sxvZyX",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2026-01-13T00:09:24.974872+01:00",
+  "at": "2026-09-23T17:50:15",
+  "clientify": {
+   "pipeline_desc": "Operativo Pathway",
+   "pipeline_stage_desc": "Cobrar Inscripción 1",
+   "status_desc": "Expired",
+   "amount": "12500.00",
+   "owner_name": "Andrés García de la Vega",
+   "name": "Operativo Pathway Mateo Monarrez"
+  }
+ },
+ "25022023": {
+  "opp_id": "0S5c2bvTdpl63nLPCCC0",
+  "cambios": {
+   "status_desc": [
+    "Open",
+    "Expired"
+   ]
+  },
+  "modified": "2025-12-02T01:05:55.085387+01:00",
+  "at": "2026-09-23T17:50:16",
+  "clientify": {
+   "pipeline_desc": "Operativo Pathway",
+   "pipeline_stage_desc": "Cobrar Inscripción 1",
+   "status_desc": "Expired",
+   "amount": "12500.00",
+   "owner_name": "Andrés García de la Vega",
+   "name": "Santiago Abendaño Pathway"
+  }
+ }
+}

@@ -1,0 +1,130 @@
+{
+  "probe_id": "sess_hpf_fic_007_1785963817#a2ab00b6cc35",
+  "session_id": "sess_hpf_fic_007_1785963817",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "quiero sandalias",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 66.9,
+  "version_antes": "3e339320-66cd-4c21-afde-f04ea116df34",
+  "version_despues": "3e339320-66cd-4c21-afde-f04ea116df34",
+  "capturado_utc": "2026-08-05T21:07:19.040264+00:00",
+  "execution_id": "990596",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T21:06:07.591Z",
+  "stoppedAt": "2026-08-05T21:07:13.470Z",
+  "n_esperadas": 5,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Así es, para tus XV tenemos sandalias súper cómodas y personalizadas que son un detalle que todos van a agradecer Me puedes decir cuántos pares También dime si prefieres la suela delgada o gruesa",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "✨ Sandalias personalizadas\n💕 Un detalle que todos van a agradecer en tu evento\n👡 Súper cómodas y personalizadas\n\n💡 Disponibles en \n💰 suela delgada $25\n💰 suela gruesa $30\nsegún la comodidad que estés buscando.\n\n📦 Pedido mínimo de 50 pares.\n\n🎁 Opción de bolsa:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf41b86ae4203405cbf9.jpeg",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 2,
+      "message_part": "Mira este video para que veas cómo se ve 🎥",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701852cf81b06f05808192.mp4"
+    },
+    {
+      "idx": 3,
+      "message_part": "Aquí tienes el catálogo completo 📋",
+      "photo_url": null,
+      "doc_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701851a4c8a1a2c39ff069.pdf",
+      "video_url": null
+    },
+    {
+      "idx": 4,
+      "message_part": "¿Le interesa sumarlas a la cotización?\nDígame:\n- Cantidad\n- Código postal\n\n¡Gracias!",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 0,
+      "ms": 321,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2326,
+      "chat_id": 6390727286,
+      "texto_entregado": "✨ Sandalias personalizadas\n💕 Un detalle que todos van a agradecer en tu evento\n👡 Súper cómodas y personalizadas\n\n💡 Disponibles en \n💰 suela delgada $25\n💰 suela gruesa $30\nsegún la comodidad que estés buscando.\n\n📦 Pedido mínimo de 50 pares.\n\n🎁 Opción de bolsa:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "error": null
+    },
+    {
+      "emisor": "Send Document (Telegram)",
+      "run": 0,
+      "ms": 198,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2328,
+      "chat_id": 6390727286,
+      "texto_entregado": "Aquí tienes el catálogo completo 📋",
+      "error": null
+    },
+    {
+      "emisor": "Send Video (Telegram)",
+      "run": 0,
+      "ms": 259,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2327,
+      "chat_id": 6390727286,
+      "texto_entregado": "Mira este video para que veas cómo se ve 🎥",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 196,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2325,
+      "chat_id": 6390727286,
+      "texto_entregado": "Así es, para tus XV tenemos sandalias súper cómodas y personalizadas que son un detalle que todos van a agradecer Me puedes decir cuántos pares También dime si prefieres la suela delgada o gruesa",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 259,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2329,
+      "chat_id": 6390727286,
+      "texto_entregado": "¿Le interesa sumarlas a la cotización?\nDígame:\n- Cantidad\n- Código postal\n\n¡Gracias!",
+      "error": null
+    }
+  ],
+  "n_entregadas": 5,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Así es, para tus XV tenemos sandalias súper cómodas y personalizadas que son un detalle que todos van a agradecer 😊\n¿Me puedes decir cuántos pares necesitas y a qué código postal sería el envío? También dime si prefieres la suela delgada o gruesa.",
+    "tools": [
+      "IDENTIFICAR_EVENTO",
+      "MOSTRAR_PRODUCTOS"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-FIC-007"
+}

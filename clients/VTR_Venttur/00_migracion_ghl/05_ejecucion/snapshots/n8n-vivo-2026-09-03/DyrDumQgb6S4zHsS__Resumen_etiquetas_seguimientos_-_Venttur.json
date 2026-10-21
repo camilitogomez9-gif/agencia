@@ -1,0 +1,2397 @@
+{
+  "updatedAt": "2026-08-18T16:10:58.473Z",
+  "createdAt": "2025-04-26T15:53:39.513Z",
+  "id": "DyrDumQgb6S4zHsS",
+  "name": "Resumen, etiquetas, seguimientos - Venttur",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "amount": 8,
+        "unit": "hours"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -96,
+        0
+      ],
+      "id": "ffc6b044-1c49-409d-bb7e-111f388ff42c",
+      "name": "Esperar 8 horas",
+      "webhookId": "e025fd37-908e-4153-a45c-9796ab9f6346"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "tel"
+            },
+            {
+              "name": "id_manychat"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -320,
+        0
+      ],
+      "id": "c654def8-8c9e-4be1-8223-782e957fe476",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "n8n_chat_histories",
+          "mode": "list",
+          "cachedResultName": "n8n_chat_histories"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "session_id",
+              "value": "={{ $json.tel }}"
+            }
+          ]
+        },
+        "options": {
+          "outputColumns": [
+            "message"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        128,
+        0
+      ],
+      "id": "1e68ff71-495c-4d52-b196-b620be18d43c",
+      "name": "Postgres",
+      "credentials": {
+        "postgres": {
+          "id": "ihpvM7nYMdLCwWDP",
+          "name": "Venttur"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let conversation = '';\n\n// Iterar sobre todos los items de $input\n$input.all().forEach(item => {\n    const msg = item.json.message;\n    conversation += `${msg.type}: ${msg.content.split('\\n')[0]}\\n`; // Toma solo la primera línea (sin fecha)\n});\n\nreturn [{ json: { conversation } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        288,
+        0
+      ],
+      "id": "9d8dcbc6-5fc1-4a46-a18f-a9ae353da186",
+      "name": "Obtener historial conversación"
+    },
+    {
+      "parameters": {
+        "content": "## Obtener historial conversación\n",
+        "height": 220,
+        "width": 396
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        64,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "9f709376-5eae-4158-bfcc-1a4796a4fdf9",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.clientify.net/v1/contacts/{{ $('Obtener ID Clientify').first().json['ID Clientify'] }}/tags/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token 3822fcd13b4a9a482a6af97b534bc7624ecb816f"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"{{ $json['message.content.tags'] }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2784,
+        288
+      ],
+      "id": "85bea98f-e47e-4cd0-8423-5eeb79c29a2b",
+      "name": "Etiquetar Contacto",
+      "notesInFlow": true,
+      "onError": "continueErrorOutput",
+      "notes": "Clientify"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=# Rol\n\nEres el asistente profesional de Venttur Education & Travel, una empresa especializada en programas de movilidad académica internacional.\n\n## Programas que ofrece Venttur:\n\nEstos son los programas que ofrece Venttur:\n- Internados en el extranjero (Boarding IA)\n- Año académico con familia anfitriona (AA Familiar IA)\n- Campamentos de verano (Summer Camp IA)\n- Pathway universitario en Alemania (Pathway IA)\n- Gap year / Estudia y trabaja en el extranjero (Gap Year IA)\n\n# Tareas:\n\nTienes 5 tareas sumamente importantes que debes completar utilizando como referencia la conversación completa con un usuario.\n\nEsta es la conversación completa con el usuario: \"{{ $('Obtener historial conversación').item.json.conversation }}\"\n\n## Tarea 1:\n\nDebes analizar la conversación con el usuario y identificar cuál o cuales de todos los planes son de su interés. Esto lo harás analizando los mensajes y observando cuando el usuario menciona interés por alguno o algunos en particular. \n\nLos programas que concluyas que son de interés del usuario, tendrás que devolverlo/s en una variable llamada 'tags' que sea de tipo arreglo, que incluya los programas de interés del usuario.\n\nLos únicos valores posibles para guardar en esta variable de tipo arreglo son: \"Boarding IA\", \"AA Familiar IA\", \"Summer Camp IA\", \"Pathway IA\", \"Gap Year IA\".\n\nEjemplo 1: si a lo largo de la conversación el usuario menciona que quiere enviar a su hijo a un capmamento de verano, entonces debes devolver: 'tags' = [\"Summer Camp IA\"].\n\nEjemplo 2: si el usuario dice que estaba buscando información por los Gap Years o la estadía en casas de familia, entonces debes devolver: 'tags' = [\"Gap Year IA\", \"AA Familiar IA\"].\n\nEjemplo 3: si el usuario no menciona ningún interés en particular, entonces debes devolver: 'tags' = []\n\n## Tarea 2: \n\nAnaliza la conversación y devuelve una variable 'tipo' que indique si el usuario es 'Padre/Madre' o 'Estudiante'.\n\nLos únicos valores posibles para la variable 'tipo' son 'Padre/Madre' o 'Estudiante'. NUNCA puedes dejar esta variable vacía. En caso de que no lo tengas tan claro, intentá decidirte por el que más te parezca.\n\nSiempre que en la conversación el usuario mencione que busca un programa para su hijo, o mencione a su hijo de alguna forma, entonces debes devolver: 'tipo' = \"Padre/Madre\"\n\nSiempre que en la conversación el usuario mencione que está buscando irse a Alemania o entiendes que el programa que busca es para él/ella, entonces debes devolver: 'tipo' = \"Estudiante\".\n\nAnte la duda, devuelve 'tipo' = \"Padre/Madre\"\n\nLa variable 'tipo' nunca puede devolverse vacía.\n\n## Tarea 3: \n\nDebes crear un resumen conciso de toda la conversación, en donde se detalle la información importante como si el usuario es padre/madre o estudiante, qué planes de interés tiene, si la persona reservó o no una asesoría, y todo lo que creas importante. Este resumen debes guardarlo en la variable 'resumen'.\n\n## Tarea 4:\n\nDebes identificar si el usuario recibió o no un link para agendar asesoría con Venttur. En caso de que sí lo haya recibido (el link fue enviado), entonces debes devolver la variable 'asesoria' con el valor 'uno', en caso contrario, devuelve esta variable con el valor 'cero' (asegurate de usar palabras 'cero' o 'uno' y NO los números). Ten cuidado, los únicos links para agendar asesorías son estos: 'promo.venttur.com/agendar-ema', 'promo.venttur.com/AAFamilia-Agendar', 'promo.venttur.com/SummerCamp-Agendar', 'promo.venttur.com/PW_Alemania_Agendar', 'promo.venttur.com/EstudiaryTrabajar_Agendar' o 'promo.venttur.com/Estudiar-y-Trabajar-en-Australia'.\nCualquier otro link que haya podido recibir el usuario NO es para agendar asesoría, por lo que si recibe algún otro que no sea esos, debes devolver el valor 'cero'.\n\n## Tarea 5:\n\nDebes devolver una variable llamada 'cualificado'. Esta variable toma el valor '1' si y solo si se cumplen TODAS las siguientes condiciones obligatoriamente:\n\n-   El usuario ya tiene conocimiento de un segundo o tercer idioma.\n-⁠   ⁠⁠El usuario estudia o estudió en escuela privada y Bilingüe \n-⁠  ⁠ Cumple cumpla con la edad deseada (10-17 summer camp) (13-17 Año académico y Boarding School) (18-30 Pathway y Gap Year)\n\nEn caso contrario, si hay una o más condiciones que NO se cumplen, entonces la variable 'cualificado' toma el valor '0'.\n\n# Importante\n\n- Tu respuesta siempre debe contener las 3 variables: 'tags', 'tipo', 'resumen' y 'asesoria' completadas.\n\n- NUNCA puedes dejar la variable 'tipo' vacía\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        720,
+        0
+      ],
+      "id": "f35e1ef9-edfd-4a11-a753-92fecb30b23c",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "Fa3aaCsYTBS79y3Y",
+          "name": "OpenAI la agencia®"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]"
+        },
+        "table": {
+          "__rl": true,
+          "value": "[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/appci7GstPQ1BTN0k/[AIRTABLE_TABLE_ID]"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Telefono": "={{ $('Obtener ID Clientify').item.json.Telefono }}",
+            "Tipo": "={{ $('OpenAI').item.json.message.content.tipo }}"
+          },
+          "matchingColumns": [
+            "Telefono"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "id_2",
+              "displayName": "id_2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Link asesoría enviado",
+              "displayName": "Link asesoría enviado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Asistió",
+              "displayName": "Asistió",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Agendan cita",
+              "displayName": "Agendan cita",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Programa interés",
+              "displayName": "Programa interés",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "No definido",
+                  "value": "No definido"
+                },
+                {
+                  "name": "Boarding IA",
+                  "value": "Boarding IA"
+                },
+                {
+                  "name": "Gap Year IA",
+                  "value": "Gap Year IA"
+                },
+                {
+                  "name": "Pathway IA",
+                  "value": "Pathway IA"
+                },
+                {
+                  "name": "Summer Camp IA",
+                  "value": "Summer Camp IA"
+                },
+                {
+                  "name": "AA Familiar IA",
+                  "value": "AA Familiar IA"
+                },
+                {
+                  "name": "Francia IA",
+                  "value": "Francia IA"
+                },
+                {
+                  "name": "Automatización - Comentarios",
+                  "value": "Automatización - Comentarios"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Tipo",
+              "displayName": "Tipo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Padre/Madre",
+                  "value": "Padre/Madre"
+                },
+                {
+                  "name": "Estudiante",
+                  "value": "Estudiante"
+                },
+                {
+                  "name": "No especificado",
+                  "value": "No especificado"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Creada",
+              "displayName": "Creada",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "ID Clientify",
+              "displayName": "ID Clientify",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ID Manychat",
+              "displayName": "ID Manychat",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Nombre Completo",
+              "displayName": "Nombre Completo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Fuente lead",
+              "displayName": "Fuente lead",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Francia / P. México/ Advantage",
+                  "value": "Francia / P. México/ Advantage"
+                },
+                {
+                  "name": "Francia / P. México / P1",
+                  "value": "Francia / P. México / P1"
+                },
+                {
+                  "name": "Francia / P. Jalisco/ P1",
+                  "value": "Francia / P. Jalisco/ P1"
+                },
+                {
+                  "name": "Formulario - LANDING",
+                  "value": "Formulario - LANDING"
+                },
+                {
+                  "name": "Estudiantes Locales",
+                  "value": "Estudiantes Locales"
+                },
+                {
+                  "name": "Estudiantes Foraneos",
+                  "value": "Estudiantes Foraneos"
+                },
+                {
+                  "name": "Papas locales",
+                  "value": "Papas locales"
+                },
+                {
+                  "name": "Papas Foraneos",
+                  "value": "Papas Foraneos"
+                },
+                {
+                  "name": "Internados / Público México / 3",
+                  "value": "Internados / Público México / 3"
+                },
+                {
+                  "name": "Internados / Público Advantage / 3",
+                  "value": "Internados / Público Advantage / 3"
+                },
+                {
+                  "name": "Internados / formulario",
+                  "value": "Internados / formulario"
+                },
+                {
+                  "name": "Facebook - Instagram",
+                  "value": "Facebook - Instagram"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Apellido",
+              "displayName": "Apellido",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Telefono",
+              "displayName": "Telefono",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Contestan 1er mensaje",
+              "displayName": "Contestan 1er mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Cualificado",
+              "displayName": "Cualificado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Tabla métricas",
+              "displayName": "Tabla métricas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Reporte semanal",
+              "displayName": "Reporte semanal",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "updateAllMatches": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1408,
+        -464
+      ],
+      "id": "e9150175-1e3a-4e95-aa8a-ace359e8c950",
+      "name": "Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "68f10ca4-8edd-42f9-8bf7-51a963db7102",
+              "name": "id",
+              "value": "={{ $('Esperar 8 horas').first().json.tel }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        -464
+      ],
+      "id": "98cee193-9039-43eb-ab70-425112428f19",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "content": "## Actualizar tipo\n",
+        "height": 220,
+        "width": 480,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        -528
+      ],
+      "id": "bcb4d0f5-dd8c-4ead-b74b-a89dfb2d93cc",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "message.content.tags",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2320,
+        352
+      ],
+      "id": "becfbd5b-0475-4b9c-a2b3-cedba33767fc",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.clientify.net/v1/contacts/{{ $('Obtener ID Clientify').item.json['ID Clientify'] }}/note/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token 3822fcd13b4a9a482a6af97b534bc7624ecb816f"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "Resumen"
+            },
+            {
+              "name": "comment",
+              "value": "={{ $('OpenAI').item.json.message.content.resumen }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1968,
+        832
+      ],
+      "id": "24e5b08c-3e50-4f3d-aaaf-86b6f9abd0df",
+      "name": "Agregar resumen"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0ea17d4d-e437-4b4f-8103-84307af621c4",
+              "leftValue": "={{ $('OpenAI').item.json.message.content.tags }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1504,
+        0
+      ],
+      "id": "64b226e3-cc53-4526-9849-32e57080d8f6",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('OpenAI').first().json.message.content.tags }}",
+                    "rightValue": "Pathway IA",
+                    "operator": {
+                      "type": "array",
+                      "operation": "contains",
+                      "rightType": "any"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Pathway"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2671a619-ee68-4255-ba79-fac40568bd60",
+                    "leftValue": "={{ $('OpenAI').first().json.message.content.tags }}",
+                    "rightValue": "Summer Camp IA",
+                    "operator": {
+                      "type": "array",
+                      "operation": "contains",
+                      "rightType": "any"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Campamento"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ba21508d-fecd-4218-8050-1c801c0a4f87",
+                    "leftValue": "={{ $('OpenAI').first().json.message.content.tags }}",
+                    "rightValue": "AA Familiar IA",
+                    "operator": {
+                      "type": "array",
+                      "operation": "contains",
+                      "rightType": "any"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "AA Familiar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3fc40a19-6f79-42a4-a992-d43527d0d909",
+                    "leftValue": "={{ $('OpenAI').first().json.message.content.tags }}",
+                    "rightValue": "Boarding IA",
+                    "operator": {
+                      "type": "array",
+                      "operation": "contains",
+                      "rightType": "any"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Boarding"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ad0e7626-7f79-466b-a937-1b06bdfca64a",
+                    "leftValue": "={{ $('OpenAI').first().json.message.content.tags }}",
+                    "rightValue": "Gap Year IA",
+                    "operator": {
+                      "type": "array",
+                      "operation": "contains",
+                      "rightType": "any"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Gap Year"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1968,
+        -304
+      ],
+      "id": "0bba85ab-c190-4908-bc11-5ce421eed16a",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]"
+        },
+        "table": {
+          "__rl": true,
+          "value": "[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/appci7GstPQ1BTN0k/[AIRTABLE_TABLE_ID]"
+        },
+        "filterByFormula": "={Telefono} =  '{{ $('Esperar 8 horas').first().json.tel }}'",
+        "options": {
+          "fields": [
+            "id",
+            "id_2",
+            "Nombre",
+            "Apellido",
+            "Telefono",
+            "Agendan cita",
+            "Link asesoría enviado",
+            "Nombre Completo",
+            "ID Clientify",
+            "Programa interés"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        528,
+        0
+      ],
+      "id": "80c94e9b-83e4-4756-9ed2-5fbfeadaaffb",
+      "name": "Obtener ID Clientify",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2592,
+        288
+      ],
+      "id": "3c46e47e-479a-4c35-8e96-13be855ec6cc",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "78b0b79a-3591-4314-9906-9028f5e73ac1",
+              "leftValue": "={{ $('Obtener ID Clientify').item.json['Link asesoría enviado'] ?? false }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1712,
+        -128
+      ],
+      "id": "46caf0b8-8b72-44b8-9b59-2ee24a3c07ae",
+      "name": "No envio link?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "78b0b79a-3591-4314-9906-9028f5e73ac1",
+              "leftValue": "={{ $('Obtener ID Clientify').item.json['Link asesoría enviado'] ?? false }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1712,
+        176
+      ],
+      "id": "e8e7ac4e-66fc-4b18-9898-ff7e569f3109",
+      "name": "No envio link? x2"
+    },
+    {
+      "parameters": {
+        "content": "## Etiquetas",
+        "height": 224,
+        "width": 1024
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2288,
+        272
+      ],
+      "id": "cd9252a8-b624-425e-b427-3a0826bce3c9",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer 3256256:ecc8538e4caee488900c4a02f3170a0a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $('When Executed by Another Workflow').first().json.id_manychat }}\",\n  \"flow_ns\": \"content20250718115245_638127\"\n  \n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2320,
+        -96
+      ],
+      "id": "3b7c9b5e-e440-4f34-adca-c0cda4550324",
+      "name": "Boarding School"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer 3256256:ecc8538e4caee488900c4a02f3170a0a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $('When Executed by Another Workflow').first().json.id_manychat }}\",\n  \"flow_ns\": \"content20250718121921_967738\"\n  \n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2320,
+        -576
+      ],
+      "id": "64f9b60d-0dac-4908-9a06-741348735ee4",
+      "name": "Pathway"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer 3256256:ecc8538e4caee488900c4a02f3170a0a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $('When Executed by Another Workflow').first().json.id_manychat }}\",\n  \"flow_ns\": \"content20250718122822_491460\"\n  \n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2320,
+        64
+      ],
+      "id": "707d2bb1-3783-4a4b-95cf-18420cbb2ee0",
+      "name": "Gap year"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer 3256256:ecc8538e4caee488900c4a02f3170a0a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $('When Executed by Another Workflow').first().json.id_manychat }}\",\n  \"flow_ns\": \"content20250718123255_243860\"\n  \n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2320,
+        -256
+      ],
+      "id": "553582df-3918-498e-8269-94f766c7560d",
+      "name": "Año Académico"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer 3256256:ecc8538e4caee488900c4a02f3170a0a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $('When Executed by Another Workflow').first().json.id_manychat }}\",\n  \"flow_ns\": \"content20250718123847_652764\"\n  \n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2320,
+        -416
+      ],
+      "id": "5944ba24-8a34-43c6-a181-a96a78ddf931",
+      "name": "Summer Camp"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer 3256256:ecc8538e4caee488900c4a02f3170a0a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $('When Executed by Another Workflow').first().json.id_manychat }}\",\n  \"flow_ns\": \"content20250718124216_992343\"\n  \n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2320,
+        592
+      ],
+      "id": "cba4fb5b-8211-4ad8-adac-7076a804434a",
+      "name": "Seguimiento Lead General"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "db47d697-642c-4038-8fd1-8d92c4a71916",
+              "leftValue": "={{ $json.message.content.cualificado }}",
+              "rightValue": "1",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1744,
+        1040
+      ],
+      "id": "b8aa6e4c-2504-4c7e-bdae-cee17989f4ba",
+      "name": "Cualificado?"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]"
+        },
+        "table": {
+          "__rl": true,
+          "value": "[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]/[AIRTABLE_TABLE_ID]"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Cualificado": true,
+            "ID Clientify": "={{ $('Obtener ID Clientify').first().json['ID Clientify'] }}"
+          },
+          "matchingColumns": [
+            "ID Clientify"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "id_2",
+              "displayName": "id_2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Link asesoría enviado",
+              "displayName": "Link asesoría enviado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Asistió",
+              "displayName": "Asistió",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Agendan cita",
+              "displayName": "Agendan cita",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Programa interés",
+              "displayName": "Programa interés",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "No definido",
+                  "value": "No definido"
+                },
+                {
+                  "name": "Boarding IA",
+                  "value": "Boarding IA"
+                },
+                {
+                  "name": "Gap Year IA",
+                  "value": "Gap Year IA"
+                },
+                {
+                  "name": "Pathway IA",
+                  "value": "Pathway IA"
+                },
+                {
+                  "name": "Summer Camp IA",
+                  "value": "Summer Camp IA"
+                },
+                {
+                  "name": "AA Familiar IA",
+                  "value": "AA Familiar IA"
+                },
+                {
+                  "name": "Francia IA",
+                  "value": "Francia IA"
+                },
+                {
+                  "name": "Automatización - Comentarios",
+                  "value": "Automatización - Comentarios"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Tipo",
+              "displayName": "Tipo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Padre/Madre",
+                  "value": "Padre/Madre"
+                },
+                {
+                  "name": "Estudiante",
+                  "value": "Estudiante"
+                },
+                {
+                  "name": "No especificado",
+                  "value": "No especificado"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Creada",
+              "displayName": "Creada",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "ID Clientify",
+              "displayName": "ID Clientify",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ID Manychat",
+              "displayName": "ID Manychat",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Nombre Completo",
+              "displayName": "Nombre Completo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Fuente lead",
+              "displayName": "Fuente lead",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Francia / P. México/ Advantage",
+                  "value": "Francia / P. México/ Advantage"
+                },
+                {
+                  "name": "Francia / P. México / P1",
+                  "value": "Francia / P. México / P1"
+                },
+                {
+                  "name": "Francia / P. Jalisco/ P1",
+                  "value": "Francia / P. Jalisco/ P1"
+                },
+                {
+                  "name": "Formulario - LANDING",
+                  "value": "Formulario - LANDING"
+                },
+                {
+                  "name": "Estudiantes Locales",
+                  "value": "Estudiantes Locales"
+                },
+                {
+                  "name": "Estudiantes Foraneos",
+                  "value": "Estudiantes Foraneos"
+                },
+                {
+                  "name": "Papas locales",
+                  "value": "Papas locales"
+                },
+                {
+                  "name": "Papas Foraneos",
+                  "value": "Papas Foraneos"
+                },
+                {
+                  "name": "Internados / Público México / 3",
+                  "value": "Internados / Público México / 3"
+                },
+                {
+                  "name": "Internados / Público Advantage / 3",
+                  "value": "Internados / Público Advantage / 3"
+                },
+                {
+                  "name": "Internados / formulario",
+                  "value": "Internados / formulario"
+                },
+                {
+                  "name": "Facebook - Instagram",
+                  "value": "Facebook - Instagram"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Apellido",
+              "displayName": "Apellido",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Telefono",
+              "displayName": "Telefono",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Contestan 1er mensaje",
+              "displayName": "Contestan 1er mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Cualificado",
+              "displayName": "Cualificado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Tabla métricas",
+              "displayName": "Tabla métricas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Reporte semanal",
+              "displayName": "Reporte semanal",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1968,
+        1040
+      ],
+      "id": "036319a9-4351-408d-b194-978efd65a4a2",
+      "name": "Actualizar 'cualificado'",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]"
+        },
+        "table": {
+          "__rl": true,
+          "value": "[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/appci7GstPQ1BTN0k/[AIRTABLE_TABLE_ID]"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Programa interés": "={{ $('Split Out').first().json['message.content.tags'] }}",
+            "ID Clientify": "={{ $('Obtener ID Clientify').item.json['ID Clientify'] }}"
+          },
+          "matchingColumns": [
+            "ID Clientify"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "id_2",
+              "displayName": "id_2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Link asesoría enviado",
+              "displayName": "Link asesoría enviado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Asistió",
+              "displayName": "Asistió",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Agendan cita",
+              "displayName": "Agendan cita",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Programa interés",
+              "displayName": "Programa interés",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "No definido",
+                  "value": "No definido"
+                },
+                {
+                  "name": "Boarding IA",
+                  "value": "Boarding IA"
+                },
+                {
+                  "name": "Gap Year IA",
+                  "value": "Gap Year IA"
+                },
+                {
+                  "name": "Pathway IA",
+                  "value": "Pathway IA"
+                },
+                {
+                  "name": "Summer Camp IA",
+                  "value": "Summer Camp IA"
+                },
+                {
+                  "name": "AA Familiar IA",
+                  "value": "AA Familiar IA"
+                },
+                {
+                  "name": "Francia IA",
+                  "value": "Francia IA"
+                },
+                {
+                  "name": "Automatización - Comentarios",
+                  "value": "Automatización - Comentarios"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Tipo",
+              "displayName": "Tipo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Padre/Madre",
+                  "value": "Padre/Madre"
+                },
+                {
+                  "name": "Estudiante",
+                  "value": "Estudiante"
+                },
+                {
+                  "name": "No especificado",
+                  "value": "No especificado"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Creada",
+              "displayName": "Creada",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "ID Clientify",
+              "displayName": "ID Clientify",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ID Manychat",
+              "displayName": "ID Manychat",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Nombre Completo",
+              "displayName": "Nombre Completo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Fuente lead",
+              "displayName": "Fuente lead",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Francia / P. México/ Advantage",
+                  "value": "Francia / P. México/ Advantage"
+                },
+                {
+                  "name": "Francia / P. México / P1",
+                  "value": "Francia / P. México / P1"
+                },
+                {
+                  "name": "Francia / P. Jalisco/ P1",
+                  "value": "Francia / P. Jalisco/ P1"
+                },
+                {
+                  "name": "Formulario - LANDING",
+                  "value": "Formulario - LANDING"
+                },
+                {
+                  "name": "Estudiantes Locales",
+                  "value": "Estudiantes Locales"
+                },
+                {
+                  "name": "Estudiantes Foraneos",
+                  "value": "Estudiantes Foraneos"
+                },
+                {
+                  "name": "Papas locales",
+                  "value": "Papas locales"
+                },
+                {
+                  "name": "Papas Foraneos",
+                  "value": "Papas Foraneos"
+                },
+                {
+                  "name": "Internados / Público México / 3",
+                  "value": "Internados / Público México / 3"
+                },
+                {
+                  "name": "Internados / Público Advantage / 3",
+                  "value": "Internados / Público Advantage / 3"
+                },
+                {
+                  "name": "Internados / formulario",
+                  "value": "Internados / formulario"
+                },
+                {
+                  "name": "Facebook - Instagram",
+                  "value": "Facebook - Instagram"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Apellido",
+              "displayName": "Apellido",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Telefono",
+              "displayName": "Telefono",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Contestan 1er mensaje",
+              "displayName": "Contestan 1er mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Cualificado",
+              "displayName": "Cualificado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Tabla métricas",
+              "displayName": "Tabla métricas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Reporte semanal",
+              "displayName": "Reporte semanal",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2960,
+        288
+      ],
+      "id": "151dc71b-fa4f-413f-be69-1367b2bea778",
+      "name": "Interés",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d087019d-6241-4013-a020-98d60ccd095d",
+              "leftValue": "={{ $('Obtener ID Clientify').item.json['ID Clientify'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1744,
+        848
+      ],
+      "id": "54cd64f5-8c8c-49bf-a0dc-74df56dbf279",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/subscriber/setCustomFields",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 3256256:ecc8538e4caee488900c4a02f3170a0a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $('When Executed by Another Workflow').first().json.id_manychat }}\",\n  \"fields\": [\n    {\n      \"field_name\": \"programa_interes\",\n      \"field_value\": \"{{ $('Split Out').first().json['message.content.tags'] }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3120,
+        288
+      ],
+      "id": "d30cccc0-0264-4c40-9370-e281601afaab",
+      "name": "Set programa_interes",
+      "notesInFlow": true,
+      "notes": "Manychat"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "g1",
+              "leftValue": "={{ ($('Obtener ID Clientify').item.json['Programa interés'] || '').toString().trim() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "g2",
+              "leftValue": "={{ ($('Obtener ID Clientify').item.json['Programa interés'] || '').toString().trim() }}",
+              "rightValue": "No definido",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "guard-programa-definido",
+      "name": "¿Programa ya definido?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2880,
+        432
+      ]
+    }
+  ],
+  "connections": {
+    "Esperar 8 horas": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Esperar 8 horas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "Obtener historial conversación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Etiquetar Contacto": {
+      "main": [
+        [
+          {
+            "node": "¿Programa ya definido?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "¿Programa ya definido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cualificado?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "No envio link?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No envio link? x2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Pathway",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Summer Camp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Año Académico",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Boarding School",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gap year",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener ID Clientify": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Etiquetar Contacto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No envio link?": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "No envio link? x2": {
+      "main": [
+        [
+          {
+            "node": "Seguimiento Lead General",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener historial conversación": {
+      "main": [
+        [
+          {
+            "node": "Obtener ID Clientify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cualificado?": {
+      "main": [
+        [
+          {
+            "node": "Actualizar 'cualificado'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Interés": {
+      "main": [
+        [
+          {
+            "node": "Set programa_interes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agregar resumen": {
+      "main": [
+        []
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Agregar resumen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set programa_interes": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Programa ya definido?": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Interés",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "errorWorkflow": "OBkUyb8fuo30DzA9"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "tel": "5215541815259",
+          "id_manychat": "1410652077"
+        }
+      }
+    ]
+  },
+  "versionId": "57afa7f7-c69e-4472-93cb-5adc1efece7a",
+  "activeVersionId": null,
+  "versionCounter": 15,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-04-26T15:53:39.518Z",
+      "createdAt": "2025-04-26T15:53:39.518Z",
+      "role": "workflow:owner",
+      "workflowId": "DyrDumQgb6S4zHsS",
+      "projectId": "OZub3m3DGqbZefcZ",
+      "project": {
+        "updatedAt": "2025-02-10T13:18:00.403Z",
+        "createdAt": "2025-02-10T13:17:23.832Z",
+        "id": "OZub3m3DGqbZefcZ",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-02-10T13:17:23.833Z",
+            "createdAt": "2025-02-10T13:17:23.833Z",
+            "userId": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+            "projectId": "OZub3m3DGqbZefcZ",
+            "user": {
+              "updatedAt": "2026-09-03T08:27:11.000Z",
+              "createdAt": "2025-02-10T13:17:22.713Z",
+              "id": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "lastName": "AI",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-02-10T13:18:23.044Z",
+                "personalization_survey_n8n_version": "1.77.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "KFHNPOd9iRMDKpBc",
+                "userActivatedAt": 1739194255698,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1773068538338
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-02",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

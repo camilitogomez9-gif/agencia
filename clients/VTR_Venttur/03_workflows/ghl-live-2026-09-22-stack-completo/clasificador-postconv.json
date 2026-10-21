@@ -1,0 +1,582 @@
+{
+  "updatedAt": "2026-09-21T08:07:51.605Z",
+  "createdAt": "2026-09-07T05:08:01.420Z",
+  "id": "Xmyoewwa1W5gm1fy",
+  "name": "vtr-clasificador-postconv-v1",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "conversation",
+              "type": "string"
+            },
+            {
+              "name": "contactId",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "clf-trigger",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -420,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsonOutput": true,
+        "messages": {
+          "values": [
+            {
+              "content": "=# Rol\n\nEres el asistente profesional de Venttur Education & Travel, una empresa especializada en programas de movilidad académica internacional.\n\n## Programas que ofrece Venttur:\n\nEstos son los programas que ofrece Venttur:\n- Internados en el extranjero (Boarding IA)\n- Año académico con familia anfitriona (AA Familiar IA)\n- Campamentos de verano (Summer Camp IA)\n- Pathway universitario en Alemania (Pathway IA)\n- Gap year / Estudia y trabaja en el extranjero (Gap Year IA)\n\n# Tareas:\n\nTienes 5 tareas sumamente importantes que debes completar utilizando como referencia la conversación completa con un usuario.\n\nEsta es la conversación completa con el usuario: \"{{ $json.conversation }}\"\n\n## Tarea 1:\n\nDebes analizar la conversación con el usuario y identificar cuál o cuales de todos los planes son de su interés. Esto lo harás analizando los mensajes y observando cuando el usuario menciona interés por alguno o algunos en particular. \n\nLos programas que concluyas que son de interés del usuario, tendrás que devolverlo/s en una variable llamada 'tags' que sea de tipo arreglo, que incluya los programas de interés del usuario.\n\nLos únicos valores posibles para guardar en esta variable de tipo arreglo son: \"Boarding IA\", \"AA Familiar IA\", \"Summer Camp IA\", \"Pathway IA\", \"Gap Year IA\".\n\nEjemplo 1: si a lo largo de la conversación el usuario menciona que quiere enviar a su hijo a un capmamento de verano, entonces debes devolver: 'tags' = [\"Summer Camp IA\"].\n\nEjemplo 2: si el usuario dice que estaba buscando información por los Gap Years o la estadía en casas de familia, entonces debes devolver: 'tags' = [\"Gap Year IA\", \"AA Familiar IA\"].\n\nEjemplo 3: si el usuario no menciona ningún interés en particular, entonces debes devolver: 'tags' = []\n\n## Tarea 2: \n\nAnaliza la conversación y devuelve una variable 'tipo' que indique si el usuario es 'Padre/Madre' o 'Estudiante'.\n\nLos únicos valores posibles para la variable 'tipo' son 'Padre/Madre' o 'Estudiante'. NUNCA puedes dejar esta variable vacía. En caso de que no lo tengas tan claro, intentá decidirte por el que más te parezca.\n\nSiempre que en la conversación el usuario mencione que busca un programa para su hijo, o mencione a su hijo de alguna forma, entonces debes devolver: 'tipo' = \"Padre/Madre\"\n\nSiempre que en la conversación el usuario mencione que está buscando irse a Alemania o entiendes que el programa que busca es para él/ella, entonces debes devolver: 'tipo' = \"Estudiante\".\n\nAnte la duda, devuelve 'tipo' = \"Padre/Madre\"\n\nLa variable 'tipo' nunca puede devolverse vacía.\n\n## Tarea 3: \n\nDebes crear un resumen conciso de toda la conversación, en donde se detalle la información importante como si el usuario es padre/madre o estudiante, qué planes de interés tiene, si la persona reservó o no una asesoría, y todo lo que creas importante. Este resumen debes guardarlo en la variable 'resumen'.\n\n## Tarea 4:\n\nDebes identificar si el usuario recibió o no un link para agendar asesoría con Venttur. En caso de que sí lo haya recibido (el link fue enviado), entonces debes devolver la variable 'asesoria' con el valor 'uno', en caso contrario, devuelve esta variable con el valor 'cero' (asegurate de usar palabras 'cero' o 'uno' y NO los números). Ten cuidado, los únicos links para agendar asesorías son estos: 'promo.venttur.com/SPEagendar', 'promo.venttur.com/Estudiar-y-Trabajar-en-Australia', 'promo.venttur.com/AAFamilia-Agendar', 'promo.venttur.com/SummerCamp-Agendar', 'promo.venttur.com/PW_Alemania_Agendar', 'promo.venttur.com/EstudiaryTrabajar_Agendar', 'promo.venttur.com/Estudiar-y-Trabajar-en-Australia' o 'promo.venttur.com/SPEagendar'.\nCualquier otro link que haya podido recibir el usuario NO es para agendar asesoría, por lo que si recibe algún otro que no sea esos, debes devolver el valor 'cero'.\n\n## Tarea 5:\n\nDebes devolver una variable llamada 'cualificado'. Esta variable toma el valor '1' si y solo si se cumplen TODAS las siguientes condiciones obligatoriamente:\n\n-   El usuario ya tiene conocimiento de un segundo o tercer idioma.\n-⁠   ⁠⁠El usuario estudia o estudió en escuela privada y Bilingüe \n-⁠  ⁠ Cumple cumpla con la edad deseada (10-17 summer camp) (13-17 Año académico y Boarding School) (18-30 Pathway y Gap Year)\n\nEn caso contrario, si hay una o más condiciones que NO se cumplen, entonces la variable 'cualificado' toma el valor '0'.\n\n# Importante\n\n- Tu respuesta siempre debe contener las 3 variables: 'tags', 'tipo', 'resumen' y 'asesoria' completadas.\n\n- NUNCA puedes dejar la variable 'tipo' vacía\n"
+            }
+          ]
+        },
+        "modelId": {
+          "__rl": true,
+          "cachedResultName": "GPT-4O-MINI",
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "id": "clf-openai",
+      "name": "Clasificar (rúbrica 5 tareas)",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -180,
+        0
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "Fa3aaCsYTBS79y3Y",
+          "name": "OpenAI la agencia®"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const c = ($('Clasificar (rúbrica 5 tareas)').first().json.message || {}).content || {};\nconst contactId = $('When Executed by Another Workflow').first().json.contactId;\nconst MAP = {'Boarding IA':'Internados','AA Familiar IA':'Intercambio académico con familias','Summer Camp IA':'Campamentos de verano','Pathway IA':'Pathway Alemania','Gap Year IA':'Gap Year / Estudia y Trabaja'};\nconst tags = Array.isArray(c.tags) ? c.tags : [];\nconst programa = tags.length ? (MAP[tags[0]] || null) : null;\nreturn [{ json: { contactId, tipo: c.tipo || null, resumen: c.resumen || '', cualificado: String(c.cualificado || ''), programa } }];"
+      },
+      "id": "clf-Prepararwrites",
+      "name": "Preparar writes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        180,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $('Preparar writes').first().json.contactId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"customFields\":[{\"id\":\"4sj9sWAen1PvGCkn9eCN\",\"value\":\"{{ $('Preparar writes').first().json.tipo }}\"}]}"
+      },
+      "id": "clf-Settipo_contacto",
+      "name": "Set tipo_contacto (GHL)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        380,
+        200
+      ],
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YkVmaA4jlRbO1TQD",
+          "name": "GHL VTR (PIT)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $('Preparar writes').first().json.contactId }}/notes",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"body\": {{ JSON.stringify($('Preparar writes').first().json.resumen) }}}"
+      },
+      "id": "clf-Addnotaresumen(G",
+      "name": "Add nota resumen (GHL)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        580,
+        200
+      ],
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YkVmaA4jlRbO1TQD",
+          "name": "GHL VTR (PIT)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $('Preparar writes').first().json.contactId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "clf-GETcontact(progr",
+      "name": "GET contact (programa)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        780,
+        200
+      ],
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YkVmaA4jlRbO1TQD",
+          "name": "GHL VTR (PIT)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const resp = $json.contact || $json;\nconst cfs = resp.customFields || [];\nconst cur = (cfs.find(f => f.id === 'xK2NFqtz1DYUw3gYdn8I') || {}).value;\nconst empty = !cur || (Array.isArray(cur) && !cur.length) || cur === '';\nconst programa = $('Preparar writes').first().json.programa;\nconst contactId = $('Preparar writes').first().json.contactId;\nreturn [{ json: { should_set: !!(empty && programa), programa, contactId } }];"
+      },
+      "id": "clf-Guardprograma",
+      "name": "Guard programa",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        980,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.should_set }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "clf-¿setearprograma?",
+      "name": "¿setear programa?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1180,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $json.contactId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"customFields\":[{\"id\":\"xK2NFqtz1DYUw3gYdn8I\",\"value\":\"{{ $json.programa }}\"}]}"
+      },
+      "id": "clf-Setprograma_inte",
+      "name": "Set programa_interes (GHL)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1380,
+        120
+      ],
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YkVmaA4jlRbO1TQD",
+          "name": "GHL VTR (PIT)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $('Preparar writes').first().json.cualificado }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "rightValue": "1"
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "clf-¿Cualificado?",
+      "name": "¿Cualificado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1580,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $('When Executed by Another Workflow').first().json.contactId }}/tags",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"tags\":[\"cualificado\"]}",
+        "options": {}
+      },
+      "id": "clf-tag",
+      "name": "Tag cualificado (GHL)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1780,
+        200
+      ],
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YkVmaA4jlRbO1TQD",
+          "name": "GHL VTR (PIT)"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Clasificar (rúbrica 5 tareas)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clasificar (rúbrica 5 tareas)": {
+      "main": [
+        [
+          {
+            "node": "Preparar writes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar writes": {
+      "main": [
+        [
+          {
+            "node": "Set tipo_contacto (GHL)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set tipo_contacto (GHL)": {
+      "main": [
+        [
+          {
+            "node": "Add nota resumen (GHL)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add nota resumen (GHL)": {
+      "main": [
+        [
+          {
+            "node": "GET contact (programa)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET contact (programa)": {
+      "main": [
+        [
+          {
+            "node": "Guard programa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard programa": {
+      "main": [
+        [
+          {
+            "node": "¿setear programa?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿setear programa?": {
+      "main": [
+        [
+          {
+            "node": "Set programa_interes (GHL)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "¿Cualificado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set programa_interes (GHL)": {
+      "main": [
+        [
+          {
+            "node": "¿Cualificado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Cualificado?": {
+      "main": [
+        [
+          {
+            "node": "Tag cualificado (GHL)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "4330771c-5107-4e61-a34b-91b044d15f9c",
+  "activeVersionId": null,
+  "versionCounter": 4,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-09-07T05:08:01.425Z",
+      "createdAt": "2026-09-07T05:08:01.425Z",
+      "role": "workflow:owner",
+      "workflowId": "Xmyoewwa1W5gm1fy",
+      "projectId": "OZub3m3DGqbZefcZ",
+      "project": {
+        "updatedAt": "2025-02-10T13:18:00.403Z",
+        "createdAt": "2025-02-10T13:17:23.832Z",
+        "id": "OZub3m3DGqbZefcZ",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-02-10T13:17:23.833Z",
+            "createdAt": "2025-02-10T13:17:23.833Z",
+            "userId": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+            "projectId": "OZub3m3DGqbZefcZ",
+            "user": {
+              "updatedAt": "2026-09-21T22:19:54.000Z",
+              "createdAt": "2025-02-10T13:17:22.713Z",
+              "id": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "lastName": "AI",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-02-10T13:18:23.044Z",
+                "personalization_survey_n8n_version": "1.77.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "KFHNPOd9iRMDKpBc",
+                "userActivatedAt": 1739194255698,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1789467400717
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-21",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

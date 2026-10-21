@@ -1,0 +1,30 @@
+{
+  "caso": "G-03",
+  "titulo": "find_or_create_opportunity",
+  "resultado": "CORROBORADO",
+  "detalle": "http=200 via=existente id=vzYAb3P86uJ08CI9jKyV → el 400 OPPORTUNITY_NO_DUPLICATE se traduce a éxito",
+  "pasos": [
+    {
+      "req": {
+        "op": "find_or_create_opportunity",
+        "args": {
+          "contactId": "3tzzBVjsKlOF2RJjKNOL"
+        }
+      },
+      "resp": [
+        {
+          "ok": true,
+          "op": "find_or_create_opportunity",
+          "http_status": 400,
+          "via": "existente",
+          "data": {
+            "opportunity": {
+              "id": "vzYAb3P86uJ08CI9jKyV"
+            }
+          },
+          "error": null
+        }
+      ]
+    }
+  ]
+}

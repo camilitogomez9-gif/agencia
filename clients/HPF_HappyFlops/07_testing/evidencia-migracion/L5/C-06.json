@@ -1,0 +1,18 @@
+{
+  "caso": "C-06",
+  "titulo": "la card lleva el texto y el asset correctos",
+  "resultado": "CORROBORADO",
+  "detalle": "texto_igual=True media_igual=True tipo=imagen",
+  "pasos": [
+    {
+      "card": {
+        "ficha_id": "Boda::Boda::Colores de tintas 2025",
+        "nombre": "Colores de tintas 2025",
+        "texto": "Aqui te muestro los *colores disponibles* para las *TINTAS*",
+        "media_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/0fa78aef-78e4-412f-8ada-78107bc0176e.jpg",
+        "media_tipo": "imagen",
+        "subcategoria": "Accesorios"
+      }
+    }
+  ]
+}

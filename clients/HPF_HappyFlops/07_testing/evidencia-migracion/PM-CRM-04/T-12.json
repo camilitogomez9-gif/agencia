@@ -1,0 +1,125 @@
+{
+  "test_id": "T-12",
+  "punto": "PM-CRM-04",
+  "titulo": "add/remove tag atencion_humana",
+  "resultado": "CORROBORADO",
+  "detalle": "tras_add=['lead_prueba', 'atencion_humana'] tras_remove=['lead_prueba']",
+  "pasos": [
+    {
+      "paso": "add tag",
+      "method": "POST",
+      "path": "/contacts/3tzzBVjsKlOF2RJjKNOL/tags",
+      "request": {
+        "tags": [
+          "atencion_humana"
+        ]
+      },
+      "status": 201,
+      "response": {
+        "tags": [
+          "lead_prueba",
+          "atencion_humana"
+        ],
+        "tagsAdded": [
+          "atencion_humana"
+        ],
+        "traceId": "429799ac-5821-489c-aaa1-cc541ca31214"
+      }
+    },
+    {
+      "paso": "read-back add",
+      "method": "GET",
+      "path": "/contacts/3tzzBVjsKlOF2RJjKNOL",
+      "request": null,
+      "status": 200,
+      "response": {
+        "contact": {
+          "id": "3tzzBVjsKlOF2RJjKNOL",
+          "dateAdded": "2026-08-06T19:14:43.333Z",
+          "type": "lead",
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "firstName": "ZZ",
+          "firstNameLowerCase": "zz",
+          "fullNameLowerCase": "zz test migracion ghl",
+          "lastName": "Test Migracion GHL",
+          "lastNameLowerCase": "test migracion ghl",
+          "phone": "+5213300000199",
+          "country": "MX",
+          "createdBy": {
+            "source": "INTEGRATION",
+            "channel": "OAUTH",
+            "sourceId": "6a355d3fd70f7bc6633d2172",
+            "timestamp": "2026-08-06T19:14:43.333Z"
+          },
+          "additionalPhones": [],
+          "source": "hpf-migracion-l2",
+          "dateUpdated": "2026-08-06T23:31:36.353Z",
+          "tags": [
+            "lead_prueba",
+            "atencion_humana"
+          ],
+          "customFields": [],
+          "additionalEmails": []
+        },
+        "traceId": "f18a873a-2732-408f-a805-b9368098ccaf"
+      }
+    },
+    {
+      "paso": "remove tag",
+      "method": "DELETE",
+      "path": "/contacts/3tzzBVjsKlOF2RJjKNOL/tags",
+      "request": {
+        "tags": [
+          "atencion_humana"
+        ]
+      },
+      "status": 200,
+      "response": {
+        "tags": [
+          "lead_prueba"
+        ],
+        "tagsRemoved": [
+          "atencion_humana"
+        ],
+        "traceId": "8b9195c9-f7b9-42c2-9bf9-170860ba5b9f"
+      }
+    },
+    {
+      "paso": "read-back remove",
+      "method": "GET",
+      "path": "/contacts/3tzzBVjsKlOF2RJjKNOL",
+      "request": null,
+      "status": 200,
+      "response": {
+        "contact": {
+          "id": "3tzzBVjsKlOF2RJjKNOL",
+          "dateAdded": "2026-08-06T19:14:43.333Z",
+          "type": "lead",
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "firstName": "ZZ",
+          "firstNameLowerCase": "zz",
+          "fullNameLowerCase": "zz test migracion ghl",
+          "lastName": "Test Migracion GHL",
+          "lastNameLowerCase": "test migracion ghl",
+          "phone": "+5213300000199",
+          "country": "MX",
+          "createdBy": {
+            "source": "INTEGRATION",
+            "channel": "OAUTH",
+            "sourceId": "6a355d3fd70f7bc6633d2172",
+            "timestamp": "2026-08-06T19:14:43.333Z"
+          },
+          "additionalPhones": [],
+          "source": "hpf-migracion-l2",
+          "dateUpdated": "2026-08-06T23:31:38.071Z",
+          "tags": [
+            "lead_prueba"
+          ],
+          "customFields": [],
+          "additionalEmails": []
+        },
+        "traceId": "8fbeff7d-5006-4e8c-a4f1-331afd88ce92"
+      }
+    }
+  ]
+}

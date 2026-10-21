@@ -1,0 +1,3062 @@
+{
+  "name": "Outreach Form Meta - Venttur",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "// Normalize Payload — versión Google Sheets Trigger\n// Input shape: cada item es una fila del sheet sincronizado por Meta\n// El trigger emite N items por poll si entran N filas → procesar TODOS\n\nconst items = $input.all();\nconst results = [];\n\n// --- Helpers ---\n\nconst stripMetaPrefix = (v) => (v || '').toString().replace(/^[a-z]+:/, '').trim();\n\nconst titleCase = (s) => (s || '')\n  .toString()\n  .toLowerCase()\n  .replace(/(^|\\s|-)\\p{L}/gu, c => c.toUpperCase());\n\nconst splitName = (full) => {\n  const trimmed = (full || '').toString().trim();\n  if (!trimmed) return { nombre: 'Lead', apellido: '' };\n  const parts = trimmed.split(/\\s+/);\n  return {\n    nombre: titleCase(parts[0]),\n    apellido: parts.length > 1 ? titleCase(parts.slice(1).join(' ')) : ''\n  };\n};\n\n// parsePhone: maneja 3 formatos del sheet\n//   1) \"p:+5215512345678\" (con prefijo p:+)\n//   2) \"5215512345678\"   (raw sin prefijo)\n//   3) \"p:MX\" o basura   → invalid\nconst parsePhone = (raw) => {\n  if (raw === undefined || raw === null || raw === '') return { valid: false };\n  const cleaned = raw.toString().replace(/^p:\\+?/, '').replace(/[^0-9]/g, '');\n  if (cleaned.length < 10 || cleaned.length > 15) {\n    return { valid: false };\n  }\n  return { valid: true, phoneNoPlus: cleaned, phoneWithPlus: '+' + cleaned };\n};\n\nconst deriveTipo = (adName) => {\n  // El campo 'Tipo' en Airtable solo acepta: Padre/Madre, Estudiante, No especificado.\n  // La distincion papa vs mama vive en 'Ad Name' (BS_PAPAS vs BS_MAMAS).\n  const upper = (adName || '').toString().toUpperCase();\n  if (upper.includes('PAPAS') || upper.includes('PAPÁS') ||\n      upper.includes('MAMAS') || upper.includes('MAMÁS')) return 'Padre/Madre';\n  return 'No especificado';\n};\n\nconst deriveFuente = (platform) => {\n  const p = (platform || '').toString().toLowerCase();\n  if (p === 'ig' || p === 'instagram') return 'Instagram';\n  if (p === 'fb' || p === 'facebook') return 'Facebook';\n  return 'Facebook - Instagram';\n};\n\n// Helper para acceder a keys del sheet con caracteres especiales\nconst pick = (row, ...keys) => {\n  for (const k of keys) {\n    if (row[k] !== undefined && row[k] !== null && row[k] !== '') return row[k];\n  }\n  return '';\n};\n\n// --- Loop principal ---\n\nfor (const item of items) {\n  const row = item.json;\n\n  // Las 3 preguntas del form tienen keys con caracteres especiales\n  const gradoEscolar = pick(row, '¿qué_grado_escolar_cursa_actualmente_tu_hijo(a)?', 'grado_escolar');\n  const cuandoIniciar = pick(row, '¿cuándo_te_gustaría_que_iniciara_sus_estudios?', 'cuando_iniciar');\n  const nivelIngles = pick(row, '¿cuál_es_el_nivel_actual_de_inglés_de_tu_hijo(a)?', 'nivel_ingles');\n\n  // Phone: priorizar `whatsapp` (más limpio en el sheet), fallback `phone_number`\n  let phoneResult = parsePhone(row.whatsapp);\n  if (!phoneResult.valid) {\n    phoneResult = parsePhone(row.phone_number);\n  }\n\n  // Si phone inválido (ej. fila con whatsapp='' y phone_number='p:MX'),\n  // marcar para rama _error en lugar de throw (no abortar el batch entero)\n  if (!phoneResult.valid) {\n    results.push({\n      json: {\n        _error: true,\n        _error_reason: 'Phone inválido: whatsapp=\"' + (row.whatsapp || '') +\n                       '\" phone_number=\"' + (row.phone_number || '') + '\"',\n        _meta_lead_id: stripMetaPrefix(row.id),\n        _row_number: row.row_number,\n        _raw_row: row\n      }\n    });\n    continue;\n  }\n\n  const { nombre, apellido } = splitName(row.full_name);\n\n  // Touch 1 programado at = NOW() + 1h (desacople del cron del Flujo B)\n  const touch1At = new Date(Date.now() + 60 * 60 * 1000).toISOString();\n\n  results.push({\n    json: {\n      _error: false,\n\n      // Identificación (Folio = meta_lead_id sin prefijo l:)\n      meta_lead_id: stripMetaPrefix(row.id),\n\n      // Datos del lead\n      telefono: phoneResult.phoneNoPlus,\n      telefono_con_plus: phoneResult.phoneWithPlus,\n      nombre,\n      apellido,\n      email: (row.email || '').toString().trim().toLowerCase(),\n\n      // Tracking Meta (campos nuevos en Airtable)\n      ad_name: (row.ad_name || '').toString(),\n      platform: (row.platform || '').toString().toLowerCase(),\n\n      // Cualificación ORO (campos nuevos en Airtable)\n      grado_escolar: gradoEscolar.toString(),\n      inicio_deseado: cuandoIniciar.toString(),\n      nivel_ingles: nivelIngles.toString(),\n\n      // Derivados (reutilizan campos existentes en Airtable)\n      tipo: deriveTipo(row.ad_name),\n      fuente_lead: deriveFuente(row.platform),\n\n      // Cadencia tri-toque\n      touch_1_programado_at: touch1At,\n\n      // Defaults / origen\n      origen: 'Form Meta',\n      received_at: new Date().toISOString()\n    }\n  });\n}\n\nreturn results;\n"
+      },
+      "id": "ae19ee47-60a5-44aa-ab58-eb0b0371798f",
+      "name": "Normalize Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        96,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]"
+        },
+        "table": {
+          "__rl": true,
+          "value": "[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "cachedResultName": "Leads"
+        },
+        "filterByFormula": "=OR({Folio} = '{{ $('Normalize Payload').item.json.meta_lead_id }}', {Telefono} = '{{ $('Normalize Payload').item.json.telefono }}')",
+        "options": {
+          "fields": [
+            "id_2",
+            "Telefono",
+            "Folio",
+            "Outreach Form Meta enviado",
+            "Agendan cita",
+            "Toques enviados",
+            "ID Manychat",
+            "Estado conversación"
+          ]
+        }
+      },
+      "id": "8401ded0-4ccc-4bce-bda5-b35a52091ade",
+      "name": "Buscar Lead Existente",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        768,
+        480
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "exists-check-1",
+              "leftValue": "={{ $json.id_2 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "fd78ce92-b750-4252-8c41-9a438efaaabb",
+      "name": "¿Lead Existe?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        992,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]"
+        },
+        "table": {
+          "__rl": true,
+          "value": "[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "cachedResultName": "Leads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_2": "={{ $json.id_2 }}",
+            "Folio": "={{ $('Normalize Payload').item.json.meta_lead_id }}",
+            "Origen": "Form Meta",
+            "Ad Name": "={{ $('Normalize Payload').item.json.ad_name }}",
+            "Platform": "={{ $('Normalize Payload').item.json.platform }}",
+            "Grado Escolar": "={{ $('Normalize Payload').item.json.grado_escolar }}",
+            "Inicio Deseado": "={{ $('Normalize Payload').item.json.inicio_deseado }}",
+            "Nivel Inglés": "={{ $('Normalize Payload').item.json.nivel_ingles }}"
+          },
+          "matchingColumns": [
+            "id_2"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "id_2",
+              "displayName": "id_2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Link asesoría enviado",
+              "displayName": "Link asesoría enviado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Asistió",
+              "displayName": "Asistió",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Agendan cita",
+              "displayName": "Agendan cita",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Programa interés",
+              "displayName": "Programa interés",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "No definido",
+                  "value": "No definido"
+                },
+                {
+                  "name": "Boarding IA",
+                  "value": "Boarding IA"
+                },
+                {
+                  "name": "Gap Year IA",
+                  "value": "Gap Year IA"
+                },
+                {
+                  "name": "Pathway IA",
+                  "value": "Pathway IA"
+                },
+                {
+                  "name": "Summer Camp IA",
+                  "value": "Summer Camp IA"
+                },
+                {
+                  "name": "AA Familiar IA",
+                  "value": "AA Familiar IA"
+                },
+                {
+                  "name": "Francia IA",
+                  "value": "Francia IA"
+                },
+                {
+                  "name": "Automatización - Comentarios",
+                  "value": "Automatización - Comentarios"
+                },
+                {
+                  "name": "Boarding School",
+                  "value": "Boarding School"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Tipo",
+              "displayName": "Tipo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Padre/Madre",
+                  "value": "Padre/Madre"
+                },
+                {
+                  "name": "Estudiante",
+                  "value": "Estudiante"
+                },
+                {
+                  "name": "No especificado",
+                  "value": "No especificado"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Creada",
+              "displayName": "Creada",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "ID Clientify",
+              "displayName": "ID Clientify",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ID Manychat",
+              "displayName": "ID Manychat",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Nombre Completo",
+              "displayName": "Nombre Completo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Fuente lead",
+              "displayName": "Fuente lead",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Francia / P. México/ Advantage",
+                  "value": "Francia / P. México/ Advantage"
+                },
+                {
+                  "name": "Francia / P. México / P1",
+                  "value": "Francia / P. México / P1"
+                },
+                {
+                  "name": "Francia / P. Jalisco/ P1",
+                  "value": "Francia / P. Jalisco/ P1"
+                },
+                {
+                  "name": "Formulario - LANDING",
+                  "value": "Formulario - LANDING"
+                },
+                {
+                  "name": "Estudiantes Locales",
+                  "value": "Estudiantes Locales"
+                },
+                {
+                  "name": "Estudiantes Foraneos",
+                  "value": "Estudiantes Foraneos"
+                },
+                {
+                  "name": "Papas locales",
+                  "value": "Papas locales"
+                },
+                {
+                  "name": "Papas Foraneos",
+                  "value": "Papas Foraneos"
+                },
+                {
+                  "name": "Internados / Público México / 3",
+                  "value": "Internados / Público México / 3"
+                },
+                {
+                  "name": "Internados / Público Advantage / 3",
+                  "value": "Internados / Público Advantage / 3"
+                },
+                {
+                  "name": "Internados / formulario",
+                  "value": "Internados / formulario"
+                },
+                {
+                  "name": "Facebook - Instagram",
+                  "value": "Facebook - Instagram"
+                },
+                {
+                  "name": "Web",
+                  "value": "Web"
+                },
+                {
+                  "name": "BOARD-PRES-V1",
+                  "value": "BOARD-PRES-V1"
+                },
+                {
+                  "name": "BOARD-GIRL-V1",
+                  "value": "BOARD-GIRL-V1"
+                },
+                {
+                  "name": "BOARD-DEP-V2",
+                  "value": "BOARD-DEP-V2"
+                },
+                {
+                  "name": "BOARD-PRES-V2",
+                  "value": "BOARD-PRES-V2"
+                },
+                {
+                  "name": "BOARD-GIRL-V2",
+                  "value": "BOARD-GIRL-V2"
+                },
+                {
+                  "name": "AA-PUBLICO",
+                  "value": "AA-PUBLICO"
+                },
+                {
+                  "name": "BOARD-GIRL-V3",
+                  "value": "BOARD-GIRL-V3"
+                },
+                {
+                  "name": "BOARD-PRES-V3",
+                  "value": "BOARD-PRES-V3"
+                },
+                {
+                  "name": "AA_PROSP_WA_2026-04",
+                  "value": "AA_PROSP_WA_2026-04"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Folio",
+              "displayName": "Folio",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "fbclid",
+              "displayName": "fbclid",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Estado conversación",
+              "displayName": "Estado conversación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Contestó",
+                  "value": "Contestó"
+                },
+                {
+                  "name": "Cita confirmada",
+                  "value": "Cita confirmada"
+                },
+                {
+                  "name": "Conversación interrumpida",
+                  "value": "Conversación interrumpida"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Última actividad",
+              "displayName": "Última actividad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Outreach Form Meta enviado",
+              "displayName": "Outreach Form Meta enviado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Outreach Form Meta enviado at",
+              "displayName": "Outreach Form Meta enviado at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Origen",
+              "displayName": "Origen",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Form Landing",
+                  "value": "Form Landing"
+                },
+                {
+                  "name": "Form Meta",
+                  "value": "Form Meta"
+                },
+                {
+                  "name": "CTWA",
+                  "value": "CTWA"
+                },
+                {
+                  "name": "Otro",
+                  "value": "Otro"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Toques enviados",
+              "displayName": "Toques enviados",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Ultimo toque at",
+              "displayName": "Ultimo toque at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Apellido",
+              "displayName": "Apellido",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Telefono",
+              "displayName": "Telefono",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Contestan 1er mensaje",
+              "displayName": "Contestan 1er mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Cualificado",
+              "displayName": "Cualificado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Tabla métricas",
+              "displayName": "Tabla métricas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Reporte semanal",
+              "displayName": "Reporte semanal",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Ad Name",
+              "displayName": "Ad Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "BS_PAPAS_TEST1",
+                  "value": "BS_PAPAS_TEST1"
+                },
+                {
+                  "name": "BS_MAMAS_TEST1",
+                  "value": "BS_MAMAS_TEST1"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Platform",
+              "displayName": "Platform",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "ig",
+                  "value": "ig"
+                },
+                {
+                  "name": "fb",
+                  "value": "fb"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Grado Escolar",
+              "displayName": "Grado Escolar",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "primaria",
+                  "value": "primaria"
+                },
+                {
+                  "name": "secundaria",
+                  "value": "secundaria"
+                },
+                {
+                  "name": "preparatoria",
+                  "value": "preparatoria"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Inicio Deseado",
+              "displayName": "Inicio Deseado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "agosto_2026",
+                  "value": "agosto_2026"
+                },
+                {
+                  "name": "enero_2027",
+                  "value": "enero_2027"
+                },
+                {
+                  "name": "agosto_2027",
+                  "value": "agosto_2027"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Nivel Inglés",
+              "displayName": "Nivel Inglés",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "básico",
+                  "value": "básico"
+                },
+                {
+                  "name": "intermedio",
+                  "value": "intermedio"
+                },
+                {
+                  "name": "avanzado",
+                  "value": "avanzado"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "id": "f25dc329-b325-4251-bb2e-e28734c5761f",
+      "name": "Actualizar Lead Existente",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1440,
+        384
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]"
+        },
+        "table": {
+          "__rl": true,
+          "value": "[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "cachedResultName": "Leads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nombre": "={{ $('Normalize Payload').item.json.nombre }}",
+            "Apellido": "={{ $('Normalize Payload').item.json.apellido }}",
+            "Telefono": "={{ $('Normalize Payload').item.json.telefono }}",
+            "Email": "={{ $('Normalize Payload').item.json.email }}",
+            "Programa interés": "Boarding School",
+            "Origen": "Form Meta",
+            "Outreach Form Meta enviado": false,
+            "Contestan 1er mensaje": false,
+            "Folio": "={{ $('Normalize Payload').item.json.meta_lead_id }}",
+            "Fuente lead": "={{ $('Normalize Payload').item.json.fuente_lead }}",
+            "Tipo": "={{ $('Normalize Payload').item.json.tipo }}",
+            "Ad Name": "={{ $('Normalize Payload').item.json.ad_name }}",
+            "Platform": "={{ $('Normalize Payload').item.json.platform }}",
+            "Grado Escolar": "={{ $('Normalize Payload').item.json.grado_escolar }}",
+            "Inicio Deseado": "={{ $('Normalize Payload').item.json.inicio_deseado }}",
+            "Nivel Inglés": "={{ $('Normalize Payload').item.json.nivel_ingles }}",
+            "Toques enviados": 0,
+            "Touch 1 programado at": "={{ $('Normalize Payload').item.json.touch_1_programado_at }}"
+          },
+          "matchingColumns": [
+            "Folio"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "id_2",
+              "displayName": "id_2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Link asesoría enviado",
+              "displayName": "Link asesoría enviado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Asistió",
+              "displayName": "Asistió",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Agendan cita",
+              "displayName": "Agendan cita",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Programa interés",
+              "displayName": "Programa interés",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "No definido",
+                  "value": "No definido"
+                },
+                {
+                  "name": "Boarding IA",
+                  "value": "Boarding IA"
+                },
+                {
+                  "name": "Gap Year IA",
+                  "value": "Gap Year IA"
+                },
+                {
+                  "name": "Pathway IA",
+                  "value": "Pathway IA"
+                },
+                {
+                  "name": "Summer Camp IA",
+                  "value": "Summer Camp IA"
+                },
+                {
+                  "name": "AA Familiar IA",
+                  "value": "AA Familiar IA"
+                },
+                {
+                  "name": "Francia IA",
+                  "value": "Francia IA"
+                },
+                {
+                  "name": "Automatización - Comentarios",
+                  "value": "Automatización - Comentarios"
+                },
+                {
+                  "name": "Boarding School",
+                  "value": "Boarding School"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Tipo",
+              "displayName": "Tipo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Padre/Madre",
+                  "value": "Padre/Madre"
+                },
+                {
+                  "name": "Estudiante",
+                  "value": "Estudiante"
+                },
+                {
+                  "name": "No especificado",
+                  "value": "No especificado"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Creada",
+              "displayName": "Creada",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "ID Clientify",
+              "displayName": "ID Clientify",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ID Manychat",
+              "displayName": "ID Manychat",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Nombre Completo",
+              "displayName": "Nombre Completo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fuente lead",
+              "displayName": "Fuente lead",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Francia / P. México/ Advantage",
+                  "value": "Francia / P. México/ Advantage"
+                },
+                {
+                  "name": "Francia / P. México / P1",
+                  "value": "Francia / P. México / P1"
+                },
+                {
+                  "name": "Francia / P. Jalisco/ P1",
+                  "value": "Francia / P. Jalisco/ P1"
+                },
+                {
+                  "name": "Formulario - LANDING",
+                  "value": "Formulario - LANDING"
+                },
+                {
+                  "name": "Estudiantes Locales",
+                  "value": "Estudiantes Locales"
+                },
+                {
+                  "name": "Estudiantes Foraneos",
+                  "value": "Estudiantes Foraneos"
+                },
+                {
+                  "name": "Papas locales",
+                  "value": "Papas locales"
+                },
+                {
+                  "name": "Papas Foraneos",
+                  "value": "Papas Foraneos"
+                },
+                {
+                  "name": "Internados / Público México / 3",
+                  "value": "Internados / Público México / 3"
+                },
+                {
+                  "name": "Internados / Público Advantage / 3",
+                  "value": "Internados / Público Advantage / 3"
+                },
+                {
+                  "name": "Internados / formulario",
+                  "value": "Internados / formulario"
+                },
+                {
+                  "name": "Facebook - Instagram",
+                  "value": "Facebook - Instagram"
+                },
+                {
+                  "name": "Web",
+                  "value": "Web"
+                },
+                {
+                  "name": "BOARD-PRES-V1",
+                  "value": "BOARD-PRES-V1"
+                },
+                {
+                  "name": "BOARD-GIRL-V1",
+                  "value": "BOARD-GIRL-V1"
+                },
+                {
+                  "name": "BOARD-DEP-V2",
+                  "value": "BOARD-DEP-V2"
+                },
+                {
+                  "name": "BOARD-PRES-V2",
+                  "value": "BOARD-PRES-V2"
+                },
+                {
+                  "name": "BOARD-GIRL-V2",
+                  "value": "BOARD-GIRL-V2"
+                },
+                {
+                  "name": "AA-PUBLICO",
+                  "value": "AA-PUBLICO"
+                },
+                {
+                  "name": "BOARD-GIRL-V3",
+                  "value": "BOARD-GIRL-V3"
+                },
+                {
+                  "name": "BOARD-PRES-V3",
+                  "value": "BOARD-PRES-V3"
+                },
+                {
+                  "name": "AA_PROSP_WA_2026-04",
+                  "value": "AA_PROSP_WA_2026-04"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Folio",
+              "displayName": "Folio",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "fbclid",
+              "displayName": "fbclid",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Estado conversación",
+              "displayName": "Estado conversación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Contestó",
+                  "value": "Contestó"
+                },
+                {
+                  "name": "Cita confirmada",
+                  "value": "Cita confirmada"
+                },
+                {
+                  "name": "Conversación interrumpida",
+                  "value": "Conversación interrumpida"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Última actividad",
+              "displayName": "Última actividad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Outreach Form Meta enviado",
+              "displayName": "Outreach Form Meta enviado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Outreach Form Meta enviado at",
+              "displayName": "Outreach Form Meta enviado at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Origen",
+              "displayName": "Origen",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Form Landing",
+                  "value": "Form Landing"
+                },
+                {
+                  "name": "Form Meta",
+                  "value": "Form Meta"
+                },
+                {
+                  "name": "CTWA",
+                  "value": "CTWA"
+                },
+                {
+                  "name": "Otro",
+                  "value": "Otro"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Toques enviados",
+              "displayName": "Toques enviados",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Apellido",
+              "displayName": "Apellido",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Telefono",
+              "displayName": "Telefono",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Contestan 1er mensaje",
+              "displayName": "Contestan 1er mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Cualificado",
+              "displayName": "Cualificado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Tabla métricas",
+              "displayName": "Tabla métricas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Reporte semanal",
+              "displayName": "Reporte semanal",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Ad Name",
+              "displayName": "Ad Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "BS_PAPAS_TEST1",
+                  "value": "BS_PAPAS_TEST1"
+                },
+                {
+                  "name": "BS_MAMAS_TEST1",
+                  "value": "BS_MAMAS_TEST1"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Platform",
+              "displayName": "Platform",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "ig",
+                  "value": "ig"
+                },
+                {
+                  "name": "fb",
+                  "value": "fb"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Grado Escolar",
+              "displayName": "Grado Escolar",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "primaria",
+                  "value": "primaria"
+                },
+                {
+                  "name": "secundaria",
+                  "value": "secundaria"
+                },
+                {
+                  "name": "preparatoria",
+                  "value": "preparatoria"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Inicio Deseado",
+              "displayName": "Inicio Deseado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "agosto_2026",
+                  "value": "agosto_2026"
+                },
+                {
+                  "name": "enero_2027",
+                  "value": "enero_2027"
+                },
+                {
+                  "name": "agosto_2027",
+                  "value": "agosto_2027"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Nivel Inglés",
+              "displayName": "Nivel Inglés",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "básico",
+                  "value": "básico"
+                },
+                {
+                  "name": "intermedio",
+                  "value": "intermedio"
+                },
+                {
+                  "name": "avanzado",
+                  "value": "avanzado"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Touch 1 programado at",
+              "displayName": "Touch 1 programado at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "id": "86616f1a-c87d-42ff-b378-523dbea4f5f3",
+      "name": "Crear Lead Nuevo",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1216,
+        576
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Flujo B — Cron de Outreach\n\nCada 5 minutos consulta Airtable buscando leads del form Meta que:\n- No hayan recibido outreach todavía\n- No hayan agendado cita\n- No hayan respondido (Última actividad vacía)\n- Hayan sido creados hace ≥ 1 hora (D1: delay)\n\nPor cada lead pendiente:\n1. createSubscriber en ManyChat (con consent_phrase)\n2. sendFlow al template `boarding_form_followup`\n3. Marca `Outreach Form Meta enviado = true` en Airtable\n\n**Atención:** requiere permiso `wa_id` import en ManyChat (ver §2.3 de la guía).",
+        "height": 380,
+        "width": 540,
+        "color": 5
+      },
+      "id": "ae4198e6-9582-4f05-a859-c5d8c6e5394e",
+      "name": "📤 Flujo B — Cron Outreach",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "id": "dfd68797-76ad-4bf7-bc58-fa4127233f98",
+      "name": "Cron cada 5 min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -128,
+        1488
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]"
+        },
+        "table": {
+          "__rl": true,
+          "value": "[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "cachedResultName": "Leads"
+        },
+        "filterByFormula": "=AND({Origen} = 'Form Meta', NOT({Agendan cita}), {Última actividad} = BLANK(), {Toques enviados} < 3, {Touch 1 programado at}, OR(AND({Toques enviados} = 0, IS_AFTER(NOW(), {Touch 1 programado at})), AND({Toques enviados} = 1, IS_AFTER(NOW(), DATEADD({Touch 1 programado at}, 24, 'hours'))), AND({Toques enviados} = 2, IS_AFTER(NOW(), DATEADD({Touch 1 programado at}, 72, 'hours')))))",
+        "options": {
+          "fields": [
+            "id_2",
+            "Telefono",
+            "Nombre",
+            "Apellido",
+            "Programa interés",
+            "Toques enviados",
+            "Touch 1 programado at",
+            "ID Manychat",
+            "Folio"
+          ]
+        }
+      },
+      "id": "e40c835f-912f-406d-9c6a-cf701502363d",
+      "name": "Get Leads Pendientes",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        96,
+        1488
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "26843c1b-cf39-4a30-964d-e8871c1df137",
+      "name": "Split In Batches (1)",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        320,
+        1488
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/subscriber/createSubscriber",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"whatsapp_phone\": \"+{{ $json.Telefono }}\",\n  \"first_name\": \"{{ $json.Nombre || 'Lead' }}\",\n  \"last_name\": \"{{ $json.Apellido || '' }}\",\n  \"consent_phrase\": \"Lead completó formulario Meta Lead Ads de Boarding School con checkbox de opt-in para recibir comunicaciones por WhatsApp\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "a8bf9e90-4e2b-434f-8c4d-6f411708b6f2",
+      "name": "createSubscriber ManyChat",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        768,
+        1296
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9OZtsIsmuVEG9l6R",
+          "name": "Venttur Header Auth account"
+        }
+      },
+      "notes": "Crea contacto WA en ManyChat. Requiere permiso wa_id (ver guía §2.3)."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "subscriber-ok",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "success",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ccf17048-7fbb-49db-be9f-2295db9fab29",
+      "name": "¿Subscriber OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        992,
+        1296
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]"
+        },
+        "table": {
+          "__rl": true,
+          "value": "[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "cachedResultName": "Leads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_2": "={{ $('Split In Batches (1)').item.json.id_2 }}",
+            "Outreach Form Meta enviado": true,
+            "Outreach Form Meta enviado at": "={{ $('Split In Batches (1)').item.json['Outreach Form Meta enviado at'] || $now.toISO() }}",
+            "ID Manychat": "={{ $('createSubscriber ManyChat').isExecuted ? $('createSubscriber ManyChat').item.json.data.id : $('Split In Batches (1)').item.json['ID Manychat'] }}",
+            "Toques enviados": "={{ ($('Split In Batches (1)').item.json['Toques enviados'] || 0) + 1 }}",
+            "Ultimo toque at": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [
+            "id_2"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "id_2",
+              "displayName": "id_2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true
+            },
+            {
+              "id": "Link asesoría enviado",
+              "displayName": "Link asesoría enviado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Asistió",
+              "displayName": "Asistió",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Agendan cita",
+              "displayName": "Agendan cita",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Programa interés",
+              "displayName": "Programa interés",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "No definido",
+                  "value": "No definido"
+                },
+                {
+                  "name": "Boarding IA",
+                  "value": "Boarding IA"
+                },
+                {
+                  "name": "Gap Year IA",
+                  "value": "Gap Year IA"
+                },
+                {
+                  "name": "Pathway IA",
+                  "value": "Pathway IA"
+                },
+                {
+                  "name": "Summer Camp IA",
+                  "value": "Summer Camp IA"
+                },
+                {
+                  "name": "AA Familiar IA",
+                  "value": "AA Familiar IA"
+                },
+                {
+                  "name": "Francia IA",
+                  "value": "Francia IA"
+                },
+                {
+                  "name": "Automatización - Comentarios",
+                  "value": "Automatización - Comentarios"
+                },
+                {
+                  "name": "Boarding School",
+                  "value": "Boarding School"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Tipo",
+              "displayName": "Tipo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Padre/Madre",
+                  "value": "Padre/Madre"
+                },
+                {
+                  "name": "Estudiante",
+                  "value": "Estudiante"
+                },
+                {
+                  "name": "No especificado",
+                  "value": "No especificado"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Creada",
+              "displayName": "Creada",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "ID Clientify",
+              "displayName": "ID Clientify",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ID Manychat",
+              "displayName": "ID Manychat",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Nombre Completo",
+              "displayName": "Nombre Completo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Fuente lead",
+              "displayName": "Fuente lead",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Francia / P. México/ Advantage",
+                  "value": "Francia / P. México/ Advantage"
+                },
+                {
+                  "name": "Francia / P. México / P1",
+                  "value": "Francia / P. México / P1"
+                },
+                {
+                  "name": "Francia / P. Jalisco/ P1",
+                  "value": "Francia / P. Jalisco/ P1"
+                },
+                {
+                  "name": "Formulario - LANDING",
+                  "value": "Formulario - LANDING"
+                },
+                {
+                  "name": "Estudiantes Locales",
+                  "value": "Estudiantes Locales"
+                },
+                {
+                  "name": "Estudiantes Foraneos",
+                  "value": "Estudiantes Foraneos"
+                },
+                {
+                  "name": "Papas locales",
+                  "value": "Papas locales"
+                },
+                {
+                  "name": "Papas Foraneos",
+                  "value": "Papas Foraneos"
+                },
+                {
+                  "name": "Internados / Público México / 3",
+                  "value": "Internados / Público México / 3"
+                },
+                {
+                  "name": "Internados / Público Advantage / 3",
+                  "value": "Internados / Público Advantage / 3"
+                },
+                {
+                  "name": "Internados / formulario",
+                  "value": "Internados / formulario"
+                },
+                {
+                  "name": "Facebook - Instagram",
+                  "value": "Facebook - Instagram"
+                },
+                {
+                  "name": "Web",
+                  "value": "Web"
+                },
+                {
+                  "name": "BOARD-PRES-V1",
+                  "value": "BOARD-PRES-V1"
+                },
+                {
+                  "name": "BOARD-GIRL-V1",
+                  "value": "BOARD-GIRL-V1"
+                },
+                {
+                  "name": "BOARD-DEP-V2",
+                  "value": "BOARD-DEP-V2"
+                },
+                {
+                  "name": "BOARD-PRES-V2",
+                  "value": "BOARD-PRES-V2"
+                },
+                {
+                  "name": "BOARD-GIRL-V2",
+                  "value": "BOARD-GIRL-V2"
+                },
+                {
+                  "name": "AA-PUBLICO",
+                  "value": "AA-PUBLICO"
+                },
+                {
+                  "name": "BOARD-GIRL-V3",
+                  "value": "BOARD-GIRL-V3"
+                },
+                {
+                  "name": "BOARD-PRES-V3",
+                  "value": "BOARD-PRES-V3"
+                },
+                {
+                  "name": "AA_PROSP_WA_2026-04",
+                  "value": "AA_PROSP_WA_2026-04"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Folio",
+              "displayName": "Folio",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "fbclid",
+              "displayName": "fbclid",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Estado conversación",
+              "displayName": "Estado conversación",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Contestó",
+                  "value": "Contestó"
+                },
+                {
+                  "name": "Cita confirmada",
+                  "value": "Cita confirmada"
+                },
+                {
+                  "name": "Conversación interrumpida",
+                  "value": "Conversación interrumpida"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Última actividad",
+              "displayName": "Última actividad",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Outreach Form Meta enviado",
+              "displayName": "Outreach Form Meta enviado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false
+            },
+            {
+              "id": "Outreach Form Meta enviado at",
+              "displayName": "Outreach Form Meta enviado at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false
+            },
+            {
+              "id": "Origen",
+              "displayName": "Origen",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Form Landing",
+                  "value": "Form Landing"
+                },
+                {
+                  "name": "Form Meta",
+                  "value": "Form Meta"
+                },
+                {
+                  "name": "CTWA",
+                  "value": "CTWA"
+                },
+                {
+                  "name": "Otro",
+                  "value": "Otro"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Toques enviados",
+              "displayName": "Toques enviados",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Ultimo toque at",
+              "displayName": "Ultimo toque at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Apellido",
+              "displayName": "Apellido",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Telefono",
+              "displayName": "Telefono",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Contestan 1er mensaje",
+              "displayName": "Contestan 1er mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Cualificado",
+              "displayName": "Cualificado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Tabla métricas",
+              "displayName": "Tabla métricas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Reporte semanal",
+              "displayName": "Reporte semanal",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "id": "2c3949c0-c313-4337-b1b7-a494229ebd5f",
+      "name": "Marcar Enviado",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1456,
+        1232
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Log de error createSubscriber\n// El IF anterior nos manda acá si status != 'success'\n// Capturamos detalles para debugging sin romper el batch\n\nconst lead = $('Split In Batches (1)').item.json;\nconst manychatResponse = $input.first().json;\n\nconst error = {\n  timestamp: new Date().toISOString(),\n  lead_id: lead.id_2,\n  telefono: lead.Telefono,\n  nombre: lead.Nombre,\n  manychat_status: manychatResponse.status || 'unknown',\n  manychat_message: manychatResponse.message || 'No message',\n  manychat_details: manychatResponse.details || manychatResponse,\n};\n\nconsole.log('[outreach-form-meta] createSubscriber FAIL:', JSON.stringify(error, null, 2));\n\n// Retorna el error para que un siguiente nodo lo pueda loguear a Airtable / Slack / Telegram si se quiere\nreturn [{ json: error }];"
+      },
+      "id": "3127d754-7486-4623-8b8b-70e10812d030",
+      "name": "Log Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1216,
+        1424
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OBkUyb8fuo30DzA9",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OBkUyb8fuo30DzA9",
+          "cachedResultName": "webapp_errors"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "error_message": "={{ $json.manychat_message }}",
+            "error_stack": "={{ $json.manychat_details.messages.wa_id.message[0] }}",
+            "workflow_id": "={{ $workflow.id }}",
+            "workflow_name": "={{ $workflow.name }}",
+            "execution_url": "={{ 'https://[TU-INSTANCIA-N8N]/workflow/' + $workflow.id + '/executions/' + $execution.id }}",
+            "execution_id": "={{ $execution.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "workflow_id",
+              "displayName": "workflow_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "workflow_name",
+              "displayName": "workflow_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "execution_url",
+              "displayName": "execution_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "error_message",
+              "displayName": "error_message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "error_stack",
+              "displayName": "error_stack",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "id": "b788d2b0-dcaa-4937-b470-61cf369a233f",
+      "name": "Registrar Error en Supabase",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1456,
+        1424
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json[\"Toques enviados\"] }}",
+                    "rightValue": 1,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lt"
+                    },
+                    "id": "44cc83e2-1b72-4b7f-bae5-04e49220ee5d"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "0"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "fb7475a0-428c-4ee7-9c77-22bbdab6c7dd",
+                    "leftValue": "={{ $json[\"Toques enviados\"] }}",
+                    "rightValue": 1,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a3bd4737-9806-43b5-a3ae-51ce3284989d",
+                    "leftValue": "={{ $json[\"Toques enviados\"] }}",
+                    "rightValue": 2,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "2"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        528,
+        1472
+      ],
+      "id": "b8390cf4-0905-45ca-bf91-7f61d9bb5f7a",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $json.data.id }}\",\n  \"flow_ns\": \"content20260612151152_969589\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "892478c9-34cb-4891-9933-3696827dc58c",
+      "name": "sendFlow Outreach Boarding Form",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1216,
+        1232
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9OZtsIsmuVEG9l6R",
+          "name": "Venttur Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $json['ID Manychat'] }}\",\n  \"flow_ns\": \"content20260616231914_193459\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "1e05c9e2-efa9-4ba3-9dbc-c0757640e8a7",
+      "name": "sendFlow Touch 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1216,
+        1616
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9OZtsIsmuVEG9l6R",
+          "name": "Venttur Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $json['ID Manychat'] }}\",\n  \"flow_ns\": \"content20260616231947_185709\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "a7826612-bf79-4450-bb32-05ea24b06531",
+      "name": "sendFlow Touch 3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1216,
+        1808
+      ],
+      "notesInFlow": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9OZtsIsmuVEG9l6R",
+          "name": "Venttur Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1HzJVMBwnGikiI_U805N7oqcXPYE7TjEFTL1rqdcCEIU",
+          "mode": "list",
+          "cachedResultName": "LEADS - FORMULARIO (VTR)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HzJVMBwnGikiI_U805N7oqcXPYE7TjEFTL1rqdcCEIU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 160362675,
+          "mode": "list",
+          "cachedResultName": "Boarding_Schools_Venttur_2026-test-2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HzJVMBwnGikiI_U805N7oqcXPYE7TjEFTL1rqdcCEIU/edit#gid=160362675"
+        },
+        "event": "rowAdded",
+        "options": {
+          "valueRender": "UNFORMATTED_VALUE",
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "detectAutomatically",
+              "headerRow": 1
+            }
+          }
+        }
+      },
+      "id": "c1111111-1111-1111-1111-111111111111",
+      "name": "Sheets Trigger - Form Meta Sync",
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        384
+      ],
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "__REEMPLAZAR_CREDENCIAL_ID__",
+          "name": "Google Sheets - Venttur Meta Sync"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## 📥 Flujo A — Sheets Trigger\n\nMeta sincroniza cada lead del Form Meta a este Google Sheet.\nEl trigger poolea cada 1 min en modo `rowAdded` (NO `rowAddedOrUpdated`).\n\n**Sheet:** `Boarding_Schools_Venttur_2026-test-2`\n**Doc ID:** `1HzJVMBwnGikiI_U805N7oqcXPYE7TjEFTL1rqdcCEIU`\n\n⚠️ **`event=rowAdded` INTENCIONAL.** El sheet muta `lead_status` CREATED→contacted post-inserción. Usar `rowAddedOrUpdated` reactivaría flujo en cada update y crearía duplicados/resets.",
+        "height": 320,
+        "width": 480,
+        "color": 4
+      },
+      "id": "1111aaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "name": "📥 Sheets Trigger info",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "err-check",
+              "leftValue": "={{ $json._error }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "1222aaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "name": "IF (_error?)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OBkUyb8fuo30DzA9",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OBkUyb8fuo30DzA9",
+          "cachedResultName": "webapp_errors"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "workflow_id": "={{ $workflow.id }}",
+            "workflow_name": "={{ $workflow.name }}",
+            "execution_id": "={{ $execution.id }}",
+            "execution_url": "={{ 'https://[TU-INSTANCIA-N8N]/workflow/' + $workflow.id + '/executions/' + $execution.id }}",
+            "error_message": "={{ $json._error_reason }}",
+            "error_stack": "={{ JSON.stringify($json._raw_row, null, 2) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "workflow_id",
+              "displayName": "workflow_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "workflow_name",
+              "displayName": "workflow_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "execution_url",
+              "displayName": "execution_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "error_message",
+              "displayName": "error_message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "error_stack",
+              "displayName": "error_stack",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "id": "1333aaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "name": "Registrar Error Normalize",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        544,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "1444aaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "name": "Split In Batches Flujo A (anti-flood)",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        544,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "g1",
+              "leftValue": "={{ $json['Outreach Form Meta enviado'] ?? false }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "g2",
+              "leftValue": "={{ $json['Toques enviados'] ?? 0 }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "1555aaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "name": "¿Lead seguro actualizar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1216,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## ⚠️ v2 — Trigger Google Sheets + Tri-toque + 8 campos cualificación\n\n**Cambios respecto a v1 (pre-migración):**\n1. ❌ Eliminados Webhook + Respond rápido (no se usaban)\n2. ✅ Trigger ahora es `Sheets Trigger - Form Meta Sync` (modo `rowAdded`, polling 1min)\n3. ✅ Normalize Payload: loop `$input.all()`, parsePhone robusto, rama `_error` para edge cases\n4. ✅ Dedup robusto: `Buscar Lead Existente` matchea por `Folio` (meta_lead_id) OR `Telefono`\n5. ✅ `Crear Lead Nuevo` ahora es `upsert` por `Folio` (idempotencia)\n6. ✅ IF gate `¿Lead seguro actualizar?`: solo permite update si `Outreach Form Meta enviado=false AND Toques enviados=0`\n7. ✅ `Actualizar Lead Existente`: mapping SOLO de campos inmutables (no toca Toques/Outreach/etc.)\n8. ✅ Tri-toque ya en Flujo B (heredado del repo v1 tri-toque)\n9. ✅ `Get Leads Pendientes` ahora usa `Touch 1 programado at` (NOW()+1h en Normalize) en vez de `CREATED_TIME()`\n\n**Configuración pendiente al importar:**\n- Reemplazar credencial `__REEMPLAZAR_CREDENCIAL_ID__` del nodo Sheets Trigger con la credencial Google Sheets OAuth2 real",
+        "height": 480,
+        "width": 540,
+        "color": 3
+      },
+      "id": "1666aaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "name": "⚠️ v2 — Changelog",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1632,
+        -96
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Cron cada 5 min": {
+      "main": [
+        [
+          {
+            "node": "Get Leads Pendientes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Leads Pendientes": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split In Batches (1)": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "createSubscriber ManyChat": {
+      "main": [
+        [
+          {
+            "node": "¿Subscriber OK?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Subscriber OK?": {
+      "main": [
+        [
+          {
+            "node": "sendFlow Outreach Boarding Form",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marcar Enviado": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Error": {
+      "main": [
+        [
+          {
+            "node": "Registrar Error en Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar Error en Supabase": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "createSubscriber ManyChat",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "sendFlow Touch 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "sendFlow Touch 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sendFlow Outreach Boarding Form": {
+      "main": [
+        [
+          {
+            "node": "Marcar Enviado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sendFlow Touch 2": {
+      "main": [
+        [
+          {
+            "node": "Marcar Enviado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sendFlow Touch 3": {
+      "main": [
+        [
+          {
+            "node": "Marcar Enviado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets Trigger - Form Meta Sync": {
+      "main": [
+        [
+          {
+            "node": "Normalize Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Payload": {
+      "main": [
+        [
+          {
+            "node": "IF (_error?)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF (_error?)": {
+      "main": [
+        [
+          {
+            "node": "Registrar Error Normalize",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Split In Batches Flujo A (anti-flood)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split In Batches Flujo A (anti-flood)": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Buscar Lead Existente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Lead Existente": {
+      "main": [
+        [
+          {
+            "node": "¿Lead Existe?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Lead Existe?": {
+      "main": [
+        [
+          {
+            "node": "¿Lead seguro actualizar?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Crear Lead Nuevo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Lead seguro actualizar?": {
+      "main": [
+        [
+          {
+            "node": "Actualizar Lead Existente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Split In Batches Flujo A (anti-flood)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar Lead Existente": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches Flujo A (anti-flood)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear Lead Nuevo": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches Flujo A (anti-flood)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "1a00146f-3365-4e3a-9f4b-d020dd4e5223",
+  "meta": {
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9",
+    "notes": "v2 - Sheets Trigger + tri-toque + 8 campos cualificacion. Ver guia: clients/VTR_Venttur/06_docs/guia-implementacion-trigger-sheets-2026-06-17.md"
+  },
+  "id": "CUuFxbst3iHpgeXS",
+  "tags": []
+}

@@ -1,0 +1,72 @@
+{
+  "probe_id": "sess_hpf_nrp_025_1785958953#c9a13e49d1e7",
+  "session_id": "sess_hpf_nrp_025_1785958953",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "xv años",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 61.8,
+  "version_antes": "cff6a505-9b93-437e-8535-df2be25e399f",
+  "version_despues": "cff6a505-9b93-437e-8535-df2be25e399f",
+  "capturado_utc": "2026-08-05T19:43:44.983952+00:00",
+  "execution_id": "990067",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T19:42:38.117Z",
+  "stoppedAt": "2026-08-05T19:43:38.959Z",
+  "n_esperadas": 2,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Qué padre! 😊  \n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Kit anti cruda*\n*Pantuflas*\n\nDime cuales te interesan, así te mostramos toda su información  😊",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/136d7ce1-0487-4767-a408-16742a068939.jpg",
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 0,
+      "ms": 199,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2175,
+      "chat_id": 6390727286,
+      "texto_entregado": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Kit anti cruda*\n*Pantuflas*\n\nDime cuales te interesan, así te mostramos toda su información  😊",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 198,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2174,
+      "chat_id": 6390727286,
+      "texto_entregado": "Qué padre! 😊  \n🎉 ¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO 🎉",
+      "error": null
+    }
+  ],
+  "n_entregadas": 2,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Qué padre que estés planeando tus XV! 🎉\nCuéntame, qué recuerditos te gustaría ver para tu evento? Tenemos sandalias, pantuflas, cilindros, kit anticruda y vasos popote.",
+    "tools": [
+      "IDENTIFICAR_EVENTO"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-NRP-025"
+}

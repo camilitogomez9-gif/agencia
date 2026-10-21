@@ -1,0 +1,202 @@
+{
+  "name": "sys-tool-consultar-faq-v2",
+  "nodes": [
+    {
+      "id": "d47f0f27-9611-50cd-86ce-269c73ad8e58",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"pregunta_usuario\": \"Hacen cuotas?\",\n  \"categoria_hint\": \"\",\n  \"session_id\": \"\"\n}"
+      }
+    },
+    {
+      "id": "8afde6f2-8c23-5ed1-a9c7-1fb684f61d5b",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "const args = $input.first().json;\nif (!args.pregunta_usuario || String(args.pregunta_usuario).trim() === '') {\n  return [{ json: { status: 'ERROR', message_to_agent: 'Faltó pregunta_usuario.', _skip: true } }];\n}\nreturn [{ json: args }];"
+      }
+    },
+    {
+      "id": "5d99c8c1-3f58-5fcb-aaef-c37d4fe5ebcf",
+      "name": "Search FAQs",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        300
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "3zohdTBWzW8UUN6P",
+          "name": "Airtable SYS"
+        }
+      },
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": "appMD3g2HWxzBaZAM"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": "tbl5mFkoDJLzskeEJ"
+        },
+        "filterByFormula": "={{ \"{Status} = \\\"Activo\\\"\" }}",
+        "limit": 50,
+        "options": {},
+        "view": {
+          "__rl": true,
+          "mode": "list",
+          "value": "viwo5C6ZNYf9dj4kZ"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "3c720431-e62d-57dc-bdfb-8c38289a84b5",
+      "name": "Format Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "// v2 — F1+F7: filtra records vacíos + scoring robusto.\n// F7: tokeniza query y keywords, normaliza acentos, stemming simple (prefix matching),\n// categoria_hint solo da BOOST cuando ya hay match real de keywords (no como condición suficiente),\n// threshold >= 2 puntos de keyword/pregunta match (sin contar boost de categoria).\n\nconst faqs = $input.all()\n  .map(i => i.json)\n  .filter(f => f && f.id && f['Pregunta']);\nconst args = $('Execute Workflow Trigger').first().json;\nconst query = String(args.pregunta_usuario || '');\nconst categoria = String(args.categoria_hint || '');\n\nfunction normalize(t) {\n  return String(t || '')\n    .toLowerCase()\n    .normalize('NFD').replace(/[̀-ͯ]/g, '');\n}\n\nfunction tokenize(text) {\n  return normalize(text)\n    .split(/[\\s,;\\-_¿?¡!.]+/)\n    .map(t => t.trim())\n    .filter(t => t.length >= 3);\n}\n\n// Stemming simple: para palabras >5 chars, devuelve los primeros (n-2) chars.\n// \"reparar\" → \"repar\", \"reparan\" → \"repar\", \"rompió\" → \"romp\" (normalizado), \"rompio\" → \"romp\".\nfunction stem(t) {\n  if (t.length <= 5) return t;\n  return t.slice(0, t.length - 2);\n}\n\nfunction matchTokens(qTokens, kTokens) {\n  for (const k of kTokens) {\n    const ks = stem(k);\n    for (const q of qTokens) {\n      const qs = stem(q);\n      if (q === k || qs === ks) return true;\n      if (ks.length >= 4 && q.includes(ks)) return true;\n      if (qs.length >= 4 && k.includes(qs)) return true;\n    }\n  }\n  return false;\n}\n\nfunction score(faq) {\n  const queryTokens = tokenize(query);\n  // Keywords pueden ser frases separadas por coma — tokenizamos cada una.\n  const keywordsRaw = String(faq.Keywords || '').split(/[,;]+/).map(k => k.trim()).filter(Boolean);\n  let keywordScore = 0;\n  const matchedKws = new Set();\n  for (const kwRaw of keywordsRaw) {\n    if (matchedKws.has(kwRaw)) continue;\n    const kwTokens = tokenize(kwRaw);\n    if (kwTokens.length === 0) continue;\n    if (matchTokens(queryTokens, kwTokens)) {\n      keywordScore += 2;\n      matchedKws.add(kwRaw);\n    }\n  }\n  // Score por match con la propia pregunta del FAQ\n  const preguntaTokens = tokenize(faq['Pregunta'] || '').filter(t => t.length >= 4);\n  let preguntaScore = 0;\n  for (const pt of preguntaTokens) {\n    const pts = stem(pt);\n    for (const qt of queryTokens) {\n      const qts = stem(qt);\n      if (qt === pt || qts === pts) { preguntaScore += 1; break; }\n    }\n  }\n  const baseScore = keywordScore + preguntaScore;\n  // Categoria_hint solo da boost si YA hay match real\n  const cat = normalize(faq['Categoría']);\n  const catHint = normalize(categoria);\n  const categoriaBoost = (catHint && baseScore > 0 && cat.includes(catHint)) ? 3 : 0;\n  return baseScore + categoriaBoost;\n}\n\n// Threshold: requiere >= 2 puntos REALES (de keyword/pregunta match, no de boost).\nconst scored = faqs.map(f => ({ faq: f, s: score(f) }))\n  .filter(x => x.s >= 2)\n  .sort((a, b) => b.s - a.s);\n\nif (scored.length === 0) {\n  return [{ json: {\n    status: 'NOT_FOUND',\n    data: null,\n    message_to_agent: `No encontré una FAQ que matchee \"${query}\". Si es algo común, sugerile al cliente que llame a 4342-5742 o derivá al comercial. Si la consulta es genérica, agregala a la tabla FAQs de Airtable.`,\n    trace_id: $execution.id\n  } }];\n}\n\nconst best = scored[0].faq;\nreturn [{ json: {\n  status: 'RESOLVED',\n  data: {\n    respuesta_corta: best['Respuesta corta'] || '',\n    categoria: best['Categoría'] || '',\n    pregunta_matched: best['Pregunta'] || ''\n  },\n  message_to_agent: `Respuesta encontrada en categoría \"${best['Categoría']}\". Integrala natural a tu respuesta.`,\n  trace_id: $execution.id\n} }];"
+      },
+      "notes": "v2 — F1+F7: filtra records vacíos + scoring tokenizado con normalización de acentos y stemming. categoria_hint solo da boost si ya hay match de keywords (no como condición suficiente). Threshold >= 2 puntos reales. Resuelve 1.5.C (rompió/reparan) y 1.5.E (falsos positivos por categoria_hint)."
+    },
+    {
+      "id": "c39f0134-bf05-5a16-822d-8526b5f0b67c",
+      "name": "Log to sys_tool_calls",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        960,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sys_tool_calls (session_id, tool_name, input_payload, output_payload, status, duration_ms)\nVALUES ($1, 'consultar-faq', $2::jsonb, $3::jsonb, $4, $5)",
+        "options": {
+          "queryReplacement": "={{ [$('Execute Workflow Trigger').first().json.session_id || 'unknown', JSON.stringify($('Execute Workflow Trigger').first().json), JSON.stringify($json), $json.status || 'success', $json.duration_ms || 0] }}"
+        },
+        "continueOnFail": true
+      },
+      "continueOnFail": true,
+      "notes": "Log a sys_tool_calls. continueOnFail=true para no romper la tool si Postgres falla."
+    },
+    {
+      "id": "7d2a2657-7750-5a6d-9609-baa3b755d759",
+      "name": "Return Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        300
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $('Format Output').first().json }}",
+        "options": {}
+      },
+      "notes": "v2 — F2: .first().json"
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Search FAQs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search FAQs": {
+      "main": [
+        [
+          {
+            "node": "Format Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Output": {
+      "main": [
+        [
+          {
+            "node": "Log to sys_tool_calls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to sys_tool_calls": {
+      "main": [
+        [
+          {
+            "node": "Return Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "SYS"
+    },
+    {
+      "name": "F4"
+    },
+    {
+      "name": "tool"
+    }
+  ],
+  "versionId": "297ee49b-4baf-4a41-bd76-240e93b4f6eb",
+  "id": "T1qIgrg7f0763wXm"
+}

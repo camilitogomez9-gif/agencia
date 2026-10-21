@@ -1,0 +1,513 @@
+{
+  "updatedAt": "2026-08-14T15:38:30.264Z",
+  "createdAt": "2026-08-07T00:02:35.349Z",
+  "id": "psGRDByGNjHQ2DVT",
+  "name": "HPF·GHL · W4 CALCULADORA",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"cuentas\": \"\",\n  \"items\": \"\"\n}"
+      },
+      "id": "b900913b-5443-4f97-97d1-514485d15349",
+      "name": "Ejecutado por otro workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -460,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hpf-w4-calculadora",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "4f835e7c-7941-4759-8055-ee63d2ef7600",
+      "name": "Webhook (carril de prueba)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -460,
+        200
+      ],
+      "webhookId": "12ecf8dd-b160-43e1-9e3c-510ca31c696e",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jUb7ZjztncX5ACpc",
+          "name": "HPF GHL Webhook Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Contrato heredado del origen: `items` (preferido) o `cuentas` (legacy).\n//\n// DELTA vs el origen: allá el trigger declaraba SIEMPRE los dos campos, y el ruteo\n// interno es `if (input.items !== undefined)`. Con `items: ''` esa condición da true,\n// entra a orderFromItems(''), parseItemsInput devuelve null y TIRA. O sea: la rama\n// `cuentas` era inalcanzable y cualquier llamada legacy reventaba — aunque el prompt\n// del Recolector la documenta como formato válido y el código tiene su `else if` con\n// mensaje de advertencia, que nunca corrió.\n// Acá `items` sólo viaja si trae contenido, así que la rama legacy funciona de verdad.\nconst j0 = $input.first().json || {};\nconst porWebhook = !!(j0.body && (j0.body.items !== undefined || j0.body.cuentas !== undefined));\nconst src = porWebhook ? j0.body : j0;\n\nconst vacio = v => v === undefined || v === null ||\n                   (typeof v === 'string' && v.trim() === '') ||\n                   (Array.isArray(v) && v.length === 0);\n\nconst out = { _via: porWebhook ? 'webhook' : 'subworkflow' };\nif (!vacio(src.items)) out.items = src.items;\nif (!vacio(src.cuentas)) out.cuentas = src.cuentas;\nif (out.items === undefined && out.cuentas === undefined) {\n  throw new Error('W4: hay que mandar `items` (preferido) o `cuentas` (legacy)');\n}\nreturn [{ json: out }];"
+      },
+      "id": "fa831e5c-7f82-4c2a-b043-56331d4b070d",
+      "name": "Normalizar entrada",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -220,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * n8n Code node (Run Once for Each Item)\n *\n * IMPORTANTE:\n * - Formato preferido: `items` con nombre de producto + cantidad\n * - `cuentas` se mantiene SOLO por compatibilidad, pero pierde la categoría del producto\n *   y por eso no es el formato ideal para aplicar correctamente las reglas de empaque.\n *\n * Entrada por item (preferido):\n * {\n *   \"items\": [\n *     { \"producto\": \"Cilindros\", \"cantidad\": 320 },\n *     { \"producto\": \"Sandalias Delgadas\", \"cantidad\": 150 },\n *     { \"producto\": \"Pantufla Moño Satin\", \"cantidad\": 80 },\n *     { \"producto\": \"Vaso Popote 24 oz\", \"cantidad\": 50 },\n *     { \"producto\": \"Mandiles\", \"cantidad\": 20 }\n *   ]\n * }\n *\n * Compatibilidad (sin nombres):\n * { \"cuentas\": \"50 x 0.15, 75 x 0.15\" }\n *\n * Salida por item:\n * {\n *   \"cajas\": [\n *     {\n *       \"indice\": 1,\n *       \"peso_total_kg\": 18.75,\n *       \"costo_envio\": 350,\n *       \"costo_envio_str\": \"$350\",\n *       \"contenido\": { \"Cilindros\": 250, \"Sandalias Delgadas\": 50, \"Pantufla Moño Satin\": 0, \"Otros_0kg\": 20 }\n *     },\n *     ...\n *   ],\n *   \"cantidad_cajas\": 3,\n *   \"costo_total_envio\": 900,\n *   \"costo_total_envio_str\": \"$900\",\n *   \"resumen_cajas\": [\"Caja 1: $350\", \"Caja 2: $300\", \"Caja 3: $250\"]\n * }\n */\n\n// ====== Config editable ======\n\n// Pesos por producto (kg)\nconst WEIGHT_BY_PRODUCT = {\n  \"Mandiles\": 0,\n  \"Kits Anticrudas\": 0,\n  \"Costales\": 0,\n\n  \"Cilindros\": 0.14,\n  \"Vaso Popote 24 oz\": 0.14,\n  \"Vasos Popote\": 0.14,\n\n  \"Sandalias Delgadas\": 0.15,\n  \"Sandalias Gruesas\": 0.15,\n  \"Pantuflas\": 0.15,\n  \"Pantuflas Mono\": 0.15,\n  \"Pantufla Moño Satin\": 0.15,\n  \"Pantufla Moño Peluche\": 0.15\n};\n\n// Categoría por producto (para aplicar límites)\nconst CATEGORY_BY_PRODUCT = {\n  \"Cilindros\": \"CILINDROS\",\n  \"Vaso Popote 24 oz\": \"CILINDROS\",\n  \"Vasos Popote\": \"CILINDROS\",\n\n  \"Sandalias Delgadas\": \"SANDALIAS\",\n  \"Sandalias Gruesas\": \"SANDALIAS\",\n  \"Pantuflas\": \"SANDALIAS\",\n  \"Pantuflas Mono\": \"SANDALIAS\",\n  \"Pantufla Moño Satin\": \"SANDALIAS\",\n  \"Pantufla Moño Peluche\": \"SANDALIAS\",\n\n  // Los de 0 kg (sin restricciones explícitas)\n  \"Mandiles\": \"OTROS_0KG\",\n  \"Kits Anticrudas\": \"OTROS_0KG\",\n  \"Costales\": \"OTROS_0KG\"\n};\n\n// Mínimo de compra por producto (unidades). Si un item del formato `items`\n// no alcanza su mínimo, la tool RECHAZA el cálculo (ver checkMinimums más abajo).\n// El formato legacy `cuentas` no tiene nombre de producto y por lo tanto NO\n// puede validarse acá — ver advertencia_minimos en la salida.\nconst MIN_BY_PRODUCT = {\n  \"Sandalias Delgadas\": 50,\n  \"Sandalias Gruesas\": 50,\n  \"Pantuflas\": 50,\n  \"Pantuflas Mono\": 50,\n  \"Pantufla Moño Satin\": 50,\n  \"Pantufla Moño Peluche\": 50,\n  \"Cilindros\": 40,\n  \"Vaso Popote 24 oz\": 50,\n  \"Vasos Popote\": 50,\n  \"Kits Anticrudas\": 35,\n  \"Costales\": 35,\n  \"Mandiles\": 12\n};\n\n// Alias para tolerar variaciones del nombre que pueda mandar el agente\nconst PRODUCT_ALIASES = {\n  \"mandil\": \"Mandiles\",\n  \"mandiles\": \"Mandiles\",\n\n  \"kit anticruda\": \"Kits Anticrudas\",\n  \"kits anticruda\": \"Kits Anticrudas\",\n  \"kit anticrudas\": \"Kits Anticrudas\",\n  \"kits anticrudas\": \"Kits Anticrudas\",\n  \"costal\": \"Costales\",\n  \"costales\": \"Costales\",\n\n  \"cilindro\": \"Cilindros\",\n  \"cilindros\": \"Cilindros\",\n\n  \"sandalia delgada\": \"Sandalias Delgadas\",\n  \"sandalias delgadas\": \"Sandalias Delgadas\",\n  \"sandalia gruesa\": \"Sandalias Gruesas\",\n  \"sandalias gruesas\": \"Sandalias Gruesas\",\n\n  \"pantufla\": \"Pantuflas\",\n  \"pantuflas\": \"Pantuflas\",\n\n  \"pantufla mono\": \"Pantuflas Mono\",\n  \"pantuflas mono\": \"Pantuflas Mono\",\n  \"pantufla mono satin\": \"Pantufla Moño Satin\",\n  \"pantuflas mono satin\": \"Pantufla Moño Satin\",\n  \"pantufla mono satín\": \"Pantufla Moño Satin\",\n  \"pantuflas mono satín\": \"Pantufla Moño Satin\",\n  \"pantufla moño satin\": \"Pantufla Moño Satin\",\n  \"pantuflas moño satin\": \"Pantufla Moño Satin\",\n  \"pantufla moño satín\": \"Pantufla Moño Satin\",\n  \"pantuflas moño satín\": \"Pantufla Moño Satin\",\n\n  \"pantufla mono peluche\": \"Pantufla Moño Peluche\",\n  \"pantuflas mono peluche\": \"Pantufla Moño Peluche\",\n  \"pantufla moño peluche\": \"Pantufla Moño Peluche\",\n  \"pantuflas moño peluche\": \"Pantufla Moño Peluche\",\n\n  \"vaso popote\": \"Vaso Popote 24 oz\",\n  \"vasos popote\": \"Vaso Popote 24 oz\",\n  \"vaso popote 24 oz\": \"Vaso Popote 24 oz\",\n  \"vasos popote 24 oz\": \"Vaso Popote 24 oz\",\n  \"vaso con popote\": \"Vaso Popote 24 oz\",\n  \"vasos con popote\": \"Vaso Popote 24 oz\",\n  \"vaso con popote 24 oz\": \"Vaso Popote 24 oz\",\n  \"vasos con popote 24 oz\": \"Vaso Popote 24 oz\"\n};\n\n// Límites por caja\nconst LIMITS = {\n  MAX_PER_BOX_WEIGHT_KG: 35,\n  MAX_CILINDROS_PER_BOX: 250,\n  MAX_SANDALIAS_PER_BOX: 200,\n  MAX_COMBINED_SANDALIAS_CILINDROS_PER_BOX: 200\n};\n\n// Rangos de costo por peso total de la caja (kg)\n// v3 (2026-07-24): bordes contiguos SIN huecos. Antes >7.1/>12.1 dejaban\n// pesos 7.01-7.10 y 12.01-12.10 kg sin tarifa (costo_envio=null -> $0 de envio).\nfunction costoPorPeso(pesoKg) {\n  const p = Number(pesoKg.toFixed(2));\n  if (p >= 0 && p <= 4.99) return 250;\n  if (p >= 5 && p <= 7) return 280;\n  if (p > 7 && p <= 12) return 300;\n  if (p > 12 && p <= 19.99) return 350;\n  if (p > 19.99 && p <= 35) return 400;\n  return null;\n}\n\n// ====== Utilidades ======\n\nfunction normalizeText(str) {\n  return String(str || \"\")\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .toLowerCase()\n    .replace(/\\s+/g, \" \")\n    .trim();\n}\n\nfunction canonicalizeProductName(rawName) {\n  const clean = normalizeText(rawName);\n  return PRODUCT_ALIASES[clean] || String(rawName || \"\").trim();\n}\n\nfunction parseItemsInput(rawItems) {\n  if (Array.isArray(rawItems)) return rawItems;\n  if (typeof rawItems === \"string\") {\n    try {\n      const parsed = JSON.parse(rawItems);\n      if (Array.isArray(parsed)) return parsed;\n    } catch (_) {}\n  }\n  return null;\n}\n\nfunction cloneEmptyBoxState() {\n  return {\n    peso: 0,\n    cil: 0,            // # Cilindros/Vasos en la caja\n    sand: 0,           // # Sandalias/Pantuflas en la caja\n    combSC: 0,         // combinadas sandalias + cilindros\n    contenido: {}      // { producto: unidades }\n  };\n}\n\nfunction addToBox(box, product, qty, weightPerUnit) {\n  if (!box.contenido[product]) box.contenido[product] = 0;\n  box.contenido[product] += qty;\n  box.peso += qty * weightPerUnit;\n\n  const cat = CATEGORY_BY_PRODUCT[product] || \"OTROS\";\n  if (cat === \"CILINDROS\") {\n    box.cil += qty;\n    box.combSC += qty;\n  } else if (cat === \"SANDALIAS\") {\n    box.sand += qty;\n    box.combSC += qty;\n  }\n}\n\nfunction capacityForProductInBox(box, product, weightPerUnit) {\n  const cat = CATEGORY_BY_PRODUCT[product] || \"OTROS\";\n  let cap = Infinity;\n\n  // Peso\n  if (weightPerUnit > 0) {\n    const weightLeft = LIMITS.MAX_PER_BOX_WEIGHT_KG - box.peso;\n    const byWeight = Math.floor(weightLeft / weightPerUnit);\n    cap = Math.min(cap, Math.max(0, byWeight));\n  }\n\n  // Límites por categoría\n  if (cat === \"CILINDROS\") {\n    cap = Math.min(cap, LIMITS.MAX_CILINDROS_PER_BOX - box.cil);\n    cap = Math.min(cap, LIMITS.MAX_COMBINED_SANDALIAS_CILINDROS_PER_BOX - box.combSC);\n  } else if (cat === \"SANDALIAS\") {\n    cap = Math.min(cap, LIMITS.MAX_SANDALIAS_PER_BOX - box.sand);\n    cap = Math.min(cap, LIMITS.MAX_COMBINED_SANDALIAS_CILINDROS_PER_BOX - box.combSC);\n  } else if (cat === \"OTROS_0KG\") {\n    cap = Infinity;\n  }\n\n  return Math.max(0, cap);\n}\n\n// Empaquetado: “first-fit” con llenado por tandas\nfunction packBoxes(orderLines) {\n  const boxes = [];\n  let currentBox = cloneEmptyBoxState();\n\n  const lines = orderLines.slice().sort((a, b) => {\n    const rank = (x) => {\n      const cat = CATEGORY_BY_PRODUCT[x.product] || \"OTROS\";\n      if (cat === \"CILINDROS\" || cat === \"SANDALIAS\") return 0;\n      if (x.weight > 0) return 1;\n      return 2;\n    };\n    const rA = rank(a), rB = rank(b);\n    if (rA !== rB) return rA - rB;\n    return (b.weight || 0) - (a.weight || 0);\n  });\n\n  const remaining = {};\n  for (const ln of lines) {\n    remaining[ln.product] = (remaining[ln.product] || 0) + ln.quantity;\n  }\n\n  function hasRemaining() {\n    for (const k in remaining) {\n      if (remaining[k] > 0) return true;\n    }\n    return false;\n  }\n\n  while (hasRemaining()) {\n    let packedSomething = false;\n\n    for (let i = 0; i < lines.length; i++) {\n      const { product, weight } = lines[i];\n      const need = remaining[product];\n      if (!need) continue;\n\n      const cap = capacityForProductInBox(currentBox, product, weight);\n      if (cap <= 0) continue;\n\n      const toPut = Math.min(need, cap);\n      if (toPut > 0) {\n        addToBox(currentBox, product, toPut, weight);\n        remaining[product] -= toPut;\n        packedSomething = true;\n      }\n    }\n\n    if (!packedSomething || !hasRemaining()) {\n      const hasContent = Object.keys(currentBox.contenido).length > 0;\n      if (hasContent) {\n        boxes.push(currentBox);\n      }\n      if (hasRemaining()) {\n        currentBox = cloneEmptyBoxState();\n      }\n    }\n  }\n\n  return boxes;\n}\n\n// Traduce \"cuentas\" -> líneas genéricas (compatibilidad)\nfunction orderFromCuentasStr(cuentasStr) {\n  const parts = (cuentasStr || \"\").split(\",\");\n  const map = {};\n\n  for (let i = 0; i < parts.length; i++) {\n    const expr = (parts[i] || \"\").trim();\n    if (!expr) continue;\n\n    const trozos = expr.split(/x|X|×|\\*/);\n    if (trozos.length < 2) continue;\n\n    const a = parseFloat(String(trozos[0]).trim().replace(\",\", \".\"));\n    const b = parseFloat(String(trozos[1]).trim().replace(\",\", \".\"));\n\n    if (!isNaN(a) && !isNaN(b) && a > 0 && b >= 0) {\n      const qty = Math.round(a);\n      const w = Number(b.toFixed(5));\n      const key = `GEN_${w}`;\n      if (!map[key]) {\n        map[key] = { product: key, quantity: 0, weight: w, __generic: true };\n      }\n      map[key].quantity += qty;\n    }\n  }\n\n  return Object.values(map);\n}\n\n// Convierte `items` a líneas de pedido con pesos conocidos\nfunction orderFromItems(itemsArr) {\n  const parsedItems = parseItemsInput(itemsArr);\n  if (!parsedItems) {\n    throw new Error(\"El campo 'items' debe ser un arreglo válido o un JSON parseable.\");\n  }\n\n  const acc = {};\n\n  for (let i = 0; i < parsedItems.length; i++) {\n    const row = parsedItems[i] || {};\n    const rawProd = String(row.producto ?? row.product ?? \"\").trim();\n    const qty = Number(row.cantidad ?? row.qty ?? 0);\n\n    if (!rawProd || !qty) continue;\n\n    const prod = canonicalizeProductName(rawProd);\n    const w = WEIGHT_BY_PRODUCT[prod];\n\n    if (typeof w !== \"number\") {\n      throw new Error(`Producto desconocido o sin peso configurado: \"${rawProd}\"`);\n    }\n\n    if (!acc[prod]) {\n      acc[prod] = { product: prod, quantity: 0, weight: w };\n    }\n    acc[prod].quantity += qty;\n  }\n\n  return Object.values(acc);\n}\n\n// Valida que cada línea de pedido (con nombre de producto conocido) cumpla su mínimo.\n// Devuelve un arreglo de violaciones (vacío si todo OK). Ignora líneas __generic\n// (formato legacy `cuentas`, sin nombre de producto -> no se puede validar).\nfunction checkMinimums(orderLines) {\n  const violaciones = [];\n  for (const line of orderLines) {\n    if (line.__generic) continue;\n    const minimo = MIN_BY_PRODUCT[line.product];\n    if (typeof minimo === \"number\" && line.quantity < minimo) {\n      violaciones.push({\n        producto: line.product,\n        cantidad_pedida: line.quantity,\n        minimo_requerido: minimo\n      });\n    }\n  }\n  return violaciones;\n}\n\n// Arma salida legible por IA\nfunction buildOutput(boxes) {\n  const outBoxes = [];\n  let totalCost = 0;\n\n  for (let i = 0; i < boxes.length; i++) {\n    const b = boxes[i];\n    const peso = Number(b.peso.toFixed(2));\n    const costo = costoPorPeso(peso);\n    totalCost += (costo || 0);\n\n    const contenidoPretty = {};\n    for (const k in b.contenido) {\n      if (CATEGORY_BY_PRODUCT[k] === \"OTROS_0KG\") {\n        contenidoPretty[\"Otros_0kg\"] = (contenidoPretty[\"Otros_0kg\"] || 0) + b.contenido[k];\n      } else {\n        contenidoPretty[k] = b.contenido[k];\n      }\n    }\n\n    outBoxes.push({\n      indice: i + 1,\n      peso_total_kg: peso,\n      costo_envio: costo,\n      costo_envio_str: costo != null ? `$${costo}` : null,\n      contenido: contenidoPretty\n    });\n  }\n\n  return {\n    cajas: outBoxes,\n    cantidad_cajas: outBoxes.length,\n    costo_total_envio: totalCost,\n    costo_total_envio_str: `$${totalCost}`,\n    resumen_cajas: outBoxes.map(b => `Caja ${b.indice}: ${b.costo_envio_str}`)\n  };\n}\n\n// ====== Ejecución por item ======\nconst results = [];\n\nfor (let i = 0; i < items.length; i++) {\n  const input = items[i].json || {};\n  let orderLines;\n\n  let advertenciaMinimos = null;\n\n  if (input.items !== undefined) {\n    // Formato recomendado\n    orderLines = orderFromItems(input.items);\n\n    const violaciones = checkMinimums(orderLines);\n    if (violaciones.length > 0) {\n      const detalle = violaciones\n        .map(v => `${v.producto}: pediste ${v.cantidad_pedida} (mínimo ${v.minimo_requerido})`)\n        .join(\"; \");\n      results.push({\n        json: {\n          error: \"MINIMO_NO_ALCANZADO\",\n          detalle_violaciones: violaciones,\n          message_to_agent: `No se puede cotizar, no se alcanza el mínimo de compra: ${detalle}. Avisále al cliente el mínimo real de cada producto listado y esperá que ajuste la cantidad antes de volver a cotizar. No inventes ni fuerces un cálculo alternativo.`\n        }\n      });\n      continue;\n    }\n  } else if (typeof input.cuentas === \"string\") {\n    // Compatibilidad (solo peso, sin categorías ni nombres de producto)\n    orderLines = orderFromCuentasStr(input.cuentas);\n    advertenciaMinimos = \"No se pudieron verificar los mínimos de compra por producto porque se usó el formato legacy 'cuentas' (sin nombres de producto). Usá 'items' para que la tool valide los mínimos automáticamente. Verificá manualmente los mínimos antes de cotizar.\";\n  } else {\n    results.push({\n      json: {\n        error: \"Entrada inválida: provea 'items' (preferido) o 'cuentas' (compatibilidad).\"\n      }\n    });\n    continue;\n  }\n\n  const boxes = packBoxes(orderLines);\n\n  for (let b = 0; b < boxes.length; b++) {\n    const peso = Number(boxes[b].peso.toFixed(4));\n    if (peso > LIMITS.MAX_PER_BOX_WEIGHT_KG + 1e-6) {\n      throw new Error(`Caja ${b + 1} excede ${LIMITS.MAX_PER_BOX_WEIGHT_KG} kg (${peso} kg).`);\n    }\n  }\n\n  const salida = buildOutput(boxes);\n  if (advertenciaMinimos) {\n    salida.advertencia_minimos = advertenciaMinimos;\n  }\n  results.push({ json: salida });\n}\n\nreturn results;"
+      },
+      "id": "be1cf63a-d9e3-4050-b2e4-cb0b622a3b5c",
+      "name": "Calcular (byte-exacto del origen)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        20,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// DELTA vs el origen: allá el Set exponía sólo `resumen_cajas`, así que un rechazo por\n// mínimo (que no trae ese campo) llegaba al agente como vacío y el LLM nunca sabía por\n// qué no podía cotizar. Acá viaja el objeto entero.\nconst r = $input.first().json || {};\nif (r.error) {\n  return [{ json: {\n    ok: false,\n    error: r.error,\n    detalle_violaciones: r.detalle_violaciones || [],\n    // el prompt del Recolector espera leer esto para explicarle el mínimo al cliente\n    message_to_agent: r.message_to_agent || 'No se puede cotizar.',\n  } }];\n}\nreturn [{ json: {\n  ok: true,\n  costo_total_envio: r.costo_total_envio ?? null,\n  costo_total_envio_str: r.costo_total_envio_str ?? null,\n  cantidad_cajas: r.cantidad_cajas ?? null,\n  resumen_cajas: r.resumen_cajas ?? [],\n  cajas: r.cajas ?? [],\n  advertencia_minimos: r.advertencia_minimos ?? null,\n  // nombre heredado: es el campo que el prompt del Recolector nombra hoy\n  'Cantidad de cajas necesarias y costo de envio': r.resumen_cajas ?? [],\n} }];"
+      },
+      "id": "6bce7de4-2fd4-4dd7-9694-0ae986d23a89",
+      "name": "Formatear salida",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "e014b3b2-b13e-4d50-8151-49ad2660f230",
+              "leftValue": "={{ $('Normalizar entrada').first().json._via }}",
+              "rightValue": "webhook",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a6857881-5ae7-4298-8e0c-c7269ea10e78",
+      "name": "¿Vino por webhook?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        500,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "id": "44d4e768-c7d2-4431-bab1-227bc07ff53d",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        740,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "400fd770-8af3-4017-82d4-f1e74822af22",
+      "name": "Devolver al llamador",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        740,
+        200
+      ]
+    }
+  ],
+  "connections": {
+    "Ejecutado por otro workflow": {
+      "main": [
+        [
+          {
+            "node": "Normalizar entrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook (carril de prueba)": {
+      "main": [
+        [
+          {
+            "node": "Normalizar entrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar entrada": {
+      "main": [
+        [
+          {
+            "node": "Calcular (byte-exacto del origen)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calcular (byte-exacto del origen)": {
+      "main": [
+        [
+          {
+            "node": "Formatear salida",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatear salida": {
+      "main": [
+        [
+          {
+            "node": "¿Vino por webhook?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Vino por webhook?": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Devolver al llamador",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "395908b2-e9ce-46cc-9c94-209c25527591",
+  "activeVersionId": "395908b2-e9ce-46cc-9c94-209c25527591",
+  "versionCounter": 7,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-08-07T00:02:35.349Z",
+      "createdAt": "2026-08-07T00:02:35.349Z",
+      "role": "workflow:owner",
+      "workflowId": "psGRDByGNjHQ2DVT",
+      "projectId": "g2TpxqLMiC0UsUBj",
+      "project": {
+        "updatedAt": "2025-05-10T12:26:37.475Z",
+        "createdAt": "2025-05-10T12:24:10.921Z",
+        "id": "g2TpxqLMiC0UsUBj",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-05-10T12:24:10.921Z",
+            "createdAt": "2025-05-10T12:24:10.921Z",
+            "userId": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+            "projectId": "g2TpxqLMiC0UsUBj",
+            "user": {
+              "updatedAt": "2026-08-28T03:11:21.679Z",
+              "createdAt": "2025-05-10T12:24:07.518Z",
+              "id": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "lastName": "AI",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-05-10T12:26:59.729Z",
+                "personalization_survey_n8n_version": "1.91.3",
+                "companySize": "<20",
+                "companyType": "systems-integrator",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "6fpcC3iGwfEYO3Eu",
+                "userActivatedAt": 1757033385622,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1773184568459
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "aiAgentStarterCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-08-28",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-08-07T00:05:18.884Z",
+    "createdAt": "2026-08-07T00:05:18.884Z",
+    "versionId": "395908b2-e9ce-46cc-9c94-209c25527591",
+    "workflowId": "psGRDByGNjHQ2DVT",
+    "nodes": [
+      {
+        "parameters": {
+          "inputSource": "jsonExample",
+          "jsonExample": "{\n  \"cuentas\": \"\",\n  \"items\": \"\"\n}"
+        },
+        "id": "b900913b-5443-4f97-97d1-514485d15349",
+        "name": "Ejecutado por otro workflow",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -460,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "hpf-w4-calculadora",
+          "authentication": "headerAuth",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "4f835e7c-7941-4759-8055-ee63d2ef7600",
+        "name": "Webhook (carril de prueba)",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -460,
+          200
+        ],
+        "webhookId": "12ecf8dd-b160-43e1-9e3c-510ca31c696e",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "jUb7ZjztncX5ACpc",
+            "name": "HPF GHL Webhook Auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Contrato heredado del origen: `items` (preferido) o `cuentas` (legacy).\n//\n// DELTA vs el origen: allá el trigger declaraba SIEMPRE los dos campos, y el ruteo\n// interno es `if (input.items !== undefined)`. Con `items: ''` esa condición da true,\n// entra a orderFromItems(''), parseItemsInput devuelve null y TIRA. O sea: la rama\n// `cuentas` era inalcanzable y cualquier llamada legacy reventaba — aunque el prompt\n// del Recolector la documenta como formato válido y el código tiene su `else if` con\n// mensaje de advertencia, que nunca corrió.\n// Acá `items` sólo viaja si trae contenido, así que la rama legacy funciona de verdad.\nconst j0 = $input.first().json || {};\nconst porWebhook = !!(j0.body && (j0.body.items !== undefined || j0.body.cuentas !== undefined));\nconst src = porWebhook ? j0.body : j0;\n\nconst vacio = v => v === undefined || v === null ||\n                   (typeof v === 'string' && v.trim() === '') ||\n                   (Array.isArray(v) && v.length === 0);\n\nconst out = { _via: porWebhook ? 'webhook' : 'subworkflow' };\nif (!vacio(src.items)) out.items = src.items;\nif (!vacio(src.cuentas)) out.cuentas = src.cuentas;\nif (out.items === undefined && out.cuentas === undefined) {\n  throw new Error('W4: hay que mandar `items` (preferido) o `cuentas` (legacy)');\n}\nreturn [{ json: out }];"
+        },
+        "id": "fa831e5c-7f82-4c2a-b043-56331d4b070d",
+        "name": "Normalizar entrada",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -220,
+          100
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "/**\n * n8n Code node (Run Once for Each Item)\n *\n * IMPORTANTE:\n * - Formato preferido: `items` con nombre de producto + cantidad\n * - `cuentas` se mantiene SOLO por compatibilidad, pero pierde la categoría del producto\n *   y por eso no es el formato ideal para aplicar correctamente las reglas de empaque.\n *\n * Entrada por item (preferido):\n * {\n *   \"items\": [\n *     { \"producto\": \"Cilindros\", \"cantidad\": 320 },\n *     { \"producto\": \"Sandalias Delgadas\", \"cantidad\": 150 },\n *     { \"producto\": \"Pantufla Moño Satin\", \"cantidad\": 80 },\n *     { \"producto\": \"Vaso Popote 24 oz\", \"cantidad\": 50 },\n *     { \"producto\": \"Mandiles\", \"cantidad\": 20 }\n *   ]\n * }\n *\n * Compatibilidad (sin nombres):\n * { \"cuentas\": \"50 x 0.15, 75 x 0.15\" }\n *\n * Salida por item:\n * {\n *   \"cajas\": [\n *     {\n *       \"indice\": 1,\n *       \"peso_total_kg\": 18.75,\n *       \"costo_envio\": 350,\n *       \"costo_envio_str\": \"$350\",\n *       \"contenido\": { \"Cilindros\": 250, \"Sandalias Delgadas\": 50, \"Pantufla Moño Satin\": 0, \"Otros_0kg\": 20 }\n *     },\n *     ...\n *   ],\n *   \"cantidad_cajas\": 3,\n *   \"costo_total_envio\": 900,\n *   \"costo_total_envio_str\": \"$900\",\n *   \"resumen_cajas\": [\"Caja 1: $350\", \"Caja 2: $300\", \"Caja 3: $250\"]\n * }\n */\n\n// ====== Config editable ======\n\n// Pesos por producto (kg)\nconst WEIGHT_BY_PRODUCT = {\n  \"Mandiles\": 0,\n  \"Kits Anticrudas\": 0,\n  \"Costales\": 0,\n\n  \"Cilindros\": 0.14,\n  \"Vaso Popote 24 oz\": 0.14,\n  \"Vasos Popote\": 0.14,\n\n  \"Sandalias Delgadas\": 0.15,\n  \"Sandalias Gruesas\": 0.15,\n  \"Pantuflas\": 0.15,\n  \"Pantuflas Mono\": 0.15,\n  \"Pantufla Moño Satin\": 0.15,\n  \"Pantufla Moño Peluche\": 0.15\n};\n\n// Categoría por producto (para aplicar límites)\nconst CATEGORY_BY_PRODUCT = {\n  \"Cilindros\": \"CILINDROS\",\n  \"Vaso Popote 24 oz\": \"CILINDROS\",\n  \"Vasos Popote\": \"CILINDROS\",\n\n  \"Sandalias Delgadas\": \"SANDALIAS\",\n  \"Sandalias Gruesas\": \"SANDALIAS\",\n  \"Pantuflas\": \"SANDALIAS\",\n  \"Pantuflas Mono\": \"SANDALIAS\",\n  \"Pantufla Moño Satin\": \"SANDALIAS\",\n  \"Pantufla Moño Peluche\": \"SANDALIAS\",\n\n  // Los de 0 kg (sin restricciones explícitas)\n  \"Mandiles\": \"OTROS_0KG\",\n  \"Kits Anticrudas\": \"OTROS_0KG\",\n  \"Costales\": \"OTROS_0KG\"\n};\n\n// Mínimo de compra por producto (unidades). Si un item del formato `items`\n// no alcanza su mínimo, la tool RECHAZA el cálculo (ver checkMinimums más abajo).\n// El formato legacy `cuentas` no tiene nombre de producto y por lo tanto NO\n// puede validarse acá — ver advertencia_minimos en la salida.\nconst MIN_BY_PRODUCT = {\n  \"Sandalias Delgadas\": 50,\n  \"Sandalias Gruesas\": 50,\n  \"Pantuflas\": 50,\n  \"Pantuflas Mono\": 50,\n  \"Pantufla Moño Satin\": 50,\n  \"Pantufla Moño Peluche\": 50,\n  \"Cilindros\": 40,\n  \"Vaso Popote 24 oz\": 50,\n  \"Vasos Popote\": 50,\n  \"Kits Anticrudas\": 35,\n  \"Costales\": 35,\n  \"Mandiles\": 12\n};\n\n// Alias para tolerar variaciones del nombre que pueda mandar el agente\nconst PRODUCT_ALIASES = {\n  \"mandil\": \"Mandiles\",\n  \"mandiles\": \"Mandiles\",\n\n  \"kit anticruda\": \"Kits Anticrudas\",\n  \"kits anticruda\": \"Kits Anticrudas\",\n  \"kit anticrudas\": \"Kits Anticrudas\",\n  \"kits anticrudas\": \"Kits Anticrudas\",\n  \"costal\": \"Costales\",\n  \"costales\": \"Costales\",\n\n  \"cilindro\": \"Cilindros\",\n  \"cilindros\": \"Cilindros\",\n\n  \"sandalia delgada\": \"Sandalias Delgadas\",\n  \"sandalias delgadas\": \"Sandalias Delgadas\",\n  \"sandalia gruesa\": \"Sandalias Gruesas\",\n  \"sandalias gruesas\": \"Sandalias Gruesas\",\n\n  \"pantufla\": \"Pantuflas\",\n  \"pantuflas\": \"Pantuflas\",\n\n  \"pantufla mono\": \"Pantuflas Mono\",\n  \"pantuflas mono\": \"Pantuflas Mono\",\n  \"pantufla mono satin\": \"Pantufla Moño Satin\",\n  \"pantuflas mono satin\": \"Pantufla Moño Satin\",\n  \"pantufla mono satín\": \"Pantufla Moño Satin\",\n  \"pantuflas mono satín\": \"Pantufla Moño Satin\",\n  \"pantufla moño satin\": \"Pantufla Moño Satin\",\n  \"pantuflas moño satin\": \"Pantufla Moño Satin\",\n  \"pantufla moño satín\": \"Pantufla Moño Satin\",\n  \"pantuflas moño satín\": \"Pantufla Moño Satin\",\n\n  \"pantufla mono peluche\": \"Pantufla Moño Peluche\",\n  \"pantuflas mono peluche\": \"Pantufla Moño Peluche\",\n  \"pantufla moño peluche\": \"Pantufla Moño Peluche\",\n  \"pantuflas moño peluche\": \"Pantufla Moño Peluche\",\n\n  \"vaso popote\": \"Vaso Popote 24 oz\",\n  \"vasos popote\": \"Vaso Popote 24 oz\",\n  \"vaso popote 24 oz\": \"Vaso Popote 24 oz\",\n  \"vasos popote 24 oz\": \"Vaso Popote 24 oz\",\n  \"vaso con popote\": \"Vaso Popote 24 oz\",\n  \"vasos con popote\": \"Vaso Popote 24 oz\",\n  \"vaso con popote 24 oz\": \"Vaso Popote 24 oz\",\n  \"vasos con popote 24 oz\": \"Vaso Popote 24 oz\"\n};\n\n// Límites por caja\nconst LIMITS = {\n  MAX_PER_BOX_WEIGHT_KG: 35,\n  MAX_CILINDROS_PER_BOX: 250,\n  MAX_SANDALIAS_PER_BOX: 200,\n  MAX_COMBINED_SANDALIAS_CILINDROS_PER_BOX: 200\n};\n\n// Rangos de costo por peso total de la caja (kg)\n// v3 (2026-07-24): bordes contiguos SIN huecos. Antes >7.1/>12.1 dejaban\n// pesos 7.01-7.10 y 12.01-12.10 kg sin tarifa (costo_envio=null -> $0 de envio).\nfunction costoPorPeso(pesoKg) {\n  const p = Number(pesoKg.toFixed(2));\n  if (p >= 0 && p <= 4.99) return 250;\n  if (p >= 5 && p <= 7) return 280;\n  if (p > 7 && p <= 12) return 300;\n  if (p > 12 && p <= 19.99) return 350;\n  if (p > 19.99 && p <= 35) return 400;\n  return null;\n}\n\n// ====== Utilidades ======\n\nfunction normalizeText(str) {\n  return String(str || \"\")\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .toLowerCase()\n    .replace(/\\s+/g, \" \")\n    .trim();\n}\n\nfunction canonicalizeProductName(rawName) {\n  const clean = normalizeText(rawName);\n  return PRODUCT_ALIASES[clean] || String(rawName || \"\").trim();\n}\n\nfunction parseItemsInput(rawItems) {\n  if (Array.isArray(rawItems)) return rawItems;\n  if (typeof rawItems === \"string\") {\n    try {\n      const parsed = JSON.parse(rawItems);\n      if (Array.isArray(parsed)) return parsed;\n    } catch (_) {}\n  }\n  return null;\n}\n\nfunction cloneEmptyBoxState() {\n  return {\n    peso: 0,\n    cil: 0,            // # Cilindros/Vasos en la caja\n    sand: 0,           // # Sandalias/Pantuflas en la caja\n    combSC: 0,         // combinadas sandalias + cilindros\n    contenido: {}      // { producto: unidades }\n  };\n}\n\nfunction addToBox(box, product, qty, weightPerUnit) {\n  if (!box.contenido[product]) box.contenido[product] = 0;\n  box.contenido[product] += qty;\n  box.peso += qty * weightPerUnit;\n\n  const cat = CATEGORY_BY_PRODUCT[product] || \"OTROS\";\n  if (cat === \"CILINDROS\") {\n    box.cil += qty;\n    box.combSC += qty;\n  } else if (cat === \"SANDALIAS\") {\n    box.sand += qty;\n    box.combSC += qty;\n  }\n}\n\nfunction capacityForProductInBox(box, product, weightPerUnit) {\n  const cat = CATEGORY_BY_PRODUCT[product] || \"OTROS\";\n  let cap = Infinity;\n\n  // Peso\n  if (weightPerUnit > 0) {\n    const weightLeft = LIMITS.MAX_PER_BOX_WEIGHT_KG - box.peso;\n    const byWeight = Math.floor(weightLeft / weightPerUnit);\n    cap = Math.min(cap, Math.max(0, byWeight));\n  }\n\n  // Límites por categoría\n  if (cat === \"CILINDROS\") {\n    cap = Math.min(cap, LIMITS.MAX_CILINDROS_PER_BOX - box.cil);\n    cap = Math.min(cap, LIMITS.MAX_COMBINED_SANDALIAS_CILINDROS_PER_BOX - box.combSC);\n  } else if (cat === \"SANDALIAS\") {\n    cap = Math.min(cap, LIMITS.MAX_SANDALIAS_PER_BOX - box.sand);\n    cap = Math.min(cap, LIMITS.MAX_COMBINED_SANDALIAS_CILINDROS_PER_BOX - box.combSC);\n  } else if (cat === \"OTROS_0KG\") {\n    cap = Infinity;\n  }\n\n  return Math.max(0, cap);\n}\n\n// Empaquetado: “first-fit” con llenado por tandas\nfunction packBoxes(orderLines) {\n  const boxes = [];\n  let currentBox = cloneEmptyBoxState();\n\n  const lines = orderLines.slice().sort((a, b) => {\n    const rank = (x) => {\n      const cat = CATEGORY_BY_PRODUCT[x.product] || \"OTROS\";\n      if (cat === \"CILINDROS\" || cat === \"SANDALIAS\") return 0;\n      if (x.weight > 0) return 1;\n      return 2;\n    };\n    const rA = rank(a), rB = rank(b);\n    if (rA !== rB) return rA - rB;\n    return (b.weight || 0) - (a.weight || 0);\n  });\n\n  const remaining = {};\n  for (const ln of lines) {\n    remaining[ln.product] = (remaining[ln.product] || 0) + ln.quantity;\n  }\n\n  function hasRemaining() {\n    for (const k in remaining) {\n      if (remaining[k] > 0) return true;\n    }\n    return false;\n  }\n\n  while (hasRemaining()) {\n    let packedSomething = false;\n\n    for (let i = 0; i < lines.length; i++) {\n      const { product, weight } = lines[i];\n      const need = remaining[product];\n      if (!need) continue;\n\n      const cap = capacityForProductInBox(currentBox, product, weight);\n      if (cap <= 0) continue;\n\n      const toPut = Math.min(need, cap);\n      if (toPut > 0) {\n        addToBox(currentBox, product, toPut, weight);\n        remaining[product] -= toPut;\n        packedSomething = true;\n      }\n    }\n\n    if (!packedSomething || !hasRemaining()) {\n      const hasContent = Object.keys(currentBox.contenido).length > 0;\n      if (hasContent) {\n        boxes.push(currentBox);\n      }\n      if (hasRemaining()) {\n        currentBox = cloneEmptyBoxState();\n      }\n    }\n  }\n\n  return boxes;\n}\n\n// Traduce \"cuentas\" -> líneas genéricas (compatibilidad)\nfunction orderFromCuentasStr(cuentasStr) {\n  const parts = (cuentasStr || \"\").split(\",\");\n  const map = {};\n\n  for (let i = 0; i < parts.length; i++) {\n    const expr = (parts[i] || \"\").trim();\n    if (!expr) continue;\n\n    const trozos = expr.split(/x|X|×|\\*/);\n    if (trozos.length < 2) continue;\n\n    const a = parseFloat(String(trozos[0]).trim().replace(\",\", \".\"));\n    const b = parseFloat(String(trozos[1]).trim().replace(\",\", \".\"));\n\n    if (!isNaN(a) && !isNaN(b) && a > 0 && b >= 0) {\n      const qty = Math.round(a);\n      const w = Number(b.toFixed(5));\n      const key = `GEN_${w}`;\n      if (!map[key]) {\n        map[key] = { product: key, quantity: 0, weight: w, __generic: true };\n      }\n      map[key].quantity += qty;\n    }\n  }\n\n  return Object.values(map);\n}\n\n// Convierte `items` a líneas de pedido con pesos conocidos\nfunction orderFromItems(itemsArr) {\n  const parsedItems = parseItemsInput(itemsArr);\n  if (!parsedItems) {\n    throw new Error(\"El campo 'items' debe ser un arreglo válido o un JSON parseable.\");\n  }\n\n  const acc = {};\n\n  for (let i = 0; i < parsedItems.length; i++) {\n    const row = parsedItems[i] || {};\n    const rawProd = String(row.producto ?? row.product ?? \"\").trim();\n    const qty = Number(row.cantidad ?? row.qty ?? 0);\n\n    if (!rawProd || !qty) continue;\n\n    const prod = canonicalizeProductName(rawProd);\n    const w = WEIGHT_BY_PRODUCT[prod];\n\n    if (typeof w !== \"number\") {\n      throw new Error(`Producto desconocido o sin peso configurado: \"${rawProd}\"`);\n    }\n\n    if (!acc[prod]) {\n      acc[prod] = { product: prod, quantity: 0, weight: w };\n    }\n    acc[prod].quantity += qty;\n  }\n\n  return Object.values(acc);\n}\n\n// Valida que cada línea de pedido (con nombre de producto conocido) cumpla su mínimo.\n// Devuelve un arreglo de violaciones (vacío si todo OK). Ignora líneas __generic\n// (formato legacy `cuentas`, sin nombre de producto -> no se puede validar).\nfunction checkMinimums(orderLines) {\n  const violaciones = [];\n  for (const line of orderLines) {\n    if (line.__generic) continue;\n    const minimo = MIN_BY_PRODUCT[line.product];\n    if (typeof minimo === \"number\" && line.quantity < minimo) {\n      violaciones.push({\n        producto: line.product,\n        cantidad_pedida: line.quantity,\n        minimo_requerido: minimo\n      });\n    }\n  }\n  return violaciones;\n}\n\n// Arma salida legible por IA\nfunction buildOutput(boxes) {\n  const outBoxes = [];\n  let totalCost = 0;\n\n  for (let i = 0; i < boxes.length; i++) {\n    const b = boxes[i];\n    const peso = Number(b.peso.toFixed(2));\n    const costo = costoPorPeso(peso);\n    totalCost += (costo || 0);\n\n    const contenidoPretty = {};\n    for (const k in b.contenido) {\n      if (CATEGORY_BY_PRODUCT[k] === \"OTROS_0KG\") {\n        contenidoPretty[\"Otros_0kg\"] = (contenidoPretty[\"Otros_0kg\"] || 0) + b.contenido[k];\n      } else {\n        contenidoPretty[k] = b.contenido[k];\n      }\n    }\n\n    outBoxes.push({\n      indice: i + 1,\n      peso_total_kg: peso,\n      costo_envio: costo,\n      costo_envio_str: costo != null ? `$${costo}` : null,\n      contenido: contenidoPretty\n    });\n  }\n\n  return {\n    cajas: outBoxes,\n    cantidad_cajas: outBoxes.length,\n    costo_total_envio: totalCost,\n    costo_total_envio_str: `$${totalCost}`,\n    resumen_cajas: outBoxes.map(b => `Caja ${b.indice}: ${b.costo_envio_str}`)\n  };\n}\n\n// ====== Ejecución por item ======\nconst results = [];\n\nfor (let i = 0; i < items.length; i++) {\n  const input = items[i].json || {};\n  let orderLines;\n\n  let advertenciaMinimos = null;\n\n  if (input.items !== undefined) {\n    // Formato recomendado\n    orderLines = orderFromItems(input.items);\n\n    const violaciones = checkMinimums(orderLines);\n    if (violaciones.length > 0) {\n      const detalle = violaciones\n        .map(v => `${v.producto}: pediste ${v.cantidad_pedida} (mínimo ${v.minimo_requerido})`)\n        .join(\"; \");\n      results.push({\n        json: {\n          error: \"MINIMO_NO_ALCANZADO\",\n          detalle_violaciones: violaciones,\n          message_to_agent: `No se puede cotizar, no se alcanza el mínimo de compra: ${detalle}. Avisále al cliente el mínimo real de cada producto listado y esperá que ajuste la cantidad antes de volver a cotizar. No inventes ni fuerces un cálculo alternativo.`\n        }\n      });\n      continue;\n    }\n  } else if (typeof input.cuentas === \"string\") {\n    // Compatibilidad (solo peso, sin categorías ni nombres de producto)\n    orderLines = orderFromCuentasStr(input.cuentas);\n    advertenciaMinimos = \"No se pudieron verificar los mínimos de compra por producto porque se usó el formato legacy 'cuentas' (sin nombres de producto). Usá 'items' para que la tool valide los mínimos automáticamente. Verificá manualmente los mínimos antes de cotizar.\";\n  } else {\n    results.push({\n      json: {\n        error: \"Entrada inválida: provea 'items' (preferido) o 'cuentas' (compatibilidad).\"\n      }\n    });\n    continue;\n  }\n\n  const boxes = packBoxes(orderLines);\n\n  for (let b = 0; b < boxes.length; b++) {\n    const peso = Number(boxes[b].peso.toFixed(4));\n    if (peso > LIMITS.MAX_PER_BOX_WEIGHT_KG + 1e-6) {\n      throw new Error(`Caja ${b + 1} excede ${LIMITS.MAX_PER_BOX_WEIGHT_KG} kg (${peso} kg).`);\n    }\n  }\n\n  const salida = buildOutput(boxes);\n  if (advertenciaMinimos) {\n    salida.advertencia_minimos = advertenciaMinimos;\n  }\n  results.push({ json: salida });\n}\n\nreturn results;"
+        },
+        "id": "be1cf63a-d9e3-4050-b2e4-cb0b622a3b5c",
+        "name": "Calcular (byte-exacto del origen)",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          20,
+          100
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// DELTA vs el origen: allá el Set exponía sólo `resumen_cajas`, así que un rechazo por\n// mínimo (que no trae ese campo) llegaba al agente como vacío y el LLM nunca sabía por\n// qué no podía cotizar. Acá viaja el objeto entero.\nconst r = $input.first().json || {};\nif (r.error) {\n  return [{ json: {\n    ok: false,\n    error: r.error,\n    detalle_violaciones: r.detalle_violaciones || [],\n    // el prompt del Recolector espera leer esto para explicarle el mínimo al cliente\n    message_to_agent: r.message_to_agent || 'No se puede cotizar.',\n  } }];\n}\nreturn [{ json: {\n  ok: true,\n  costo_total_envio: r.costo_total_envio ?? null,\n  costo_total_envio_str: r.costo_total_envio_str ?? null,\n  cantidad_cajas: r.cantidad_cajas ?? null,\n  resumen_cajas: r.resumen_cajas ?? [],\n  cajas: r.cajas ?? [],\n  advertencia_minimos: r.advertencia_minimos ?? null,\n  // nombre heredado: es el campo que el prompt del Recolector nombra hoy\n  'Cantidad de cajas necesarias y costo de envio': r.resumen_cajas ?? [],\n} }];"
+        },
+        "id": "6bce7de4-2fd4-4dd7-9694-0ae986d23a89",
+        "name": "Formatear salida",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          260,
+          100
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "version": 2,
+              "typeValidation": "loose"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "e014b3b2-b13e-4d50-8151-49ad2660f230",
+                "leftValue": "={{ $('Normalizar entrada').first().json._via }}",
+                "rightValue": "webhook",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "a6857881-5ae7-4298-8e0c-c7269ea10e78",
+        "name": "¿Vino por webhook?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          500,
+          100
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "allIncomingItems",
+          "options": {}
+        },
+        "id": "44d4e768-c7d2-4431-bab1-227bc07ff53d",
+        "name": "Respond to Webhook",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          740,
+          0
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "400fd770-8af3-4017-82d4-f1e74822af22",
+        "name": "Devolver al llamador",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          740,
+          200
+        ]
+      }
+    ],
+    "connections": {
+      "Ejecutado por otro workflow": {
+        "main": [
+          [
+            {
+              "node": "Normalizar entrada",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook (carril de prueba)": {
+        "main": [
+          [
+            {
+              "node": "Normalizar entrada",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalizar entrada": {
+        "main": [
+          [
+            {
+              "node": "Calcular (byte-exacto del origen)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Calcular (byte-exacto del origen)": {
+        "main": [
+          [
+            {
+              "node": "Formatear salida",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Formatear salida": {
+        "main": [
+          [
+            {
+              "node": "¿Vino por webhook?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Vino por webhook?": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Devolver al llamador",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "la agencia",
+    "name": null,
+    "description": null
+  }
+}

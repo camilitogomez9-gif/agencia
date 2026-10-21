@@ -1,0 +1,70 @@
+{
+  "probe_id": "sess_hpf_nrp_021_1785953135#0ab626c061d1",
+  "session_id": "sess_hpf_nrp_021_1785953135",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "me pueden mandar la cotización formal en PDF por correo",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 9.2,
+  "version_antes": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "version_despues": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "capturado_utc": "2026-08-05T18:06:09.342699+00:00",
+  "execution_id": "989442",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T18:05:55.925Z",
+  "stoppedAt": "2026-08-05T18:06:04.182Z",
+  "n_esperadas": 2,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Claro, puedo ofrecerle la cotización aquí mismo con todos los detalles y montos, para que tenga la información completa. Si necesita el PDF o el envío por correo, le canalizo con el equipo para que le apoyen directamente",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "Qué producto le gustaría cotizar primero para su boda?",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 223,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1694,
+      "chat_id": 6390727286,
+      "texto_entregado": "Claro, puedo ofrecerle la cotización aquí mismo con todos los detalles y montos, para que tenga la información completa. Si necesita el PDF o el envío por correo, le canalizo con el equipo para que le apoyen directamente",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 289,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1695,
+      "chat_id": 6390727286,
+      "texto_entregado": "Qué producto le gustaría cotizar primero para su boda?",
+      "error": null
+    }
+  ],
+  "n_entregadas": 2,
+  "cero_partes": false,
+  "agente": {
+    "output": "Claro, puedo ofrecerle la cotización aquí mismo con todos los detalles y montos, para que tenga la información completa. Si necesita el PDF o el envío por correo, le canalizo con el equipo para que le apoyen directamente. ¿Qué producto le gustaría cotizar primero para su boda?",
+    "tools": [
+      "ATENCION_PERSONALIZADA"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-NRP-021"
+}

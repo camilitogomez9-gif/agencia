@@ -1,0 +1,52 @@
+✅ [1] M1 Mauricio: hola → quiero agendar nuevamente
+    lead: Hola
+    bot: ¡Hola Mauricio! ¿En qué puedo ayudarte hoy? Si tienes alguna pregunta sobre los internados o necesitas algo más, aquí estoy para asistirte.
+    lead: Quiero agendar nuevamente
+    bot (link ok): Claro, Mauricio. Aquí te dejo el enlace para que elijas un nuevo horario que te acomode: vtr.[TU-DOMINIO]/agendar-ema. Rodrigo, uno de nuestros fundadores y especialista en internados, estará encantado de ayudarte a encontrar la mejor opción para tu hijo.
+✅ [1] M2 Mauricio: ¿cuándo es mi cita?
+    lead: Según tú cuando está agendada mi cita?
+    bot (nocorreo ok): Hola Mauricio, no veo la fecha de tu cita registrada aquí. Para asegurarnos de que puedas elegir un horario que te acomode, te recomiendo que uses este enlace para agendar o reagendar tu asesoría: vtr.[TU-DOMINIO]/agendar-ema. Así podrás seleccionar el día y la hora que mejor te convengan. Si tienes alguna otra pregunta o necesitas ayuda, aquí estoy para apoyarte.
+✅ [1] M3 Mauricio: ya pasó, quiero otra
+    lead: Ya pasó la fecha quiero volver a agendar una nueva
+    bot (link ok): Claro, Mauricio. Aquí te dejo el enlace para que elijas un nuevo horario: vtr.[TU-DOMINIO]/agendar-ema. Rodrigo, uno de nuestros fundadores y especialista en internados, estará encantado de ayudarte a encontrar la mejor opción para tu hijo.
+✅ [1] D1 Daiana (cita futura): ¿cuándo es?
+    lead: Hola, me recuerdas cuándo es mi cita?
+    bot (fecha+nolink ok): ¡Hola Daiana! Claro, tu cita está agendada para mañana, viernes 25 de septiembre, a las 9:45 a. m. (hora de CDMX). Si tienes alguna otra pregunta o necesitas algo antes de la cita, aquí estoy para ayudarte.
+✅ [1] D2 Daiana (cita futura): cambiarla
+    lead: Necesito cambiar mi cita, ese día no puedo
+    bot (link ok): Entiendo, Daiana. Aquí te dejo el enlace para que elijas un nuevo horario que te acomode mejor: vtr.[TU-DOMINIO]/SummerCamp-Agendar. Si necesitas algo más, estoy aquí para ayudarte.
+✅ [1] D3 Daiana (cita futura): gracias
+    lead: Muchas gracias!
+    bot (nolink ok): ¡De nada, Daiana! Ya tienes tu asesoría agendada para el viernes 25 de septiembre a las 9:45 a. m. con Rodrigo. Si te surge cualquier duda antes, no dudes en escribirme por aquí. ¡Que tengas un excelente día! 😊
+✅ [1] P1 cita pasada: quiero otra
+    lead: No pude conectarme a la llamada, quiero otra
+    bot (link ok): ¡Hola Daiana! No te preocupes, aquí te dejo el enlace para que elijas un nuevo horario para la asesoría sobre los campamentos de verano: vtr.[TU-DOMINIO]/SummerCamp-Agendar. Rodrigo, uno de nuestros fundadores y especialista en internados, estará encantado de ayudarte a encontrar la mejor opción.
+✅ [1] V1 link sin cita: propone horario
+    lead: ¿El lunes a las 11 podemos hablar?
+    bot (link ok): ¡Hola, Viri! Claro, te dejo el enlace otra vez para que elijas el horario que te acomode: vtr.[TU-DOMINIO]/agendar-ema. Tú eliges día y hora, y me llega la confirmación automáticamente. Rodrigo, uno de nuestros fundadores y especialista en internados, estará encantado de ayudarte a encontrar la mejor opción para tu hijo.
+✅ [1] R1 precio: rango + propuesta de día
+    lead: ¿Cuánto cuesta un internado más o menos?
+    bot (precio ok): ¡Hola, Viri! Entiendo perfecto, es una inversión importante y es de las primeras cosas que hay que aterrizar. Los internados rondan entre USD $50,000 y $130,000 al año, dependiendo del país y la escuela. Este costo incluye campus, colegiatura, deportes e inmersión total en el idioma. Para darte el número exacto de las opciones que le calzan a tu hijo, lo vemos en la asesoría con Rodrigo. ¿Te queda mejor hoy o mañana 
+✅ [1] R2 moneda: confirma pesos o dólares
+    lead: Tengo 250 mil de presupuesto, ¿me alcanza?
+    bot (moneda ok): Para orientarte bien, ¿esos 250 mil son pesos o dólares?
+✅ [1] R3 una sola pregunta por mensaje
+    lead: Hola, me interesa un intercambio para mi hija
+    bot (unapregunta ok): ¡Hola! Soy Mauricio de Venttur 😊 ¿Con quién tengo el gusto?
+✅ [1] S1 cita futura: comprobante de pago → asesor
+    lead: Ya hice el pago de la inscripción, ¿a quién le mando el comprobante?
+    bot (elevar ok): Un asesor de Venttur te va a atender por este mismo chat para ayudarte con el comprobante de pago.
+✅ [1] S2 link no abre → lo reenvía
+    lead: No me abre el link que me mandaste
+    bot (link ok): ¡Hola, Viri! Lamento que hayas tenido problemas con el enlace. Te lo vuelvo a enviar para que puedas elegir el horario que te acomode: vtr.[TU-DOMINIO]/agendar-ema. Si sigues teniendo problemas, házmelo saber y te ayudo a resolverlo.
+✅ [1] S3 contacto viejo saluda → ofrece ayuda
+    lead: Hola
+    bot (resuelve ok): ¡Hola Mauricio! ¿En qué puedo ayudarte hoy? Si tienes alguna duda o necesitas información sobre los internados, estoy aquí para asistirte.
+✅ [1] S4 cita futura: cambio de programa
+    lead: Necesito cambiar el campamento que elegí por otro de otra fecha, ¿cómo le hago?
+    bot (resuelve ok): Hola Daiana, entiendo que necesitas cambiar el campamento que elegiste. Para hacer eso, lo mejor es que reagendes tu asesoría para que podamos revisar las opciones disponibles y ajustar la fecha del campamento. Aquí te dejo el enlace para que elijas un nuevo horario que te acomode: vtr.[TU-DOMINIO]/SummerCamp-Agendar. Si tienes alguna otra pregunta o necesitas más ayuda, estoy aquí para asistirte.
+✅ [1] N1 lead nuevo: no manda link de entrada
+    lead: Hola! Quiero agendar una asesoría para encontrar el internado ideal de mi hijo
+    bot (nolink ok): ¡Hola! Soy Mauricio de Venttur 😊. Me alegra que estés considerando una experiencia internacional para tu hijo. ¿Con quién tengo el gusto?
+
+16/16 casos OK · prompt=prompt-v2.4-completo-BORRADOR.txt · estado=nuevo

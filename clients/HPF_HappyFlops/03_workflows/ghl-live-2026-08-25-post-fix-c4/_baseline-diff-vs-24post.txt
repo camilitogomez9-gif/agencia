@@ -1,0 +1,41 @@
+
+============================================================================
+DIFF  _baseline-post.json → _baseline-post-fix-c4.json
+============================================================================
+
+── oferta_precio
+   T4 «cuanto cuestan?»  ·  emojis_fuera_del_set
+      antes:   []
+      después: ["💰"]
+   T4 «cuanto cuestan?»  ·  etapa_destino
+      antes:   "Cotizado"
+      después: "Productos Mostrados"
+   T4 «cuanto cuestan?»  ·  fichas
+      antes:   []
+      después: ["Boda/Cilindros de 500ml boda personalizados", "Boda/Cilindros el catalogo boda", "Boda/Cilindros video", "Otros/Cilindros video", "XV/Cilindros vide
+   T4 «cuanto cuestan?»  ·  n_adjuntos
+      antes:   0
+      después: 3
+   T4 «cuanto cuestan?»  ·  nodos
+      antes:   ["Elegir ruta", "LM Recolector", "LM Router", "Leer evento", "Memoria Recolector", "Memoria Router", "Normalizar entrada", "Partir en burbujas", "Reco
+      después: ["Canonicalizar productos", "Cards a partes", "Elegir ruta", "LM Products", "LM Router", "Leer Products", "Leer canónicos", "Leer evento", "Leer suger
+   T4 «cuanto cuestan?»  ·  step
+      antes:   "step_4"
+      después: "step_3"
+
+── otros_evento
+   T3 «que productos tienen?»  ·  nodos
+      antes:   ["Canonicalizar productos", "Cards a partes", "Elegir ruta", "LM Products", "LM Router", "Leer Products", "Leer canónicos", "Leer evento", "Leer suger
+      después: ["Canonicalizar productos", "Cards a partes", "Elegir ruta", "LM Products", "LM Recolector", "LM Router", "Leer Products", "Leer canónicos", "Leer eve
+
+── saludo
+   T1 «hola»  ·  nodos
+      antes:   []
+      después: ["Elegir ruta", "LM Router", "LM Starter", "Leer evento", "Memoria Router", "Memoria Starter", "Normalizar entrada", "Partir en burbujas", "Respond to
+
+── xv_cilindros
+   T3 «me interesan los cilindros y los t»  ·  nodos
+      antes:   []
+      después: ["Canonicalizar productos", "Cards a partes", "Elegir ruta", "LM Products", "LM Router", "Leer Products", "Leer canónicos", "Leer evento", "Leer suger
+
+9 diferencia(s). Cada una tiene que estar justificada por un punto de la lista aprobada; si no, es una regresión.

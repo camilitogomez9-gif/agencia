@@ -1,0 +1,4409 @@
+{
+  "updatedAt": "2026-08-25T14:54:29.773Z",
+  "createdAt": "2026-08-06T23:28:06.569Z",
+  "id": "nA14dNwJ7VS3YMYr",
+  "name": "HPF·GHL · W1 Inbound",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hpf-w1-inbound",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "fe6eaeb9-ba9d-434a-93ec-d9a2990626ae",
+      "name": "Webhook inbound",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1184,
+        -32
+      ],
+      "webhookId": "15158884-a4d9-45ac-bcf0-d4f948677449",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jUb7ZjztncX5ACpc",
+          "name": "HPF GHL Webhook Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Contrato de entrada — lo define NUESTRO workflow WF-01 de GHL, no GHL: el paso\n// \"Webhook\" de un GHL Workflow deja mapear campos a mano. Está documentado en la guía\n// de provisión; si cambia allá, cambia acá.\n//   { contactId, conversationId, messageId, body, attachments[], phone, canal }\nconst j0 = $input.first().json || {};\nconst src = (j0.body && j0.body.contactId !== undefined) ? j0.body : j0;\n\nif (!src.contactId) {\n  throw new Error('W1: el relay no mandó contactId. ' +\n    'Revisar el mapeo del paso Webhook en WF-01.');\n}\n\nlet adj = src.attachments ?? [];\nif (typeof adj === 'string') {\n  const t = adj.trim();\n  adj = t.startsWith('[') ? JSON.parse(t) : (t ? [t] : []);\n}\nif (!Array.isArray(adj)) adj = adj ? [adj] : [];\n\nconst texto = String(src.body ?? '').trim();\n\n// Ruteo por tipo, réplica de `checkType` del origen (text / voice / Image).\nlet tipo = 'texto';\nconst url0 = String(adj[0] || '').toLowerCase();\nif (adj.length) {\n  if (/\\.(ogg|oga|mp3|m4a|wav|amr)(\\?|$)/.test(url0)) tipo = 'audio';\n  else if (/\\.pdf(\\?|$)/.test(url0)) tipo = 'pdf';\n  else tipo = 'imagen';\n}\n\n// El messageId es la clave de idempotencia, y hace falta porque el debounce hace\n// timeoutear el webhook de GHL: si GHL reintenta, el mismo mensaje entra dos veces.\n//\n// Pero no está garantizado que el relay mande uno: depende de si el trigger de GHL\n// expone un id por mensaje, y el paso \"Webhook\" de un GHL Workflow mapea campos a\n// mano. Si no viene, se deriva del contenido — determinístico, así que el reintento\n// del MISMO mensaje cae en la misma clave.\n//\n// No se usa crypto: el sandbox del nodo Code no garantiza los builtins de Node. El\n// hash es FNV-1a de 32 bits, que para desambiguar mensajes de un mismo contacto\n// dentro de una ventana de 3 minutos sobra.\nfunction huella(s) {\n  let h = 0x811c9dc5;\n  for (let i = 0; i < s.length; i++) {\n    h ^= s.charCodeAt(i);\n    h = Math.imul(h, 0x01000193) >>> 0;\n  }\n  return h.toString(16).padStart(8, '0');\n}\n\nlet messageId = src.messageId ? String(src.messageId).trim() : '';\nconst derivado = !messageId;\nif (derivado) {\n  // El id lleva el contactId adelante para que sea legible en la tabla y en los logs,\n  // y para que dos leads que escriben lo mismo nunca colisionen.\n  messageId = 'auto:' + String(src.contactId) + ':' +\n              huella([texto, adj.join('|')].join('\\u0001'));\n}\n\nreturn [{ json: {\n  contactId: String(src.contactId),\n  conversationId: src.conversationId ? String(src.conversationId) : null,\n  messageId,\n  messageId_derivado: derivado,\n  phone: src.phone ? String(src.phone) : null,\n  canal: src.canal || 'WhatsApp',\n  texto,\n  adjuntos: adj,\n  tipo,\n  // el test manda debounce_seg: 0; producción usa los del origen (50 texto / 15 imagen)\n  debounce_seg: src.debounce_seg !== undefined\n    ? Number(src.debounce_seg)\n    : (tipo === 'imagen' ? 15 : 50),\n  recibido_at: $now.toISO(),\n  // seam de test, ver la guardia de horario de W7\n  _forzar_fuera_horario: src._forzar_fuera_horario === true,\n} }];"
+      },
+      "id": "10a5438e-c968-4fad-a736-a870f83792de",
+      "name": "Normalizar entrada",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -960,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "CREATE TABLE IF NOT EXISTS hpf_mensajes_vistos (\n  message_id text PRIMARY KEY,\n  visto_at   timestamptz NOT NULL DEFAULT now()\n);\nDELETE FROM hpf_mensajes_vistos WHERE visto_at < now() - interval '24 hours';\nINSERT INTO hpf_mensajes_vistos (message_id) VALUES ($1)\nON CONFLICT (message_id) DO UPDATE\n  SET visto_at = now()\n  WHERE $2::boolean\n    AND hpf_mensajes_vistos.visto_at < now() - interval '3 minutes'\nRETURNING message_id;",
+        "options": {
+          "queryReplacement": "={{ [ $json.messageId, $json.messageId_derivado ] }}"
+        }
+      },
+      "id": "bc8f71de-9fa3-41a8-bf49-84302b2c809f",
+      "name": "Idempotencia",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        -736,
+        -32
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "a1bf9a21-c568-409f-aa54-f467d05dcd06",
+              "leftValue": "={{ $json.message_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "dc3f4cd5-7955-4b14-bfbf-0ac8595ca5d3",
+      "name": "¿Mensaje nuevo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -512,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ok: true, aceptado: true, messageId: $('Normalizar entrada').first().json.messageId}) }}",
+        "options": {}
+      },
+      "id": "7506ac0f-5df6-461e-b8be-075c00a6d8fe",
+      "name": "Responder ack",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -288,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ok: true, aceptado: false, motivo: \"duplicado\", messageId: $('Normalizar entrada').first().json.messageId}) }}",
+        "options": {}
+      },
+      "id": "9216d54a-f97e-4363-ab0f-a0302581802e",
+      "name": "Responder duplicado",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -288,
+        64
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "a7d68311-5ea9-4504-b2ea-b12ae9a016ad",
+      "name": "Fin · duplicado",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "CREATE TABLE IF NOT EXISTS hpf_identity (\n  ghl_contact_id   text PRIMARY KEY,\n  phone_raw        text,\n  phone_e164       text,\n  session_id       text NOT NULL,\n  kommo_entity_id  text,\n  kommo_contact_id text,\n  created_at       timestamptz NOT NULL DEFAULT now()\n);\nCREATE INDEX IF NOT EXISTS hpf_identity_session_idx ON hpf_identity (session_id);\nINSERT INTO hpf_identity (ghl_contact_id, phone_e164, session_id)\nVALUES ($1, $2, $2 || '2131')\nON CONFLICT (ghl_contact_id) DO UPDATE SET\n  phone_e164 = COALESCE(EXCLUDED.phone_e164, hpf_identity.phone_e164),\n  -- Repara SOLO las filas que escribió la derivación vieja (la que borraba el '+'),\n  -- comparando contra esa fórmula exacta. Cualquier otro session_id se respeta:\n  -- pisarle la clave de memoria a un lead con conversación abierta le borra el\n  -- historial, que es justo lo que este mecanismo tiene que evitar.\n  session_id = CASE\n    WHEN hpf_identity.session_id = regexp_replace(\n           COALESCE(EXCLUDED.phone_e164, hpf_identity.phone_e164), '\\D', '', 'g') || '2131'\n     AND EXCLUDED.session_id IS DISTINCT FROM hpf_identity.session_id\n    THEN EXCLUDED.session_id\n    ELSE hpf_identity.session_id\n  END\nRETURNING session_id, ghl_contact_id;",
+        "options": {
+          "queryReplacement": "={{ [ $('Normalizar entrada').first().json.contactId, $('Normalizar entrada').first().json.phone || '' ] }}"
+        }
+      },
+      "id": "4506eff7-82cd-4a8d-acb5-541130ddf63b",
+      "name": "Resolver identidad",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        -64,
+        -128
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT CASE\n  WHEN to_regclass('public.n8n_chat_histories') IS NULL THEN 0\n  ELSE (SELECT count(*) FROM n8n_chat_histories\n        WHERE session_id = $1 AND message->>'type' = 'human')\nEND::int AS turnos_previos;",
+        "options": {
+          "queryReplacement": "={{ [ $json.session_id ] }}"
+        }
+      },
+      "id": "94038510-dfbc-45a4-adb0-b92c2186e7d4",
+      "name": "¿Hay historial?",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        160,
+        -128
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VK4M7VQm8CMefbty",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W0 Client"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "op": "find_or_create_opportunity",
+            "args": "={{ {contactId: $('Normalizar entrada').first().json.contactId, name: 'WhatsApp ' + ($('Normalizar entrada').first().json.phone || $('Normalizar entrada').first().json.contactId)} }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "5ecc0dde-c65b-489e-901d-9a8427dd21f7",
+      "name": "W0 · find or create",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        384,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VK4M7VQm8CMefbty",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W0 Client"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "op": "get_opportunity",
+            "args": "={{ {opportunityId: $json.data.opportunity.id} }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "cfb60be3-b5e1-4faa-9ef9-04a66680c8f6",
+      "name": "W0 · leer oportunidad",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        608,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Traducción de los gates de etapa del origen. En Kommo se hacía con `contains` sobre\n// el JSON del lead serializado — de ahí el bug del \"143\" que matcheaba cualquier\n// timestamp. Acá es igualdad de UUID.\nconst ETAPAS = {\n  \"Lead Nuevo\": \"cf8fc770-81b1-422c-8394-d00bfb97a3f0\",\n  \"Saludo Enviado\": \"f9709293-d03c-47f1-949f-0c03ab077a45\",\n  \"Evento Identificado\": \"fec50c94-fba0-444b-8c75-7a97da9e0daa\",\n  \"Productos Mostrados\": \"49c7401f-8af1-4d8f-a1b4-e989b6d0a5e2\",\n  \"Cotizado\": \"96fa0ade-c853-4db3-97f4-56d58d69af8c\",\n  \"Esperando Pago\": \"843a06f1-1214-4baa-a3a0-f197cb240b5d\",\n  \"Pago Confirmado\": \"96d760e5-f290-456c-a117-57e61ce6c27d\",\n  \"Diseño en Proceso\": \"d35bb30d-97d5-48c4-81f8-5ecabf32e57d\",\n  \"En Producción\": \"008689c6-80d8-4712-981b-1d800e1e6137\",\n  \"Enviado\": \"218b9b41-4007-4b1c-bbe4-4e775ddf00b5\",\n  \"En Espera\": \"48de80e9-31a9-472a-b030-5b9fe9174810\",\n  \"Ganado\": \"909a816d-997e-4d90-8dc1-dc4b0dcd16d7\",\n  \"Ventas Perdidas\": \"6abfe419-adf2-4df5-87c5-ef4f62e01464\"\n};\nconst nombreDe = Object.fromEntries(Object.entries(ETAPAS).map(([k, v]) => [v, k]));\n\n// El agente se calla en estas etapas (equivale a If7/If9/If12/If20 + \"Si está en perdidos\")\nconst BLOQUEO = {\n  'En Espera':        'atencion_humana',   // Kommo 91266100 atención personalizada\n  'Pago Confirmado':  'pago_confirmado',   // Kommo 91450360\n  'En Producción':    'en_produccion',     // Kommo 100395519\n  'Ventas Perdidas':  'perdido',           // Kommo 143\n  'Ganado':           'ganado',            // Kommo 142\n};\n\nconst ctx  = $('Normalizar entrada').first().json;\nconst ses  = $('Resolver identidad').first().json;\nconst opp  = ($input.first().json.data || {}).opportunity || {};\nconst via  = $('W0 · find or create').first().json.via || null;\nconst hist = $('¿Hay historial?').first().json || {};\nconst turnosPrevios = Number(hist.turnos_previos || 0);\n\nconst etapaId     = opp.pipelineStageId || null;\nconst etapaNombre = nombreDe[etapaId] || null;\nconst motivo      = BLOQUEO[etapaNombre] || null;\n\n// Cliente que vuelve: la oportunidad ya existía y está cerrada. En Kommo esto era un\n// lead nuevo; acá hay que reciclar la misma (ver PM-IDN-03-decision.md).\nconst vuelve = via === 'existente' && ['Ganado', 'Ventas Perdidas'].includes(etapaNombre);\n\nlet ruta = 'seguir';\nif (vuelve) ruta = 'cliente_vuelve';\nelse if (motivo) ruta = 'bloqueado';\n\nreturn [{ json: {\n  ...ctx,\n  sessionId: ses.session_id,\n  opportunityId: opp.id || null,\n  etapa_id: etapaId,\n  etapa: etapaNombre,\n  via_oportunidad: via,\n  ruta,\n  motivo_bloqueo: motivo,\n  // Sale de la memoria, no del CRM — ver SQL_HISTORIAL.\n  primer_contacto: turnosPrevios === 0,\n  turnos_previos: turnosPrevios,\n  gates: { etapa: etapaNombre, bloqueo: motivo, via, cliente_vuelve: vuelve,\n           primer_contacto: turnosPrevios === 0 },\n} }];"
+      },
+      "id": "6dc269de-49f7-46d5-b5e4-177c862eb537",
+      "name": "Evaluar estado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        832,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "122fd87a-402a-4ee3-89b4-4e58c5c8df29",
+                    "leftValue": "={{ $json.ruta }}",
+                    "rightValue": "bloqueado",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "bloqueado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "554833e3-0658-41e1-be3d-f7ae57831230",
+                    "leftValue": "={{ $json.ruta }}",
+                    "rightValue": "cliente_vuelve",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "cliente_vuelve"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "e8e504dc-4913-4cab-b61d-0a07587e4792",
+                    "leftValue": "={{ $json.ruta }}",
+                    "rightValue": "seguir",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "seguir"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b26d9bc5-26cb-49dc-8647-a188915ed483",
+      "name": "Ruteo por estado",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        1056,
+        -144
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "310ef633-ec44-4909-8773-0aa3633b5af2",
+      "name": "Fin · agente en silencio",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        -320
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "3708ef14-c146-4060-adee-72a4bcca314b",
+      "name": "Cliente vuelve · sin respuesta",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ 'hpf:' + $json.contactId }}",
+        "messageData": "={{ $json.messageId }}",
+        "tail": true
+      },
+      "id": "610c0952-a93f-49cf-a1eb-4e0109696fa9",
+      "name": "Debounce · push",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        -128
+      ],
+      "credentials": {
+        "redis": {
+          "id": "o8I3YHY4b5xY8Ipo",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": "={{ $('Evaluar estado').first().json.debounce_seg }}"
+      },
+      "id": "1768d089-d8f2-458a-ad1b-ab97479e814e",
+      "name": "Debounce · esperar",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1728,
+        -128
+      ],
+      "webhookId": "ae181367-e41e-49d3-8a16-8fc11d212974"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "Mensajes",
+        "key": "={{ $('Evaluar estado').first().json.contactId ? 'hpf:' + $('Evaluar estado').first().json.contactId : '' }}",
+        "options": {}
+      },
+      "id": "64790c1d-9469-4b0d-b6ae-3ac125d10515",
+      "name": "Debounce · leer",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1952,
+        -128
+      ],
+      "credentials": {
+        "redis": {
+          "id": "o8I3YHY4b5xY8Ipo",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Debounce \"gana el último\", igual que el origen: cada mensaje empuja a una lista de\n// Redis y duerme; al despertar sólo sigue la ejecución cuyo texto sigue siendo el\n// último de la lista. Las demás mueren acá.\n//\n// Ojo: el origen tenía este mismo mecanismo ROTO en la rama de imagen — `Guardar1`\n// empujaba `$workflow.id`, que es constante, así que la comparación daba siempre true\n// y no deduplicaba nada. Acá se empuja el messageId, que sí es único.\nconst ctx  = $('Evaluar estado').first().json;\nconst raw  = $input.first().json;\nconst lista = raw.Mensajes ?? raw.propertyName ?? raw ?? [];\nconst arr = Array.isArray(lista) ? lista : [lista];\nconst ultimo = arr.length ? String(arr[arr.length - 1]) : null;\nconst soyElUltimo = ultimo === ctx.messageId;\n\nreturn [{ json: {\n  ...ctx,\n  debounce: { acumulados: arr.length, ultimo, soy_el_ultimo: soyElUltimo,\n              mensajes: arr },\n  soy_el_ultimo: soyElUltimo,\n} }];"
+      },
+      "id": "bfc21c9c-ae54-46c7-b3c3-cd26c7ca39ad",
+      "name": "¿Soy el último?",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2176,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "03571525-7b69-4286-84ab-768c7751e309",
+              "leftValue": "={{ $json.soy_el_ultimo }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a268fd95-39b8-4510-981c-1217707ea821",
+      "name": "Gana el último",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2400,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "={{ 'hpf:' + $json.contactId }}"
+      },
+      "id": "a7ae3f28-bd95-446d-8121-6fc068412b14",
+      "name": "Debounce · limpiar",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2624,
+        -128
+      ],
+      "credentials": {
+        "redis": {
+          "id": "o8I3YHY4b5xY8Ipo",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "41d0eb1e-cb73-410e-909e-c33406bac4fb",
+      "name": "Fin · superado por otro mensaje",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2624,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "f4ed26ed-643c-46b7-b240-9102cf04cc47",
+              "leftValue": "={{ $json.tipo }}",
+              "rightValue": "audio",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b564e6ca-35d6-4ea0-864a-770fdcc27cfa",
+      "name": "¿Es audio?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2848,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Evaluar estado').first().json.adjuntos[0] }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "9422d03a-e5dd-453d-b927-b4345b63831a",
+      "name": "Descargar audio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3072,
+        -208
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {
+          "language": "es"
+        }
+      },
+      "id": "720b418f-939a-43e5-a4e0-e278bf1edb02",
+      "name": "Transcribir audio",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        3296,
+        -208
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "a1k3E4C9uRRHxngs",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Una nota de voz es un mensaje de texto más. En el origen `transcribe voice` vuelve\n// a `Get_Text`, o sea que el audio se reinyecta en el carril común y sigue el mismo\n// camino que cualquier mensaje escrito — Router incluido. Se replica eso.\nconst ctx = $('¿Soy el último?').first().json;\nconst t = $input.first().json || {};\nconst texto = String(t.text ?? t.transcription ?? t.content ?? '').trim();\nif (!texto) {\n  throw new Error('W1: la transcripción del audio vino vacía');\n}\nreturn [{ json: { ...ctx, texto, tipo: 'texto', tipo_original: 'audio' } }];"
+      },
+      "id": "3588f3f6-7103-42f0-a014-083a07182475",
+      "name": "Texto del audio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3520,
+        -208
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "a401bd4a-a0c1-49be-b98b-02a5fc10f653",
+              "leftValue": "={{ ['imagen','pdf'].includes($json.tipo) }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ebbe6f1a-0158-4158-9d89-c2401c1f3914",
+      "name": "¿Es media?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        3744,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "m8KhaZV3nSjJ55ci",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W7 Media"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "sessionId": "={{ $json.sessionId }}",
+            "contactId": "={{ $json.contactId }}",
+            "opportunityId": "={{ $json.opportunityId }}",
+            "texto": "={{ $json.texto }}",
+            "tipo": "={{ $json.tipo }}",
+            "adjuntos": "={{ JSON.stringify($json.adjuntos) }}",
+            "etapa": "={{ $json.etapa }}",
+            "_forzar_fuera_horario": "={{ $('Normalizar entrada').first().json._forzar_fuera_horario || false }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "f291d1d8-c3a2-4cbe-b6ef-373e19e8ccf8",
+      "name": "W7 · media",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        3968,
+        -224
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "cNmJCP2qVhdtfCH0",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W6 Conversación"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "sessionId": "={{ $json.sessionId }}",
+            "contactId": "={{ $json.contactId }}",
+            "opportunityId": "={{ $json.opportunityId }}",
+            "texto": "={{ $json.texto }}",
+            "primer_contacto": "={{ $json.primer_contacto }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "sessionId",
+              "displayName": "sessionId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "contactId",
+              "displayName": "contactId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "opportunityId",
+              "displayName": "opportunityId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "texto",
+              "displayName": "texto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "evento",
+              "displayName": "evento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "primer_contacto",
+              "displayName": "primer_contacto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "boolean"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "00fd8b41-1654-4f52-9da4-e26a0b735101",
+      "name": "W6 · conversación",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        3968,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Convergencia de los dos cerebros. Se lee por nombre de nodo y no por $json porque\n// sólo uno de los dos corrió; el otro ni existe en este runData.\nconst w7 = $('W7 · media');\nif (w7.isExecuted) return [{ json: w7.first().json }];\nconst w6 = $('W6 · conversación');\nif (w6.isExecuted) return [{ json: w6.first().json }];\nthrow new Error('W1: ni W6 ni W7 produjeron respuesta');"
+      },
+      "id": "e5962b3c-3fa1-48c1-b6ea-4d3f0af1de59",
+      "name": "Resultado del cerebro",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4192,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "78cdb7b2-be3b-4a85-8d2f-d772948921c4",
+              "leftValue": "={{ ($json.partes || []).length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0583b7ee-8ed7-4b6c-8d89-9d298ed052b1",
+      "name": "¿Hay algo que enviar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        4416,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "MdbOREN56lfQTYlM",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W2 Salida"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "contactId": "={{ $('Evaluar estado').first().json.contactId }}",
+            "partes": "={{ JSON.stringify($json.partes) }}",
+            "pausa_seg": "={{ ($('Normalizar entrada').first().json.canal === 'Telegram' || $('Normalizar entrada').first().json.debounce_seg > 0) ? 2 : 0 }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "eb81f217-7a3b-4cb0-8b2c-fbe8c3e23834",
+      "name": "W2 · enviar",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        4640,
+        -208
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const ctx = $('Evaluar estado').first().json;\nconst cerebro = $('Resultado del cerebro').first().json;\nconst destino = cerebro.etapa_destino || null;\n\n// Escalera del embudo. Fuera de ella (En Espera, Pago Confirmado, En Producción,\n// Ganado, Ventas Perdidas, …) NO se toca nada: son estados que maneja una persona\n// o la rama de pago, y pisarlos con un avance automático sería destructivo.\n// 'Esperando Pago' y 'Pago Confirmado' entran en la escalera porque el carril de\n// media las produce: un comprobante válido avanza a 'Pago Confirmado'. Sin ellas el\n// guard monótono rechazaba ese avance por no encontrar el destino en la lista.\nconst ESCALERA = ['Lead Nuevo', 'Saludo Enviado', 'Evento Identificado',\n                  'Productos Mostrados', 'Cotizado', 'Esperando Pago',\n                  'Pago Confirmado'];\nconst actual = ESCALERA.indexOf(ctx.etapa);\nconst nuevo  = ESCALERA.indexOf(destino);\n\n// DELTA declarado: el origen NO es monótono (sus If21/If8 dejan volver a ETAPA 2 a\n// un lead que ya estaba en ETAPA 4). Acá sólo se avanza. Retroceder la etapa borra\n// el trabajo comercial que ya se hizo sobre ese lead.\nconst avanza = destino !== null && actual >= 0 && nuevo > actual;\n\nreturn [{ json: { ...ctx, etapa_destino: destino, etapa_actual: ctx.etapa,\n                  avanza_etapa: avanza } }];"
+      },
+      "id": "50c1916f-9a0c-4367-9ad4-2e0540d18ab4",
+      "name": "Decidir etapa",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4864,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "8fe1b194-2fff-4f60-9a4a-a4eeacc07a8f",
+              "leftValue": "={{ $json.avanza_etapa }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3f9764dc-4576-4545-8876-469dc939a68b",
+      "name": "¿Avanza la etapa?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        5088,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VK4M7VQm8CMefbty",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W0 Client"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "op": "update_stage",
+            "args": "={{ {opportunityId: $json.opportunityId, etapa: $json.etapa_destino} }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "00085b68-1aa1-4582-889f-4d073d845009",
+      "name": "W0 · avanzar etapa",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        5312,
+        -208
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Objeto de evidencia del turno completo. Es lo que el runner de paridad lee del\n// runData: qué entró, por dónde ruteó, qué tools usó y qué salió a GHL.\n//\n// El envío se toma por nombre de nodo y NO de $json: desde que la escritura de\n// etapa se metió en el medio, `$input` acá es la salida de `¿Avanza la etapa?` o\n// la de `W0 · avanzar etapa`, no la de W2. Es la trampa que documenta\n// _core/standards/n8n-data-references.md.\nconst ctx = $('Evaluar estado').first().json;\nconst cerebro = $('Resultado del cerebro').first().json;\n// Cuando el cerebro no devuelve nada que mandar (imagen de un lead en producción, que\n// el origen también contesta con silencio) W2 no corre.\nconst w2 = $('W2 · enviar');\nconst envio = w2.isExecuted ? w2.first().json : { partes_enviadas: 0, enviados: [] };\nconst etapas = $('Decidir etapa').first().json;\nreturn [{ json: {\n  ok: true,\n  sessionId: ctx.sessionId, contactId: ctx.contactId, opportunityId: ctx.opportunityId,\n  entrada: { texto: ctx.texto, tipo: ctx.tipo, adjuntos: ctx.adjuntos },\n  etapa: ctx.etapa, gates: ctx.gates,\n  primer_contacto: ctx.primer_contacto, turnos_previos: ctx.turnos_previos,\n  messageId: ctx.messageId, messageId_derivado: ctx.messageId_derivado,\n  etapa_destino: etapas.etapa_destino, etapa_avanzada: etapas.avanza_etapa,\n  step: cerebro.step,\n  tools_usadas: cerebro.tools_usadas || [],\n  partes_enviadas: envio.partes_enviadas ?? null,\n  enviados: envio.enviados || [],\n} }];"
+      },
+      "id": "3d7cd4f7-58f7-4b08-8eda-648596821267",
+      "name": "Evidencia del turno",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5536,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Qué campaña de re-enganche arma este turno. Réplica de qué sub-workflow disparaba\n// cada agente en el origen:\n//   Starter (step_1)    → seg-rebeca\n//   Main Image (step_2) → seg-imagen\n//   Products (step_3)   → seg-cotizacion\n//   Recolector que COTIZÓ → seg-7pasos\n// Un step_4 que no cotiza no arma nada, y de paso mata la campaña anterior.\n//\n// DELTA declarado: en el origen, un step_3 que además cotizaba disparaba LAS DOS\n// cadenas. Acá gana 7pasos, porque la tabla tiene una fila por sesión.\nconst ctx = $('Evaluar estado').first().json;\nconst cerebro = $('Resultado del cerebro').first().json;\nconst step = cerebro.step;\n\nlet campania = null;\nif (cerebro.etapa_destino === 'Cotizado') campania = '7pasos';\nelse if (step === 'step_1') campania = 'rebeca';\nelse if (step === 'step_2') campania = 'imagen';\nelse if (step === 'step_3') campania = 'cotizacion';\n\nconst ahora = Date.now();\n// La primera ola va a la hora; 7pasos no manda olas, sólo evalúa a las 24 h.\nconst proximo = (campania && campania !== '7pasos')\n  ? new Date(ahora + 60 * 60000).toISOString() : null;\nconst evalAt = (campania === '7pasos')\n  ? new Date(ahora + 24 * 3600000).toISOString() : null;\n\nreturn [{ json: {\n  session_id: ctx.sessionId,\n  contact_id: ctx.contactId,\n  opportunity_id: ctx.opportunityId,\n  campania,\n  etapa_al_armar: cerebro.etapa_destino || ctx.etapa,\n  evento: cerebro.evento || null,\n  proximo_at: proximo,\n  evaluacion_at: evalAt,\n  evaluacion_desde_at: evalAt ? new Date(ahora).toISOString() : null,\n} }];"
+      },
+      "id": "f035e39d-5f1c-47e0-b8ee-9a49fa5f3754",
+      "name": "Decidir seguimiento",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5760,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "CREATE TABLE IF NOT EXISTS hpf_seguimientos (\n  session_id          text PRIMARY KEY,\n  contact_id          text NOT NULL,\n  opportunity_id      text,\n  campania            text,\n  etapa_al_armar      text,\n  evento              text,\n  ola                 int         NOT NULL DEFAULT 0,\n  proximo_at          timestamptz,\n  desde_at            timestamptz NOT NULL DEFAULT now(),\n  evaluacion_at       timestamptz,\n  evaluacion_desde_at timestamptz,\n  ultimo_inbound_at   timestamptz NOT NULL DEFAULT now(),\n  ultimo_toque_at     timestamptz,\n  cerrado_at          timestamptz,\n  cerrado_motivo      text,\n  bloqueado_hasta     timestamptz,\n  actualizado_at      timestamptz NOT NULL DEFAULT now()\n);\nINSERT INTO hpf_seguimientos (session_id, contact_id, opportunity_id, campania,\n  etapa_al_armar, evento, ola, proximo_at, evaluacion_at, evaluacion_desde_at,\n  desde_at, ultimo_inbound_at)\nVALUES ($1,$2,$3,$4,$5,$6,0,$7::timestamptz,$8::timestamptz,$9::timestamptz,now(),now())\nON CONFLICT (session_id) DO UPDATE SET\n  contact_id     = EXCLUDED.contact_id,\n  opportunity_id = COALESCE(EXCLUDED.opportunity_id, hpf_seguimientos.opportunity_id),\n  campania       = EXCLUDED.campania,\n  etapa_al_armar = EXCLUDED.etapa_al_armar,\n  evento         = COALESCE(EXCLUDED.evento, hpf_seguimientos.evento),\n  ola            = 0,\n  proximo_at     = EXCLUDED.proximo_at,\n  evaluacion_at  = COALESCE(EXCLUDED.evaluacion_at, hpf_seguimientos.evaluacion_at),\n  evaluacion_desde_at = COALESCE(EXCLUDED.evaluacion_desde_at,\n                                 hpf_seguimientos.evaluacion_desde_at),\n  desde_at          = now(),\n  ultimo_inbound_at = now(),\n  cerrado_at = NULL, cerrado_motivo = NULL, bloqueado_hasta = NULL,\n  actualizado_at = now()\nRETURNING session_id, campania, proximo_at, evaluacion_at;",
+        "options": {
+          "queryReplacement": "={{ [ $json.session_id, $json.contact_id, $json.opportunity_id, $json.campania, $json.etapa_al_armar, $json.evento, $json.proximo_at, $json.evaluacion_at, $json.evaluacion_desde_at ] }}"
+        }
+      },
+      "id": "c5445e2f-7e38-4d79-bae0-48ae70c1b062",
+      "name": "Marcar actividad",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        5984,
+        -128
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "159d47b4-decb-4d4e-886c-7b8ebcaeffa2",
+      "name": "Fin · procesado",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        6208,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "id": "tg-683295467687",
+      "name": "Telegram Trigger",
+      "position": [
+        -1184,
+        320
+      ],
+      "webhookId": "3b8e5c17-6a24-4d91-8f0b-51c7a9e2d604",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Telegram → el payload que espera W1, que es el de GHL.\n//\n// W1 exige `contactId` de GHL y un usuario de Telegram no tiene teléfono, así que se le\n// fabrica uno con el prefijo +999 (código de país SIN ASIGNAR: no puede pisar el número\n// de un lead real). El nodo siguiente hace upsert_contact con ese teléfono y devuelve un\n// contactId de verdad, así el resto del pipeline no se entera de que vino de Telegram.\n//\n// El mismo prefijo es lo que W2 mira después para decidir si responde por Telegram o por\n// GHL — por eso no se puede cambiar acá sin cambiarlo allá.\nconst j = $input.first().json || {};\nconst msg = j.message || j;\nconst chat = msg.chat || {};\nconst from = msg.from || {};\nconst chatId = String(chat.id ?? from.id ?? '');\nif (!chatId) throw new Error('W1/TG: mensaje de Telegram sin chat id');\n\nconst nombre = [from.first_name, from.last_name].filter(Boolean).join(' ')\n             || from.username || ('Telegram ' + chatId);\n\nconst texto = String(msg.text || msg.caption || '').trim();\n\n// ── adjuntos ──────────────────────────────────────────────────────────────────────────\n// Telegram entrega los adjuntos como `file_id`. Acá SÓLO se decide cuál se canjea y con\n// qué extensión va a quedar; el canje lo hacen `TG · bajar archivo` → `TG · subir a GHL`.\n//\n// La extensión NO se lee de Telegram. `file_path` de la Bot API suele traerla bien, pero\n// es un dato que no controlamos y de él depende TODA la clasificación que hace\n// `Normalizar entrada`, que mira exclusivamente la extensión de adjuntos[0]:\n//     .ogg .oga .mp3 .m4a .wav .amr → audio   (→ Whisper)\n//     .pdf                          → pdf     (→ W7, sin visión)\n//     cualquier otro adjunto        → imagen  (→ W7, visión de OpenAI)\n// Un video queda como 'imagen' y la visión lo rechaza: es EXACTAMENTE lo que le pasa hoy\n// a un lead real que manda un video por WhatsApp. Se replica a propósito — esta Fase 0\n// existe para que la guía de paridad DESCUBRA estas cosas, no para taparlas.\nconst MAX = 20 * 1024 * 1024;   // techo duro de getFile en la Bot API\n\n// Extensiones que un `document` puede tener para que valga la pena subirlo. Es más\n// estricto que producción, y sólo acá: sin esto un .zip se sube, la visión lo rechaza y\n// el caso de prueba \"documento no soportado\" no tiene resultado observable.\nconst DOC_OK = ['pdf', 'jpg', 'jpeg', 'png', 'webp', 'gif',\n                'ogg', 'oga', 'mp3', 'm4a', 'wav', 'amr', 'mp4', 'mov', 'm4v'];\n\nconst extDe = (n, def) => {\n  const m = String(n || '').toLowerCase().match(/\\.([a-z0-9]{1,5})$/);\n  return m ? m[1] : def;\n};\n\nlet media = null;     // { file_id, ext, clase, bytes }\nlet rechazo = '';\n\nif (Array.isArray(msg.photo) && msg.photo.length) {\n  // `photo` es el array de tamaños, ordenado de menor a mayor. El último es el que le\n  // sirve a la visión.\n  const p = msg.photo[msg.photo.length - 1];\n  media = { file_id: p.file_id, ext: 'jpg', clase: 'foto',\n            bytes: Number(p.file_size || 0) };\n} else if (msg.voice) {\n  // Las notas de voz de Telegram son OGG/Opus. Va como '.ogg' y NO '.oga': la Media Library\n  // de GHL valida por EXTENSIÓN, no por contenido, y rechaza .oga con\n  // 400 INVALID_FILE_TYPE. Medido el 2026-08-20 subiendo el MISMO archivo dos veces,\n  // byte por byte idéntico, cambiando sólo el nombre: .oga → 400, .ogg → 201.\n  // (También aceptan .mp3 y .wav; .m4a también da 400.)\n  // Con .oga el audio moría en el upload y NUNCA llegaba a Whisper.\n  // El regex de audio de `Normalizar entrada` matchea .ogg igual, así que no cambia nada aguas abajo.\n  media = { file_id: msg.voice.file_id, ext: 'ogg', clase: 'nota de voz',\n            bytes: Number(msg.voice.file_size || 0) };\n} else if (msg.audio) {\n  media = { file_id: msg.audio.file_id, ext: extDe(msg.audio.file_name, 'mp3'),\n            clase: 'audio', bytes: Number(msg.audio.file_size || 0) };\n} else if (msg.video_note) {\n  media = { file_id: msg.video_note.file_id, ext: 'mp4', clase: 'video',\n            bytes: Number(msg.video_note.file_size || 0) };\n} else if (msg.animation) {\n  // Un GIF de Telegram es un mp4, y viene con `animation` Y `document` poblados a la vez.\n  // Por eso va ANTES de document: si no, entra por la rama equivocada.\n  media = { file_id: msg.animation.file_id, ext: 'mp4', clase: 'video',\n            bytes: Number(msg.animation.file_size || 0) };\n} else if (msg.video) {\n  media = { file_id: msg.video.file_id, ext: extDe(msg.video.file_name, 'mp4'),\n            clase: 'video', bytes: Number(msg.video.file_size || 0) };\n} else if (msg.document) {\n  const ext = extDe(msg.document.file_name, '');\n  if (DOC_OK.includes(ext)) {\n    media = { file_id: msg.document.file_id, ext, clase: 'documento',\n              bytes: Number(msg.document.file_size || 0) };\n  } else {\n    // El nombre del archivo NO se echa en el aviso: un 'mi_archivo.zip' metería un '_'\n    // suelto y, si el nodo de Telegram sale con parse_mode, eso es un 400.\n    rechazo = 'No puedo procesar ese tipo de archivo. Mandame una foto, un PDF o una nota de voz.';\n  }\n} else if (msg.sticker) {\n  rechazo = 'No puedo procesar stickers. Mandame una foto, un PDF o una nota de voz.';\n} else if (msg.location || msg.venue) {\n  rechazo = 'No puedo procesar ubicaciones. Escribime la direccion como texto.';\n} else if (msg.contact || msg.poll || msg.dice || msg.game) {\n  rechazo = 'No puedo procesar ese tipo de mensaje. Mandame texto, una foto, un PDF o una nota de voz.';\n}\n\n// getFile devuelve 400 arriba de 20 MB y no hay manera de bajar el archivo. Se corta acá,\n// con el file_size que ya viene en el update, para dar un mensaje entendible en vez del\n// error crudo de la API.\nif (media && media.bytes > MAX) {\n  rechazo = 'Ese archivo pesa mas de 20 MB y Telegram no me deja bajarlo. Mandame uno mas chico.';\n  media = null;\n}\n\n// Sin texto y sin adjunto reconocible no hay nada que procesar. Ojo: una FOTO SIN CAPTION\n// no cae acá — tiene media, y el mensaje de imagen con texto vacío es válido de punta a\n// punta (W7 hace String(src.texto ?? '') y la visión sólo usa la URL).\nif (!media && !rechazo && !texto) {\n  rechazo = 'No pude leer ese mensaje. Mandame texto, una foto, un PDF o una nota de voz.';\n}\n\nreturn [{ json: {\n  _tg_chat_id: chatId,\n  _tg_nombre: nombre,\n  // Se sigue emitiendo porque es diagnóstico útil en el log, pero YA NO ES UN GUARD: si\n  // alguien lo cablea \"para completar\", rompe las fotos sin caption. El guard real es\n  // `_tg_ruta`.\n  _tg_sin_texto: !texto,\n  telefono_sintetico: '+999' + chatId,\n  texto,\n  // messageId real de Telegram: es la clave de idempotencia del debounce de W1 y viene\n  // garantizada, así que no hace falta que W1 la derive por hash.\n  messageId: 'tg:' + chatId + ':' + String(msg.message_id ?? ''),\n  // ── contrato con los nodos de media ────────────────────────────────────────────────\n  // Ternario TOTAL: siempre vale una de las tres. Por eso `TG · ruteo media` puede ir sin\n  // fallback y no pierde items.\n  _tg_ruta: rechazo ? 'no_soportado' : (media ? 'con_media' : 'sin_media'),\n  _tg_media: media,\n  _media_error: rechazo,\n} }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "id": "tg-379448020320",
+      "name": "TG → payload GHL",
+      "position": [
+        -976,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VK4M7VQm8CMefbty",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W0 Client"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "op": "upsert_contact",
+            "args": "={{ {email: 'tg-' + $json._tg_chat_id + '@telegram.happyflops.mx', name: $json._tg_nombre, source: 'telegram-test', tags: ['canal-telegram','test']} }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "op",
+              "displayName": "op",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "args",
+              "displayName": "args",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "id": "tg-122976629403",
+      "name": "TG · upsert contacto",
+      "position": [
+        -784,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Toma el contactId que devolvió W0 y arma el payload GHL definitivo para W1.\nconst ctx = $('TG → payload GHL').first().json;\nconst r = $input.first().json || {};\n// W0 devuelve el contacto en distintas formas según sea alta o match; se aceptan todas\n// en vez de asumir una y romper el día que GHL cambie el shape.\nconst c = r.contact || r.data?.contact || r.data || r;\nconst contactId = c.id || c.contactId || c._id;\nif (!contactId) {\n  throw new Error('W1/TG: upsert_contact no devolvió contactId — ' +\n    JSON.stringify(r).slice(0, 200));\n}\nreturn [{ json: {\n  contactId: String(contactId),\n  conversationId: null,\n  messageId: ctx.messageId,\n  body: ctx.texto,\n  // Vacío a propósito. La rama con adjunto la pisa `TG · adjuntar media`, que es el único\n  // nodo que llega a conocer la URL pública.\n  attachments: [],\n  phone: ctx.telefono_sintetico,\n  canal: 'Telegram',\n  // 0 para texto: en una prueba manual esperar 50s por respuesta es insufrible, y un\n  // mensaje escrito no viene en ráfaga. Para media 0 NO sirve — un álbum de Telegram\n  // llega como N mensajes independientes y el \"gana el último\" no alcanza a deduplicar\n  // nada. `TG · adjuntar media` lo sube a 15 en esa rama.\n  debounce_seg: 0,\n  // Se arrastran para el Switch de ruteo y para el aviso de rechazo.\n  _tg_ruta: ctx._tg_ruta,\n  _media_error: ctx._media_error,\n} }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "id": "tg-949801687401",
+      "name": "TG · armar payload",
+      "position": [
+        -576,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ¿Es un comando de reset? Se compara igual que en el handler viejo: texto entero,\n// sin espacios, en minúsculas. Así \"/reset\" resetea y \"reset el pedido\" no.\nconst p = $input.first().json;\nconst COMANDOS = [\"/b\", \"/borrar\", \"/reset\", \"/clear\", \"/nuevo\", \"/nueva\"];\nconst t = String(p.body || '').trim().toLowerCase();\n// El session_id se deriva igual que en `Resolver identidad` de W1 (phone || '2131').\n// Si esa fórmula cambia allá, hay que cambiarla acá — es la misma clave de memoria.\nconst sessionId = String(p.phone || '') + '2131';\nconst tg = $('TG → payload GHL').first().json;\nreturn [{ json: { ...p, _tg_chat_id_reset: tg._tg_chat_id, _es_reset: COMANDOS.includes(t), _session_id: sessionId } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "id": "rst-109882889746",
+      "name": "TG · ¿es reset?",
+      "position": [
+        -400,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "r1",
+              "leftValue": "={{ $json._es_reset }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "id": "rst-110508230276",
+      "name": "TG · ruteo reset",
+      "position": [
+        -224,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Reset de sesión. Las tres tablas se limpian juntas: dejar una a medias deja al\n-- bot recordando el evento sin recordar la conversación, que es peor que no resetear.\nDELETE FROM n8n_chat_histories WHERE session_id = $1;\nDELETE FROM hpf_estado_sesion  WHERE session_id = $1;\nDELETE FROM hpf_seguimientos   WHERE session_id = $1;\nSELECT $1::text AS session_id;",
+        "options": {
+          "queryReplacement": "={{ [ $json._session_id ] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "id": "rst-306652740808",
+      "name": "TG · borrar memoria",
+      "position": [
+        -48,
+        208
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "={{ 'hpf:' + $('TG · ¿es reset?').first().json.contactId }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "id": "rst-997791247250",
+      "name": "TG · limpiar debounce",
+      "position": [
+        160,
+        208
+      ],
+      "credentials": {
+        "redis": {
+          "id": "o8I3YHY4b5xY8Ipo",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const p = $('TG · ¿es reset?').first().json;\nreturn [{ json: { chatId: p._tg_chat_id_reset,\n  texto: '🧹 Memoria y buffer limpios. Puedes probar un caso nuevo.' } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "id": "rst-100206933431",
+      "name": "TG · aviso reset",
+      "position": [
+        368,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.texto }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "id": "rst-482501052066",
+      "name": "TG · confirmar reset",
+      "position": [
+        560,
+        208
+      ],
+      "webhookId": "98b60a2a-7162-482b-915c-312c496ec71f",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Define segs salida",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4560,
+        -400
+      ],
+      "typeVersion": 1,
+      "id": "a26bde6e-bd90-48f8-92f0-5ec39eae52bd",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Define segs entrada",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -624,
+        224
+      ],
+      "typeVersion": 1,
+      "id": "91199c61-43e2-46f8-82bd-6c13b7ca22e6",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "chatId": "-4925599962",
+        "text": "=👤 El lead {{ $('Evaluar estado').first().json.contactId }} está en *{{ $('Evaluar estado').first().json.etapa }}* y envió un mensaje. El bot no le respondió — hay que atenderlo a mano.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "c2f8b5e1-3333-4bbb-9003-1f2b3c4d5e03",
+      "name": "Aviso · cliente vuelve",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1504,
+        -320
+      ],
+      "webhookId": "8d3c1a56-7e42-4b90-a1f5-62d7b8e93c14",
+      "credentials": {
+        "telegramApi": {
+          "id": "vgyWhM8OBUJtYOGC",
+          "name": "H.F"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "rm-con",
+                    "leftValue": "={{ $json._tg_ruta }}",
+                    "rightValue": "con_media",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "con_media"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "rm-sin",
+                    "leftValue": "={{ $json._tg_ruta }}",
+                    "rightValue": "sin_media",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "sin_media"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "rm-no",
+                    "leftValue": "={{ $json._tg_ruta }}",
+                    "rightValue": "no_soportado",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "no_soportado"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d3f1a2b0-1111-4ccc-9101-0a1b2c3d4e01",
+      "name": "TG · ruteo media",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        -48,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $('TG → payload GHL').first().json._tg_media.file_id }}",
+        "additionalFields": {}
+      },
+      "id": "d3f1a2b0-2222-4ccc-9102-0a1b2c3d4e02",
+      "name": "TG · bajar archivo",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        448
+      ],
+      "webhookId": "5a1c7e30-8b44-4d21-9e6f-71a2b3c4d5e6",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// El nombre del archivo lo fijamos NOSOTROS, no Telegram.\n//\n// `TG · bajar archivo` nombra el binario con lo que venga en `file_path` de la Bot API\n// ('photos/file_12.jpg', 'voice/file_13.oga'...). En la práctica la extensión viene bien,\n// pero es un dato que no controlamos y de él depende TODA la clasificación de\n// `Normalizar entrada`. Así que se reescribe con la que ya decidió `TG → payload GHL`, y\n// se manda además en el campo `name` del multipart — que es de donde GHL saca el nombre\n// con el que publica el archivo. Dos mecanismos, uno tiene que pegar.\nconst ctx = $('TG → payload GHL').first().json;\nconst med = ctx._tg_media || {};\nconst it  = $input.first();\nconst j   = it.json || {};\nconst res = j.result || {};\n\n// Prefijo 'tg-test-' para poder listarlos y borrarlos después de la corrida:\n//     hpf-subir-media-ghl.py --listar tg-test\n// El chat y el message_id hacen el nombre trazable y único.\nconst nombre = 'tg-test-' + ctx._tg_chat_id + '-' +\n               String(ctx.messageId).split(':').pop() + '.' + med.ext;\n\n// getFile falla con 400 si el archivo pasa los 20 MB o si el file_id venció. El nodo\n// anterior va con onError:continueRegularOutput justamente para poder avisarlo por\n// Telegram en vez de morir en silencio, así que acá NO se tira: se marca y se sigue.\n// `TG · subir a GHL` va a fallar también (no hay binario), pero `TG · adjuntar media`\n// reporta ESTE error, que es el de verdad, y no el derivado.\nif (!res.file_path || !it.binary || !it.binary.data) {\n  return [{ json: { ...j, _nombre_ghl: nombre,\n    _media_error: 'No pude bajar el archivo de Telegram. Proba con uno mas chico o mandalo de nuevo.' } }];\n}\n\n// El binario viaja tal cual; sólo se le cambian los metadatos de nombre. El mimeType NO se\n// toca: lo puso el nodo de Telegram desde la respuesta real y GHL lo usa como Content-Type.\nit.binary.data.fileName = nombre;\nit.binary.data.fileExtension = med.ext;\nreturn [{ json: { ...j, _nombre_ghl: nombre, _media_error: '' }, binary: it.binary }];\n"
+      },
+      "id": "d3f1a2b0-3333-4ccc-9103-0a1b2c3d4e03",
+      "name": "TG · nombrar archivo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/medias/upload-file",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "hpf-n8n/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $json._nombre_ghl }}"
+            },
+            {
+              "name": "hosted",
+              "value": "false"
+            },
+            {
+              "name": "altId",
+              "value": "onRwi0ZF4uYi0Lp6GAbE"
+            },
+            {
+              "name": "altType",
+              "value": "location"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "id": "d3f1a2b0-4444-4ccc-9104-0a1b2c3d4e04",
+      "name": "TG · subir a GHL",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        576,
+        448
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Última parada del canje: convierte lo que devolvió GHL en el `attachments[]` que espera\n// `Normalizar entrada`.\n//\n// El contrato no es negociable: `Normalizar entrada` clasifica el mensaje MIRANDO LA\n// EXTENSIÓN de adjuntos[0]. Si la URL no termina como corresponde, un audio se procesa\n// como imagen y el turno sale mal SIN NINGÚN ERROR. Por eso acá se verifica la extensión\n// de la URL final antes de dejarla pasar: un bug silencioso se convierte en un mensaje.\nconst base = $('TG · ¿es reset?').first().json;   // el payload completo de esta rama\nconst ctx  = $('TG → payload GHL').first().json;\nconst nom  = $('TG · nombrar archivo').first().json;\nconst med  = ctx._tg_media || {};\n\n// n8n trunca los errores POR EL FINAL: lo accionable va primero, el ruido al final.\n// Y se limpian los caracteres de Markdown: el repo se contradice sobre si los nodos de\n// Telegram salen con parse_mode, y un '_' suelto del body de GHL sería un 400.\nconst fallar = (m, debug) => [{ json: { ...base,\n  _media_error: String(m).replace(/[*_`\\[\\]]/g, ' ').slice(0, 300),\n  _media_error_debug: debug ? String(debug).slice(0, 500) : '' } }];\n\n// Error arrastrado desde la bajada.\nif (nom._media_error) return fallar(nom._media_error);\n\nconst up  = $input.first().json || {};\nconst st  = Number(up.statusCode ?? 200);\nconst b   = up.body ?? up;\nconst txt = (typeof b === 'string') ? b : JSON.stringify(b || {});\n\nif (st < 200 || st >= 300) {\n  // 401/403 = el PIT de la credencial no tiene scope medias.write, o Cloudflare.\n  // Debug técnico va aparte; al lead solo un mensaje amable.\n  return fallar('No pude procesar tu archivo. Escribime lo que necesitás en texto y seguimos.', 'GHL rechazo HTTP ' + st + '. ' + txt.slice(0, 140));\n}\n\n// GHL devuelve el id del archivo; según la versión, a veces también la URL. Se aceptan las\n// dos formas y, si sólo vino el id, se arma la URL del CDN — el mismo patrón con el que se\n// sirven las 65 fichas del catálogo.\nconst CDN = 'https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/';\nconst id  = b.fileId || b.id || b._id || (b.file && b.file.id) || '';\nlet url = String(b.url || b.fileUrl || (b.file && b.file.url) || '');\nif (!url && id) url = CDN + id + '.' + med.ext;\nif (!url) return fallar('No pude procesar tu archivo. Escribime lo que necesitás en texto y seguimos.', 'GHL acepto pero no devolvio URL. ' + txt.slice(0, 140));\n\n// El assert que evita el bug silencioso.\nconst limpia = url.split('?')[0].toLowerCase();\nif (!limpia.endsWith('.' + String(med.ext).toLowerCase())) {\n  return fallar('La URL de GHL no termino en .' + med.ext +\n                ' y W1 la clasificaria mal. URL: ' + url.slice(-70));\n}\n\nreturn [{ json: {\n  ...base,\n  attachments: [url],\n  // 15 s, no 0. Con 0 el \"gana el último\" no deduplica nada: cada ejecución empuja a Redis\n  // y lee al instante, y siempre se ve última. Un álbum de 3 fotos son 3 mensajes\n  // independientes de Telegram → 3 respuestas. Con 15 las tres empujan y sólo la última\n  // sigue. 15 es además lo que `Normalizar entrada` aplicaría solo para una imagen, así\n  // que la comparación con producción es honesta.\n  // (Producción usa 50 para audio; acá también van 15 — diferencia declarada en la guía.)\n  debounce_seg: 15,\n  _media_error: '',\n  _tg_media_url: url,\n  _tg_media_clase: med.clase,\n} }];\n"
+      },
+      "id": "d3f1a2b0-5555-4ccc-9105-0a1b2c3d4e05",
+      "name": "TG · adjuntar media",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        784,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "mo-1",
+              "leftValue": "={{ $json._media_error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d3f1a2b0-6666-4ccc-9106-0a1b2c3d4e06",
+      "name": "TG · ¿media ok?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        992,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('TG → payload GHL').first().json._tg_chat_id }}",
+        "text": "={{ $json._media_error || 'No pude procesar ese mensaje. Mandame texto, una foto, un PDF o una nota de voz.' }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "d3f1a2b0-7777-4ccc-9107-0a1b2c3d4e07",
+      "name": "TG · aviso media",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1200,
+        560
+      ],
+      "webhookId": "6b2d8f41-9c55-4e32-8f70-82b3c4d5e6f7",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook inbound": {
+      "main": [
+        [
+          {
+            "node": "Normalizar entrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar entrada": {
+      "main": [
+        [
+          {
+            "node": "Idempotencia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Idempotencia": {
+      "main": [
+        [
+          {
+            "node": "¿Mensaje nuevo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Mensaje nuevo?": {
+      "main": [
+        [
+          {
+            "node": "Responder ack",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder duplicado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder duplicado": {
+      "main": [
+        [
+          {
+            "node": "Fin · duplicado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder ack": {
+      "main": [
+        [
+          {
+            "node": "Resolver identidad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolver identidad": {
+      "main": [
+        [
+          {
+            "node": "¿Hay historial?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay historial?": {
+      "main": [
+        [
+          {
+            "node": "W0 · find or create",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "W0 · find or create": {
+      "main": [
+        [
+          {
+            "node": "W0 · leer oportunidad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "W0 · leer oportunidad": {
+      "main": [
+        [
+          {
+            "node": "Evaluar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluar estado": {
+      "main": [
+        [
+          {
+            "node": "Ruteo por estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ruteo por estado": {
+      "main": [
+        [
+          {
+            "node": "Fin · agente en silencio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cliente vuelve · sin respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Debounce · push",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Debounce · push": {
+      "main": [
+        [
+          {
+            "node": "Debounce · esperar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Debounce · esperar": {
+      "main": [
+        [
+          {
+            "node": "Debounce · leer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Debounce · leer": {
+      "main": [
+        [
+          {
+            "node": "¿Soy el último?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Soy el último?": {
+      "main": [
+        [
+          {
+            "node": "Gana el último",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gana el último": {
+      "main": [
+        [
+          {
+            "node": "Debounce · limpiar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fin · superado por otro mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Debounce · limpiar": {
+      "main": [
+        [
+          {
+            "node": "¿Es audio?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es audio?": {
+      "main": [
+        [
+          {
+            "node": "Descargar audio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "¿Es media?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar audio": {
+      "main": [
+        [
+          {
+            "node": "Transcribir audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribir audio": {
+      "main": [
+        [
+          {
+            "node": "Texto del audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Texto del audio": {
+      "main": [
+        [
+          {
+            "node": "¿Es media?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es media?": {
+      "main": [
+        [
+          {
+            "node": "W7 · media",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "W6 · conversación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "W7 · media": {
+      "main": [
+        [
+          {
+            "node": "Resultado del cerebro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "W6 · conversación": {
+      "main": [
+        [
+          {
+            "node": "Resultado del cerebro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resultado del cerebro": {
+      "main": [
+        [
+          {
+            "node": "¿Hay algo que enviar?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay algo que enviar?": {
+      "main": [
+        [
+          {
+            "node": "W2 · enviar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Decidir etapa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "W2 · enviar": {
+      "main": [
+        [
+          {
+            "node": "Decidir etapa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decidir etapa": {
+      "main": [
+        [
+          {
+            "node": "¿Avanza la etapa?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Avanza la etapa?": {
+      "main": [
+        [
+          {
+            "node": "W0 · avanzar etapa",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Evidencia del turno",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "W0 · avanzar etapa": {
+      "main": [
+        [
+          {
+            "node": "Evidencia del turno",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evidencia del turno": {
+      "main": [
+        [
+          {
+            "node": "Decidir seguimiento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decidir seguimiento": {
+      "main": [
+        [
+          {
+            "node": "Marcar actividad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marcar actividad": {
+      "main": [
+        [
+          {
+            "node": "Fin · procesado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "TG → payload GHL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG → payload GHL": {
+      "main": [
+        [
+          {
+            "node": "TG · upsert contacto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG · upsert contacto": {
+      "main": [
+        [
+          {
+            "node": "TG · armar payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG · armar payload": {
+      "main": [
+        [
+          {
+            "node": "TG · ¿es reset?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG · ¿es reset?": {
+      "main": [
+        [
+          {
+            "node": "TG · ruteo reset",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG · ruteo reset": {
+      "main": [
+        [
+          {
+            "node": "TG · borrar memoria",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "TG · ruteo media",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG · borrar memoria": {
+      "main": [
+        [
+          {
+            "node": "TG · limpiar debounce",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG · limpiar debounce": {
+      "main": [
+        [
+          {
+            "node": "TG · aviso reset",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG · aviso reset": {
+      "main": [
+        [
+          {
+            "node": "TG · confirmar reset",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cliente vuelve · sin respuesta": {
+      "main": [
+        [
+          {
+            "node": "Aviso · cliente vuelve",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG · ruteo media": {
+      "main": [
+        [
+          {
+            "node": "TG · bajar archivo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Normalizar entrada",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "TG · aviso media",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG · bajar archivo": {
+      "main": [
+        [
+          {
+            "node": "TG · nombrar archivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG · nombrar archivo": {
+      "main": [
+        [
+          {
+            "node": "TG · subir a GHL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG · subir a GHL": {
+      "main": [
+        [
+          {
+            "node": "TG · adjuntar media",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG · adjuntar media": {
+      "main": [
+        [
+          {
+            "node": "TG · ¿media ok?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG · ¿media ok?": {
+      "main": [
+        [
+          {
+            "node": "Normalizar entrada",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "TG · aviso media",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Normalizar entrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "6693266b-ab60-4cfe-89de-517f577423c6",
+  "activeVersionId": "6693266b-ab60-4cfe-89de-517f577423c6",
+  "versionCounter": 82,
+  "triggerCount": 2,
+  "shared": [
+    {
+      "updatedAt": "2026-08-06T23:28:06.569Z",
+      "createdAt": "2026-08-06T23:28:06.569Z",
+      "role": "workflow:owner",
+      "workflowId": "nA14dNwJ7VS3YMYr",
+      "projectId": "g2TpxqLMiC0UsUBj",
+      "project": {
+        "updatedAt": "2025-05-10T12:26:37.475Z",
+        "createdAt": "2025-05-10T12:24:10.921Z",
+        "id": "g2TpxqLMiC0UsUBj",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-05-10T12:24:10.921Z",
+            "createdAt": "2025-05-10T12:24:10.921Z",
+            "userId": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+            "projectId": "g2TpxqLMiC0UsUBj",
+            "user": {
+              "updatedAt": "2026-08-27T18:52:56.937Z",
+              "createdAt": "2025-05-10T12:24:07.518Z",
+              "id": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "lastName": "AI",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-05-10T12:26:59.729Z",
+                "personalization_survey_n8n_version": "1.91.3",
+                "companySize": "<20",
+                "companyType": "systems-integrator",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "6fpcC3iGwfEYO3Eu",
+                "userActivatedAt": 1757033385622,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1773184568459
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "aiAgentStarterCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-08-27",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-08-25T14:54:29.744Z",
+    "createdAt": "2026-08-25T14:54:29.744Z",
+    "versionId": "6693266b-ab60-4cfe-89de-517f577423c6",
+    "workflowId": "nA14dNwJ7VS3YMYr",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "hpf-w1-inbound",
+          "authentication": "headerAuth",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "fe6eaeb9-ba9d-434a-93ec-d9a2990626ae",
+        "name": "Webhook inbound",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -1184,
+          -32
+        ],
+        "webhookId": "15158884-a4d9-45ac-bcf0-d4f948677449",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "jUb7ZjztncX5ACpc",
+            "name": "HPF GHL Webhook Auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Contrato de entrada — lo define NUESTRO workflow WF-01 de GHL, no GHL: el paso\n// \"Webhook\" de un GHL Workflow deja mapear campos a mano. Está documentado en la guía\n// de provisión; si cambia allá, cambia acá.\n//   { contactId, conversationId, messageId, body, attachments[], phone, canal }\nconst j0 = $input.first().json || {};\nconst src = (j0.body && j0.body.contactId !== undefined) ? j0.body : j0;\n\nif (!src.contactId) {\n  throw new Error('W1: el relay no mandó contactId. ' +\n    'Revisar el mapeo del paso Webhook en WF-01.');\n}\n\nlet adj = src.attachments ?? [];\nif (typeof adj === 'string') {\n  const t = adj.trim();\n  adj = t.startsWith('[') ? JSON.parse(t) : (t ? [t] : []);\n}\nif (!Array.isArray(adj)) adj = adj ? [adj] : [];\n\nconst texto = String(src.body ?? '').trim();\n\n// Ruteo por tipo, réplica de `checkType` del origen (text / voice / Image).\nlet tipo = 'texto';\nconst url0 = String(adj[0] || '').toLowerCase();\nif (adj.length) {\n  if (/\\.(ogg|oga|mp3|m4a|wav|amr)(\\?|$)/.test(url0)) tipo = 'audio';\n  else if (/\\.pdf(\\?|$)/.test(url0)) tipo = 'pdf';\n  else tipo = 'imagen';\n}\n\n// El messageId es la clave de idempotencia, y hace falta porque el debounce hace\n// timeoutear el webhook de GHL: si GHL reintenta, el mismo mensaje entra dos veces.\n//\n// Pero no está garantizado que el relay mande uno: depende de si el trigger de GHL\n// expone un id por mensaje, y el paso \"Webhook\" de un GHL Workflow mapea campos a\n// mano. Si no viene, se deriva del contenido — determinístico, así que el reintento\n// del MISMO mensaje cae en la misma clave.\n//\n// No se usa crypto: el sandbox del nodo Code no garantiza los builtins de Node. El\n// hash es FNV-1a de 32 bits, que para desambiguar mensajes de un mismo contacto\n// dentro de una ventana de 3 minutos sobra.\nfunction huella(s) {\n  let h = 0x811c9dc5;\n  for (let i = 0; i < s.length; i++) {\n    h ^= s.charCodeAt(i);\n    h = Math.imul(h, 0x01000193) >>> 0;\n  }\n  return h.toString(16).padStart(8, '0');\n}\n\nlet messageId = src.messageId ? String(src.messageId).trim() : '';\nconst derivado = !messageId;\nif (derivado) {\n  // El id lleva el contactId adelante para que sea legible en la tabla y en los logs,\n  // y para que dos leads que escriben lo mismo nunca colisionen.\n  messageId = 'auto:' + String(src.contactId) + ':' +\n              huella([texto, adj.join('|')].join('\\u0001'));\n}\n\nreturn [{ json: {\n  contactId: String(src.contactId),\n  conversationId: src.conversationId ? String(src.conversationId) : null,\n  messageId,\n  messageId_derivado: derivado,\n  phone: src.phone ? String(src.phone) : null,\n  canal: src.canal || 'WhatsApp',\n  texto,\n  adjuntos: adj,\n  tipo,\n  // el test manda debounce_seg: 0; producción usa los del origen (50 texto / 15 imagen)\n  debounce_seg: src.debounce_seg !== undefined\n    ? Number(src.debounce_seg)\n    : (tipo === 'imagen' ? 15 : 50),\n  recibido_at: $now.toISO(),\n  // seam de test, ver la guardia de horario de W7\n  _forzar_fuera_horario: src._forzar_fuera_horario === true,\n} }];"
+        },
+        "id": "10a5438e-c968-4fad-a736-a870f83792de",
+        "name": "Normalizar entrada",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -960,
+          -32
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "CREATE TABLE IF NOT EXISTS hpf_mensajes_vistos (\n  message_id text PRIMARY KEY,\n  visto_at   timestamptz NOT NULL DEFAULT now()\n);\nDELETE FROM hpf_mensajes_vistos WHERE visto_at < now() - interval '24 hours';\nINSERT INTO hpf_mensajes_vistos (message_id) VALUES ($1)\nON CONFLICT (message_id) DO UPDATE\n  SET visto_at = now()\n  WHERE $2::boolean\n    AND hpf_mensajes_vistos.visto_at < now() - interval '3 minutes'\nRETURNING message_id;",
+          "options": {
+            "queryReplacement": "={{ [ $json.messageId, $json.messageId_derivado ] }}"
+          }
+        },
+        "id": "bc8f71de-9fa3-41a8-bf49-84302b2c809f",
+        "name": "Idempotencia",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          -736,
+          -32
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "postgres": {
+            "id": "uK59P60DJmOJc4Lm",
+            "name": "H.F"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "version": 2,
+              "typeValidation": "loose"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "a1bf9a21-c568-409f-aa54-f467d05dcd06",
+                "leftValue": "={{ $json.message_id }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "dc3f4cd5-7955-4b14-bfbf-0ac8595ca5d3",
+        "name": "¿Mensaje nuevo?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          -512,
+          -32
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ok: true, aceptado: true, messageId: $('Normalizar entrada').first().json.messageId}) }}",
+          "options": {}
+        },
+        "id": "7506ac0f-5df6-461e-b8be-075c00a6d8fe",
+        "name": "Responder ack",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          -288,
+          -128
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ok: true, aceptado: false, motivo: \"duplicado\", messageId: $('Normalizar entrada').first().json.messageId}) }}",
+          "options": {}
+        },
+        "id": "9216d54a-f97e-4363-ab0f-a0302581802e",
+        "name": "Responder duplicado",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          -288,
+          64
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "a7d68311-5ea9-4504-b2ea-b12ae9a016ad",
+        "name": "Fin · duplicado",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          -64,
+          64
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "CREATE TABLE IF NOT EXISTS hpf_identity (\n  ghl_contact_id   text PRIMARY KEY,\n  phone_raw        text,\n  phone_e164       text,\n  session_id       text NOT NULL,\n  kommo_entity_id  text,\n  kommo_contact_id text,\n  created_at       timestamptz NOT NULL DEFAULT now()\n);\nCREATE INDEX IF NOT EXISTS hpf_identity_session_idx ON hpf_identity (session_id);\nINSERT INTO hpf_identity (ghl_contact_id, phone_e164, session_id)\nVALUES ($1, $2, $2 || '2131')\nON CONFLICT (ghl_contact_id) DO UPDATE SET\n  phone_e164 = COALESCE(EXCLUDED.phone_e164, hpf_identity.phone_e164),\n  -- Repara SOLO las filas que escribió la derivación vieja (la que borraba el '+'),\n  -- comparando contra esa fórmula exacta. Cualquier otro session_id se respeta:\n  -- pisarle la clave de memoria a un lead con conversación abierta le borra el\n  -- historial, que es justo lo que este mecanismo tiene que evitar.\n  session_id = CASE\n    WHEN hpf_identity.session_id = regexp_replace(\n           COALESCE(EXCLUDED.phone_e164, hpf_identity.phone_e164), '\\D', '', 'g') || '2131'\n     AND EXCLUDED.session_id IS DISTINCT FROM hpf_identity.session_id\n    THEN EXCLUDED.session_id\n    ELSE hpf_identity.session_id\n  END\nRETURNING session_id, ghl_contact_id;",
+          "options": {
+            "queryReplacement": "={{ [ $('Normalizar entrada').first().json.contactId, $('Normalizar entrada').first().json.phone || '' ] }}"
+          }
+        },
+        "id": "4506eff7-82cd-4a8d-acb5-541130ddf63b",
+        "name": "Resolver identidad",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          -64,
+          -128
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "uK59P60DJmOJc4Lm",
+            "name": "H.F"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT CASE\n  WHEN to_regclass('public.n8n_chat_histories') IS NULL THEN 0\n  ELSE (SELECT count(*) FROM n8n_chat_histories\n        WHERE session_id = $1 AND message->>'type' = 'human')\nEND::int AS turnos_previos;",
+          "options": {
+            "queryReplacement": "={{ [ $json.session_id ] }}"
+          }
+        },
+        "id": "94038510-dfbc-45a4-adb0-b92c2186e7d4",
+        "name": "¿Hay historial?",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          160,
+          -128
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "postgres": {
+            "id": "uK59P60DJmOJc4Lm",
+            "name": "H.F"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "VK4M7VQm8CMefbty",
+            "mode": "id",
+            "cachedResultName": "HPF·GHL · W0 Client"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "op": "find_or_create_opportunity",
+              "args": "={{ {contactId: $('Normalizar entrada').first().json.contactId, name: 'WhatsApp ' + ($('Normalizar entrada').first().json.phone || $('Normalizar entrada').first().json.contactId)} }}"
+            },
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "id": "5ecc0dde-c65b-489e-901d-9a8427dd21f7",
+        "name": "W0 · find or create",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          384,
+          -128
+        ]
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "VK4M7VQm8CMefbty",
+            "mode": "id",
+            "cachedResultName": "HPF·GHL · W0 Client"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "op": "get_opportunity",
+              "args": "={{ {opportunityId: $json.data.opportunity.id} }}"
+            },
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "id": "cfb60be3-b5e1-4faa-9ef9-04a66680c8f6",
+        "name": "W0 · leer oportunidad",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          608,
+          -128
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Traducción de los gates de etapa del origen. En Kommo se hacía con `contains` sobre\n// el JSON del lead serializado — de ahí el bug del \"143\" que matcheaba cualquier\n// timestamp. Acá es igualdad de UUID.\nconst ETAPAS = {\n  \"Lead Nuevo\": \"cf8fc770-81b1-422c-8394-d00bfb97a3f0\",\n  \"Saludo Enviado\": \"f9709293-d03c-47f1-949f-0c03ab077a45\",\n  \"Evento Identificado\": \"fec50c94-fba0-444b-8c75-7a97da9e0daa\",\n  \"Productos Mostrados\": \"49c7401f-8af1-4d8f-a1b4-e989b6d0a5e2\",\n  \"Cotizado\": \"96fa0ade-c853-4db3-97f4-56d58d69af8c\",\n  \"Esperando Pago\": \"843a06f1-1214-4baa-a3a0-f197cb240b5d\",\n  \"Pago Confirmado\": \"96d760e5-f290-456c-a117-57e61ce6c27d\",\n  \"Diseño en Proceso\": \"d35bb30d-97d5-48c4-81f8-5ecabf32e57d\",\n  \"En Producción\": \"008689c6-80d8-4712-981b-1d800e1e6137\",\n  \"Enviado\": \"218b9b41-4007-4b1c-bbe4-4e775ddf00b5\",\n  \"En Espera\": \"48de80e9-31a9-472a-b030-5b9fe9174810\",\n  \"Ganado\": \"909a816d-997e-4d90-8dc1-dc4b0dcd16d7\",\n  \"Ventas Perdidas\": \"6abfe419-adf2-4df5-87c5-ef4f62e01464\"\n};\nconst nombreDe = Object.fromEntries(Object.entries(ETAPAS).map(([k, v]) => [v, k]));\n\n// El agente se calla en estas etapas (equivale a If7/If9/If12/If20 + \"Si está en perdidos\")\nconst BLOQUEO = {\n  'En Espera':        'atencion_humana',   // Kommo 91266100 atención personalizada\n  'Pago Confirmado':  'pago_confirmado',   // Kommo 91450360\n  'En Producción':    'en_produccion',     // Kommo 100395519\n  'Ventas Perdidas':  'perdido',           // Kommo 143\n  'Ganado':           'ganado',            // Kommo 142\n};\n\nconst ctx  = $('Normalizar entrada').first().json;\nconst ses  = $('Resolver identidad').first().json;\nconst opp  = ($input.first().json.data || {}).opportunity || {};\nconst via  = $('W0 · find or create').first().json.via || null;\nconst hist = $('¿Hay historial?').first().json || {};\nconst turnosPrevios = Number(hist.turnos_previos || 0);\n\nconst etapaId     = opp.pipelineStageId || null;\nconst etapaNombre = nombreDe[etapaId] || null;\nconst motivo      = BLOQUEO[etapaNombre] || null;\n\n// Cliente que vuelve: la oportunidad ya existía y está cerrada. En Kommo esto era un\n// lead nuevo; acá hay que reciclar la misma (ver PM-IDN-03-decision.md).\nconst vuelve = via === 'existente' && ['Ganado', 'Ventas Perdidas'].includes(etapaNombre);\n\nlet ruta = 'seguir';\nif (vuelve) ruta = 'cliente_vuelve';\nelse if (motivo) ruta = 'bloqueado';\n\nreturn [{ json: {\n  ...ctx,\n  sessionId: ses.session_id,\n  opportunityId: opp.id || null,\n  etapa_id: etapaId,\n  etapa: etapaNombre,\n  via_oportunidad: via,\n  ruta,\n  motivo_bloqueo: motivo,\n  // Sale de la memoria, no del CRM — ver SQL_HISTORIAL.\n  primer_contacto: turnosPrevios === 0,\n  turnos_previos: turnosPrevios,\n  gates: { etapa: etapaNombre, bloqueo: motivo, via, cliente_vuelve: vuelve,\n           primer_contacto: turnosPrevios === 0 },\n} }];"
+        },
+        "id": "6dc269de-49f7-46d5-b5e4-177c862eb537",
+        "name": "Evaluar estado",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          832,
+          -128
+        ]
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "version": 2,
+                    "typeValidation": "loose"
+                  },
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "122fd87a-402a-4ee3-89b4-4e58c5c8df29",
+                      "leftValue": "={{ $json.ruta }}",
+                      "rightValue": "bloqueado",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ]
+                },
+                "renameOutput": true,
+                "outputKey": "bloqueado"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "version": 2,
+                    "typeValidation": "loose"
+                  },
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "554833e3-0658-41e1-be3d-f7ae57831230",
+                      "leftValue": "={{ $json.ruta }}",
+                      "rightValue": "cliente_vuelve",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ]
+                },
+                "renameOutput": true,
+                "outputKey": "cliente_vuelve"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "version": 2,
+                    "typeValidation": "loose"
+                  },
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "e8e504dc-4913-4cab-b61d-0a07587e4792",
+                      "leftValue": "={{ $json.ruta }}",
+                      "rightValue": "seguir",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ]
+                },
+                "renameOutput": true,
+                "outputKey": "seguir"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "b26d9bc5-26cb-49dc-8647-a188915ed483",
+        "name": "Ruteo por estado",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3,
+        "position": [
+          1056,
+          -144
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "310ef633-ec44-4909-8773-0aa3633b5af2",
+        "name": "Fin · agente en silencio",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1280,
+          -320
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "3708ef14-c146-4060-adee-72a4bcca314b",
+        "name": "Cliente vuelve · sin respuesta",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1280,
+          -128
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "push",
+          "list": "={{ 'hpf:' + $json.contactId }}",
+          "messageData": "={{ $json.messageId }}",
+          "tail": true
+        },
+        "id": "610c0952-a93f-49cf-a1eb-4e0109696fa9",
+        "name": "Debounce · push",
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          1504,
+          -128
+        ],
+        "credentials": {
+          "redis": {
+            "id": "o8I3YHY4b5xY8Ipo",
+            "name": "H.F"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "amount": "={{ $('Evaluar estado').first().json.debounce_seg }}"
+        },
+        "id": "1768d089-d8f2-458a-ad1b-ab97479e814e",
+        "name": "Debounce · esperar",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1728,
+          -128
+        ],
+        "webhookId": "ae181367-e41e-49d3-8a16-8fc11d212974"
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "propertyName": "Mensajes",
+          "key": "={{ $('Evaluar estado').first().json.contactId ? 'hpf:' + $('Evaluar estado').first().json.contactId : '' }}",
+          "options": {}
+        },
+        "id": "64790c1d-9469-4b0d-b6ae-3ac125d10515",
+        "name": "Debounce · leer",
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          1952,
+          -128
+        ],
+        "credentials": {
+          "redis": {
+            "id": "o8I3YHY4b5xY8Ipo",
+            "name": "H.F"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Debounce \"gana el último\", igual que el origen: cada mensaje empuja a una lista de\n// Redis y duerme; al despertar sólo sigue la ejecución cuyo texto sigue siendo el\n// último de la lista. Las demás mueren acá.\n//\n// Ojo: el origen tenía este mismo mecanismo ROTO en la rama de imagen — `Guardar1`\n// empujaba `$workflow.id`, que es constante, así que la comparación daba siempre true\n// y no deduplicaba nada. Acá se empuja el messageId, que sí es único.\nconst ctx  = $('Evaluar estado').first().json;\nconst raw  = $input.first().json;\nconst lista = raw.Mensajes ?? raw.propertyName ?? raw ?? [];\nconst arr = Array.isArray(lista) ? lista : [lista];\nconst ultimo = arr.length ? String(arr[arr.length - 1]) : null;\nconst soyElUltimo = ultimo === ctx.messageId;\n\nreturn [{ json: {\n  ...ctx,\n  debounce: { acumulados: arr.length, ultimo, soy_el_ultimo: soyElUltimo,\n              mensajes: arr },\n  soy_el_ultimo: soyElUltimo,\n} }];"
+        },
+        "id": "bfc21c9c-ae54-46c7-b3c3-cd26c7ca39ad",
+        "name": "¿Soy el último?",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2176,
+          -128
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "version": 2,
+              "typeValidation": "loose"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "03571525-7b69-4286-84ab-768c7751e309",
+                "leftValue": "={{ $json.soy_el_ultimo }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "a268fd95-39b8-4510-981c-1217707ea821",
+        "name": "Gana el último",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          2400,
+          -128
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "key": "={{ 'hpf:' + $json.contactId }}"
+        },
+        "id": "a7ae3f28-bd95-446d-8121-6fc068412b14",
+        "name": "Debounce · limpiar",
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          2624,
+          -128
+        ],
+        "credentials": {
+          "redis": {
+            "id": "o8I3YHY4b5xY8Ipo",
+            "name": "H.F"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "id": "41d0eb1e-cb73-410e-909e-c33406bac4fb",
+        "name": "Fin · superado por otro mensaje",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          2624,
+          64
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "version": 2,
+              "typeValidation": "loose"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "f4ed26ed-643c-46b7-b240-9102cf04cc47",
+                "leftValue": "={{ $json.tipo }}",
+                "rightValue": "audio",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "b564e6ca-35d6-4ea0-864a-770fdcc27cfa",
+        "name": "¿Es audio?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          2848,
+          -128
+        ]
+      },
+      {
+        "parameters": {
+          "url": "={{ $('Evaluar estado').first().json.adjuntos[0] }}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "file"
+              }
+            }
+          }
+        },
+        "id": "9422d03a-e5dd-453d-b927-b4345b63831a",
+        "name": "Descargar audio",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3072,
+          -208
+        ]
+      },
+      {
+        "parameters": {
+          "resource": "audio",
+          "operation": "transcribe",
+          "options": {
+            "language": "es"
+          }
+        },
+        "id": "720b418f-939a-43e5-a4e0-e278bf1edb02",
+        "name": "Transcribir audio",
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "typeVersion": 1.8,
+        "position": [
+          3296,
+          -208
+        ],
+        "credentials": {
+          "openAiApi": {
+            "id": "a1k3E4C9uRRHxngs",
+            "name": "H.F"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Una nota de voz es un mensaje de texto más. En el origen `transcribe voice` vuelve\n// a `Get_Text`, o sea que el audio se reinyecta en el carril común y sigue el mismo\n// camino que cualquier mensaje escrito — Router incluido. Se replica eso.\nconst ctx = $('¿Soy el último?').first().json;\nconst t = $input.first().json || {};\nconst texto = String(t.text ?? t.transcription ?? t.content ?? '').trim();\nif (!texto) {\n  throw new Error('W1: la transcripción del audio vino vacía');\n}\nreturn [{ json: { ...ctx, texto, tipo: 'texto', tipo_original: 'audio' } }];"
+        },
+        "id": "3588f3f6-7103-42f0-a014-083a07182475",
+        "name": "Texto del audio",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3520,
+          -208
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "version": 2,
+              "typeValidation": "loose"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "a401bd4a-a0c1-49be-b98b-02a5fc10f653",
+                "leftValue": "={{ ['imagen','pdf'].includes($json.tipo) }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "ebbe6f1a-0158-4158-9d89-c2401c1f3914",
+        "name": "¿Es media?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          3744,
+          -128
+        ]
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "m8KhaZV3nSjJ55ci",
+            "mode": "id",
+            "cachedResultName": "HPF·GHL · W7 Media"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "sessionId": "={{ $json.sessionId }}",
+              "contactId": "={{ $json.contactId }}",
+              "opportunityId": "={{ $json.opportunityId }}",
+              "texto": "={{ $json.texto }}",
+              "tipo": "={{ $json.tipo }}",
+              "adjuntos": "={{ JSON.stringify($json.adjuntos) }}",
+              "etapa": "={{ $json.etapa }}",
+              "_forzar_fuera_horario": "={{ $('Normalizar entrada').first().json._forzar_fuera_horario || false }}"
+            },
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "id": "f291d1d8-c3a2-4cbe-b6ef-373e19e8ccf8",
+        "name": "W7 · media",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          3968,
+          -224
+        ]
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "cNmJCP2qVhdtfCH0",
+            "mode": "id",
+            "cachedResultName": "HPF·GHL · W6 Conversación"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "sessionId": "={{ $json.sessionId }}",
+              "contactId": "={{ $json.contactId }}",
+              "opportunityId": "={{ $json.opportunityId }}",
+              "texto": "={{ $json.texto }}",
+              "primer_contacto": "={{ $json.primer_contacto }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "sessionId",
+                "displayName": "sessionId",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "contactId",
+                "displayName": "contactId",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "opportunityId",
+                "displayName": "opportunityId",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "texto",
+                "displayName": "texto",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "evento",
+                "displayName": "evento",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "primer_contacto",
+                "displayName": "primer_contacto",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "boolean"
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "id": "00fd8b41-1654-4f52-9da4-e26a0b735101",
+        "name": "W6 · conversación",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          3968,
+          -32
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Convergencia de los dos cerebros. Se lee por nombre de nodo y no por $json porque\n// sólo uno de los dos corrió; el otro ni existe en este runData.\nconst w7 = $('W7 · media');\nif (w7.isExecuted) return [{ json: w7.first().json }];\nconst w6 = $('W6 · conversación');\nif (w6.isExecuted) return [{ json: w6.first().json }];\nthrow new Error('W1: ni W6 ni W7 produjeron respuesta');"
+        },
+        "id": "e5962b3c-3fa1-48c1-b6ea-4d3f0af1de59",
+        "name": "Resultado del cerebro",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          4192,
+          -128
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "version": 2,
+              "typeValidation": "loose"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "78cdb7b2-be3b-4a85-8d2f-d772948921c4",
+                "leftValue": "={{ ($json.partes || []).length }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "0583b7ee-8ed7-4b6c-8d89-9d298ed052b1",
+        "name": "¿Hay algo que enviar?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          4416,
+          -128
+        ]
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "MdbOREN56lfQTYlM",
+            "mode": "id",
+            "cachedResultName": "HPF·GHL · W2 Salida"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "contactId": "={{ $('Evaluar estado').first().json.contactId }}",
+              "partes": "={{ JSON.stringify($json.partes) }}",
+              "pausa_seg": "={{ ($('Normalizar entrada').first().json.canal === 'Telegram' || $('Normalizar entrada').first().json.debounce_seg > 0) ? 2 : 0 }}"
+            },
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "id": "eb81f217-7a3b-4cb0-8b2c-fbe8c3e23834",
+        "name": "W2 · enviar",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          4640,
+          -208
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const ctx = $('Evaluar estado').first().json;\nconst cerebro = $('Resultado del cerebro').first().json;\nconst destino = cerebro.etapa_destino || null;\n\n// Escalera del embudo. Fuera de ella (En Espera, Pago Confirmado, En Producción,\n// Ganado, Ventas Perdidas, …) NO se toca nada: son estados que maneja una persona\n// o la rama de pago, y pisarlos con un avance automático sería destructivo.\n// 'Esperando Pago' y 'Pago Confirmado' entran en la escalera porque el carril de\n// media las produce: un comprobante válido avanza a 'Pago Confirmado'. Sin ellas el\n// guard monótono rechazaba ese avance por no encontrar el destino en la lista.\nconst ESCALERA = ['Lead Nuevo', 'Saludo Enviado', 'Evento Identificado',\n                  'Productos Mostrados', 'Cotizado', 'Esperando Pago',\n                  'Pago Confirmado'];\nconst actual = ESCALERA.indexOf(ctx.etapa);\nconst nuevo  = ESCALERA.indexOf(destino);\n\n// DELTA declarado: el origen NO es monótono (sus If21/If8 dejan volver a ETAPA 2 a\n// un lead que ya estaba en ETAPA 4). Acá sólo se avanza. Retroceder la etapa borra\n// el trabajo comercial que ya se hizo sobre ese lead.\nconst avanza = destino !== null && actual >= 0 && nuevo > actual;\n\nreturn [{ json: { ...ctx, etapa_destino: destino, etapa_actual: ctx.etapa,\n                  avanza_etapa: avanza } }];"
+        },
+        "id": "50c1916f-9a0c-4367-9ad4-2e0540d18ab4",
+        "name": "Decidir etapa",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          4864,
+          -128
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "version": 2,
+              "typeValidation": "loose"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "8fe1b194-2fff-4f60-9a4a-a4eeacc07a8f",
+                "leftValue": "={{ $json.avanza_etapa }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "3f9764dc-4576-4545-8876-469dc939a68b",
+        "name": "¿Avanza la etapa?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          5088,
+          -128
+        ]
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "VK4M7VQm8CMefbty",
+            "mode": "id",
+            "cachedResultName": "HPF·GHL · W0 Client"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "op": "update_stage",
+              "args": "={{ {opportunityId: $json.opportunityId, etapa: $json.etapa_destino} }}"
+            },
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "id": "00085b68-1aa1-4582-889f-4d073d845009",
+        "name": "W0 · avanzar etapa",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          5312,
+          -208
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Objeto de evidencia del turno completo. Es lo que el runner de paridad lee del\n// runData: qué entró, por dónde ruteó, qué tools usó y qué salió a GHL.\n//\n// El envío se toma por nombre de nodo y NO de $json: desde que la escritura de\n// etapa se metió en el medio, `$input` acá es la salida de `¿Avanza la etapa?` o\n// la de `W0 · avanzar etapa`, no la de W2. Es la trampa que documenta\n// _core/standards/n8n-data-references.md.\nconst ctx = $('Evaluar estado').first().json;\nconst cerebro = $('Resultado del cerebro').first().json;\n// Cuando el cerebro no devuelve nada que mandar (imagen de un lead en producción, que\n// el origen también contesta con silencio) W2 no corre.\nconst w2 = $('W2 · enviar');\nconst envio = w2.isExecuted ? w2.first().json : { partes_enviadas: 0, enviados: [] };\nconst etapas = $('Decidir etapa').first().json;\nreturn [{ json: {\n  ok: true,\n  sessionId: ctx.sessionId, contactId: ctx.contactId, opportunityId: ctx.opportunityId,\n  entrada: { texto: ctx.texto, tipo: ctx.tipo, adjuntos: ctx.adjuntos },\n  etapa: ctx.etapa, gates: ctx.gates,\n  primer_contacto: ctx.primer_contacto, turnos_previos: ctx.turnos_previos,\n  messageId: ctx.messageId, messageId_derivado: ctx.messageId_derivado,\n  etapa_destino: etapas.etapa_destino, etapa_avanzada: etapas.avanza_etapa,\n  step: cerebro.step,\n  tools_usadas: cerebro.tools_usadas || [],\n  partes_enviadas: envio.partes_enviadas ?? null,\n  enviados: envio.enviados || [],\n} }];"
+        },
+        "id": "3d7cd4f7-58f7-4b08-8eda-648596821267",
+        "name": "Evidencia del turno",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          5536,
+          -128
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Qué campaña de re-enganche arma este turno. Réplica de qué sub-workflow disparaba\n// cada agente en el origen:\n//   Starter (step_1)    → seg-rebeca\n//   Main Image (step_2) → seg-imagen\n//   Products (step_3)   → seg-cotizacion\n//   Recolector que COTIZÓ → seg-7pasos\n// Un step_4 que no cotiza no arma nada, y de paso mata la campaña anterior.\n//\n// DELTA declarado: en el origen, un step_3 que además cotizaba disparaba LAS DOS\n// cadenas. Acá gana 7pasos, porque la tabla tiene una fila por sesión.\nconst ctx = $('Evaluar estado').first().json;\nconst cerebro = $('Resultado del cerebro').first().json;\nconst step = cerebro.step;\n\nlet campania = null;\nif (cerebro.etapa_destino === 'Cotizado') campania = '7pasos';\nelse if (step === 'step_1') campania = 'rebeca';\nelse if (step === 'step_2') campania = 'imagen';\nelse if (step === 'step_3') campania = 'cotizacion';\n\nconst ahora = Date.now();\n// La primera ola va a la hora; 7pasos no manda olas, sólo evalúa a las 24 h.\nconst proximo = (campania && campania !== '7pasos')\n  ? new Date(ahora + 60 * 60000).toISOString() : null;\nconst evalAt = (campania === '7pasos')\n  ? new Date(ahora + 24 * 3600000).toISOString() : null;\n\nreturn [{ json: {\n  session_id: ctx.sessionId,\n  contact_id: ctx.contactId,\n  opportunity_id: ctx.opportunityId,\n  campania,\n  etapa_al_armar: cerebro.etapa_destino || ctx.etapa,\n  evento: cerebro.evento || null,\n  proximo_at: proximo,\n  evaluacion_at: evalAt,\n  evaluacion_desde_at: evalAt ? new Date(ahora).toISOString() : null,\n} }];"
+        },
+        "id": "f035e39d-5f1c-47e0-b8ee-9a49fa5f3754",
+        "name": "Decidir seguimiento",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          5760,
+          -128
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "CREATE TABLE IF NOT EXISTS hpf_seguimientos (\n  session_id          text PRIMARY KEY,\n  contact_id          text NOT NULL,\n  opportunity_id      text,\n  campania            text,\n  etapa_al_armar      text,\n  evento              text,\n  ola                 int         NOT NULL DEFAULT 0,\n  proximo_at          timestamptz,\n  desde_at            timestamptz NOT NULL DEFAULT now(),\n  evaluacion_at       timestamptz,\n  evaluacion_desde_at timestamptz,\n  ultimo_inbound_at   timestamptz NOT NULL DEFAULT now(),\n  ultimo_toque_at     timestamptz,\n  cerrado_at          timestamptz,\n  cerrado_motivo      text,\n  bloqueado_hasta     timestamptz,\n  actualizado_at      timestamptz NOT NULL DEFAULT now()\n);\nINSERT INTO hpf_seguimientos (session_id, contact_id, opportunity_id, campania,\n  etapa_al_armar, evento, ola, proximo_at, evaluacion_at, evaluacion_desde_at,\n  desde_at, ultimo_inbound_at)\nVALUES ($1,$2,$3,$4,$5,$6,0,$7::timestamptz,$8::timestamptz,$9::timestamptz,now(),now())\nON CONFLICT (session_id) DO UPDATE SET\n  contact_id     = EXCLUDED.contact_id,\n  opportunity_id = COALESCE(EXCLUDED.opportunity_id, hpf_seguimientos.opportunity_id),\n  campania       = EXCLUDED.campania,\n  etapa_al_armar = EXCLUDED.etapa_al_armar,\n  evento         = COALESCE(EXCLUDED.evento, hpf_seguimientos.evento),\n  ola            = 0,\n  proximo_at     = EXCLUDED.proximo_at,\n  evaluacion_at  = COALESCE(EXCLUDED.evaluacion_at, hpf_seguimientos.evaluacion_at),\n  evaluacion_desde_at = COALESCE(EXCLUDED.evaluacion_desde_at,\n                                 hpf_seguimientos.evaluacion_desde_at),\n  desde_at          = now(),\n  ultimo_inbound_at = now(),\n  cerrado_at = NULL, cerrado_motivo = NULL, bloqueado_hasta = NULL,\n  actualizado_at = now()\nRETURNING session_id, campania, proximo_at, evaluacion_at;",
+          "options": {
+            "queryReplacement": "={{ [ $json.session_id, $json.contact_id, $json.opportunity_id, $json.campania, $json.etapa_al_armar, $json.evento, $json.proximo_at, $json.evaluacion_at, $json.evaluacion_desde_at ] }}"
+          }
+        },
+        "id": "c5445e2f-7e38-4d79-bae0-48ae70c1b062",
+        "name": "Marcar actividad",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          5984,
+          -128
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "postgres": {
+            "id": "uK59P60DJmOJc4Lm",
+            "name": "H.F"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "id": "159d47b4-decb-4d4e-886c-7b8ebcaeffa2",
+        "name": "Fin · procesado",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          6208,
+          -128
+        ]
+      },
+      {
+        "parameters": {
+          "updates": [
+            "message"
+          ],
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.2,
+        "id": "tg-683295467687",
+        "name": "Telegram Trigger",
+        "position": [
+          -1184,
+          320
+        ],
+        "webhookId": "3b8e5c17-6a24-4d91-8f0b-51c7a9e2d604",
+        "credentials": {
+          "telegramApi": {
+            "id": "yXtgg8Djbxglxq9H",
+            "name": "HPF"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Telegram → el payload que espera W1, que es el de GHL.\n//\n// W1 exige `contactId` de GHL y un usuario de Telegram no tiene teléfono, así que se le\n// fabrica uno con el prefijo +999 (código de país SIN ASIGNAR: no puede pisar el número\n// de un lead real). El nodo siguiente hace upsert_contact con ese teléfono y devuelve un\n// contactId de verdad, así el resto del pipeline no se entera de que vino de Telegram.\n//\n// El mismo prefijo es lo que W2 mira después para decidir si responde por Telegram o por\n// GHL — por eso no se puede cambiar acá sin cambiarlo allá.\nconst j = $input.first().json || {};\nconst msg = j.message || j;\nconst chat = msg.chat || {};\nconst from = msg.from || {};\nconst chatId = String(chat.id ?? from.id ?? '');\nif (!chatId) throw new Error('W1/TG: mensaje de Telegram sin chat id');\n\nconst nombre = [from.first_name, from.last_name].filter(Boolean).join(' ')\n             || from.username || ('Telegram ' + chatId);\n\nconst texto = String(msg.text || msg.caption || '').trim();\n\n// ── adjuntos ──────────────────────────────────────────────────────────────────────────\n// Telegram entrega los adjuntos como `file_id`. Acá SÓLO se decide cuál se canjea y con\n// qué extensión va a quedar; el canje lo hacen `TG · bajar archivo` → `TG · subir a GHL`.\n//\n// La extensión NO se lee de Telegram. `file_path` de la Bot API suele traerla bien, pero\n// es un dato que no controlamos y de él depende TODA la clasificación que hace\n// `Normalizar entrada`, que mira exclusivamente la extensión de adjuntos[0]:\n//     .ogg .oga .mp3 .m4a .wav .amr → audio   (→ Whisper)\n//     .pdf                          → pdf     (→ W7, sin visión)\n//     cualquier otro adjunto        → imagen  (→ W7, visión de OpenAI)\n// Un video queda como 'imagen' y la visión lo rechaza: es EXACTAMENTE lo que le pasa hoy\n// a un lead real que manda un video por WhatsApp. Se replica a propósito — esta Fase 0\n// existe para que la guía de paridad DESCUBRA estas cosas, no para taparlas.\nconst MAX = 20 * 1024 * 1024;   // techo duro de getFile en la Bot API\n\n// Extensiones que un `document` puede tener para que valga la pena subirlo. Es más\n// estricto que producción, y sólo acá: sin esto un .zip se sube, la visión lo rechaza y\n// el caso de prueba \"documento no soportado\" no tiene resultado observable.\nconst DOC_OK = ['pdf', 'jpg', 'jpeg', 'png', 'webp', 'gif',\n                'ogg', 'oga', 'mp3', 'm4a', 'wav', 'amr', 'mp4', 'mov', 'm4v'];\n\nconst extDe = (n, def) => {\n  const m = String(n || '').toLowerCase().match(/\\.([a-z0-9]{1,5})$/);\n  return m ? m[1] : def;\n};\n\nlet media = null;     // { file_id, ext, clase, bytes }\nlet rechazo = '';\n\nif (Array.isArray(msg.photo) && msg.photo.length) {\n  // `photo` es el array de tamaños, ordenado de menor a mayor. El último es el que le\n  // sirve a la visión.\n  const p = msg.photo[msg.photo.length - 1];\n  media = { file_id: p.file_id, ext: 'jpg', clase: 'foto',\n            bytes: Number(p.file_size || 0) };\n} else if (msg.voice) {\n  // Las notas de voz de Telegram son OGG/Opus. Va como '.ogg' y NO '.oga': la Media Library\n  // de GHL valida por EXTENSIÓN, no por contenido, y rechaza .oga con\n  // 400 INVALID_FILE_TYPE. Medido el 2026-08-20 subiendo el MISMO archivo dos veces,\n  // byte por byte idéntico, cambiando sólo el nombre: .oga → 400, .ogg → 201.\n  // (También aceptan .mp3 y .wav; .m4a también da 400.)\n  // Con .oga el audio moría en el upload y NUNCA llegaba a Whisper.\n  // El regex de audio de `Normalizar entrada` matchea .ogg igual, así que no cambia nada aguas abajo.\n  media = { file_id: msg.voice.file_id, ext: 'ogg', clase: 'nota de voz',\n            bytes: Number(msg.voice.file_size || 0) };\n} else if (msg.audio) {\n  media = { file_id: msg.audio.file_id, ext: extDe(msg.audio.file_name, 'mp3'),\n            clase: 'audio', bytes: Number(msg.audio.file_size || 0) };\n} else if (msg.video_note) {\n  media = { file_id: msg.video_note.file_id, ext: 'mp4', clase: 'video',\n            bytes: Number(msg.video_note.file_size || 0) };\n} else if (msg.animation) {\n  // Un GIF de Telegram es un mp4, y viene con `animation` Y `document` poblados a la vez.\n  // Por eso va ANTES de document: si no, entra por la rama equivocada.\n  media = { file_id: msg.animation.file_id, ext: 'mp4', clase: 'video',\n            bytes: Number(msg.animation.file_size || 0) };\n} else if (msg.video) {\n  media = { file_id: msg.video.file_id, ext: extDe(msg.video.file_name, 'mp4'),\n            clase: 'video', bytes: Number(msg.video.file_size || 0) };\n} else if (msg.document) {\n  const ext = extDe(msg.document.file_name, '');\n  if (DOC_OK.includes(ext)) {\n    media = { file_id: msg.document.file_id, ext, clase: 'documento',\n              bytes: Number(msg.document.file_size || 0) };\n  } else {\n    // El nombre del archivo NO se echa en el aviso: un 'mi_archivo.zip' metería un '_'\n    // suelto y, si el nodo de Telegram sale con parse_mode, eso es un 400.\n    rechazo = 'No puedo procesar ese tipo de archivo. Mandame una foto, un PDF o una nota de voz.';\n  }\n} else if (msg.sticker) {\n  rechazo = 'No puedo procesar stickers. Mandame una foto, un PDF o una nota de voz.';\n} else if (msg.location || msg.venue) {\n  rechazo = 'No puedo procesar ubicaciones. Escribime la direccion como texto.';\n} else if (msg.contact || msg.poll || msg.dice || msg.game) {\n  rechazo = 'No puedo procesar ese tipo de mensaje. Mandame texto, una foto, un PDF o una nota de voz.';\n}\n\n// getFile devuelve 400 arriba de 20 MB y no hay manera de bajar el archivo. Se corta acá,\n// con el file_size que ya viene en el update, para dar un mensaje entendible en vez del\n// error crudo de la API.\nif (media && media.bytes > MAX) {\n  rechazo = 'Ese archivo pesa mas de 20 MB y Telegram no me deja bajarlo. Mandame uno mas chico.';\n  media = null;\n}\n\n// Sin texto y sin adjunto reconocible no hay nada que procesar. Ojo: una FOTO SIN CAPTION\n// no cae acá — tiene media, y el mensaje de imagen con texto vacío es válido de punta a\n// punta (W7 hace String(src.texto ?? '') y la visión sólo usa la URL).\nif (!media && !rechazo && !texto) {\n  rechazo = 'No pude leer ese mensaje. Mandame texto, una foto, un PDF o una nota de voz.';\n}\n\nreturn [{ json: {\n  _tg_chat_id: chatId,\n  _tg_nombre: nombre,\n  // Se sigue emitiendo porque es diagnóstico útil en el log, pero YA NO ES UN GUARD: si\n  // alguien lo cablea \"para completar\", rompe las fotos sin caption. El guard real es\n  // `_tg_ruta`.\n  _tg_sin_texto: !texto,\n  telefono_sintetico: '+999' + chatId,\n  texto,\n  // messageId real de Telegram: es la clave de idempotencia del debounce de W1 y viene\n  // garantizada, así que no hace falta que W1 la derive por hash.\n  messageId: 'tg:' + chatId + ':' + String(msg.message_id ?? ''),\n  // ── contrato con los nodos de media ────────────────────────────────────────────────\n  // Ternario TOTAL: siempre vale una de las tres. Por eso `TG · ruteo media` puede ir sin\n  // fallback y no pierde items.\n  _tg_ruta: rechazo ? 'no_soportado' : (media ? 'con_media' : 'sin_media'),\n  _tg_media: media,\n  _media_error: rechazo,\n} }];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "id": "tg-379448020320",
+        "name": "TG → payload GHL",
+        "position": [
+          -976,
+          320
+        ]
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "VK4M7VQm8CMefbty",
+            "mode": "id",
+            "cachedResultName": "HPF·GHL · W0 Client"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "op": "upsert_contact",
+              "args": "={{ {email: 'tg-' + $json._tg_chat_id + '@telegram.happyflops.mx', name: $json._tg_nombre, source: 'telegram-test', tags: ['canal-telegram','test']} }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "op",
+                "displayName": "op",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "args",
+                "displayName": "args",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "object"
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "id": "tg-122976629403",
+        "name": "TG · upsert contacto",
+        "position": [
+          -784,
+          320
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Toma el contactId que devolvió W0 y arma el payload GHL definitivo para W1.\nconst ctx = $('TG → payload GHL').first().json;\nconst r = $input.first().json || {};\n// W0 devuelve el contacto en distintas formas según sea alta o match; se aceptan todas\n// en vez de asumir una y romper el día que GHL cambie el shape.\nconst c = r.contact || r.data?.contact || r.data || r;\nconst contactId = c.id || c.contactId || c._id;\nif (!contactId) {\n  throw new Error('W1/TG: upsert_contact no devolvió contactId — ' +\n    JSON.stringify(r).slice(0, 200));\n}\nreturn [{ json: {\n  contactId: String(contactId),\n  conversationId: null,\n  messageId: ctx.messageId,\n  body: ctx.texto,\n  // Vacío a propósito. La rama con adjunto la pisa `TG · adjuntar media`, que es el único\n  // nodo que llega a conocer la URL pública.\n  attachments: [],\n  phone: ctx.telefono_sintetico,\n  canal: 'Telegram',\n  // 0 para texto: en una prueba manual esperar 50s por respuesta es insufrible, y un\n  // mensaje escrito no viene en ráfaga. Para media 0 NO sirve — un álbum de Telegram\n  // llega como N mensajes independientes y el \"gana el último\" no alcanza a deduplicar\n  // nada. `TG · adjuntar media` lo sube a 15 en esa rama.\n  debounce_seg: 0,\n  // Se arrastran para el Switch de ruteo y para el aviso de rechazo.\n  _tg_ruta: ctx._tg_ruta,\n  _media_error: ctx._media_error,\n} }];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "id": "tg-949801687401",
+        "name": "TG · armar payload",
+        "position": [
+          -576,
+          320
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// ¿Es un comando de reset? Se compara igual que en el handler viejo: texto entero,\n// sin espacios, en minúsculas. Así \"/reset\" resetea y \"reset el pedido\" no.\nconst p = $input.first().json;\nconst COMANDOS = [\"/b\", \"/borrar\", \"/reset\", \"/clear\", \"/nuevo\", \"/nueva\"];\nconst t = String(p.body || '').trim().toLowerCase();\n// El session_id se deriva igual que en `Resolver identidad` de W1 (phone || '2131').\n// Si esa fórmula cambia allá, hay que cambiarla acá — es la misma clave de memoria.\nconst sessionId = String(p.phone || '') + '2131';\nconst tg = $('TG → payload GHL').first().json;\nreturn [{ json: { ...p, _tg_chat_id_reset: tg._tg_chat_id, _es_reset: COMANDOS.includes(t), _session_id: sessionId } }];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "id": "rst-109882889746",
+        "name": "TG · ¿es reset?",
+        "position": [
+          -400,
+          320
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "r1",
+                "leftValue": "={{ $json._es_reset }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "id": "rst-110508230276",
+        "name": "TG · ruteo reset",
+        "position": [
+          -224,
+          320
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "-- Reset de sesión. Las tres tablas se limpian juntas: dejar una a medias deja al\n-- bot recordando el evento sin recordar la conversación, que es peor que no resetear.\nDELETE FROM n8n_chat_histories WHERE session_id = $1;\nDELETE FROM hpf_estado_sesion  WHERE session_id = $1;\nDELETE FROM hpf_seguimientos   WHERE session_id = $1;\nSELECT $1::text AS session_id;",
+          "options": {
+            "queryReplacement": "={{ [ $json._session_id ] }}"
+          }
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "id": "rst-306652740808",
+        "name": "TG · borrar memoria",
+        "position": [
+          -48,
+          208
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "uK59P60DJmOJc4Lm",
+            "name": "H.F"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "key": "={{ 'hpf:' + $('TG · ¿es reset?').first().json.contactId }}"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "id": "rst-997791247250",
+        "name": "TG · limpiar debounce",
+        "position": [
+          160,
+          208
+        ],
+        "credentials": {
+          "redis": {
+            "id": "o8I3YHY4b5xY8Ipo",
+            "name": "H.F"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const p = $('TG · ¿es reset?').first().json;\nreturn [{ json: { chatId: p._tg_chat_id_reset,\n  texto: '🧹 Memoria y buffer limpios. Puedes probar un caso nuevo.' } }];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "id": "rst-100206933431",
+        "name": "TG · aviso reset",
+        "position": [
+          368,
+          208
+        ]
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $json.chatId }}",
+          "text": "={{ $json.texto }}",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "id": "rst-482501052066",
+        "name": "TG · confirmar reset",
+        "position": [
+          560,
+          208
+        ],
+        "webhookId": "98b60a2a-7162-482b-915c-312c496ec71f",
+        "credentials": {
+          "telegramApi": {
+            "id": "yXtgg8Djbxglxq9H",
+            "name": "HPF"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Define segs salida",
+          "height": 80
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          4560,
+          -400
+        ],
+        "typeVersion": 1,
+        "id": "a26bde6e-bd90-48f8-92f0-5ec39eae52bd",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "content": "## Define segs entrada",
+          "height": 80
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -624,
+          224
+        ],
+        "typeVersion": 1,
+        "id": "91199c61-43e2-46f8-82bd-6c13b7ca22e6",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "chatId": "-4925599962",
+          "text": "=👤 El lead {{ $('Evaluar estado').first().json.contactId }} está en *{{ $('Evaluar estado').first().json.etapa }}* y envió un mensaje. El bot no le respondió — hay que atenderlo a mano.",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "id": "c2f8b5e1-3333-4bbb-9003-1f2b3c4d5e03",
+        "name": "Aviso · cliente vuelve",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1504,
+          -320
+        ],
+        "webhookId": "8d3c1a56-7e42-4b90-a1f5-62d7b8e93c14",
+        "credentials": {
+          "telegramApi": {
+            "id": "vgyWhM8OBUJtYOGC",
+            "name": "H.F"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "version": 2,
+                    "typeValidation": "loose"
+                  },
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "rm-con",
+                      "leftValue": "={{ $json._tg_ruta }}",
+                      "rightValue": "con_media",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ]
+                },
+                "renameOutput": true,
+                "outputKey": "con_media"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "version": 2,
+                    "typeValidation": "loose"
+                  },
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "rm-sin",
+                      "leftValue": "={{ $json._tg_ruta }}",
+                      "rightValue": "sin_media",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ]
+                },
+                "renameOutput": true,
+                "outputKey": "sin_media"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "version": 2,
+                    "typeValidation": "loose"
+                  },
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "id": "rm-no",
+                      "leftValue": "={{ $json._tg_ruta }}",
+                      "rightValue": "no_soportado",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ]
+                },
+                "renameOutput": true,
+                "outputKey": "no_soportado"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "d3f1a2b0-1111-4ccc-9101-0a1b2c3d4e01",
+        "name": "TG · ruteo media",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3,
+        "position": [
+          -48,
+          448
+        ]
+      },
+      {
+        "parameters": {
+          "resource": "file",
+          "fileId": "={{ $('TG → payload GHL').first().json._tg_media.file_id }}",
+          "additionalFields": {}
+        },
+        "id": "d3f1a2b0-2222-4ccc-9102-0a1b2c3d4e02",
+        "name": "TG · bajar archivo",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          160,
+          448
+        ],
+        "webhookId": "5a1c7e30-8b44-4d21-9e6f-71a2b3c4d5e6",
+        "credentials": {
+          "telegramApi": {
+            "id": "yXtgg8Djbxglxq9H",
+            "name": "HPF"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "jsCode": "// El nombre del archivo lo fijamos NOSOTROS, no Telegram.\n//\n// `TG · bajar archivo` nombra el binario con lo que venga en `file_path` de la Bot API\n// ('photos/file_12.jpg', 'voice/file_13.oga'...). En la práctica la extensión viene bien,\n// pero es un dato que no controlamos y de él depende TODA la clasificación de\n// `Normalizar entrada`. Así que se reescribe con la que ya decidió `TG → payload GHL`, y\n// se manda además en el campo `name` del multipart — que es de donde GHL saca el nombre\n// con el que publica el archivo. Dos mecanismos, uno tiene que pegar.\nconst ctx = $('TG → payload GHL').first().json;\nconst med = ctx._tg_media || {};\nconst it  = $input.first();\nconst j   = it.json || {};\nconst res = j.result || {};\n\n// Prefijo 'tg-test-' para poder listarlos y borrarlos después de la corrida:\n//     hpf-subir-media-ghl.py --listar tg-test\n// El chat y el message_id hacen el nombre trazable y único.\nconst nombre = 'tg-test-' + ctx._tg_chat_id + '-' +\n               String(ctx.messageId).split(':').pop() + '.' + med.ext;\n\n// getFile falla con 400 si el archivo pasa los 20 MB o si el file_id venció. El nodo\n// anterior va con onError:continueRegularOutput justamente para poder avisarlo por\n// Telegram en vez de morir en silencio, así que acá NO se tira: se marca y se sigue.\n// `TG · subir a GHL` va a fallar también (no hay binario), pero `TG · adjuntar media`\n// reporta ESTE error, que es el de verdad, y no el derivado.\nif (!res.file_path || !it.binary || !it.binary.data) {\n  return [{ json: { ...j, _nombre_ghl: nombre,\n    _media_error: 'No pude bajar el archivo de Telegram. Proba con uno mas chico o mandalo de nuevo.' } }];\n}\n\n// El binario viaja tal cual; sólo se le cambian los metadatos de nombre. El mimeType NO se\n// toca: lo puso el nodo de Telegram desde la respuesta real y GHL lo usa como Content-Type.\nit.binary.data.fileName = nombre;\nit.binary.data.fileExtension = med.ext;\nreturn [{ json: { ...j, _nombre_ghl: nombre, _media_error: '' }, binary: it.binary }];\n"
+        },
+        "id": "d3f1a2b0-3333-4ccc-9103-0a1b2c3d4e03",
+        "name": "TG · nombrar archivo",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          368,
+          448
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://services.leadconnectorhq.com/medias/upload-file",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Version",
+                "value": "2021-07-28"
+              },
+              {
+                "name": "Accept",
+                "value": "application/json"
+              },
+              {
+                "name": "User-Agent",
+                "value": "hpf-n8n/1.0"
+              }
+            ]
+          },
+          "sendBody": true,
+          "contentType": "multipart-form-data",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "name",
+                "value": "={{ $json._nombre_ghl }}"
+              },
+              {
+                "name": "hosted",
+                "value": "false"
+              },
+              {
+                "name": "altId",
+                "value": "onRwi0ZF4uYi0Lp6GAbE"
+              },
+              {
+                "name": "altType",
+                "value": "location"
+              },
+              {
+                "parameterType": "formBinaryData",
+                "name": "file",
+                "inputDataFieldName": "data"
+              }
+            ]
+          },
+          "options": {
+            "response": {
+              "response": {
+                "fullResponse": true,
+                "neverError": true
+              }
+            },
+            "timeout": 120000
+          }
+        },
+        "id": "d3f1a2b0-4444-4ccc-9104-0a1b2c3d4e04",
+        "name": "TG · subir a GHL",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          576,
+          448
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "Zz21t1RdLIMvud4j",
+            "name": "GHL PIT HPF"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Última parada del canje: convierte lo que devolvió GHL en el `attachments[]` que espera\n// `Normalizar entrada`.\n//\n// El contrato no es negociable: `Normalizar entrada` clasifica el mensaje MIRANDO LA\n// EXTENSIÓN de adjuntos[0]. Si la URL no termina como corresponde, un audio se procesa\n// como imagen y el turno sale mal SIN NINGÚN ERROR. Por eso acá se verifica la extensión\n// de la URL final antes de dejarla pasar: un bug silencioso se convierte en un mensaje.\nconst base = $('TG · ¿es reset?').first().json;   // el payload completo de esta rama\nconst ctx  = $('TG → payload GHL').first().json;\nconst nom  = $('TG · nombrar archivo').first().json;\nconst med  = ctx._tg_media || {};\n\n// n8n trunca los errores POR EL FINAL: lo accionable va primero, el ruido al final.\n// Y se limpian los caracteres de Markdown: el repo se contradice sobre si los nodos de\n// Telegram salen con parse_mode, y un '_' suelto del body de GHL sería un 400.\nconst fallar = (m, debug) => [{ json: { ...base,\n  _media_error: String(m).replace(/[*_`\\[\\]]/g, ' ').slice(0, 300),\n  _media_error_debug: debug ? String(debug).slice(0, 500) : '' } }];\n\n// Error arrastrado desde la bajada.\nif (nom._media_error) return fallar(nom._media_error);\n\nconst up  = $input.first().json || {};\nconst st  = Number(up.statusCode ?? 200);\nconst b   = up.body ?? up;\nconst txt = (typeof b === 'string') ? b : JSON.stringify(b || {});\n\nif (st < 200 || st >= 300) {\n  // 401/403 = el PIT de la credencial no tiene scope medias.write, o Cloudflare.\n  // Debug técnico va aparte; al lead solo un mensaje amable.\n  return fallar('No pude procesar tu archivo. Escribime lo que necesitás en texto y seguimos.', 'GHL rechazo HTTP ' + st + '. ' + txt.slice(0, 140));\n}\n\n// GHL devuelve el id del archivo; según la versión, a veces también la URL. Se aceptan las\n// dos formas y, si sólo vino el id, se arma la URL del CDN — el mismo patrón con el que se\n// sirven las 65 fichas del catálogo.\nconst CDN = 'https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/';\nconst id  = b.fileId || b.id || b._id || (b.file && b.file.id) || '';\nlet url = String(b.url || b.fileUrl || (b.file && b.file.url) || '');\nif (!url && id) url = CDN + id + '.' + med.ext;\nif (!url) return fallar('No pude procesar tu archivo. Escribime lo que necesitás en texto y seguimos.', 'GHL acepto pero no devolvio URL. ' + txt.slice(0, 140));\n\n// El assert que evita el bug silencioso.\nconst limpia = url.split('?')[0].toLowerCase();\nif (!limpia.endsWith('.' + String(med.ext).toLowerCase())) {\n  return fallar('La URL de GHL no termino en .' + med.ext +\n                ' y W1 la clasificaria mal. URL: ' + url.slice(-70));\n}\n\nreturn [{ json: {\n  ...base,\n  attachments: [url],\n  // 15 s, no 0. Con 0 el \"gana el último\" no deduplica nada: cada ejecución empuja a Redis\n  // y lee al instante, y siempre se ve última. Un álbum de 3 fotos son 3 mensajes\n  // independientes de Telegram → 3 respuestas. Con 15 las tres empujan y sólo la última\n  // sigue. 15 es además lo que `Normalizar entrada` aplicaría solo para una imagen, así\n  // que la comparación con producción es honesta.\n  // (Producción usa 50 para audio; acá también van 15 — diferencia declarada en la guía.)\n  debounce_seg: 15,\n  _media_error: '',\n  _tg_media_url: url,\n  _tg_media_clase: med.clase,\n} }];\n"
+        },
+        "id": "d3f1a2b0-5555-4ccc-9105-0a1b2c3d4e05",
+        "name": "TG · adjuntar media",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          784,
+          448
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "mo-1",
+                "leftValue": "={{ $json._media_error }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "empty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "d3f1a2b0-6666-4ccc-9106-0a1b2c3d4e06",
+        "name": "TG · ¿media ok?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          992,
+          448
+        ]
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $('TG → payload GHL').first().json._tg_chat_id }}",
+          "text": "={{ $json._media_error || 'No pude procesar ese mensaje. Mandame texto, una foto, un PDF o una nota de voz.' }}",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "id": "d3f1a2b0-7777-4ccc-9107-0a1b2c3d4e07",
+        "name": "TG · aviso media",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1200,
+          560
+        ],
+        "webhookId": "6b2d8f41-9c55-4e32-8f70-82b3c4d5e6f7",
+        "credentials": {
+          "telegramApi": {
+            "id": "yXtgg8Djbxglxq9H",
+            "name": "HPF"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Webhook inbound": {
+        "main": [
+          [
+            {
+              "node": "Normalizar entrada",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalizar entrada": {
+        "main": [
+          [
+            {
+              "node": "Idempotencia",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Idempotencia": {
+        "main": [
+          [
+            {
+              "node": "¿Mensaje nuevo?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Mensaje nuevo?": {
+        "main": [
+          [
+            {
+              "node": "Responder ack",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Responder duplicado",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Responder duplicado": {
+        "main": [
+          [
+            {
+              "node": "Fin · duplicado",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Responder ack": {
+        "main": [
+          [
+            {
+              "node": "Resolver identidad",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Resolver identidad": {
+        "main": [
+          [
+            {
+              "node": "¿Hay historial?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Hay historial?": {
+        "main": [
+          [
+            {
+              "node": "W0 · find or create",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "W0 · find or create": {
+        "main": [
+          [
+            {
+              "node": "W0 · leer oportunidad",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "W0 · leer oportunidad": {
+        "main": [
+          [
+            {
+              "node": "Evaluar estado",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Evaluar estado": {
+        "main": [
+          [
+            {
+              "node": "Ruteo por estado",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Ruteo por estado": {
+        "main": [
+          [
+            {
+              "node": "Fin · agente en silencio",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Cliente vuelve · sin respuesta",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Debounce · push",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Debounce · push": {
+        "main": [
+          [
+            {
+              "node": "Debounce · esperar",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Debounce · esperar": {
+        "main": [
+          [
+            {
+              "node": "Debounce · leer",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Debounce · leer": {
+        "main": [
+          [
+            {
+              "node": "¿Soy el último?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Soy el último?": {
+        "main": [
+          [
+            {
+              "node": "Gana el último",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Gana el último": {
+        "main": [
+          [
+            {
+              "node": "Debounce · limpiar",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Fin · superado por otro mensaje",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Debounce · limpiar": {
+        "main": [
+          [
+            {
+              "node": "¿Es audio?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Es audio?": {
+        "main": [
+          [
+            {
+              "node": "Descargar audio",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "¿Es media?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Descargar audio": {
+        "main": [
+          [
+            {
+              "node": "Transcribir audio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Transcribir audio": {
+        "main": [
+          [
+            {
+              "node": "Texto del audio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Texto del audio": {
+        "main": [
+          [
+            {
+              "node": "¿Es media?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Es media?": {
+        "main": [
+          [
+            {
+              "node": "W7 · media",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "W6 · conversación",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "W7 · media": {
+        "main": [
+          [
+            {
+              "node": "Resultado del cerebro",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "W6 · conversación": {
+        "main": [
+          [
+            {
+              "node": "Resultado del cerebro",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Resultado del cerebro": {
+        "main": [
+          [
+            {
+              "node": "¿Hay algo que enviar?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Hay algo que enviar?": {
+        "main": [
+          [
+            {
+              "node": "W2 · enviar",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Decidir etapa",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "W2 · enviar": {
+        "main": [
+          [
+            {
+              "node": "Decidir etapa",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Decidir etapa": {
+        "main": [
+          [
+            {
+              "node": "¿Avanza la etapa?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Avanza la etapa?": {
+        "main": [
+          [
+            {
+              "node": "W0 · avanzar etapa",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Evidencia del turno",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "W0 · avanzar etapa": {
+        "main": [
+          [
+            {
+              "node": "Evidencia del turno",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Evidencia del turno": {
+        "main": [
+          [
+            {
+              "node": "Decidir seguimiento",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Decidir seguimiento": {
+        "main": [
+          [
+            {
+              "node": "Marcar actividad",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Marcar actividad": {
+        "main": [
+          [
+            {
+              "node": "Fin · procesado",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Telegram Trigger": {
+        "main": [
+          [
+            {
+              "node": "TG → payload GHL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG → payload GHL": {
+        "main": [
+          [
+            {
+              "node": "TG · upsert contacto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG · upsert contacto": {
+        "main": [
+          [
+            {
+              "node": "TG · armar payload",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG · armar payload": {
+        "main": [
+          [
+            {
+              "node": "TG · ¿es reset?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG · ¿es reset?": {
+        "main": [
+          [
+            {
+              "node": "TG · ruteo reset",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG · ruteo reset": {
+        "main": [
+          [
+            {
+              "node": "TG · borrar memoria",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "TG · ruteo media",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG · borrar memoria": {
+        "main": [
+          [
+            {
+              "node": "TG · limpiar debounce",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG · limpiar debounce": {
+        "main": [
+          [
+            {
+              "node": "TG · aviso reset",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG · aviso reset": {
+        "main": [
+          [
+            {
+              "node": "TG · confirmar reset",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cliente vuelve · sin respuesta": {
+        "main": [
+          [
+            {
+              "node": "Aviso · cliente vuelve",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG · ruteo media": {
+        "main": [
+          [
+            {
+              "node": "TG · bajar archivo",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Normalizar entrada",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "TG · aviso media",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG · bajar archivo": {
+        "main": [
+          [
+            {
+              "node": "TG · nombrar archivo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG · nombrar archivo": {
+        "main": [
+          [
+            {
+              "node": "TG · subir a GHL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG · subir a GHL": {
+        "main": [
+          [
+            {
+              "node": "TG · adjuntar media",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG · adjuntar media": {
+        "main": [
+          [
+            {
+              "node": "TG · ¿media ok?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG · ¿media ok?": {
+        "main": [
+          [
+            {
+              "node": "Normalizar entrada",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "TG · aviso media",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Normalizar entrada",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "la agencia",
+    "name": null,
+    "description": null
+  }
+}

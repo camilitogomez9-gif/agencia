@@ -1,0 +1,32 @@
+{
+  "caso": "G-09",
+  "titulo": "send_media (adjunto suelto → array)",
+  "resultado": "CORROBORADO",
+  "detalle": "http=200 attachments=['https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg']",
+  "pasos": [
+    {
+      "req": {
+        "op": "send_media",
+        "args": {
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "mensaje": "W0 smoke media 1786059134",
+          "adjuntos": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+        }
+      },
+      "resp": [
+        {
+          "ok": true,
+          "op": "send_media",
+          "http_status": 201,
+          "via": null,
+          "data": {
+            "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+            "messageId": "0SlCyKW6UKv8gTxIyInI",
+            "traceId": "02943af2-ad8c-49b5-bd2a-031bfbe1874a"
+          },
+          "error": null
+        }
+      ]
+    }
+  ]
+}

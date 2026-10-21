@@ -1,0 +1,28 @@
+{
+  "prompt": "recolector",
+  "item_reunion": "estandarización de vocabulario mexicano en nombres de colores (sesión 2026-08-27)",
+  "descripcion": "Camilo alineó tres nombres de color al léxico mexicano de HPF: 'lila' → 'morado', 'fucsia' (y su variante 'fuxia') → 'fiusha', 'rosado' → 'rosa'. El prompt del Recolector tenía tres ocurrencias que hay que actualizar para no contradecirse a sí mismo (la lista de tapas ya usaba 'FIUSHA O FUCSIA' con OR — se queda sólo con FIUSHA; MORADO ya estaba en la misma lista, así que LILA sale por redundancia).",
+  "cita_usuario": "'lila' → 'morado'  ·  'fucsia' → 'fiusha'  ·  'rosado' → 'rosa'",
+  "contexto": "Norma decidida por Oscar y aplicada por Camilo en el vivo. Los tres términos rechazados son de registro rioplatense/español neutro; los tres aceptados son los que usa efectivamente el cliente mexicano de HPF. El anchor de la línea de correa se solapa con el edit del punto 4 (mandar la ficha visual del catálogo de correas en vez de enumerar por texto) — si ese edit se aplica primero, esta línea desaparece y el vocabulario mexicano queda embebido en el nombre_display / alt_text de la ficha en GHL, no en el prompt.",
+  "distincion_central": "Cambios sólo léxicos, sin cambio semántico. Los colores del catálogo real no cambian — sólo cómo el bot los nombra al leer y al responder.",
+  "anti_alucinacion": "Ninguna. El modelo NO va a inventar colores nuevos por este cambio: la lista de colores canónicos queda idéntica en cardinalidad y significado.",
+  "no_se_toca": "La lista completa de colores del catálogo real. Los colores de pantufla mono satín (línea 208: 'blanca, negra, morada, rosa, cielo, beige') y pantufla mono peluche (línea 209: 'blanca, negra, morada, rosa') ya usan 'morada' y 'rosa' — no requieren edición.",
+  "ATENCION_no_deployar_con_este_script": "Este delta se aplica al vivo como PARCHE DE NODO (`scripts/utilities/hpf-deploy-workflow.py --apply` sobre el `systemMessage` de Recolector en W6), NO con `hpf-aplicar-deltas-prompt.py --deploy`. Motivo idéntico al delta 08: el Recolector vivo divergió de `base + deltas` (base 55.600 chars, vivo 61.995 con deltas 02 y 06 aplicados por fuera), y --deploy pisaría lo que el vivo tiene de más. Queda acá por trazabilidad y por si algún día se recompone la cadena entera desde la base congelada. Espejo obligatorio en W7 (rama de imagen): ver delta 10.",
+  "ediciones": [
+    {
+      "anchor": "Fachada Fucsia, Portones Negros",
+      "reemplazo": "Fachada Fiusha, Portones Negros",
+      "motivo": "Descripción de la sede física en la sección 'Ubicación'. La fachada del local es del mismo color en cualquier idioma; sólo cambia cómo se nombra para que coincida con lo que el cliente mexicano diría al mirarla."
+    },
+    {
+      "anchor": "COLORES DE TAPAS DE CILINDROS: FIUSHA O FUCSIA, NARANJA O ANARANJADO, NEGRO, MORADO, VERDE, ORO O DORADO, AMARILLO, ROJO, AZUL CIELO, AZUL MARINO, BLANCA, LILA, PLATA O PLATEADO.",
+      "reemplazo": "COLORES DE TAPAS DE CILINDROS: FIUSHA, NARANJA O ANARANJADO, NEGRO, MORADO, VERDE, ORO O DORADO, AMARILLO, ROJO, AZUL CIELO, AZUL MARINO, BLANCA, PLATA O PLATEADO.",
+      "motivo": "Dos cambios en un solo anchor. (1) 'FIUSHA O FUCSIA' → 'FIUSHA': la lista ya reconocía las dos grafías con OR, ahora se queda con la mexicana. (2) 'LILA' sale de la lista: la norma nueva es MORADO y MORADO ya estaba listado, así que dejarlas ambas induce al modelo a tratarlas como dos colores distintos cuando son el mismo. El resto de la lista queda idéntico."
+    },
+    {
+      "anchor": "- Correa de Sandalia: Negro, Blanco, Lila, Plata, Oro, Rojo, Fuxia, Rosado",
+      "reemplazo": "- Correa de Sandalia: Negro, Blanco, Morado, Plata, Oro, Rojo, Fiusha, Rosa",
+      "motivo": "Enumeración de colores de correa de sandalia. Tres reemplazos en la misma línea (Lila→Morado, Fuxia→Fiusha, Rosado→Rosa). NOTA: si se aplica también el edit del punto 4 (reemplazar esta enumeración por el trigger 'mandá la ficha `colores_correa_sandalia`'), esta línea desaparece — este delta y ese edit son mutuamente excluyentes sobre la misma línea. Aplicar sólo uno."
+    }
+  ]
+}

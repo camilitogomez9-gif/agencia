@@ -1,0 +1,149 @@
+{
+  "probe_id": "sess_hpf_fic_031_1785955944#0024e74d1c0e",
+  "session_id": "sess_hpf_fic_031_1785955944",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "quiero cilindros",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 7.9,
+  "version_antes": "f787487c-8332-405d-8053-16b9b8eb1189",
+  "version_despues": "f787487c-8332-405d-8053-16b9b8eb1189",
+  "capturado_utc": "2026-08-05T18:53:11.828096+00:00",
+  "execution_id": "989737",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T18:52:59.293Z",
+  "stoppedAt": "2026-08-05T18:53:06.262Z",
+  "n_esperadas": 6,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Perfecto! Los cilindros personalizados son un detalle que todos van a agradecer en tu boda",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "✨ Cilindros personalizados\n🎉 Ideales para todo tipo de evento\n\n🎨 Por cada 20 piezas se realiza un diseño diferente.\n\n💰 Precio promo: $10 c/u\n📦 Pedido mínimo de 40 piezas",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3df7d31b0eb454cf57.png",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 2,
+      "message_part": "Mira este video para que veas cómo se ve 🎥",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701846a4c8a1a2c39fef44.mp4"
+    },
+    {
+      "idx": 3,
+      "message_part": "Te comparto el *catalogo de diseños* que tenemos para *Cilindros*",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701855188345b27e310907.jpeg",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 4,
+      "message_part": "Así puedo cotizarle",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 5,
+      "message_part": "¿Le interesa sumarlos a la cotización?\nDígame:\n- Cantidad\n- Código postal\n\n¡Gracias!",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 0,
+      "ms": 244,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1999,
+      "chat_id": 6390727286,
+      "texto_entregado": "✨ Cilindros personalizados\n🎉 Ideales para todo tipo de evento\n\n🎨 Por cada 20 piezas se realiza un diseño diferente.\n\n💰 Precio promo: $10 c/u\n📦 Pedido mínimo de 40 piezas",
+      "error": null
+    },
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 1,
+      "ms": 234,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2001,
+      "chat_id": 6390727286,
+      "texto_entregado": "Te comparto el *catalogo de diseños* que tenemos para *Cilindros*",
+      "error": null
+    },
+    {
+      "emisor": "Send Video (Telegram)",
+      "run": 0,
+      "ms": 221,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2000,
+      "chat_id": 6390727286,
+      "texto_entregado": "Mira este video para que veas cómo se ve 🎥",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 250,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1998,
+      "chat_id": 6390727286,
+      "texto_entregado": "Perfecto! Los cilindros personalizados son un detalle que todos van a agradecer en tu boda",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 290,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2002,
+      "chat_id": 6390727286,
+      "texto_entregado": "Así puedo cotizarle",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 2,
+      "ms": 270,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2003,
+      "chat_id": 6390727286,
+      "texto_entregado": "¿Le interesa sumarlos a la cotización?\nDígame:\n- Cantidad\n- Código postal\n\n¡Gracias!",
+      "error": null
+    }
+  ],
+  "n_entregadas": 6,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Perfecto! Los cilindros personalizados son un detalle que todos van a agradecer en tu boda. ¿Cuántos cilindros te gustaría pedir y a qué código postal sería el envío? Así puedo cotizarle.",
+    "tools": [
+      "IDENTIFICAR_EVENTO",
+      "MOSTRAR_PRODUCTOS"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-FIC-031"
+}

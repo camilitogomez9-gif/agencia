@@ -1,0 +1,31 @@
+{
+  "caso": "G-08",
+  "titulo": "send_text con read-back byte-exacto",
+  "resultado": "CORROBORADO",
+  "detalle": "http=200 conv=44tBzIqK9ODLJ7Jr9Lco body_exacto=sí status=failed",
+  "pasos": [
+    {
+      "req": {
+        "op": "send_text",
+        "args": {
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "mensaje": "W0 smoke texto 1786059130\n*negrita* y salto"
+        }
+      },
+      "resp": [
+        {
+          "ok": true,
+          "op": "send_text",
+          "http_status": 201,
+          "via": null,
+          "data": {
+            "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+            "messageId": "aZ7f0oKiD9DHkWkZgUHF",
+            "traceId": "3de9704d-5ff9-44ae-a24d-7e8750c59792"
+          },
+          "error": null
+        }
+      ]
+    }
+  ]
+}

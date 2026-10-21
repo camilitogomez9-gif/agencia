@@ -1,0 +1,2047 @@
+{
+  "version": 1,
+  "last_updated": "2026-06-06",
+  "comment": "Snapshot cumulativo de códigos vistos en xlsx. Pruning automático a 2 meses por update-sonrisas-nodes.py. NO editar a mano salvo conflictos.",
+  "codigos": {
+    "00001": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "A0000": {
+      "categoria": "ALINEADORES",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "A0001": {
+      "categoria": "ALINEADORES",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "A0002": {
+      "categoria": "ALINEADORES",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "A0003": {
+      "categoria": "ALINEADORES",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "A0004": {
+      "categoria": "ALINEADORES",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "A0005": {
+      "categoria": "ALINEADORES",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "A0007": {
+      "categoria": "ALINEADORES",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "A0008": {
+      "categoria": "ALINEADORES",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "A0009": {
+      "categoria": "ALINEADORES",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0000": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0001": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0002": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0003": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0004": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0005": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0006": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0007": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0008": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0009": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0010": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0011": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0012": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0013": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0014": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0015": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0016": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0050": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0051": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0052": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0053": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0054": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0055": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0056": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "C0057": {
+      "categoria": "CIRUGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "E0001": {
+      "categoria": "ENDODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "E0002": {
+      "categoria": "ENDODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "E0003": {
+      "categoria": "ENDODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "E0004": {
+      "categoria": "ENDODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "E0005": {
+      "categoria": "ENDODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "E0006": {
+      "categoria": "ENDODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "E0007": {
+      "categoria": "ENDODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "E0008": {
+      "categoria": "ENDODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "E0050": {
+      "categoria": "ENDODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "E0051": {
+      "categoria": "ENDODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "E0052": {
+      "categoria": "ENDODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "HB000": {
+      "categoria": "PRODUCTOS HIGIENE BUCAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "HB001": {
+      "categoria": "PRODUCTOS HIGIENE BUCAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "HB002": {
+      "categoria": "PRODUCTOS HIGIENE BUCAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "HB003": {
+      "categoria": "PRODUCTOS HIGIENE BUCAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "HB004": {
+      "categoria": "PRODUCTOS HIGIENE BUCAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "HB005": {
+      "categoria": "PRODUCTOS HIGIENE BUCAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "HB006": {
+      "categoria": "PRODUCTOS HIGIENE BUCAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "HB007": {
+      "categoria": "PRODUCTOS HIGIENE BUCAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA001": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA002": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA003": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA004": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA005": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA006": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA007": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA008": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA009": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA010": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA011": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA012": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA013": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA014": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA015": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA016": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA017": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA018": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA019": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA020": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA021": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA022": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA023": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA024": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA025": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA026": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA027": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA028": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA029": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA030": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA031": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA032": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA033": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA034": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA035": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA036": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA037": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA038": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA039": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA040": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA041": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA042": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA043": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA044": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA045": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA046": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA047": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA048": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA049": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA100": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA101": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA102": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA103": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA104": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA105": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA106": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA107": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA108": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA109": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA110": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA111": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA200": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA201": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA202": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA203": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA204": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA205": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA206": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA207": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA208": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA300": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA301": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA302": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA600": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA601": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA602": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA603": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA604": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA605": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA606": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA607": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA608": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA609": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA700": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA701": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA702": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA703": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA704": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA800": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OA801": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG001": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG002": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG003": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG004": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG005": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG006": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG007": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG020": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG021": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG022": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG023": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG024": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG025": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG026": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG027": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG028": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG040": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG041": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG042": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG043": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG044": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG045": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG046": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG047": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG048": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG049": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG050": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG051": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG052": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG060": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG061": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG062": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG063": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG064": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG065": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG066": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG067": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG068": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG070": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG071": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG072": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG073": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG074": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG075": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG076": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG077": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG080": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG081": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OG082": {
+      "categoria": "GENERAL",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OO001": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OO002": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OO003": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OO004": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OO005": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OO006": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OO100": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OO101": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OO102": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OO200": {
+      "categoria": "ORTODONCIA",
+      "clase": "AJUSTE",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP000": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP001": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP100": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP101": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP102": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP103": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP104": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP105": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP106": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP107": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP108": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP109": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP110": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP111": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP112": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP113": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP114": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP115": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP116": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP117": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP118": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP119": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP200": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP201": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP202": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP203": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP204": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OP205": {
+      "categoria": "ORTOPEDIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR001": {
+      "categoria": "ORTODONCIA",
+      "clase": "RETIRO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR002": {
+      "categoria": "ORTODONCIA",
+      "clase": "RETIRO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR003": {
+      "categoria": "ORTODONCIA",
+      "clase": "RETIRO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR004": {
+      "categoria": "ORTODONCIA",
+      "clase": "RETIRO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR005": {
+      "categoria": "ORTODONCIA",
+      "clase": "RETIRO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR006": {
+      "categoria": "ORTODONCIA",
+      "clase": "RETIRO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR007": {
+      "categoria": "ORTODONCIA",
+      "clase": "RETIRO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR008": {
+      "categoria": "ORTODONCIA",
+      "clase": "RETIRO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR009": {
+      "categoria": "ORTODONCIA",
+      "clase": "RETIRO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR010": {
+      "categoria": "ORTODONCIA",
+      "clase": "RETIRO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR011": {
+      "categoria": "ORTODONCIA",
+      "clase": "RETIRO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR012": {
+      "categoria": "ORTODONCIA",
+      "clase": "RETIRO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR013": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR014": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR016": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR017": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR018": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR019": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR020": {
+      "categoria": "ORTODONCIA",
+      "clase": "RETIRO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR021": {
+      "categoria": "ORTODONCIA",
+      "clase": "RETIRO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR022": {
+      "categoria": "ORTODONCIA",
+      "clase": "RETIRO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR100": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR101": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR102": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR103": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR104": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR105": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR106": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR107": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR108": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR109": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR110": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR111": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR112": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR113": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR114": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR115": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR116": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR117": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR118": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR119": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR120": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR121": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR122": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR123": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR124": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR125": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR126": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR127": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR200": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR201": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "OR202": {
+      "categoria": "ORTODONCIA",
+      "clase": "COMBO",
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P0000": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P0001": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P0002": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P0003": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P0004": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P0005": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P0006": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P0007": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P0008": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P0009": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P0010": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P0011": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P1000": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P1001": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P1002": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P1003": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P1004": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P2000": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P2001": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P2002": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P2003": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P2004": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P2005": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P2006": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P2007": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P2008": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P2009": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P3000": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P3001": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P3002": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P3003": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P3004": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P3005": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P3006": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P3007": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "P3008": {
+      "categoria": "PROTESIS",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "PE0000": {
+      "categoria": "PERIODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "PE1000": {
+      "categoria": "PERIODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "PE1001": {
+      "categoria": "PERIODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "PE1002": {
+      "categoria": "PERIODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "PE1003": {
+      "categoria": "PERIODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "PE1004": {
+      "categoria": "PERIODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "PE1005": {
+      "categoria": "PERIODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "PE1006": {
+      "categoria": "PERIODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "PE1007": {
+      "categoria": "PERIODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "PE2000": {
+      "categoria": "PERIODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "PE2001": {
+      "categoria": "PERIODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "PE2002": {
+      "categoria": "PERIODONCIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "RD000": {
+      "categoria": "RADIOLOGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "RD001": {
+      "categoria": "RADIOLOGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "RD002": {
+      "categoria": "RADIOLOGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "RD003": {
+      "categoria": "RADIOLOGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "RD004": {
+      "categoria": "RADIOLOGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "RD005": {
+      "categoria": "RADIOLOGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "RD006": {
+      "categoria": "RADIOLOGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "RD007": {
+      "categoria": "RADIOLOGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    },
+    "RD008": {
+      "categoria": "RADIOLOGIA",
+      "clase": null,
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-06"
+    }
+  }
+}

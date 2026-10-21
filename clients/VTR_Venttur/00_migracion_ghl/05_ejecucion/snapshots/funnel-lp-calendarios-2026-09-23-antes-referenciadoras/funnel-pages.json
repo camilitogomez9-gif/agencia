@@ -1,0 +1,461 @@
+[
+ {
+  "_id": "cnL05E6NeqX6cXQpYSKc",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "AAFamilia-Agendar",
+  "stepId": "e4073c36-178c-4453-8e90-5972ef7c83f0",
+  "updatedAt": "2026-09-22T23:28:01.609Z"
+ },
+ {
+  "_id": "8e4rPwVTvA34SjVWp616",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "Campamentos-Calendario",
+  "stepId": "644e7b9b-d9be-466c-9553-e4f2d8611ab1",
+  "updatedAt": "2026-09-23T14:20:12.924Z"
+ },
+ {
+  "_id": "PeZs7cRmVYp6zHOJzyJP",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "CursosIdiomas-Calendario",
+  "stepId": "0998edfb-d311-429e-aa3f-73000ee717e7",
+  "updatedAt": "2026-09-22T23:17:03.676Z"
+ },
+ {
+  "_id": "m35TQ9vLfQW3EiKcsXpW",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "EducacionSuperior-Calendario",
+  "stepId": "0dcdb603-b488-42a3-aa21-81b599f45d0a",
+  "updatedAt": "2026-09-22T23:17:57.795Z"
+ },
+ {
+  "_id": "W8Re4e7sya2H51nnZWN2",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "Estudiar-y-Trabajar-en-Australia",
+  "stepId": "f91fa7ea-e5c0-4d83-88ea-e89f48e2b111",
+  "updatedAt": "2026-09-22T23:28:38.121Z"
+ },
+ {
+  "_id": "DOHwV2NUwoTgKwDGPd7V",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "EstudiaryTrabajar_Agendar",
+  "stepId": "b14d2ba7-c559-439d-a687-a171e29f022d",
+  "updatedAt": "2026-09-22T23:29:18.187Z"
+ },
+ {
+  "_id": "2f5BAvcHVDKYVYfh0LlC",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "GapYear-Calendario",
+  "stepId": "bfdb70e3-d12f-4537-812c-f3dac7ceaa4c",
+  "updatedAt": "2026-09-22T23:18:58.207Z"
+ },
+ {
+  "_id": "r07BWq3aN9dd4O3EZ4Fy",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "Intercambio-Calendario",
+  "stepId": "2792405a-e6d8-4c22-aaa4-4d72e35e6f46",
+  "updatedAt": "2026-09-22T22:54:45.648Z"
+ },
+ {
+  "_id": "BXniJXVtQnTKEbHTDDRv",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "Internados-Calendario",
+  "stepId": "cdaa0b35-22e5-4c5a-82b6-cb2163c5fe1e",
+  "updatedAt": "2026-09-23T14:19:47.701Z"
+ },
+ {
+  "_id": "TScDsllM7dF5htct8FRc",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "JuanJose-Calendario",
+  "stepId": "9ec861a3-527f-4a68-a69d-b0fb9559dfa2",
+  "updatedAt": "2026-09-22T23:03:15.564Z"
+ },
+ {
+  "_id": "GLXU6qQlsd5moXy7Me1l",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "Niza-Calendario",
+  "stepId": "428e3f52-6823-4f78-82a8-a048fcb357cf",
+  "updatedAt": "2026-09-22T23:21:27.129Z"
+ },
+ {
+  "_id": "aQyaK4MKOyJqGIovGQC2",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "PW_Alemania_Agendar",
+  "stepId": "9621c0c6-3c53-44fa-8275-c9c5d7d74578",
+  "updatedAt": "2026-09-22T23:30:08.356Z"
+ },
+ {
+  "_id": "LfUEbcwc1Tjf9t9L65jc",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "PathwayAlemania-Calendario",
+  "stepId": "d6a33eed-686e-4736-b49f-7c317b5df14d",
+  "updatedAt": "2026-09-22T23:27:21.134Z"
+ },
+ {
+  "_id": "rj0Op4yGxuZQfxcGd0sl",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "Programas",
+  "stepId": "e6e21af4-1484-44b5-ba51-7c98f97718ab",
+  "updatedAt": "2026-09-22T23:35:36.447Z"
+ },
+ {
+  "_id": "lMdhyhVdmjDs9a4aXxdL",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "SPEagendar",
+  "stepId": "e07ce0fe-39a5-4071-8025-86613bdca473",
+  "updatedAt": "2026-09-22T23:30:46.043Z"
+ },
+ {
+  "_id": "I3L4FvewbYgv45SCh4zU",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "SummerCamp-Agendar",
+  "stepId": "3eb2ad57-07c7-490a-a258-7d0a527386ad",
+  "updatedAt": "2026-09-22T23:31:20.787Z"
+ },
+ {
+  "_id": "GnVLvieDZQFdreJEctG3",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "ViajesEducativos-Calendario",
+  "stepId": "83b52774-b9bd-4fc2-a572-4706a9197661",
+  "updatedAt": "2026-09-22T22:50:14.874Z"
+ },
+ {
+  "_id": "ipi5FpeVu7AnrPU0Jg16",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-AlinaBuendia",
+  "stepId": "d2bf8159-13aa-4acd-ae0d-74b7e95d1ce9",
+  "updatedAt": "2026-09-22T23:37:02.417Z"
+ },
+ {
+  "_id": "SBdwN3HzvjS3xPq1xePq",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-AlondraRamos",
+  "stepId": "e834020f-c81e-4467-83c4-fff5cdba1211",
+  "updatedAt": "2026-09-22T23:37:37.585Z"
+ },
+ {
+  "_id": "IeTTwN92VDy4IQqQUd7L",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-AnaGo",
+  "stepId": "2762308d-f9d5-4e3c-966c-0f48e9d9dc96",
+  "updatedAt": "2026-09-22T23:38:12.770Z"
+ },
+ {
+  "_id": "hb6cHqbq78nuf2vCPbpD",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-BarbaraGalvan",
+  "stepId": "815de82b-f795-4073-9edb-c225c3cb0f6e",
+  "updatedAt": "2026-09-22T23:38:48.319Z"
+ },
+ {
+  "_id": "tL4JNg4MvUxvEGrfujRb",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-CeciDiaz",
+  "stepId": "c1eb3fb8-8334-4b96-8f2a-afa39219521b",
+  "updatedAt": "2026-09-22T23:39:23.777Z"
+ },
+ {
+  "_id": "Gnn9GrEXyLWPz5TuXmdn",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-CeciGonzalez",
+  "stepId": "3b9a207d-dd7a-4565-8551-c8001e0ec5c3",
+  "updatedAt": "2026-09-22T23:39:58.906Z"
+ },
+ {
+  "_id": "ICaS2lL4lY8yqNv5Tk0Y",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-DiegoG",
+  "stepId": "cf7ca3f7-0536-4185-b339-048a3e4dafa8",
+  "updatedAt": "2026-09-22T23:40:36.195Z"
+ },
+ {
+  "_id": "dJCjFmMznEqydVRcXC1j",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-DorianaVe",
+  "stepId": "9abe1012-919b-46a8-9747-3ab5ba4a49d7",
+  "updatedAt": "2026-09-22T23:41:10.893Z"
+ },
+ {
+  "_id": "PdvlU2bVB833EJOqcU1P",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-EdnaPe",
+  "stepId": "dae4375d-2d8c-44d6-9578-e813e8d673c7",
+  "updatedAt": "2026-09-22T23:41:46.262Z"
+ },
+ {
+  "_id": "THsy9M5AB5kYExT8y5X2",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-ErnestoGrapain",
+  "stepId": "f68df2f1-5bd1-4e87-b258-cc0e842edf48",
+  "updatedAt": "2026-09-22T23:42:21.573Z"
+ },
+ {
+  "_id": "p8tUCF6sxQxticfurDxg",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-EstherZamudio",
+  "stepId": "2d98629f-30ce-40df-b4e5-f179c3d89e45",
+  "updatedAt": "2026-09-22T23:42:57.581Z"
+ },
+ {
+  "_id": "HTz7OUFcwDWcBnY6eKfu",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-GabyAnaya",
+  "stepId": "ebcb9b58-7056-4cd9-a5c3-26ce323319f7",
+  "updatedAt": "2026-09-22T23:43:34.219Z"
+ },
+ {
+  "_id": "lGTjTAXufPoNBZZqnE30",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-GracielaH",
+  "stepId": "a2cd8e9c-2490-44ea-8819-17a5afefcd25",
+  "updatedAt": "2026-09-22T23:44:16.560Z"
+ },
+ {
+  "_id": "QaQ3mmOad0vdjJGWLLGY",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-ItzaPerez",
+  "stepId": "788b3407-3909-42e4-bce5-c73d0190bee8",
+  "updatedAt": "2026-09-22T23:44:52.984Z"
+ },
+ {
+  "_id": "dGdIe6urHPZwTWgvWkTj",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-JacquieMarie",
+  "stepId": "e48d3be6-eee1-4e8e-8be0-41b697f12cb9",
+  "updatedAt": "2026-09-22T23:45:28.113Z"
+ },
+ {
+  "_id": "skOYAaabeCfjJGpYQaNw",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-KarlaAsaam",
+  "stepId": "0641eb1a-e83d-4bad-8dcb-427e84f3ecc0",
+  "updatedAt": "2026-09-22T23:46:05.432Z"
+ },
+ {
+  "_id": "P5HFSmEYbIPWto20uD4C",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-LucyGalindo",
+  "stepId": "b38810a2-1131-42f3-bea1-d96ed0229b81",
+  "updatedAt": "2026-09-22T23:46:40.931Z"
+ },
+ {
+  "_id": "CInWRsiVjr1UnjJFCErH",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-LuipitaRoch",
+  "stepId": "52f63e12-b55b-486c-ac2e-1d4c8b737bbf",
+  "updatedAt": "2026-09-22T23:47:17.238Z"
+ },
+ {
+  "_id": "Zj9tQc81PbEpl1gy5VTK",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-MarianaVa",
+  "stepId": "a07df14d-488b-4f72-9e4d-43a5bce957bb",
+  "updatedAt": "2026-09-22T23:47:54.073Z"
+ },
+ {
+  "_id": "MSQDTzjaf9Orq2188rAi",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-Marissa",
+  "stepId": "b278e7ed-e1cf-442d-b935-60a7a7c186de",
+  "updatedAt": "2026-09-22T23:48:30.443Z"
+ },
+ {
+  "_id": "c1PmvhRVOQkUMnU276YA",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-MiaBarba",
+  "stepId": "4b8e0e85-e5c5-46c0-8cc1-54e6296ae20a",
+  "updatedAt": "2026-09-22T23:49:06.457Z"
+ },
+ {
+  "_id": "FGHyZ726G9Ps3cV5ZpRV",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-MishelleZ",
+  "stepId": "5aee186b-ff13-419a-9d2d-f441470072fa",
+  "updatedAt": "2026-09-22T23:49:42.787Z"
+ },
+ {
+  "_id": "xoOYXxGTcgf4yJJcTTGa",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-MontseZuniga",
+  "stepId": "535e7fde-a39f-433d-a227-5a3543fc6c85",
+  "updatedAt": "2026-09-22T23:50:19.130Z"
+ },
+ {
+  "_id": "T7tYQRHz8r0yftHIKzvo",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-PauNoreen",
+  "stepId": "a36111dc-7a3d-4a4f-8bf0-f8708e06af18",
+  "updatedAt": "2026-09-22T23:50:55.146Z"
+ },
+ {
+  "_id": "rl0uWVUyFT0CYwReFhnC",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-SoniaFrias",
+  "stepId": "0c4a0c7e-340b-4ef1-b449-0a2d070a42bb",
+  "updatedAt": "2026-09-22T23:51:30.956Z"
+ },
+ {
+  "_id": "suC3Eew7dz7xaIgiPZd6",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-VeroCampos",
+  "stepId": "42c9b702-ff67-465d-baa6-2cec0f4e2d74",
+  "updatedAt": "2026-09-22T23:52:06.059Z"
+ },
+ {
+  "_id": "f9pQAtFMaUDcMZi3GRcG",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-ayanez",
+  "stepId": "c1ec2df1-29b9-44cf-b38e-f35b8683448d",
+  "updatedAt": "2026-09-22T23:52:41.805Z"
+ },
+ {
+  "_id": "S3aWKh239nEJ8IKOaQ3X",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "agendar-ema",
+  "stepId": "cef33d1b-e7d8-4fff-a1a8-a0e9a340578a",
+  "updatedAt": "2026-09-22T23:31:57.092Z"
+ },
+ {
+  "_id": "nWVvpM7tn1cY1AC0jrPc",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "cursos-idiomas-agendar",
+  "stepId": "216d135a-f79f-4dd0-ba5a-7c1d5a1d8587",
+  "updatedAt": "2026-09-22T23:32:40.788Z"
+ },
+ {
+  "_id": "PbMDFOFJDET1AY21ozPz",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "educacion-superior-agendar",
+  "stepId": "4ad773b7-190a-4a8f-8f9e-31354ae77202",
+  "updatedAt": "2026-09-22T23:33:14.122Z"
+ },
+ {
+  "_id": "rVzDEK8OMsCnzBDGMcPk",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "entrenamientospe",
+  "stepId": "8627b518-88f7-4e2b-8e11-e1346fe9d80f",
+  "updatedAt": "2026-09-22T23:33:49.389Z"
+ },
+ {
+  "_id": "UBjCzo32ueaIB4x8DyDs",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "gap-year-agendar",
+  "stepId": "f266bb82-16d2-4d33-8dbf-1bdaf6cd7466",
+  "updatedAt": "2026-09-22T23:34:26.037Z"
+ },
+ {
+  "_id": "hfHauddlY1DtPAuwQDUo",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "preparate",
+  "stepId": "b3df7c9a-5a3c-46f7-a47c-1a6fddecffb5",
+  "updatedAt": "2026-09-23T16:10:21.213Z"
+ },
+ {
+  "_id": "nFMMwSrJKdv2HaV7UM8p",
+  "deleted": false,
+  "funnelId": "HKYOBKUdbmJoD3NFEYyN",
+  "locationId": "7aXb4JCKsWV5nUyBXeSF",
+  "name": "viajes-educativos-agendar",
+  "stepId": "561e7ca6-26e2-496a-acd7-cdf25da5961b",
+  "updatedAt": "2026-09-22T23:35:01.444Z"
+ }
+]

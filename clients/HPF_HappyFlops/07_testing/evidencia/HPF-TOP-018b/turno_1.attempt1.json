@@ -1,0 +1,29 @@
+{
+  "probe_id": "sess_hpf_top_018b_1785953724#f003239c9673",
+  "session_id": "sess_hpf_top_018b_1785953724",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "",
+  "media_url": null,
+  "http": 500,
+  "segundos_post": 1.1,
+  "version_antes": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "version_despues": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "capturado_utc": "2026-08-05T18:15:34.122970+00:00",
+  "execution_id": "989507",
+  "status_n8n": "error",
+  "startedAt": "2026-08-05T18:15:28.702Z",
+  "stoppedAt": "2026-08-05T18:15:28.809Z",
+  "n_esperadas": 0,
+  "partes_esperadas": [],
+  "partes_emitidas": [],
+  "n_entregadas": 0,
+  "cero_partes": true,
+  "agente": {
+    "output": null,
+    "tools": []
+  },
+  "message_type_forzado": "sticker",
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-TOP-018b"
+}

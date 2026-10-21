@@ -1,0 +1,414 @@
+{
+  "name": "Agente Outreach IG — SetterPerfecto",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "outreach-agent",
+        "responseMode": "onReceived",
+        "responseData": "success",
+        "options": {}
+      },
+      "id": "node-01-webhook",
+      "name": "Recibir Mensaje ManyChat",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "outreach-agent-webhook",
+      "notes": "Webhook que recibe todos los mensajes desde el Flow de ManyChat. Responde 200 inmediatamente (onReceived) y continúa procesando en background. Body esperado: { subscriber_id, ig_username, last_message, conversation_id }"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "={{ $env.NOTION_OUTREACH_DB_ID }}",
+          "mode": "id"
+        },
+        "returnAll": false,
+        "limit": 1,
+        "filterType": "manual",
+        "filters": {
+          "conditions": [
+            {
+              "key": "ig_handle|title",
+              "condition": "equals",
+              "titleValue": "={{ $json.body.ig_username }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-02-notion-search",
+      "name": "Buscar Prospecto en Notion",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [460, 300],
+      "credentials": {
+        "notionApi": {
+          "id": "REEMPLAZAR_CON_ID_DE_CREDENTIAL",
+          "name": "Notion account"
+        }
+      },
+      "notes": "Busca el ig_username en la DB de Notion. Si está registrado = es outreach. El campo Title de la DB debe llamarse 'ig_handle'. Si el nombre es diferente, cambiar 'ig_handle|title' al nombre real."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-found-in-notion",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            },
+            {
+              "id": "cond-estado-valido",
+              "leftValue": "={{ $json.properties?.estado_outreach?.select?.name }}",
+              "rightValue": "no_interesado",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "node-03-if-outreach",
+      "name": "¿Es Prospecto de Outreach?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [680, 300],
+      "notes": "TRUE (output 0): está en Notion con estado activo → agente de outreach responde. FALSE (output 1): no está en Notion o estado = no_interesado → agente inbound de Chatwoot lo maneja."
+    },
+    {
+      "parameters": {
+        "unit": "minutes",
+        "amount": "={{ Math.floor(1 + Math.random() * 4) }}"
+      },
+      "id": "node-04-wait-initial",
+      "name": "Delay Inicial Anti-bot (1-5 min)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [900, 180],
+      "webhookId": "wait-initial-delay",
+      "notes": "Espera entre 1 y 5 minutos antes de responder. Simula que la agencia vio el mensaje con delay natural. PARA TESTING: cambiar 'amount' a 1 y 'unit' a 'seconds'."
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "get",
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $('Buscar Prospecto en Notion').first().json.id }}",
+          "mode": "id"
+        }
+      },
+      "id": "node-05-notion-get",
+      "name": "Obtener Registro Completo de Notion",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [1120, 180],
+      "credentials": {
+        "notionApi": {
+          "id": "REEMPLAZAR_CON_ID_DE_CREDENTIAL",
+          "name": "Notion account"
+        }
+      },
+      "notes": "Obtiene el registro completo del prospecto: nicho, historial de conversación, score_mql, etc."
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// CONSTRUIR PROMPT CON CONTEXTO DE LA CONVERSACIÓN\n// ============================================================\n\n// Datos del webhook (ManyChat)\nconst webhookBody = $('Recibir Mensaje ManyChat').first().json.body;\nconst subscriberId = webhookBody.subscriber_id;\nconst igUsername = webhookBody.ig_username;\nconst lastMessage = webhookBody.last_message || '';\n\n// Datos de Notion\nconst notionRecord = $('Obtener Registro Completo de Notion').first().json;\nconst notionPageId = notionRecord.id;\n\n// Extraer nicho (puede ser Select o Rich Text)\nconst nichoRaw = notionRecord.properties?.nicho?.select?.name ||\n                 notionRecord.properties?.nicho?.rich_text?.[0]?.plain_text ||\n                 'tu nicho';\nconst nicho = nichoRaw.toLowerCase();\n\n// Extraer historial acumulado\nconst historialExistente = notionRecord.properties?.historial?.rich_text?.[0]?.plain_text || '';\n\n// Construir historial actualizado con el mensaje actual\nconst historialConNuevoMsg = historialExistente\n  ? historialExistente + '\\n[PROSPECTO]: ' + lastMessage\n  : '[PROSPECTO]: ' + lastMessage;\n\n// Truncar si es muy largo (Notion tiene límite de 2000 chars en rich_text via API)\n// Mantenemos los últimos 1500 caracteres del historial para dejar margen\nconst historialFinal = historialConNuevoMsg.length > 1500\n  ? '...' + historialConNuevoMsg.slice(-1500)\n  : historialConNuevoMsg;\n\n// ============================================================\n// SYSTEM PROMPT - Editar en referencia/agente-outreach-ig-system-prompt.md\n// ============================================================\nconst systemPrompt = `Sos el asistente de ventas de la agencia respondiendo en nombre de la agencia.\n\n---\n\nCONTEXTO DE LA CONVERSACIÓN\n\nla agencia inició el contacto con este prospecto enviándole este mensaje:\n\n\"che [NOMBRE], pregunta honesta, cuánto estás facturando por seguidor?\\nporque estoy viendo cuentas del nicho ${nicho} con la mitad de tu audiencia generando 3 o 4 veces más\\ny no es por el contenido. el tuyo es excelente. Es por la infraestructura detrás.\\nte jode si te muestro de qué carajo te estoy hablando?\"\n\nEl prospecto respondió a ese mensaje. Estás continuando esa conversación desde el lugar de la agencia.\nTu objetivo principal: calificar al prospecto y, si aplica, invitarlo a una llamada de exploración de 20 minutos.\n\n---\n\nQUÉ ES SETTERPERFECTO\n\nSetterPerfecto es un sistema de IA + automatización que convierte cualquier negocio con audiencia en una máquina de agendar reuniones calificadas. Usa mensajes personalizados generados por IA, seguimiento automatizado y scripts optimizados para llenar el calendario de ventas sin depender de setters humanos costosos o inconsistentes.\n\nEl problema que resuelve: la mayoría de los negocios con audiencia en Instagram tienen contenido sólido pero no convierten bien porque no tienen un sistema de seguimiento y calificación. SetterPerfecto es exactamente esa \"infraestructura detrás\" que mencionó la agencia.\n\n---\n\nSEÑALES DE CALIFICACIÓN\n\nPOSITIVAS — buen fit:\n- Tiene audiencia y vende servicios/productos de ticket medio/alto (>$300 USD)\n- Tiene o quiere tener un equipo de ventas\n- Tiene leads pero le cuesta convertirlos o darles seguimiento\n- Menciona frustración con conseguir clientes de forma consistente\n\nNEGATIVAS — probablemente no es fit:\n- Solo vende productos físicos de bajo ticket\n- No tiene sistema de ventas y no quiere construir uno\n- Solo busca likes/followers, no monetizar\n\n---\n\nTONO Y ESTILO\n\n- Conversacional, directo, sin corporativismo. Como escribe la agencia en Instagram.\n- Mostrás curiosidad genuina. No asumís — preguntás.\n- Hacés UNA sola pregunta a la vez, nunca un cuestionario.\n- No vendés en los primeros mensajes. La venta viene con fit confirmado.\n- Sos conciso. Mensajes cortos como en una conversación real de Instagram.\n- Usás lenguaje rioplatense natural: vos/sos, che, mirá, etc.\n\n---\n\nFORMATO DE RESPUESTA — MUY IMPORTANTE\n\nDividí tu respuesta en 2 a 4 partes cortas, separadas por una línea que contenga exactamente: ---\nCada parte = 1 mensaje separado. Máximo 2 oraciones por parte.\n\nEJEMPLO CORRECTO:\njaja re válido lo que decís\n---\npero justamente eso es lo que más vemos: gente con buen contenido que no convierte porque no tiene el sistema\n---\n¿hoy cómo estás consiguiendo tus clientes, más por referidos o tenés algo armado?\n\nEJEMPLO INCORRECTO (NO hacer esto):\nHola! Muchas gracias por responder. Mira, lo que te quería mostrar es que muchos negocios como el tuyo en el nicho ${nicho} están dejando dinero sobre la mesa...\n\n---\n\nHISTORIAL DE CONVERSACIÓN\n\n${historialFinal}\n\n---\n\nRespondé al último mensaje del historial de forma natural y avanzando hacia calificación o agenda de llamada.`;\n\nreturn [{\n  json: {\n    systemPrompt,\n    nicho,\n    historialConNuevoMsg,  // para guardar en Notion después\n    notionPageId,\n    subscriberId,\n    igUsername\n  }\n}];"
+      },
+      "id": "node-06-code-prompt",
+      "name": "Construir Prompt con Contexto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 180],
+      "notes": "Ensambla el system prompt con nicho y historial de la conversación. Para modificar el prompt, editar el archivo referencia/agente-outreach-ig-system-prompt.md y actualizar el string systemPrompt aquí."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={{ $env.GEMINI_API_KEY }}",
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={\n  \"system_instruction\": {\n    \"parts\": [{ \"text\": {{ JSON.stringify($json.systemPrompt) }} }]\n  },\n  \"contents\": [{\n    \"role\": \"user\",\n    \"parts\": [{ \"text\": \"Generá la próxima respuesta para continuar la conversación.\" }]\n  }],\n  \"generationConfig\": {\n    \"temperature\": 0.85,\n    \"maxOutputTokens\": 400,\n    \"topP\": 0.95\n  }\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "node-07-gemini",
+      "name": "Generar Respuesta con Gemini",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 180],
+      "notes": "Llama a Gemini 2.5 Flash. Temperature 0.85 para respuestas naturales pero no caóticas. maxOutputTokens 400 = suficiente para 3-4 mensajes cortos."
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// PARSEAR RESPUESTA DE GEMINI EN MENSAJES SEPARADOS\n// ============================================================\n\n// Extraer texto de la respuesta de Gemini\nconst geminiResponse = $input.first().json;\nconst responseText = geminiResponse.candidates?.[0]?.content?.parts?.[0]?.text || '';\n\nif (!responseText) {\n  throw new Error('Gemini no devolvió texto. Revisar la respuesta: ' + JSON.stringify(geminiResponse));\n}\n\n// Parsear mensajes separados por ---\nconst rawParts = responseText\n  .split(/^\\s*---\\s*$/m)\n  .map(p => p.trim())\n  .filter(p => p.length > 0)\n  .slice(0, 4); // máximo 4 mensajes\n\n// Si Gemini no usó separadores, dividir en oraciones (fallback)\nconst parts = rawParts.length >= 2\n  ? rawParts\n  : responseText.split(/(?<=[.!?])\\s+/).slice(0, 3);\n\n// Recuperar datos del contexto (necesarios para el loop y la actualización de Notion)\nconst contextData = $('Construir Prompt con Contexto').first().json;\nconst subscriberId = contextData.subscriberId;\nconst notionPageId = contextData.notionPageId;\n\n// Construir historial completo incluyendo la respuesta de la IA\nconst aiResponseForHistory = parts.join('\\n');\nconst historialCompleto = contextData.historialConNuevoMsg + '\\n[LA AGENCIA AI]: ' + aiResponseForHistory;\n\n// Truncar si necesario (límite Notion rich_text API: 2000 chars)\nconst historialFinalParaNotion = historialCompleto.length > 1900\n  ? '...' + historialCompleto.slice(-1900)\n  : historialCompleto;\n\n// Retornar cada mensaje como un item separado para el loop\nreturn parts.map((message, index) => ({\n  json: {\n    message,\n    // Delay en segundos: simula tipeo humano (2s base + 0.04s por char + random 0-3s)\n    delaySeconds: Math.min(12, Math.max(2, Math.floor(2 + message.length * 0.04 + Math.random() * 3))),\n    subscriberId,\n    notionPageId,\n    isLastMessage: index === parts.length - 1,\n    historialFinalParaNotion,  // solo necesario en el último mensaje\n    totalMessages: parts.length,\n    messageIndex: index + 1\n  }\n}));"
+      },
+      "id": "node-08-parse-messages",
+      "name": "Parsear Mensajes y Preparar Loop",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1780, 180],
+      "notes": "Divide la respuesta de Gemini en 2-4 mensajes usando '---' como separador. Calcula el delay de tipeo para cada parte (2-12 segundos según longitud)."
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "node-09-split-batches",
+      "name": "Loop: Un Mensaje a la Vez",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [2000, 180],
+      "notes": "Procesa un mensaje a la vez. Output 0 (loop): procesa el siguiente mensaje. Output 1 (done): todos los mensajes enviados, pasa a actualizar Notion."
+    },
+    {
+      "parameters": {
+        "unit": "seconds",
+        "amount": "={{ $json.delaySeconds }}"
+      },
+      "id": "node-10-wait-typing",
+      "name": "Delay de Tipeo",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [2220, 60],
+      "webhookId": "wait-typing-delay",
+      "notes": "Espera entre 2 y 12 segundos antes de enviar el mensaje. El tiempo depende de la longitud del mensaje."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendContent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.MANYCHAT_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $json.subscriberId }}\",\n  \"data\": {\n    \"version\": \"v2\",\n    \"content\": {\n      \"type\": \"instagram\",\n      \"messages\": [\n        {\n          \"type\": \"text\",\n          \"text\": {{ JSON.stringify($json.message) }}\n        }\n      ]\n    }\n  },\n  \"message_tag\": \"ACCOUNT_UPDATE\"\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "node-11-manychat-send",
+      "name": "Enviar Mensaje via ManyChat",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2440, 60],
+      "notes": "Envía el mensaje a través de ManyChat API. subscriber_id viene del webhook original de ManyChat. message_tag ACCOUNT_UPDATE funciona dentro de la ventana de 24h."
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "update",
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $('Parsear Mensajes y Preparar Loop').first().json.notionPageId }}",
+          "mode": "id"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "estado_outreach|select",
+              "selectValue": "en_conversacion"
+            },
+            {
+              "key": "historial|rich_text",
+              "textContent": "={{ $('Parsear Mensajes y Preparar Loop').first().json.historialFinalParaNotion }}"
+            }
+          ]
+        }
+      },
+      "id": "node-12-notion-update",
+      "name": "Actualizar Conversación en Notion",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [2220, 300],
+      "credentials": {
+        "notionApi": {
+          "id": "REEMPLAZAR_CON_ID_DE_CREDENTIAL",
+          "name": "Notion account"
+        }
+      },
+      "notes": "Se ejecuta DESPUÉS de que todos los mensajes fueron enviados (done output del loop). Actualiza el estado a 'en_conversacion' y guarda el historial completo de la conversación."
+    }
+  ],
+  "connections": {
+    "Recibir Mensaje ManyChat": {
+      "main": [
+        [
+          {
+            "node": "Buscar Prospecto en Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Prospecto en Notion": {
+      "main": [
+        [
+          {
+            "node": "¿Es Prospecto de Outreach?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es Prospecto de Outreach?": {
+      "main": [
+        [
+          {
+            "node": "Delay Inicial Anti-bot (1-5 min)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Delay Inicial Anti-bot (1-5 min)": {
+      "main": [
+        [
+          {
+            "node": "Obtener Registro Completo de Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener Registro Completo de Notion": {
+      "main": [
+        [
+          {
+            "node": "Construir Prompt con Contexto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Construir Prompt con Contexto": {
+      "main": [
+        [
+          {
+            "node": "Generar Respuesta con Gemini",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generar Respuesta con Gemini": {
+      "main": [
+        [
+          {
+            "node": "Parsear Mensajes y Preparar Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parsear Mensajes y Preparar Loop": {
+      "main": [
+        [
+          {
+            "node": "Loop: Un Mensaje a la Vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop: Un Mensaje a la Vez": {
+      "main": [
+        [
+          {
+            "node": "Delay de Tipeo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actualizar Conversación en Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delay de Tipeo": {
+      "main": [
+        [
+          {
+            "node": "Enviar Mensaje via ManyChat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Mensaje via ManyChat": {
+      "main": [
+        [
+          {
+            "node": "Loop: Un Mensaje a la Vez",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "meta": {
+    "notes": "Agente de outreach IG para SetterPerfecto. Recibe mensajes via ManyChat webhook, verifica en Notion si el remitente es un prospecto de outreach, genera respuesta con Gemini 2.5 Flash, y envía mensajes en partes con delays naturales via ManyChat API. Ver referencia/agente-outreach-ig-system-prompt.md para el prompt y referencia/notion-outreach-db-schema.md para el esquema de datos.",
+    "version": "1.0.0",
+    "created": "2026-03-12"
+  },
+  "_INSTRUCCIONES_DE_IMPORTACION": {
+    "paso_1": "En n8n: menu lateral → Workflows → Import from File → seleccionar este JSON",
+    "paso_2": "Ir a Settings → Credentials y crear: (a) Notion account con tu NOTION_API_TOKEN, (b) las HTTP Request nodes usan variables de entorno",
+    "paso_3": "Reemplazar los 3 campos 'REEMPLAZAR_CON_ID_DE_CREDENTIAL' en los nodos Notion con el ID real de tu credential de Notion",
+    "paso_4": "En n8n Settings → Variables (o Environment Variables), agregar: NOTION_OUTREACH_DB_ID, GEMINI_API_KEY, MANYCHAT_API_KEY",
+    "paso_5": "Activar el workflow. El webhook estará disponible en: https://tu-n8n.com/webhook/outreach-agent",
+    "paso_6": "En ManyChat: crear Flow 'Outreach Responder' que haga External Request POST a esa URL con body: { subscriber_id, ig_username, last_message, conversation_id }",
+    "paso_7_testing": "Para testing: en el nodo 'Delay Inicial Anti-bot', cambiar 'amount' a 5 y 'unit' a 'seconds'",
+    "nota_campo_titulo_notion": "Si el campo Title de tu DB de Notion tiene un nombre diferente a 'ig_handle', cambiar 'ig_handle|title' en el nodo 'Buscar Prospecto en Notion' al nombre real. Ej: si el Title se llama 'Handle', usar 'Handle|title'"
+  }
+}

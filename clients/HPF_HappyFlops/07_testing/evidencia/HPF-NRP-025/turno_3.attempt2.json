@@ -1,0 +1,70 @@
+{
+  "probe_id": "sess_hpf_nrp_025_1785957615#28e1c805042d",
+  "session_id": "sess_hpf_nrp_025_1785957615",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "sigues ahi?",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 59.3,
+  "version_antes": "cff6a505-9b93-437e-8535-df2be25e399f",
+  "version_despues": "cff6a505-9b93-437e-8535-df2be25e399f",
+  "capturado_utc": "2026-08-05T19:23:48.223410+00:00",
+  "execution_id": "989941",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T19:22:44.453Z",
+  "stoppedAt": "2026-08-05T19:23:42.828Z",
+  "n_esperadas": 2,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Sí, aquí sigo! Cuéntame, qué recuerditos te gustaría ver para tus XV años?",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "Tenemos varias opciones súper padres para tu evento. Quieres que te muestre sandalias, pantuflas, cilindros, kit anticruda o vasos popote?",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 188,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2106,
+      "chat_id": 6390727286,
+      "texto_entregado": "Sí, aquí sigo! Cuéntame, qué recuerditos te gustaría ver para tus XV años?",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 189,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2107,
+      "chat_id": 6390727286,
+      "texto_entregado": "Tenemos varias opciones súper padres para tu evento. Quieres que te muestre sandalias, pantuflas, cilindros, kit anticruda o vasos popote?",
+      "error": null
+    }
+  ],
+  "n_entregadas": 2,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Sí, aquí sigo! Cuéntame, ¿qué recuerditos te gustaría ver para tus XV años? Tenemos varias opciones súper padres para tu evento. ¿Quieres que te muestre sandalias, pantuflas, cilindros, kit anticruda o vasos popote?",
+    "tools": []
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-NRP-025"
+}

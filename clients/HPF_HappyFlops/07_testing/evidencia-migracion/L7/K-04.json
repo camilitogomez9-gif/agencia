@@ -1,0 +1,35 @@
+{
+  "caso": "K-04",
+  "titulo": "formato legacy `cuentas` sigue funcionando",
+  "resultado": "CORROBORADO",
+  "detalle": "costo=350 advertencia=No se pudieron verificar los mínimos de compra por producto porque se ",
+  "pasos": [
+    {
+      "resp": {
+        "ok": true,
+        "costo_total_envio": 350,
+        "costo_total_envio_str": "$350",
+        "cantidad_cajas": 1,
+        "resumen_cajas": [
+          "Caja 1: $350"
+        ],
+        "cajas": [
+          {
+            "indice": 1,
+            "peso_total_kg": 13.1,
+            "costo_envio": 350,
+            "costo_envio_str": "$350",
+            "contenido": {
+              "GEN_0.15": 50,
+              "GEN_0.14": 40
+            }
+          }
+        ],
+        "advertencia_minimos": "No se pudieron verificar los mínimos de compra por producto porque se usó el formato legacy 'cuentas' (sin nombres de producto). Usá 'items' para que la tool valide los mínimos automáticamente. Verificá manualmente los mínimos antes de cotizar.",
+        "Cantidad de cajas necesarias y costo de envio": [
+          "Caja 1: $350"
+        ]
+      }
+    }
+  ]
+}

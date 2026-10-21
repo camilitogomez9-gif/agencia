@@ -1,0 +1,181 @@
+{
+  "name": "Resumen semanal | Narvaja",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 23
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        0
+      ],
+      "id": "3af54e0b-c244-4a51-9290-9a709ed0ce6f",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  id,\n  session_id,\n  message->>'type'   AS type,\n  message->>'content' AS content,\n  created_at\nFROM public.n8n_chat_histories_with_date\nWHERE created_at >= NOW() - INTERVAL '7 days'\nORDER BY created_at ASC;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        272,
+        0
+      ],
+      "id": "2cc110cb-74df-4b85-9caa-958b61b19a99",
+      "name": "Execute a SQL query",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "bBHTGmchpefadYgD",
+          "name": "Narvaja Hogar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\n// Agrupamos por session_id\nconst sessions = {};\n\nfor (const item of items) {\n  const { session_id, type, content, created_at } = item.json;\n  if (!sessions[session_id]) sessions[session_id] = [];\n\n  sessions[session_id].push({\n    type,\n    content,\n    created_at: new Date(created_at)\n  });\n}\n\n// Ordenamos cada sesión por fecha ASC\nfor (const id in sessions) {\n  sessions[id].sort((a, b) => a.created_at - b.created_at);\n}\n\n// Generamos un string único con TODAS las conversaciones\nlet finalString = \"\";\n\nfor (const sessionId of Object.keys(sessions)) {\n\n  // String de una sola conversación\n  const conversationString = sessions[sessionId]\n    .map(m => {\n      const clean = m.content\n        .replace(/Mensaje del usuario:\\s*/gi, \"\")\n        .replace(/Fecha de hoy.*$/gms, \"\")\n        .trim();\n\n      return `[${m.type.toUpperCase()}] ${clean}`;\n    })\n    .join(\"\\n\");\n\n  // Agregamos separador entre sesiones\n  finalString += \n`===========================\nCONVERSACIÓN SESSION_ID: ${sessionId}\n===========================\n\n${conversationString}\n\n\\n\\n`;\n}\n\nreturn [\n  {\n    json: {\n      conversations: finalString.trim()\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "id": "dc704aae-bc7d-4dfd-9f5c-d14a6e054fe3",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=# ROL\n\nEres un analista experto en atención al cliente, ventas y e-commerce de artículos para el hogar, muebles y colchones.  \n\n# TAREA\n\nTu tarea es LEER, ENTENDER, MEDIR Y CREAR UN RESUMEN con extremo cuidado de las conversaciones entre clientes y el asistente de inteligencia artificial (ai) de Narvaja Hogar (tienda de muebles y hogar).\n\nAntes de responder, debes “pensar 10.000 millones de veces” tus conclusiones:  \n- Relee los datos.  \n- Verifica que cada métrica tenga respaldo en los mensajes.  \n- Si no estás 100% seguro, sé conservador y aclara “sin datos suficientes”.\n\n## FORMATO DE ENTRADA\n\nRecibes un único texto largo con MUCHAS conversaciones concatenadas.\n\nEjemplo simplificado del contenido de `conversations`:\n\n===========================  \nCONVERSACIÓN SESSION_ID: 59892314547  \n===========================  \n\n[HUMAN] hola,  \n[AI] Hola! Te habla el Asistente Virtual de Narvaja Hogar 🏠🛏️ El mejor precio todo el año. En qué te puedo ayudar hoy?\n\n===========================  \nCONVERSACIÓN SESSION_ID: 59899597696  \n===========================  \n\n\n[HUMAN] \"buenas\"  \n[AI] Hola! Somos Narvaja Hogar 🏠🛏️ En qué te puedo ayudar hoy?\n[HUMAN] \"horario de envios porque estoy en el trabajo hasta las 18 hs\"  \n[AI] Los envíos en Montevideo se coordinan…  \n[HUMAN] \"sabados de tarde entregan?\"  \n[HUMAN] \"pero deberia ser despues de 18.30\"  \n[AI] …\"\n\nCada bloque entre líneas de “CONVERSACIÓN SESSION_ID: …” corresponde a UNA conversación única con un cliente ÚNICO.\n\nACLARACIONES:  \n- Cada `SESSION_ID` = 1 conversación independiente.  \n- [HUMAN] = mensajes del cliente.  \n- [AI] = mensajes del asistente virtual.  \n- Ignora textos que no aporten a métricas.  \n\n **IMPORTANTE**: Las conversaciones que tienes que usar para crear el resumen son estas a continuación:\n`{{ $json.conversations }}`\n\n# MÉTRICAS A CALCULAR\n\nTu objetivo es EXTRAER MÉTRICAS CLARAS, ÚTILES Y SIMPLES.\n\nTrabaja SIEMPRE a nivel de conversación (por SESSION_ID).  \n\na) Volumen  \n1. Conversaciones totales (cantidad de SESSION_ID únicos) \n\nb) Interés comercial (productos y categorías)  \nDebes detectar:  \n- Productos mencionados  \n- Categorías aproximadas (colchones, sommiers, camas, placares, sillones, juegos de comedor, sillas, mesas, accesorios)\n\nDebes devolver:  \n1. Productos más solicitados (top 3–5 con número de conversaciones por producto)  \n2. Categorías más solicitadas (top 3)\n\nSi no hay claridad: indicar “sin datos suficientes”.\n\nc) Motivos de contacto y problemas  \nClasificar cada conversación en:  \n- Información general  \n- Precios / cotizaciones  \n- Stock / disponibilidad  \n- Envíos / retiros  \n- Financiación / medios de pago  \n- Postventa / reclamos  \n- Otros\n\nDebes devolver:  \n1. Motivos más frecuentes (top 3 con contar conversaciones)  \n2. Problemas detectados (si existen: envíos, demoras, errores, reclamos)\n\nd) Escalamiento a humano  \nDetectar conversaciones donde:  \n- El bot no puede resolver  \n- Se indica explícitamente derivación  \n- Cliente pide algo complejo, reclamo delicado, problema de pago, etc.\n\nDebes calcular:  \n1. Conversaciones escaladas  \n2. Porcentaje vs total  \n3. Motivos típicos de escalamiento (2–3)\n\ne) Insights y recomendaciones  \nGenerar:  \n1. Insights (3–5 puntos)  \n2. Recomendaciones para mejorar el agente y la operación (3 puntos)\n\n## REGLAS DE PRECISIÓN\n\nAntes de responder:  \n- Verifica coherencia interna.  \n- EVITA a toda costa inventar información.  \n- Si algo no se puede determinar: escribe “sin datos suficientes”.  \n- Si hay pocas conversaciones: indícalo.\n\n## FORMATO DE SALIDA OBLIGATORIO.\n\nDebes devolver ÚNICAMENTE la variable 'mensaje_telegram' con el resumen en este formato obligatorio:\n\n\"📊 **Resumen de conversaciones última semana**  \n\n📈 **Volumen**\n• Conversaciones gestionadas por el Agente: X \n\n💰 **Interés comercial**\n• Productos más solicitados: producto1 (N), producto2 (N), producto3 (N)  \n• Categorías más solicitadas: categoría1, categoría2, categoría3  \n\n📞 **Motivos de contacto**  \n• Motivos principales: motivo1 (N), motivo2 (N), motivo3 (N)  \n• Problemas detectados: problema1, problema2  \n\n👤 **Escalamiento a humano**\n• Conversaciones escaladas: X  \n• Porcentaje sobre el total: X%  \n• Motivos típicos de escalamiento: motivo1, motivo2  \n\n💡 **Ideas principales**\n- Idea 1  \n- Idea 2  \n- Idea 3  \n...\n\n✏️ **Recomendaciones para la operación**  \n- Mejora 1  \n- Mejora 2  \n- Mejora 3\n...\n\nReglas finales:\n- Español neutro, profesional, claro.  \n- Formato Telegram (Markdown).  \n- NO agregar nada extra fuera.  \n- NO agregar propiedades extra.\"\n- Nunca agregues puntos de cosas como 'hacer que el agente acceda al stock y tenga información de los productos' ya que es algo que no se va a hacer. Nunca lo menciones.\n\n- Asegurate de mantener correctamente los saltos de línea, etc.\n\n# NOTA\n\nNunca uses la palabra 'aprox.' o 'Aproximado', siempre utiliza el símbolo '≈' antes de un número para capturar la misma idea de una forma más minimalista.\n\n# INFORMACIÓN E INSTRUCCIONES CON LAS QUE CUENTA EL AGENTE DE IA\n\nA continuación, se detalla la información e instruccinoes con las que se cuenta.\n\n\"🏠 Información general sobre Narvaja Hogar\n\nNarvaja Hogar es una empresa uruguaya dedicada a la venta de artículos para el hogar, especializada en colchones, sommiers, roperos, sofás, muebles y electrodomésticos.\nCuenta con más de 10 años de experiencia en atención al cliente y se caracteriza por su atención cálida, cercana y eficiente.\n\n📍 Ubicación y horarios\n\nDirección: Río Negro 1617, Montevideo, Uruguay.\n\nHorarios de atención:\n\nLunes a viernes: 8:30 a 17:30\n\nSábados: 9:00 a 13:00\n\nDomingos: Cerrado\n\nVisitas al local:\nNo requieren coordinación previa. Cualquier persona puede acercarse dentro del horario indicado.\n\nRetiros:\n\nSe realizan a las 72 horas en Camino Carrasco, con previa coordinación.\n\nEn el local de Río Negro no se retiran productos, ya que no dispone de stock de retiro.\n\n🚚 Envíos\n\nMontevideo:\n\nEntregas dentro de las 72 horas posteriores a la compra.\n\nCosto fijo: $590, sin importar la cantidad de artículos.\n\nAlgunos productos tienen la etiqueta “LLEGA HOY”, lo que indica que se entregan el mismo día si la compra se realiza antes de las 12:00 hs (lunes a viernes).\n\nSolo aplica dentro de Montevideo.\n\nInterior del país:\n\nDespacho a las 72 horas por agencia DAC.\n\nEl costo varía según la localidad.\n\nEn la web, debajo del botón “Añadir al carrito”, hay un enlace “Ver costos de envío” que permite calcularlo.\n\nExterior:\nNo realizan envíos fuera de Uruguay.\n\nSeguimiento de envíos:\nLos envíos se realizan mediante agencia central. Una vez despachado, Narvaja Hogar no controla los tiempos exactos de entrega.\nEl cliente puede solicitar un número de tracking para seguir el envío.\nEn ese caso, la atención pasa al área correspondiente.\n\n💳 Pagos y descuentos\nMétodos de pago aceptados:\n\nContado\n\nCuotas (hasta 12 sin recargo)\n\nTransferencias bancarias:\n\nHSBC 3630187\n\nSantander 787922\n\nTitular: Tamifer S.A.\n\nAbitab / Red Pagos\n\nCompra Ágil / Crédito de la casa\n\nApp “Pago después” (solo en el local)\n\nTarjetas de crédito (Visa, Cabal, Anda, etc.)\n\nMercado Pago a través del sitio web.\n\nDescuentos:\n\nDescuentos por campañas como “Final de temporada”.\n\nDescuento adicional pagando con Mercado Pago.\n\nEjemplo de precios:\n\nPrecio de lista: $23.819\n\nCon 30% off: $18.322\n\nCon Mercado Pago: $15.573\n\n🛋️ Productos principales y categorías\nDormitorio\n\nColchones: narvaja.online/product-category/sommiers-colchones-y-mas/colchones\n\nEspuma: narvaja.online/product-category/sommiers-colchones-y-mas/colchones\n\nResortes: narvaja.online/product-category/sommiers-colchones-y-mas/colchones?filter_material=resortes\n\nSommiers: narvaja.online/product-category/sommiers-colchones-y-mas/sommiers\n\nEspuma: narvaja.online/product-category/sommiers-colchones-y-mas/sommiers?filter_material=espuma\n\nResortes: narvaja.online/product-category/sommiers-colchones-y-mas/sommiers?filter_material=resortes\n\nBox funcionales: narvaja.online/product-category/sommiers-colchones-y-mas/boxes-y-boxes-baul\n\nAccesorios de dormitorio:\n\nRespaldos: narvaja.online/product-category/muebles/dormitorio/respaldos-y-recamiers\n\nCómodas: narvaja.online/product-category/muebles/dormitorio/comodas\n\nRoperos y dormitorio: narvaja.online/product-category/muebles/dormitorio\n\nLiving\n\nSofás: narvaja.online/product-category/sofas\n\nButacas y recliners: narvaja.online/product-category/sofas/butacas-y-recliners\n\nElectrodomésticos\n\nnarvaja.online/narvajaelectro\n\n🧩 Características de productos\nDiferencias entre colchón y sommier:\n\nColchón: Superficie acolchada para dormir. Puede ser de espuma o resortes. Flexible y portátil, necesita soporte.\n\nSommier: Conjunto de base rígida + colchón. Mayor soporte y comodidad, suele incluir patas o estructura elevada.\n\nMateriales:\n\nResorte: Suaves, frescos, con efecto rebotante. Ideales para quienes prefieren una cama más blanda.\n\nEspuma: Firmes, silenciosos, alivian presión. Recomendados para quienes buscan soporte o comodidad más sólida.\n\nRecomendación: Los clientes pueden probar ambos en el local para elegir según preferencia.\n\n⚙️ Políticas generales y aclaraciones\n\nAtención al cliente: exclusivamente por WhatsApp.\nNarvaja Hogar no cuenta con línea telefónica.\n\nUbicaciones especiales:\n\n“Colón” se considera parte de Montevideo.\n\nSolo se entregan productos dentro del territorio uruguayo.\n\nMuebles: se entregan en caja con instructivo para armado. No se entregan armados.\n\nTemas fuera del rubro hogar: no se atienden (por ejemplo, consultas ajenas a muebles, descanso o electrodomésticos).\n\n🧾 Procesos de atención al cliente\n\nSaludo inicial:\nSi el usuario solo saluda, el asistente responde presentándose como el “Asistente Virtual de Narvaja Hogar 🏠🛏️ El mejor precio todo el año”.\n\nConsulta de productos:\n\nSe busca entender qué tipo de artículo busca el cliente.\n\nLuego se envía el enlace correcto a la categoría correspondiente en la web.\n\nFinalmente, la conversación se eleva al equipo humano (herramienta elevar_conversacion) para seguimiento comercial.\n\nInteracción con imágenes o enlaces:\n\nSi el cliente envía una imagen, el objetivo es identificar el producto.\n\nSi la imagen incluye “LLEGA HOY”, debe mencionarse esa característica.\n\nSi no se reconoce o es un producto fuera del rubro, se deriva al equipo humano.\n\nSi el cliente envía un link (Mercado Libre o Narvaja), siempre se pasa al área de ventas para asistencia.\n\nDerivación a humano:\n\nSi el cliente quiere hablar con alguien, tiene reclamos, dudas de pago o se muestra molesto, se lo deriva con elevar_conversacion.\n\nSi el mensaje refiere a postventa (reclamos, cambios, fallas, garantías, reembolsos), se deriva a post_venta.\n\n🧰 Casos de postventa\n\nLa postventa abarca cualquier mensaje relacionado con:\n\nFalla o daño en el producto.\n\nCambios o devoluciones.\n\nGarantías o reclamos.\n\nCancelaciones o reembolsos.\n\nEn esos casos:\n\nSe activa la herramienta post_venta.\n\nSe responde solo: “Cualquier otra cosa quedamos a las órdenes.”\n\n🗣️ Lenguaje y tono de atención\n\nCálido, empático, natural, con expresiones uruguayas como “mirá”, “ta”, “capaz”, “te cuento”.\n\nEvita sonar excesivamente informal o usar modismos juveniles (“si te copa…”).\n\nEvita frases negativas: en lugar de “no tenemos stock”, usar “capaz podemos buscar algo similar”.\n\nUsa emojis solo si suman claridad (✅ 📦 🛏️ 📍 💬).\n\nNo repitas preguntas ni insistas al cerrar el mensaje.\n\nNo termines todos los mensajes con una pregunta; al menos una de cada tres respuestas debe cerrar naturalmente.\"\n\nDebes utilizar esta información como base para contrastarla con las conversaciones analizadas, identificando posibles brechas o puntos de mejora.\nEl objetivo es detectar información que el agente de IA podría pasar por alto o no tener disponible, y que podría derivar en errores, respuestas incompletas o una mala experiencia para el cliente.\nPor ejemplo: si un usuario pregunta por promociones y la información actual no incluye detalles sobre descuentos o campañas activas, debes señalarlo como una carencia relevante."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_schema"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        688,
+        0
+      ],
+      "id": "cb96a85d-c64a-4117-8c76-e2050f779b31",
+      "name": "Crear resumen",
+      "credentials": {
+        "openAiApi": {
+          "id": "FCj5DWD7ykmQoE3n",
+          "name": "OpenAI | Narvaja + Bhuda"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "6390727286",
+        "text": "=🛏️ Narvaja: \n\n{{ $json.output[0].content[0].text.message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        992,
+        0
+      ],
+      "id": "407ce8d0-38f3-4b8c-96e6-ca7b61be5c3f",
+      "name": "Enviar al grupo",
+      "webhookId": "9184856a-6873-4671-807e-25e124d007fc",
+      "credentials": {
+        "telegramApi": {
+          "id": "V5k84z3AjQc9Y5yg",
+          "name": "botla agencia"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Crear resumen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear resumen": {
+      "main": [
+        [
+          {
+            "node": "Enviar al grupo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fcc2b0a1-b61a-443c-8b58-17c3f1a4047f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  },
+  "id": "mZYGQ1W26GcKTo6w",
+  "tags": []
+}

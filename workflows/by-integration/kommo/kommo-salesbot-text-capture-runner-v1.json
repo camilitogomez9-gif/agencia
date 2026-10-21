@@ -1,0 +1,669 @@
+{
+  "name": "Kommo Salesbot Text Capture Runner v1",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "cfe8f8b0-b531-4d4d-b5d0-8894a190a001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1040,
+        0
+      ],
+      "notes": "Manual only. Sends real WhatsApp messages and runs real Salesbots against the configured lead."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-base-url",
+              "name": "kommo_base_url",
+              "value": "https://happyflopss.amocrm.com",
+              "type": "string"
+            },
+            {
+              "id": "cfg-account-id",
+              "name": "account_id",
+              "value": 33068423,
+              "type": "number"
+            },
+            {
+              "id": "cfg-lead-id",
+              "name": "target_lead_id",
+              "value": 26554490,
+              "type": "number"
+            },
+            {
+              "id": "cfg-entity-type",
+              "name": "entity_type",
+              "value": 2,
+              "type": "number"
+            },
+            {
+              "id": "cfg-contact-id",
+              "name": "target_contact_id_override",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "cfg-chat-id",
+              "name": "target_chat_id_override",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "cfg-talk-id",
+              "name": "target_talk_id_override",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "cfg-run-only",
+              "name": "run_only_bot_ids_csv",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "cfg-max",
+              "name": "max_bots_to_run",
+              "value": 999,
+              "type": "number"
+            },
+            {
+              "id": "cfg-skip-inactive",
+              "name": "skip_inactive_bots",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "cfg-marker-wait",
+              "name": "seconds_after_marker",
+              "value": 2,
+              "type": "number"
+            },
+            {
+              "id": "cfg-bot-wait",
+              "name": "seconds_between_bots",
+              "value": 20,
+              "type": "number"
+            },
+            {
+              "id": "cfg-prefix",
+              "name": "marker_prefix",
+              "value": "[SALESBOT_TEST]",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cfe8f8b0-b531-4d4d-b5d0-8894a190a002",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -820,
+        0
+      ],
+      "notes": "Optional overrides let you hardcode contact_id/chat_id/talk_id if auto-discovery does not find them."
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Config').first().json.kommo_base_url + '/api/v4/leads/' + $('Config').first().json.target_lead_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "with",
+              "value": "contacts"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cfe8f8b0-b531-4d4d-b5d0-8894a190a003",
+      "name": "Fetch Target Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -600,
+        0
+      ],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "function parseJsonMaybe(value) {\n  if (typeof value !== 'string') return value;\n  const trimmed = value.trim();\n  if (!trimmed) return value;\n  if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'))) {\n    try { return JSON.parse(trimmed); } catch { return value; }\n  }\n  return value;\n}\nfunction unwrap(value) {\n  if (!value) return value;\n  const parsed = parseJsonMaybe(value);\n  if (parsed !== value) return unwrap(parsed);\n  if (value.data != null) {\n    const parsedData = parseJsonMaybe(value.data);\n    if (parsedData && typeof parsedData === 'object') return unwrap(parsedData);\n  }\n  if (value.body != null) {\n    const parsedBody = parseJsonMaybe(value.body);\n    if (parsedBody && typeof parsedBody === 'object') return unwrap(parsedBody);\n  }\n  return value;\n}\nfunction arr(value) {\n  if (value == null) return [];\n  const parsed = unwrap(value);\n  if (Array.isArray(parsed)) return parsed;\n  if (parsed && typeof parsed === 'object') return Object.values(parsed);\n  return [];\n}\nfunction firstNonEmpty(...values) {\n  return values.find(value => value !== undefined && value !== null && String(value).trim() !== '');\n}\nconst cfg = $('Config').first().json;\nconst lead = unwrap($input.first().json);\nconst embeddedContacts = arr(lead._embedded?.contacts ?? lead.contacts);\nconst contactId = String(cfg.target_contact_id_override || embeddedContacts[0]?.id || '').trim();\nif (!contactId) {\n  throw new Error('No pude detectar contact_id del lead. Completar target_contact_id_override en Config. Lead recibido: ' + JSON.stringify(lead).slice(0, 1000));\n}\nreturn [{ json: { ...cfg, lead, contact_id: contactId } }];"
+      },
+      "id": "cfe8f8b0-b531-4d4d-b5d0-8894a190a004",
+      "name": "Extract Contact ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -380,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Config').first().json.kommo_base_url + '/api/v4/contacts/chats' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "contact_id",
+              "value": "={{ $('Extract Contact ID').first().json.contact_id }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cfe8f8b0-b531-4d4d-b5d0-8894a190a005",
+      "name": "Fetch Contact Chats",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -160,
+        0
+      ],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      },
+      "notes": "Official Kommo endpoint: GET /api/v4/contacts/chats?contact_id=..."
+    },
+    {
+      "parameters": {
+        "jsCode": "function parseJsonMaybe(value) {\n  if (typeof value !== 'string') return value;\n  const trimmed = value.trim();\n  if (!trimmed) return value;\n  if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'))) {\n    try { return JSON.parse(trimmed); } catch { return value; }\n  }\n  return value;\n}\nfunction unwrap(value) {\n  if (!value) return value;\n  const parsed = parseJsonMaybe(value);\n  if (parsed !== value) return unwrap(parsed);\n  if (value.data != null) {\n    const parsedData = parseJsonMaybe(value.data);\n    if (parsedData && typeof parsedData === 'object') return unwrap(parsedData);\n  }\n  if (value.body != null) {\n    const parsedBody = parseJsonMaybe(value.body);\n    if (parsedBody && typeof parsedBody === 'object') return unwrap(parsedBody);\n  }\n  return value;\n}\nfunction arr(value) {\n  if (value == null) return [];\n  const parsed = unwrap(value);\n  if (Array.isArray(parsed)) return parsed;\n  if (parsed && typeof parsed === 'object') return Object.values(parsed);\n  return [];\n}\nfunction firstNonEmpty(...values) {\n  return values.find(value => value !== undefined && value !== null && String(value).trim() !== '');\n}\nconst cfg = $('Extract Contact ID').first().json;\nconst body = unwrap($input.first().json);\nconst chats = arr(body._embedded?.chats ?? body._embedded?.items ?? body.chats ?? body.items ?? body);\nconst preferred = chats.find(chat => JSON.stringify(chat).toLowerCase().includes('waba')) || chats[0] || {};\nconst chatId = String(firstNonEmpty(cfg.target_chat_id_override, preferred.chat_id, preferred.id, preferred.uuid, preferred.conversation_id, preferred.recipient_id) || '').trim();\nconst talkId = String(firstNonEmpty(cfg.target_talk_id_override, preferred.talk_id, preferred.dialog_id, preferred.crm_dialog_id) || '').trim();\nconst contactId = String(cfg.contact_id).trim();\nif (!chatId || !talkId) {\n  throw new Error('No pude resolver chat_id/talk_id. Completar target_chat_id_override y target_talk_id_override en Config. Respuesta contacts/chats: ' + JSON.stringify(body).slice(0, 2000));\n}\nreturn [{ json: { ...cfg, chat_id: chatId, talk_id: talkId, contact_id: contactId, selected_chat_raw: preferred, contacts_chats_raw: body } }];"
+      },
+      "id": "cfe8f8b0-b531-4d4d-b5d0-8894a190a006",
+      "name": "Resolve Chat Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        60,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Config').first().json.kommo_base_url + '/api/v4/bots' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "250"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/hal+json"
+            }
+          ]
+        },
+        "options": {
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "nextURL": "={{ $response.body._links?.next?.href ? ($response.body._links.next.href.startsWith('http') ? $response.body._links.next.href : $('Config').first().json.kommo_base_url + $response.body._links.next.href) : '' }}",
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !$response.body._links?.next?.href }}",
+              "requestInterval": 300
+            }
+          }
+        }
+      },
+      "id": "cfe8f8b0-b531-4d4d-b5d0-8894a190a007",
+      "name": "Fetch Salesbots",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        280,
+        0
+      ],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "function parseJsonMaybe(value) {\n  if (typeof value !== 'string') return value;\n  const trimmed = value.trim();\n  if (!trimmed) return value;\n  if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'))) {\n    try { return JSON.parse(trimmed); } catch { return value; }\n  }\n  return value;\n}\nfunction unwrap(value) {\n  if (!value) return value;\n  const parsed = parseJsonMaybe(value);\n  if (parsed !== value) return unwrap(parsed);\n  if (value.data != null) {\n    const parsedData = parseJsonMaybe(value.data);\n    if (parsedData && typeof parsedData === 'object') return unwrap(parsedData);\n  }\n  if (value.body != null) {\n    const parsedBody = parseJsonMaybe(value.body);\n    if (parsedBody && typeof parsedBody === 'object') return unwrap(parsedBody);\n  }\n  return value;\n}\nfunction arr(value) {\n  if (value == null) return [];\n  const parsed = unwrap(value);\n  if (Array.isArray(parsed)) return parsed;\n  if (parsed && typeof parsed === 'object') return Object.values(parsed);\n  return [];\n}\nfunction firstNonEmpty(...values) {\n  return values.find(value => value !== undefined && value !== null && String(value).trim() !== '');\n}\nconst ctx = $('Resolve Chat Context').first().json;\nconst requestedIds = String(ctx.run_only_bot_ids_csv || '').split(',').map(id => Number(id.trim())).filter(Boolean);\nconst requestedSet = new Set(requestedIds);\nconst rawBots = $input.all().flatMap(item => {\n  const body = unwrap(item.json);\n  return arr(body._embedded?.items ?? body._embedded?.bots ?? body.items ?? body.bots ?? body);\n});\nconst seen = new Set();\nconst bots = rawBots\n  .filter(bot => bot && bot.id != null)\n  .filter(bot => {\n    if (seen.has(bot.id)) return false;\n    seen.add(bot.id);\n    return true;\n  })\n  .filter(bot => requestedSet.size === 0 || requestedSet.has(Number(bot.id)))\n  .filter(bot => !ctx.skip_inactive_bots || bot.settings?.active === true || bot.active === true || bot.is_active === true)\n  .slice(0, Number(ctx.max_bots_to_run || 999));\nif (!bots.length) {\n  throw new Error('No hay salesbots para ejecutar. Revisar run_only_bot_ids_csv, skip_inactive_bots o respuesta de /api/v4/bots.');\n}\nreturn bots.map((bot, index) => ({\n  json: {\n    ...ctx,\n    bot_id: Number(bot.id),\n    bot_name: bot.name || null,\n    bot_active: bot.settings?.active ?? bot.active ?? bot.is_active ?? null,\n    bot_type: bot.type_functionality ?? bot.type ?? null,\n    bot_index: index + 1,\n    bot_total: bots.length,\n    marker_text: String(ctx.marker_prefix || '[SALESBOT_TEST]') + ' ' + (index + 1) + '/' + bots.length + ' | bot_id=' + bot.id + ' | name=' + (bot.name || 'sin_nombre'),\n    bot_raw: bot\n  }\n}));"
+      },
+      "id": "cfe8f8b0-b531-4d4d-b5d0-8894a190a008",
+      "name": "Prepare Bot Queue",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "cfe8f8b0-b531-4d4d-b5d0-8894a190a009",
+      "name": "Loop Salesbots One by One",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        720,
+        0
+      ],
+      "notes": "Output 0 processes next bot; output 1 produces final summary."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.kommo_base_url + \"/ajax/v1/chats/session\" }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Requested-With",
+              "value": "XMLHttpRequest"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "request[chats][session][action]",
+              "value": "={{ $json.marker_text }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "cfe8f8b0-b531-4d4d-b5d0-8894a190a010",
+      "name": "Get Chat Session Token",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        940,
+        -120
+      ],
+      "retryOnFail": false,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://amojo.kommo.com/v2/{{ $(\"Loop Salesbots One by One\").item.json.chat_id }}/sendMessage",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "stand",
+              "value": "v16"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json, text/javascript, */*; q=0.01"
+            },
+            {
+              "name": "Origin",
+              "value": "https://happyflopss.kommo.com"
+            },
+            {
+              "name": "Referer",
+              "value": "https://happyflopss.kommo.com/"
+            },
+            {
+              "name": "X-Auth-Token",
+              "value": "={{ $json.response?.chats?.session?.access_token || $json.chats?.session?.access_token || $json.access_token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"recipient_id\": \"{{ $('Loop Salesbots One by One').item.json.chat_id }}\",\n  \"group_id\": null,\n  \"text\": {{ JSON.stringify($('Loop Salesbots One by One').item.json.marker_text) }},\n  \"crm_dialog_id\": {{ $('Loop Salesbots One by One').item.json.talk_id }},\n  \"crm_contact_id\": {{ $('Loop Salesbots One by One').item.json.contact_id }},\n  \"crm_account_id\": {{ $('Loop Salesbots One by One').item.json.account_id }},\n  \"crm_entity\": {\n    \"id\": {{ $('Loop Salesbots One by One').item.json.target_lead_id }},\n    \"type\": {{ $('Loop Salesbots One by One').item.json.entity_type }}\n  },\n  \"persona_name\": \"la agencia Bot Mapper\",\n  \"persona_avatar\": \"https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg\"\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "cfe8f8b0-b531-4d4d-b5d0-8894a190a011",
+      "name": "Send Marker to WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1160,
+        -120
+      ],
+      "retryOnFail": false,
+      "waitBetweenTries": 3000,
+      "notes": "Sends visible marker before each Salesbot."
+    },
+    {
+      "parameters": {
+        "unit": "seconds",
+        "amount": "={{ $(\"Loop Salesbots One by One\").item.json.seconds_after_marker }}"
+      },
+      "id": "cfe8f8b0-b531-4d4d-b5d0-8894a190a012",
+      "name": "Wait After Marker",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1380,
+        -120
+      ],
+      "webhookId": "wait-after-marker-salesbot-capture"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $(\"Loop Salesbots One by One\").item.json.kommo_base_url + \"/api/v2/salesbot/run\" }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": {{ $('Loop Salesbots One by One').item.json.bot_id }},\n    \"entity_id\": {{ $('Loop Salesbots One by One').item.json.target_lead_id }},\n    \"entity_type\": {{ $('Loop Salesbots One by One').item.json.entity_type }}\n  }\n]",
+        "options": {}
+      },
+      "id": "cfe8f8b0-b531-4d4d-b5d0-8894a190a013",
+      "name": "Run Salesbot",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1600,
+        -120
+      ],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "unit": "seconds",
+        "amount": "={{ $(\"Loop Salesbots One by One\").item.json.seconds_between_bots }}"
+      },
+      "id": "cfe8f8b0-b531-4d4d-b5d0-8894a190a014",
+      "name": "Wait Before Next Bot",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1820,
+        -120
+      ],
+      "webhookId": "wait-before-next-salesbot-capture"
+    },
+    {
+      "parameters": {
+        "jsCode": "const queue = $('Prepare Bot Queue').all().map(item => item.json);\nreturn [{\n  json: {\n    status: 'completed',\n    target_lead_id: $('Config').first().json.target_lead_id,\n    bot_count: queue.length,\n    markers_sent: queue.map(item => ({ bot_id: item.bot_id, bot_name: item.bot_name, marker_text: item.marker_text })),\n    warning: 'Este resumen solo indica que el loop terminó en n8n. Validar en WhatsApp exportado que cada marcador tenga el texto enviado por el bot inmediatamente después.'\n  }\n}];"
+      },
+      "id": "cfe8f8b0-b531-4d4d-b5d0-8894a190a015",
+      "name": "Execution Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        140
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Fetch Target Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Target Lead": {
+      "main": [
+        [
+          {
+            "node": "Extract Contact ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Contact ID": {
+      "main": [
+        [
+          {
+            "node": "Fetch Contact Chats",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Contact Chats": {
+      "main": [
+        [
+          {
+            "node": "Resolve Chat Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolve Chat Context": {
+      "main": [
+        [
+          {
+            "node": "Fetch Salesbots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Salesbots": {
+      "main": [
+        [
+          {
+            "node": "Prepare Bot Queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Bot Queue": {
+      "main": [
+        [
+          {
+            "node": "Loop Salesbots One by One",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Salesbots One by One": {
+      "main": [
+        [
+          {
+            "node": "Get Chat Session Token",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execution Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Chat Session Token": {
+      "main": [
+        [
+          {
+            "node": "Send Marker to WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Marker to WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Wait After Marker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait After Marker": {
+      "main": [
+        [
+          {
+            "node": "Run Salesbot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Salesbot": {
+      "main": [
+        [
+          {
+            "node": "Wait Before Next Bot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait Before Next Bot": {
+      "main": [
+        [
+          {
+            "node": "Loop Salesbots One by One",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3b9ef0a9-906b-4198-9066-f163e888f1d8",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "id": "KommoSalesbotTextCaptureRunnerV1",
+  "tags": []
+}

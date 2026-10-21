@@ -1,0 +1,822 @@
+{
+  "name": "Rescate Post-Link - Venttur",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\"telefono\": \"59899999999\"}"
+      },
+      "id": "059f851c-faf3-4111-9a27-72770ccd10f6",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -192,
+        1616
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 45,
+        "unit": "minutes"
+      },
+      "id": "3c54ab97-afd9-4c0a-b20f-e262c4e99ee1",
+      "name": "Wait: 45 min",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        32,
+        1616
+      ],
+      "webhookId": "c1d2e3f4-a5b6-7890-1234-567890abcdef"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]"
+        },
+        "table": {
+          "__rl": true,
+          "value": "[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/appci7GstPQ1BTN0k/[AIRTABLE_TABLE_ID]"
+        },
+        "filterByFormula": "={Telefono} = '{{ $('When Executed by Another Workflow').first().json.telefono }}'",
+        "options": {
+          "fields": [
+            "Programa interés",
+            "ID Manychat",
+            "Nombre",
+            "Agendan cita"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        256,
+        1616
+      ],
+      "id": "bdb0b944-708c-4c72-9674-99da78ca901c",
+      "name": "Airtable: 1er check",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "if1-cond1",
+              "leftValue": "={{ $json['Agendan cita'] }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        1616
+      ],
+      "id": "82b4a2b8-dbe6-4ff4-8e4a-d894343f20e8",
+      "name": "IF: ¿ya agendó? (Fase 1)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "if2-cond1",
+              "leftValue": "={{ $json.matched }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        928,
+        1616
+      ],
+      "id": "8794e5bb-0e6b-41f8-85f0-317895341f9f",
+      "name": "IF: ¿programa mapeado?"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/subscriber/addTag",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 3256256:ecc8538e4caee488900c4a02f3170a0a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $('Code: Fase 1').first().json.id_manychat }}\",\n  \"tag_id\": 87501935\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1152,
+        1808
+      ],
+      "id": "6ab2adac-5ef7-48e2-893b-b07df9acea9e",
+      "name": "addTag: RESCATE_PROGRAMA_NO_MAPEADO"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/subscriber/setCustomFields",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 3256256:ecc8538e4caee488900c4a02f3170a0a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($('Code: Fase 1').first().json.mcBody) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1152,
+        1616
+      ],
+      "id": "5b9089d1-7fd9-4012-a039-3fb1b83c3ab8",
+      "name": "Set Custom Fields: Fase 1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 3256256:ecc8538e4caee488900c4a02f3170a0a"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $('Code: Fase 1').first().json.id_manychat }}\",\n  \"flow_ns\": \"content20250617172539_850988\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1376,
+        1616
+      ],
+      "id": "1a894247-8044-4653-ab08-645eb868e069",
+      "name": "sendFlow: Fase 1"
+    },
+    {
+      "parameters": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "id": "f690cf3a-345a-42ee-9f36-4dd37d75ed51",
+      "name": "Wait: 24 hrs",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1600,
+        1616
+      ],
+      "webhookId": "d2e3f4a5-b6c7-8901-2345-678901bcdef0"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]"
+        },
+        "table": {
+          "__rl": true,
+          "value": "[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/appci7GstPQ1BTN0k/[AIRTABLE_TABLE_ID]"
+        },
+        "filterByFormula": "={Telefono} = '{{ $('When Executed by Another Workflow').first().json.telefono }}'",
+        "options": {
+          "fields": [
+            "Agendan cita",
+            "Programa interés",
+            "ID Manychat",
+            "Nombre"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1824,
+        1616
+      ],
+      "id": "069421de-3f58-4935-b2b3-c3ed1bcbdaca",
+      "name": "Airtable: 2do check",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "if3-cond1",
+              "leftValue": "={{ $json['Agendan cita'] }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2048,
+        1616
+      ],
+      "id": "795a4755-3541-4af9-a70d-c372882f24fd",
+      "name": "IF: ¿ya agendó? (Fase 2)"
+    },
+    {
+      "parameters": {
+        "jsCode": "const record = $('Airtable: 2do check').first().json.fields || {};\nconst id_manychat = record['ID Manychat'] ? String(record['ID Manychat']) : $('Code: Fase 1').first().json.id_manychat;\nconst first_name = record['Nombre'] || '';\nconst programa = record['Programa interés'] || '';\n\nconst FASE2 = {\n  boarding: `Hola ${first_name} 👋. Noté que tu registro quedó en pausa ayer.\n\nMandar a un hijo a un internado es un gran paso y es súper normal dudar si 'ya está listo'. En la sesión validamos su perfil y vemos los pocos cupos que quedan para la temporada.\n\n¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/agendar-ema`,\n \n  aa_familia: `Hola ${first_name} 👋. Seguro entre tantas cosas ayer se te pasó agendar.\n\nLa mayor preocupación de los papás siempre es: '¿Se adaptará bien si no domina el idioma?'. En la llamada armamos un plan de inmersión seguro para evitar frustraciones.\n\n¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/AAFamilia-Agendar`,\n  \n  summer: `Hola ${first_name} 👋. Vi que tu registro quedó a medias ayer.\n  \nEs súper común dudar si un Summer Camp será seguro y realmente formativo, o solo un paseo. En 45 min aterrizamos la opción ideal antes de que cierren los grupos de temporada.\n\n¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/SummerCamp-Agendar`,\n  \n  pathway: `Hola ${first_name} 👋. Noté que pausaste el registro ayer. Muchos creen que necesitan alemán perfecto para empezar, pero el secreto es armar la ruta ya mismo para no perder la admisión en las universidades públicas. En 45 min les damos el mapa completo. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/PW_Alemania_Agendar`,\n  \n  gap_year: `Hola ${first_name} 👋. Vi que dejaste el registro a medias.\n  \nIrse a Australia es un gran paso y la mayor duda siempre es: '¿Encontrará trabajo rápido?'. El secreto está en irse con una ruta clara y no improvisar. Nos quedan pocos espacios esta semana.\n\n¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/Estudiar-y-Trabajar-en-Australia`,\n};\n\nlet parte1 = null;\n\nif (programa.includes('Boarding')) parte1 = FASE2.boarding;\nelse if (programa.includes('AA Familiar') || programa.includes('Francia')) parte1 = FASE2.aa_familia;\nelse if (programa.includes('Summer Camp')) parte1 = FASE2.summer;\nelse if (programa.includes('Pathway')) parte1 = FASE2.pathway;\nelse if (programa.includes('Gap Year')) parte1 = FASE2.gap_year;\n\nconst mcBody = {\n  subscriber_id: Number(id_manychat),\n  fields: [\n    { field_id: 13337279, field_value: parte1 },\n    { field_id: 13337280, field_value: null },\n    { field_id: 13337281, field_value: null }\n  ]\n};\n\nreturn [{ json: { id_manychat, mcBody } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2272,
+        1616
+      ],
+      "id": "2814da30-853d-4a4a-aead-00d149b1b276",
+      "name": "Code: Fase 2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/subscriber/setCustomFields",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 3256256:ecc8538e4caee488900c4a02f3170a0a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($('Code: Fase 2').first().json.mcBody) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2496,
+        1616
+      ],
+      "id": "9d33edbd-1063-469b-b553-678a01a36482",
+      "name": "Set Custom Fields: Fase 2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 3256256:ecc8538e4caee488900c4a02f3170a0a"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $('Code: Fase 2').first().json.id_manychat }}\",\n  \"flow_ns\": \"content20250617172539_850988\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2720,
+        1616
+      ],
+      "id": "4656f91c-d6b5-4496-a8db-2b0f9bc8bcf9",
+      "name": "sendFlow: Fase 2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/subscriber/addTag",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 3256256:ecc8538e4caee488900c4a02f3170a0a"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $('Code: Fase 2').first().json.id_manychat }}\",\n  \"tag_id\": 87501917\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2944,
+        1616
+      ],
+      "id": "352f0326-9b68-47e8-9b50-aaf3548de8bc",
+      "name": "addTag: LINK_ABANDONADO_FRIO"
+    },
+    {
+      "parameters": {
+        "jsCode": "const telefono = $('When Executed by Another Workflow').first().json.telefono;\nconst id_manychat = $('Airtable: 1er check').first().json['ID Manychat'];\nconst first_name = $('Airtable: 1er check').first().json.Nombre;\nconst programa = $('Airtable: 1er check').first().json['Programa interés'];\n\nconst FASE1 = {\n  boarding: `Hola ${first_name}. Noté que solicitaste el enlace para platicar sobre Boarding School, pero el registro quedó pendiente.\n  \nSi no encontraste un horario que se ajuste a tu agenda, avísame y reviso disponibilidad manual.\n  \n¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/agendar-ema`,\n  \n  aa_familia: `Hola ${first_name}. Vi que pediste el enlace para la asesoría de Año Académico, pero la cita quedó en pausa.\n  \nSi tuviste problemas con la plataforma o los horarios no te cuadran, escríbeme y lo resolvemos.\n  \n¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/AAFamilia-Agendar`,\n  \n  summer: `Hola ${first_name}. Solicitaste el acceso a la agenda para Summer Camp hace un momento.\n  \nSi el calendario no te mostró horarios convenientes, dímelo y buscamos un espacio que te funcione.\n  \n¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/SummerCamp-Agendar`,\n  \n  pathway: `Hola ${first_name}. Noté que pediste el enlace para la sesión de Pathway en Alemania.\n  \nSi la plataforma te dio error o no encontraste disponibilidad, avísame por aquí para coordinarlo directo.\n  \n¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/PW_Alemania_Agendar`,\n  \n  gap_year: `Hola ${first_name}. Solicitaste el enlace de asesoría para tu Gap Year en Australia.\n  \nSi no encontraste un hueco en la agenda o se cerró el enlace, escríbeme y te ayudo a reservarlo.\n  \n¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/Estudiar-y-Trabajar-en-Australia`,\n};\n\nlet parte1 = null;\n\nif (programa.includes('Boarding')) parte1 = FASE1.boarding;\nelse if (programa.includes('AA Familiar') || programa.includes('Francia')) parte1 = FASE1.aa_familia;\nelse if (programa.includes('Summer Camp')) parte1 = FASE1.summer;\nelse if (programa.includes('Pathway')) parte1 = FASE1.pathway;\nelse if (programa.includes('Gap Year')) parte1 = FASE1.gap_year;\n\nconst mcBody = {\n  subscriber_id: Number(id_manychat),\n  fields: [\n    { field_id: 13337279, field_value: parte1 },\n    { field_id: 13337280, field_value: null },\n    { field_id: 13337281, field_value: null }\n  ]\n};\n\nreturn [{ json: { matched: !!parte1, id_manychat, telefono, mcBody } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        704,
+        1616
+      ],
+      "id": "f0584368-0900-437a-89d1-1b3ae9e8492f",
+      "name": "Code: Fase 1"
+    },
+    {
+      "parameters": {
+        "chatId": "6390727286",
+        "text": "=🚨 Ejecución en flujo:\n\n{{ $workflow.name }}\n\nNODO 45 min (1)\n\n{{ $now.format('yyyy-MM-dd HH:mm') }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        1808
+      ],
+      "id": "4a8a0a9c-f04a-4577-9788-3f66da12ac5d",
+      "name": "Mensaje de ejecución",
+      "webhookId": "3b706118-5877-4684-8e2d-7f4cb828a76e",
+      "credentials": {
+        "telegramApi": {
+          "id": "xvFrENrzfJPgE6Ry",
+          "name": "NA_errores_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "6390727286",
+        "text": "=🚨 Ejecución en flujo:\n\n{{ $workflow.name }}\n\nNODO 24 HS (2)\n\n{{ $now.format('yyyy-MM-dd HH:mm') }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1824,
+        1808
+      ],
+      "id": "4149ad87-df51-4a39-83cd-843b292ed85a",
+      "name": "Mensaje de ejecución1",
+      "webhookId": "3b706118-5877-4684-8e2d-7f4cb828a76e",
+      "credentials": {
+        "telegramApi": {
+          "id": "xvFrENrzfJPgE6Ry",
+          "name": "NA_errores_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build Rescate Memory Fase 1 — centralizado por programa\nconst lead = $('Get Lead').first().json;  // ajustar al nombre real del nodo Airtable que trae el lead\nconst sessionKey = (lead.Telefono || '').toString();\nconst programa = (lead['Programa interés'] || '').toString();\nconst firstName = (lead.Nombre || '').toString();\n\n// === Builder de system message (mismo que outreach v2) ===\nfunction buildSystemMessage(d) {\n  const nombreCompleto = [d.Nombre, d.Apellido].filter(Boolean).join(' ').trim() || 'el lead';\n  const email = d.Email ? d.Email : null;\n  const tel = d.Telefono ? `tel +${d.Telefono}` : null;\n  const contact = [email, tel].filter(Boolean).join(', ');\n  const contactStr = contact ? ` (${contact})` : '';\n  const origenMap = {\n    'Form Meta': 'completó un formulario de Meta',\n    'Form Landing': 'completó el formulario de nuestra landing',\n    'CTWA': 'vino por un anuncio de WhatsApp',\n  };\n  const accion = origenMap[d.Origen] || 'mostró interés';\n  const prog = d['Programa interés'] ? ` interesado/a en ${d['Programa interés']}` : ' interesado/a en uno de nuestros programas';\n  const cualif = [\n    d['Grado Escolar'] && `para ${d['Grado Escolar']}`,\n    d['Inicio Deseado'] && `con inicio deseado en ${d['Inicio Deseado']}`,\n    d['Nivel Inglés'] && `y nivel de inglés ${d['Nivel Inglés']}`,\n  ].filter(Boolean).join(' ');\n  const cualifStr = cualif ? ` ${cualif}` : '';\n  const campania = d['Ad Name'] ? ` Vino por la campaña ${d['Ad Name']}${d.Platform ? ' en ' + d.Platform : ''}.` : '';\n  return `El lead ${nombreCompleto}${contactStr} ${accion}${prog}${cualifStr}.${campania}`;\n}\n\n// === Texto Rescate Fase 1 por programa (de template-texts-canonical.md §4-9) ===\nconst RESCATE_F1 = {\n  'Boarding School': `Hola {{first_name}}. Noté que solicitaste el enlace para platicar sobre Boarding School, pero el registro quedó pendiente. Si no encontraste un horario que se ajuste a tu agenda, avísame y reviso disponibilidad manual. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/agendar-ema`,\n  'AA Familiar': `Hola {{first_name}}. Vi que pediste el enlace para la asesoría de Año Académico, pero la cita quedó en pausa. Si tuviste problemas con la plataforma o los horarios no te cuadran, escríbeme y lo resolvemos. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/AAFamilia-Agendar`,\n  'Summer Camp': `Hola {{first_name}}. Solicitaste el acceso a la agenda para Summer Camp hace un momento. Si el calendario no te mostró horarios convenientes, dímelo y buscamos un espacio que te funcione. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/SummerCamp-Agendar`,\n  'Pathway': `Hola {{first_name}}. Noté que pediste el enlace para la sesión de Pathway en Alemania. Si la plataforma te dio error o no encontraste disponibilidad, avísame por aquí para coordinarlo directo. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/PW_Alemania_Agendar`,\n  'Estudio y Trabajo': `Hola {{first_name}}. Vi que solicitaste el calendario para Estudio y Trabajo. Si tuviste algún inconveniente técnico al intentar agendar o no te acomodan las horas, dime y lo reviso. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/EstudiaryTrabajar_Agendar`,\n  'Gap Year': `Hola {{first_name}}. Solicitaste el enlace de asesoría para tu Gap Year en Australia. Si no encontraste un hueco en la agenda o se cerró el enlace, escríbeme y te ayudo a reservarlo. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/Estudiar-y-Trabajar-en-Australia`,\n};\n\n// Match por substring del programa\nlet template = '';\nfor (const key of Object.keys(RESCATE_F1)) {\n  if (programa.includes(key)) {\n    template = RESCATE_F1[key];\n    break;\n  }\n}\n// Fallback genérico\nif (!template) {\n  template = `Hola {{first_name}}. Vi que solicitaste el enlace de asesoría pero el registro quedó pendiente. Si tuviste algún inconveniente con la plataforma o los horarios, escríbeme y lo resolvemos.`;\n}\n\nconst aiText = template.replace(/\\{\\{first_name\\}\\}/g, firstName || 'hola');\n\nreturn [{ json: {\n  session_key: sessionKey,\n  system_message: { type: 'system', content: buildSystemMessage(lead) },\n  ai_message: { type: 'ai', content: aiText },\n}}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        1984
+      ],
+      "id": "63b848a3-0de6-41b0-86f2-1b51094e8a45",
+      "name": "Build Rescate Memory (Fase 1)"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO n8n_chat_histories (session_id, message)\nSELECT $1, $2::jsonb\nWHERE NOT EXISTS (\n  SELECT 1 FROM n8n_chat_histories\n  WHERE session_id = $1 AND message->>'type' = 'system'\n)\nRETURNING id;",
+        "options": {
+          "queryReplacement": "={{ [$json.session_key, JSON.stringify($json.system_message)] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1824,
+        1984
+      ],
+      "id": "92959001-16b2-412e-86fe-4e5fe39559db",
+      "name": "Insert system FORM (idempotent)1",
+      "credentials": {
+        "postgres": {
+          "id": "ihpvM7nYMdLCwWDP",
+          "name": "Venttur"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Idempotente: solo inserta si no existe ya un system para este session_id. WHERE NOT EXISTS cubre re-envíos del cron."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO n8n_chat_histories (session_id, message)\nVALUES ($1, $2::jsonb)\nRETURNING id;",
+        "options": {
+          "queryReplacement": "={{ [$('Build Rescate Memory (Fase 1)').item.json.session_key, JSON.stringify($('Build Rescate Memory (Fase 1)').item.json.ai_message)] }}"
+        }
+      },
+      "id": "91e37464-b70c-44a0-ba99-d988f19c02dd",
+      "name": "Insert ai Rescate Fase 1",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        2064,
+        1984
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "ihpvM7nYMdLCwWDP",
+          "name": "Venttur"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Inserta el ai message con el texto Rescate Fase 1 ya renderizado por programa. NO idempotente (el rescate Fase 1 corre 1 vez por lead por diseño)."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build Rescate Memory Fase 2 — centralizado por programa\n// AJUSTAR el nombre del nodo \"Get Lead\" si en tu workflow se llama distinto\n// (es el nodo Airtable que trae el lead antes del sendFlow Fase 2).\nconst lead = $('Get Lead').first().json;\nconst fields = lead.fields || lead;\n\n// === sessionKey: telefono sin caracteres no-numéricos ===\nconst rawPhone = (fields.Telefono || '').toString();\nconst cleaned = rawPhone.replace(/[^0-9]/g, '');\nconst sessionKey = cleaned;\n\nconst programa = (fields['Programa interés'] || '').toString();\nconst firstName = (fields.Nombre || '').toString();\n\n// === Texto Rescate Fase 2 por programa (de template-texts-canonical.md §10-15) ===\n// Usa [first_name] como placeholder para no chocar con el parser n8n.\nconst RESCATE_F2 = {\n  'Boarding School': `Hola [first_name] 👋. Noté que tu registro quedó en pausa ayer. Mandar a un hijo a un internado es un gran paso y es súper normal dudar si 'ya está listo'. En la sesión validamos su perfil y vemos los pocos cupos que quedan para la temporada. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/agendar-ema`,\n  'AA Familiar': `Hola [first_name] 👋. Seguro entre tantas cosas ayer se te pasó agendar. La mayor preocupación de los papás siempre es: '¿Se adaptará bien si no domina el idioma?'. En la llamada armamos un plan de inmersión seguro para evitar frustraciones. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/AAFamilia-Agendar`,\n  'Summer Camp': `Hola [first_name] 👋. Vi que tu registro quedó a medias ayer. Es súper común dudar si un Summer Camp será seguro y realmente formativo, o solo un paseo. En 45 min aterrizamos la opción ideal antes de que cierren los grupos de temporada. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/SummerCamp-Agendar`,\n  'Pathway': `Hola [first_name] 👋. Noté que pausaste el registro ayer. Muchos creen que necesitan alemán perfecto para empezar, pero el secreto es armar la ruta ya mismo para no perder la admisión en las universidades públicas. En 45 min les damos el mapa completo. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/PW_Alemania_Agendar`,\n  'Estudio y Trabajo': `Hola [first_name] 👋. Seguro el día a día te ganó y se te pasó agendar. ¿Dudas si vale la pena irse teniendo nivel básico? Justo la inmersión total hace que se pierda el miedo en semanas. En la sesión aterrizamos el destino ideal según fechas de inicio. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/EstudiaryTrabajar_Agendar`,\n  'Gap Year': `Hola [first_name] 👋. Vi que dejaste el registro a medias. Irse a Australia es un gran paso y la mayor duda siempre es: '¿Encontrará trabajo rápido?'. El secreto está en irse con una ruta clara y no improvisar. Nos quedan pocos espacios esta semana. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/Estudiar-y-Trabajar-en-Australia`,\n};\n\n// Match por substring del programa\nlet template = '';\nfor (const key of Object.keys(RESCATE_F2)) {\n  if (programa.includes(key)) {\n    template = RESCATE_F2[key];\n    break;\n  }\n}\n// Fallback genérico\nif (!template) {\n  template = `Hola [first_name]. Vi que solicitaste el enlace de asesoría pero el registro quedó pendiente ya hace un día. Si tuviste algún inconveniente con la plataforma o los horarios, escríbeme y lo resolvemos. Reserva tu espacio aquí cuando puedas.`;\n}\n\nconst fnReplacement = firstName.trim() || 'hola';\nconst aiText = template.replace(/\\[first_name\\]/g, fnReplacement);\n\nreturn [{ json: {\n  session_key: sessionKey,\n  ai_message: { type: 'ai', content: aiText },\n}}];"
+      },
+      "id": "b25e3f36-5ea2-4fb9-9368-b0c1d5ef5c9b",
+      "name": "Build Rescate Memory (Fase 2)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2944,
+        1824
+      ],
+      "notes": "Construye solo el ai message para Fase 2. El system FORM ya existe (insertado en Touch 1 outreach o en Fase 1 del rescate). Usa [first_name] como placeholder."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO n8n_chat_histories (session_id, message)\nVALUES ($1, $2::jsonb)\nRETURNING id;",
+        "options": {
+          "queryReplacement": "={{ [$('Build Rescate Memory (Fase 2)').item.json.session_key, JSON.stringify($('Build Rescate Memory (Fase 2)').item.json.ai_message)] }}"
+        }
+      },
+      "id": "04817077-7c2e-4a0f-a85b-cc2b8baf98ff",
+      "name": "Insert ai Rescate Fase 2",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        3168,
+        1824
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "ihpvM7nYMdLCwWDP",
+          "name": "Venttur"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "Inserta el ai message con texto Rescate Fase 2 ya renderizado por programa."
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "telefono": "59899999999"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Wait: 45 min",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait: 45 min": {
+      "main": [
+        [
+          {
+            "node": "Airtable: 1er check",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Mensaje de ejecución",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable: 1er check": {
+      "main": [
+        [
+          {
+            "node": "IF: ¿ya agendó? (Fase 1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: ¿ya agendó? (Fase 1)": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Code: Fase 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: ¿programa mapeado?": {
+      "main": [
+        [
+          {
+            "node": "Set Custom Fields: Fase 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "addTag: RESCATE_PROGRAMA_NO_MAPEADO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Custom Fields: Fase 1": {
+      "main": [
+        [
+          {
+            "node": "sendFlow: Fase 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sendFlow: Fase 1": {
+      "main": [
+        [
+          {
+            "node": "Wait: 24 hrs",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Build Rescate Memory (Fase 1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait: 24 hrs": {
+      "main": [
+        [
+          {
+            "node": "Airtable: 2do check",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Mensaje de ejecución1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable: 2do check": {
+      "main": [
+        [
+          {
+            "node": "IF: ¿ya agendó? (Fase 2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: ¿ya agendó? (Fase 2)": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Code: Fase 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Fase 2": {
+      "main": [
+        [
+          {
+            "node": "Set Custom Fields: Fase 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Custom Fields: Fase 2": {
+      "main": [
+        [
+          {
+            "node": "sendFlow: Fase 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sendFlow: Fase 2": {
+      "main": [
+        [
+          {
+            "node": "addTag: LINK_ABANDONADO_FRIO",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Build Rescate Memory (Fase 2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Fase 1": {
+      "main": [
+        [
+          {
+            "node": "IF: ¿programa mapeado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert system FORM (idempotent)1": {
+      "main": [
+        [
+          {
+            "node": "Insert ai Rescate Fase 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Rescate Memory (Fase 1)": {
+      "main": [
+        [
+          {
+            "node": "Insert system FORM (idempotent)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Rescate Memory (Fase 2)": {
+      "main": [
+        [
+          {
+            "node": "Insert ai Rescate Fase 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1,
+    "availableInMCP": false,
+    "errorWorkflow": "OBkUyb8fuo30DzA9"
+  },
+  "versionId": "f1c5a8ca-2a12-4868-ba36-99e3c1cab67c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  },
+  "id": "mkEP1qFN7MVb9qP0",
+  "tags": []
+}

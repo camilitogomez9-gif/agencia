@@ -1,0 +1,193 @@
+{
+ "tasa": "2/6",
+ "corridas": [
+  {
+   "i": 0,
+   "exec": "1065930",
+   "ofrecido": [
+    "cilindros"
+   ],
+   "responde": [
+    "sandalias"
+   ],
+   "acierta": false,
+   "repite_lo_cotizado": true,
+   "step": "step_4",
+   "rama": "Recolector",
+   "products_productos": null,
+   "canonicos_productos": null,
+   "nodos": [
+    "Elegir ruta",
+    "LM Recolector",
+    "LM Router",
+    "Leer evento",
+    "Memoria Recolector",
+    "Memoria Router",
+    "Normalizar entrada",
+    "Partir en burbujas",
+    "Recolector",
+    "Respond to Webhook",
+    "Router",
+    "Switch de step",
+    "Webhook (carril de prueba)",
+    "¿Vino por webhook?"
+   ]
+  },
+  {
+   "i": 1,
+   "exec": "1065941",
+   "ofrecido": [],
+   "responde": [
+    "sandalias"
+   ],
+   "acierta": false,
+   "repite_lo_cotizado": true,
+   "step": "step_4",
+   "rama": "Recolector",
+   "products_productos": null,
+   "canonicos_productos": null,
+   "nodos": [
+    "Elegir ruta",
+    "LM Recolector",
+    "LM Router",
+    "Leer evento",
+    "Memoria Recolector",
+    "Memoria Router",
+    "Normalizar entrada",
+    "Partir en burbujas",
+    "Recolector",
+    "Respond to Webhook",
+    "Router",
+    "Switch de step",
+    "Webhook (carril de prueba)",
+    "¿Vino por webhook?"
+   ]
+  },
+  {
+   "i": 2,
+   "exec": "1065951",
+   "ofrecido": [
+    "cilindros"
+   ],
+   "responde": [
+    "sandalias"
+   ],
+   "acierta": false,
+   "repite_lo_cotizado": true,
+   "step": "step_4",
+   "rama": "Recolector",
+   "products_productos": null,
+   "canonicos_productos": null,
+   "nodos": [
+    "Elegir ruta",
+    "LM Recolector",
+    "LM Router",
+    "Leer evento",
+    "Memoria Recolector",
+    "Memoria Router",
+    "Normalizar entrada",
+    "Partir en burbujas",
+    "Recolector",
+    "Respond to Webhook",
+    "Router",
+    "Switch de step",
+    "Webhook (carril de prueba)",
+    "¿Vino por webhook?"
+   ]
+  },
+  {
+   "i": 3,
+   "exec": "1065962",
+   "ofrecido": [],
+   "responde": [
+    "sandalias"
+   ],
+   "acierta": false,
+   "repite_lo_cotizado": true,
+   "step": "step_4",
+   "rama": "Recolector",
+   "products_productos": null,
+   "canonicos_productos": null,
+   "nodos": [
+    "Elegir ruta",
+    "LM Recolector",
+    "LM Router",
+    "Leer evento",
+    "Memoria Recolector",
+    "Memoria Router",
+    "Normalizar entrada",
+    "Partir en burbujas",
+    "Recolector",
+    "Respond to Webhook",
+    "Router",
+    "Switch de step",
+    "Webhook (carril de prueba)",
+    "¿Vino por webhook?"
+   ]
+  },
+  {
+   "i": 4,
+   "exec": "1065973",
+   "ofrecido": [
+    "cilindros"
+   ],
+   "responde": [
+    "cilindros"
+   ],
+   "acierta": true,
+   "repite_lo_cotizado": false,
+   "step": "step_4",
+   "rama": "Recolector",
+   "products_productos": null,
+   "canonicos_productos": null,
+   "nodos": [
+    "Elegir ruta",
+    "LM Recolector",
+    "LM Router",
+    "Leer evento",
+    "Memoria Recolector",
+    "Memoria Router",
+    "Normalizar entrada",
+    "Partir en burbujas",
+    "Recolector",
+    "Respond to Webhook",
+    "Router",
+    "Switch de step",
+    "Webhook (carril de prueba)",
+    "¿Vino por webhook?"
+   ]
+  },
+  {
+   "i": 5,
+   "exec": "1065983",
+   "ofrecido": [
+    "cilindros"
+   ],
+   "responde": [
+    "cilindros"
+   ],
+   "acierta": true,
+   "repite_lo_cotizado": false,
+   "step": "step_4",
+   "rama": "Recolector",
+   "products_productos": null,
+   "canonicos_productos": null,
+   "nodos": [
+    "Elegir ruta",
+    "LM Recolector",
+    "LM Router",
+    "Leer evento",
+    "Memoria Recolector",
+    "Memoria Router",
+    "Normalizar entrada",
+    "Partir en burbujas",
+    "Recolector",
+    "Respond to Webhook",
+    "Router",
+    "Switch de step",
+    "Webhook (carril de prueba)",
+    "¿Vino por webhook?"
+   ]
+  }
+ ]
+}

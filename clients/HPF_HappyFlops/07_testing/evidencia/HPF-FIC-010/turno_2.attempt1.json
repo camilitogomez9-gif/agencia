@@ -1,0 +1,68 @@
+{
+  "probe_id": "sess_hpf_fic_010_1785952740#4d724c6ad7bd",
+  "session_id": "sess_hpf_fic_010_1785952740",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "quiero mandiles",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 5.5,
+  "version_antes": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "version_despues": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "capturado_utc": "2026-08-05T17:59:34.147611+00:00",
+  "execution_id": "989395",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T17:59:24.249Z",
+  "stoppedAt": "2026-08-05T17:59:28.895Z",
+  "n_esperadas": 2,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "En XV no manejamos mandiles, solo están disponibles para bodas. Pero si quieres, puedo mostrarte otros productos súper padres para tus XV, como sandalias, pantuflas, cilindros, kits anticruda o vasos popote",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "Te gustaría ver alguno de estos?",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 368,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1628,
+      "chat_id": 6390727286,
+      "texto_entregado": "En XV no manejamos mandiles, solo están disponibles para bodas. Pero si quieres, puedo mostrarte otros productos súper padres para tus XV, como sandalias, pantuflas, cilindros, kits anticruda o vasos popote",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 199,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1629,
+      "chat_id": 6390727286,
+      "texto_entregado": "Te gustaría ver alguno de estos?",
+      "error": null
+    }
+  ],
+  "n_entregadas": 2,
+  "cero_partes": false,
+  "agente": {
+    "output": "En XV no manejamos mandiles, solo están disponibles para bodas. Pero si quieres, puedo mostrarte otros productos súper padres para tus XV, como sandalias, pantuflas, cilindros, kits anticruda o vasos popote. ¿Te gustaría ver alguno de estos?",
+    "tools": []
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-FIC-010"
+}

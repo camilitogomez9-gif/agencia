@@ -1,0 +1,635 @@
+{
+  "updatedAt": "2026-08-14T15:49:10.868Z",
+  "createdAt": "2026-08-06T21:08:51.183Z",
+  "id": "VK4M7VQm8CMefbty",
+  "name": "HPF·GHL · W0 Client",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"op\": \"get_opportunity\",\n  \"args\": {\n    \"opportunityId\": \"...\"\n  }\n}"
+      },
+      "id": "86fb7171-4535-461c-8085-b82ce026ca9c",
+      "name": "Ejecutado por otro workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -460,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hpf-w0-ghl-client",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "2db051e4-c3c3-4cfa-b596-f3d83afe6a4d",
+      "name": "Webhook (carril de prueba)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -460,
+        200
+      ],
+      "webhookId": "a096bced-0194-4a57-8f83-2b6368511787",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jUb7ZjztncX5ACpc",
+          "name": "HPF GHL Webhook Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Unifica las dos vías de entrada: sub-workflow y webhook de prueba.\n// El carril de test y el de producción comparten TODO lo de abajo: la única\n// diferencia es por dónde entró el pedido.\nconst out = [];\nfor (const it of $input.all()) {\n  const j = it.json || {};\n  const porWebhook = !!(j.body && (j.body.op !== undefined));\n  const src = porWebhook ? j.body : j;\n  if (!src.op) {\n    throw new Error('W0: falta el argumento \"op\" en el pedido');\n  }\n  let args = src.args ?? {};\n  if (typeof args === 'string') {\n    try { args = JSON.parse(args); }\n    catch (e) { throw new Error('W0: \"args\" no es JSON válido: ' + args); }\n  }\n  out.push({ json: { op: String(src.op), args, _via: porWebhook ? 'webhook' : 'subworkflow' } });\n}\nreturn out;"
+      },
+      "id": "e77ca54d-e5a3-4ea1-bd35-e7947a5506f4",
+      "name": "Normalizar entrada",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -220,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Tabla de contratos GHL. Todo lo de acá fue corroborado en L2 con read-back real\n// (ver 07_testing/evidencia-migracion/L2-informe-primitivas.md).\nconst API      = 'https://services.leadconnectorhq.com';\nconst LOC      = 'onRwi0ZF4uYi0Lp6GAbE';\nconst PIPELINE = 'RMnhLPqtXoWUBGZ0gvbh';\nconst STAGES   = {\n  \"Lead Nuevo\": \"cf8fc770-81b1-422c-8394-d00bfb97a3f0\",\n  \"Saludo Enviado\": \"f9709293-d03c-47f1-949f-0c03ab077a45\",\n  \"Evento Identificado\": \"fec50c94-fba0-444b-8c75-7a97da9e0daa\",\n  \"Productos Mostrados\": \"49c7401f-8af1-4d8f-a1b4-e989b6d0a5e2\",\n  \"Cotizado\": \"96fa0ade-c853-4db3-97f4-56d58d69af8c\",\n  \"Esperando Pago\": \"843a06f1-1214-4baa-a3a0-f197cb240b5d\",\n  \"Pago Confirmado\": \"96d760e5-f290-456c-a117-57e61ce6c27d\",\n  \"Diseño en Proceso\": \"d35bb30d-97d5-48c4-81f8-5ecabf32e57d\",\n  \"En Producción\": \"008689c6-80d8-4712-981b-1d800e1e6137\",\n  \"Enviado\": \"218b9b41-4007-4b1c-bbe4-4e775ddf00b5\",\n  \"En Espera\": \"48de80e9-31a9-472a-b030-5b9fe9174810\",\n  \"Ganado\": \"909a816d-997e-4d90-8dc1-dc4b0dcd16d7\",\n  \"Ventas Perdidas\": \"6abfe419-adf2-4df5-87c5-ef4f62e01464\"\n};\nconst CF       = {\n  \"cantidad_cilindros\": [\n    \"1Xo6QgstbpNRu0TiKM7d\",\n    \"NUMERICAL\"\n  ],\n  \"diseno_aprobado_at\": [\n    \"3Qo691OqUvdHgy19Mu9t\",\n    \"DATE\"\n  ],\n  \"imagen_input\": [\n    \"4zvcyl95qQpnJOpKx6wy\",\n    \"CHECKBOX\"\n  ],\n  \"last_inbound_at\": [\n    \"5KDgrZMK7pha8oO0VmJt\",\n    \"TEXT\"\n  ],\n  \"comprobante_anticipo_at\": [\n    \"7P3cnSOeLJSovzI6m6XM\",\n    \"TEXT\"\n  ],\n  \"payment_proof_detectado\": [\n    \"7U96fnkNbLy1Bj2BQ4Gr\",\n    \"CHECKBOX\"\n  ],\n  \"time_to_close_hours\": [\n    \"7XcZT790aiApLPE7bACF\",\n    \"NUMERICAL\"\n  ],\n  \"re_engagement_completed_at\": [\n    \"B3nrry4BcwtJGWyQxCPi\",\n    \"DATE\"\n  ],\n  \"cotizacion_anticipo_mxn\": [\n    \"BKXYT8Bv4lxJy2durCC0\",\n    \"NUMERICAL\"\n  ],\n  \"talla_sandalias\": [\n    \"HN7EV1XOh5XjsSlC8Bq9\",\n    \"TEXT\"\n  ],\n  \"productos_mostrados\": [\n    \"IukLzqy6bZCCtuJTPzBu\",\n    \"LARGE_TEXT\"\n  ],\n  \"cantidad_mandiles\": [\n    \"KZp0egPZZpdPk16bUMLW\",\n    \"NUMERICAL\"\n  ],\n  \"cantidad_sandalias\": [\n    \"L68MYmGDZhLMbVU3VxMb\",\n    \"NUMERICAL\"\n  ],\n  \"had_information\": [\n    \"NaqWKjsZrYLN0mGsV6U2\",\n    \"CHECKBOX\"\n  ],\n  \"paqueteria\": [\n    \"RXAZLR1JFyFchlSI6a5V\",\n    \"TEXT\"\n  ],\n  \"notas_postventa\": [\n    \"SQNM1WOMu42dtFoB74jj\",\n    \"LARGE_TEXT\"\n  ],\n  \"attention_motive\": [\n    \"TTjvs6uXHwppBxbyab2y\",\n    \"TEXT\"\n  ],\n  \"tracking_number\": [\n    \"VvfK034u8gXfHu5U8O2f\",\n    \"TEXT\"\n  ],\n  \"fecha_prometida_envio\": [\n    \"WKVYhWFzJNmNgYJRBV5F\",\n    \"DATE\"\n  ],\n  \"cotizacion_emitida\": [\n    \"WvS1z4CvV6UTVU7ZpL6p\",\n    \"CHECKBOX\"\n  ],\n  \"cantidad_otros\": [\n    \"XxGTN1MLWhBFBEGHLDo6\",\n    \"NUMERICAL\"\n  ],\n  \"last_outbound_at\": [\n    \"YUoSJZklOjsnh6l3KgmV\",\n    \"TEXT\"\n  ],\n  \"evento_detectado\": [\n    \"ahVpF5ldsRcuOIn9Mxdk\",\n    \"MULTIPLE_OPTIONS\"\n  ],\n  \"created_at_first_contact\": [\n    \"bAu2xA3TBx2vCLTFVpv7\",\n    \"DATE\"\n  ],\n  \"ultima_imagen_clasificada\": [\n    \"dseuLadHs3dRLup2sRIV\",\n    \"TEXT\"\n  ],\n  \"cp_entrega\": [\n    \"dwqVZEekKwE3sNSnWvvi\",\n    \"TEXT\"\n  ],\n  \"cotizacion_generada_at\": [\n    \"ewuFioQF7h26yD5fN7U2\",\n    \"DATE\"\n  ],\n  \"tipo_suela\": [\n    \"i8zWb498oK7SSOulvM9g\",\n    \"SINGLE_OPTIONS\"\n  ],\n  \"comprobante_liquidacion_url\": [\n    \"iqZFq6sIoabZq5Vrjx1i\",\n    \"TEXT\"\n  ],\n  \"last_re_engagement_wave\": [\n    \"j8xbPFvAnlowIcC9ZzmC\",\n    \"TEXT\"\n  ],\n  \"had_image\": [\n    \"k4jHbS2HHH3d74Z7121a\",\n    \"CHECKBOX\"\n  ],\n  \"time_to_quote_hours\": [\n    \"oUDC43WUGiKhTkN3Sg42\",\n    \"NUMERICAL\"\n  ],\n  \"comprobante_anticipo_url\": [\n    \"te6n4eJtmKLg0Nktk3za\",\n    \"TEXT\"\n  ],\n  \"monto_cotizado_mxn\": [\n    \"xznzWZlvPHQI3HdsQfzM\",\n    \"NUMERICAL\"\n  ],\n  \"comprobante_liquidacion_at\": [\n    \"yLakDK5rk5lX2fxc0PZi\",\n    \"TEXT\"\n  ],\n  \"had_quote\": [\n    \"zMaaLTYTREw2InLnbimW\",\n    \"CHECKBOX\"\n  ]\n};\n\nconst { op, args, _via } = $input.first().json;\n\nfunction exigir(campos) {\n  for (const c of campos) {\n    const v = args[c];\n    if (v === undefined || v === null || v === '') {\n      throw new Error(`W0 op \"${op}\": falta el argumento obligatorio \"${c}\"`);\n    }\n  }\n}\n\nfunction idEtapa(nombre) {\n  if (STAGES[nombre]) return STAGES[nombre];\n  // permitir pasar el UUID directo\n  if (Object.values(STAGES).includes(nombre)) return nombre;\n  throw new Error(`W0: etapa desconocida \"${nombre}\" (${Object.keys(STAGES).length} válidas)`);\n}\n\n// Traduce {clave: valor} a customFields[], validando la clave contra el schema.\n// Sin esto, un id con typo se escribe \"bien\" (GHL devuelve 200) y el dato se pierde\n// en silencio — comprobado en T-17.\nfunction camposCustom(campos) {\n  const salida = [];\n  for (const [clave, valor] of Object.entries(campos)) {\n    const def = CF[clave];\n    if (!def) {\n      // Mensaje corto a propósito: n8n trunca los errores largos por el final.\n      throw new Error(`W0: campo custom desconocido \"${clave}\" ` +\n        `(${Object.keys(CF).length} válidos) — GHL lo aceptaría y perdería el dato`);\n    }\n    const [id, tipo] = def;\n    let v = valor;\n    if (tipo === 'CHECKBOX' || tipo === 'MULTIPLE_OPTIONS') {\n      v = Array.isArray(v) ? v : [v];\n    }\n    salida.push({ id, field_value: v });\n  }\n  return salida;\n}\n\n// pageLimit 100 trae el catálogo entero en una sola llamada. (El 403 que se le\n// atribuía a pageLimit>20 en los docs previos era en realidad el User-Agent.)\nfunction buscarObjeto(objectKey) {\n  return { method: 'POST', path: `/objects/${objectKey}/records/search`, body: {\n    locationId: LOC, page: args.page || 1, pageLimit: args.pageLimit || 100,\n    query: args.query || '', searchAfter: args.searchAfter || [] } };\n}\n\nconst OPS = {\n  upsert_contact: () => {\n    // phone O email: GHL acepta cualquiera de los dos como clave de upsert.\n    //\n    // El email hace falta para los testers de Telegram, que no tienen teléfono.\n    // Fabricarles uno NO sirve: GHL valida el código de país y devuelve HTTP 400\n    // \"Invalid country calling code\" ante un prefijo libre como +999 (medido el 14/08).\n    // El teléfono sintético se sigue usando, pero sólo puertas adentro — como clave de\n    // `hpf_identity` y para que W2 sepa por qué canal contestar; a GHL no llega.\n    if (!args.phone && !args.email) {\n      throw new Error('W0 upsert_contact: hace falta \"phone\" o \"email\"');\n    }\n    return { method: 'POST', path: '/contacts/upsert', body: {\n      locationId: LOC, phone: args.phone, email: args.email,\n      firstName: args.firstName, lastName: args.lastName, name: args.name,\n      tags: args.tags, source: args.source || 'hpf-n8n' } };\n  },\n  get_contact: () => {\n    exigir(['contactId']);\n    return { method: 'GET', path: `/contacts/${args.contactId}` };\n  },\n  find_or_create_opportunity: () => {\n    exigir(['contactId']);\n    // POST optimista: es autoritativo y SIN lag, a diferencia de /opportunities/search.\n    return { method: 'POST', path: '/opportunities/', body: {\n      pipelineId: PIPELINE, locationId: LOC, contactId: args.contactId,\n      name: args.name || 'Lead WhatsApp', status: 'open',\n      pipelineStageId: idEtapa(args.etapa || 'Lead Nuevo') } };\n  },\n  get_opportunity: () => {\n    exigir(['opportunityId']);\n    return { method: 'GET', path: `/opportunities/${args.opportunityId}` };\n  },\n  update_stage: () => {\n    exigir(['opportunityId', 'etapa']);\n    return { method: 'PUT', path: `/opportunities/${args.opportunityId}`,\n      body: { pipelineId: PIPELINE, pipelineStageId: idEtapa(args.etapa) } };\n  },\n  update_cf: () => {\n    exigir(['opportunityId', 'campos']);\n    return { method: 'PUT', path: `/opportunities/${args.opportunityId}`,\n      body: { customFields: camposCustom(args.campos) } };\n  },\n  add_tag: () => {\n    exigir(['contactId', 'tags']);\n    return { method: 'POST', path: `/contacts/${args.contactId}/tags`,\n      body: { tags: Array.isArray(args.tags) ? args.tags : [args.tags] } };\n  },\n  remove_tag: () => {\n    exigir(['contactId', 'tags']);\n    return { method: 'DELETE', path: `/contacts/${args.contactId}/tags`,\n      body: { tags: Array.isArray(args.tags) ? args.tags : [args.tags] } };\n  },\n  send_text: () => {\n    exigir(['contactId', 'mensaje']);\n    return { method: 'POST', path: '/conversations/messages', body: {\n      type: 'WhatsApp', contactId: args.contactId, message: args.mensaje } };\n  },\n  send_media: () => {\n    exigir(['contactId', 'adjuntos']);\n    const adj = Array.isArray(args.adjuntos) ? args.adjuntos : [args.adjuntos];\n    return { method: 'POST', path: '/conversations/messages', body: {\n      type: 'WhatsApp', contactId: args.contactId,\n      message: args.mensaje || '', attachments: adj } };\n  },\n  // Las dos ops del relay de entrada (W8). GHL no tiene webhook por location ni API\n  // para crear Workflows, así que la entrada se resuelve puliendo conversaciones en\n  // vez de esperar un push. `sortBy` va en snake_case, como el resto de /search.\n  buscar_conversaciones: () => {\n    return { method: 'GET', path: '/conversations/search', query: {\n      locationId: LOC, limit: args.limit || 20,\n      sortBy: 'last_message_date', sort: 'desc' } };\n  },\n  get_mensajes: () => {\n    exigir(['conversationId']);\n    return { method: 'GET',\n      path: `/conversations/${args.conversationId}/messages`,\n      query: { limit: args.limit || 20 } };\n  },\n  search_products: () => buscarObjeto('custom_objects.productos'),\n  // Fichas de catálogo: las ~65 tarjetas que el bot manda (texto + asset).\n  // Objeto aparte de `productos`, que son los 15 SKU con precio/mínimo/peso.\n  search_fichas: () => buscarObjeto('custom_objects.fichas'),\n};\n\nif (!OPS[op]) {\n  throw new Error(`W0: op desconocida \"${op}\" (${Object.keys(OPS).length} válidas)`);\n}\nconst spec = OPS[op]();\n// limpia claves undefined para no mandar nulls que GHL interpreta como borrado\nif (spec.body) {\n  for (const k of Object.keys(spec.body)) if (spec.body[k] === undefined) delete spec.body[k];\n}\n// Query string para las ops de lectura. Va acá y no en cada op para que ninguna se\n// arme la URL a mano y se olvide de encodear.\nlet qs = '';\nif (spec.query) {\n  const partes = [];\n  for (const [k, v] of Object.entries(spec.query)) {\n    if (v === undefined || v === null || v === '') continue;\n    partes.push(encodeURIComponent(k) + '=' + encodeURIComponent(String(v)));\n  }\n  if (partes.length) qs = '?' + partes.join('&');\n}\nreturn [{ json: { op, _via, _req: { ...spec, url: API + spec.path + qs } } }];"
+      },
+      "id": "1c7061ad-eead-4b38-a71d-e3b6750fb1f8",
+      "name": "Construir request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "method": "={{ $json._req.method }}",
+        "url": "={{ $json._req.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "hpf-n8n/1.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json._req.body || {}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "c29210f8-ebc0-419f-bae0-28f8166c55b9",
+      "name": "GHL",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        100
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// La evidencia es el status real, no que el nodo haya quedado verde.\nconst r    = $input.first().json;\nconst ctx  = $('Construir request').first().json;\nconst spec = ctx._req;\nconst op   = ctx.op;\n\nconst status = r.statusCode ?? 0;\nlet data = r.body;\nif (typeof data === 'string') { try { data = JSON.parse(data); } catch (e) { /* queda como texto */ } }\n\nconst ok = status >= 200 && status < 300;\n\n// Único no-2xx que NO es un error: el contacto ya tenía oportunidad.\n// GHL devuelve el id existente en meta.existingId — autoritativo y sin lag.\nif (!ok && op === 'find_or_create_opportunity' && data && data.code === 'OPPORTUNITY_NO_DUPLICATE') {\n  return [{ json: { ok: true, op, http_status: status, via: 'existente',\n    data: { opportunity: { id: data.meta.existingId } }, error: null } }];\n}\n\nif (!ok) {\n  // throw a propósito: que reviente acá y no que el LLM reciba el error como resultado.\n  throw new Error(`W0 ${op}: GHL ${spec.method} ${spec.path} → HTTP ${status} :: ` +\n    JSON.stringify(data).slice(0, 500));\n}\n\nreturn [{ json: { ok: true, op, http_status: status,\n  via: op === 'find_or_create_opportunity' ? 'creada' : null, data, error: null } }];"
+      },
+      "id": "4015be2b-6d7f-4247-a52a-17e0309d8a98",
+      "name": "Normalizar salida",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "5e85c88b-de22-48bf-b0eb-40ef2966aa3d",
+              "leftValue": "={{ $('Normalizar entrada').first().json._via }}",
+              "rightValue": "webhook",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "138fdb62-7674-4c04-ac8c-6b7756b80d58",
+      "name": "¿Vino por webhook?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        700,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "id": "c1d83765-e3ce-4728-863a-f63c79064771",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        940,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "b4170f90-91e9-426e-8972-24eb45b8ec9d",
+      "name": "Devolver al llamador",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        940,
+        200
+      ]
+    }
+  ],
+  "connections": {
+    "Ejecutado por otro workflow": {
+      "main": [
+        [
+          {
+            "node": "Normalizar entrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook (carril de prueba)": {
+      "main": [
+        [
+          {
+            "node": "Normalizar entrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar entrada": {
+      "main": [
+        [
+          {
+            "node": "Construir request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Construir request": {
+      "main": [
+        [
+          {
+            "node": "GHL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL": {
+      "main": [
+        [
+          {
+            "node": "Normalizar salida",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar salida": {
+      "main": [
+        [
+          {
+            "node": "¿Vino por webhook?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Vino por webhook?": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Devolver al llamador",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "22310507-533a-4f4d-81a2-fa13a82ea4ab",
+  "activeVersionId": "22310507-533a-4f4d-81a2-fa13a82ea4ab",
+  "versionCounter": 15,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-08-06T21:08:51.183Z",
+      "createdAt": "2026-08-06T21:08:51.183Z",
+      "role": "workflow:owner",
+      "workflowId": "VK4M7VQm8CMefbty",
+      "projectId": "g2TpxqLMiC0UsUBj",
+      "project": {
+        "updatedAt": "2025-05-10T12:26:37.475Z",
+        "createdAt": "2025-05-10T12:24:10.921Z",
+        "id": "g2TpxqLMiC0UsUBj",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-05-10T12:24:10.921Z",
+            "createdAt": "2025-05-10T12:24:10.921Z",
+            "userId": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+            "projectId": "g2TpxqLMiC0UsUBj",
+            "user": {
+              "updatedAt": "2026-08-25T13:07:17.187Z",
+              "createdAt": "2025-05-10T12:24:07.518Z",
+              "id": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "lastName": "AI",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-05-10T12:26:59.729Z",
+                "personalization_survey_n8n_version": "1.91.3",
+                "companySize": "<20",
+                "companyType": "systems-integrator",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "6fpcC3iGwfEYO3Eu",
+                "userActivatedAt": 1757033385622,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1773184568459
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "aiAgentStarterCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-08-25",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-08-14T15:49:10.834Z",
+    "createdAt": "2026-08-14T15:49:10.834Z",
+    "versionId": "22310507-533a-4f4d-81a2-fa13a82ea4ab",
+    "workflowId": "VK4M7VQm8CMefbty",
+    "nodes": [
+      {
+        "parameters": {
+          "inputSource": "jsonExample",
+          "jsonExample": "{\n  \"op\": \"get_opportunity\",\n  \"args\": {\n    \"opportunityId\": \"...\"\n  }\n}"
+        },
+        "id": "86fb7171-4535-461c-8085-b82ce026ca9c",
+        "name": "Ejecutado por otro workflow",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -460,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "hpf-w0-ghl-client",
+          "authentication": "headerAuth",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "2db051e4-c3c3-4cfa-b596-f3d83afe6a4d",
+        "name": "Webhook (carril de prueba)",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -460,
+          200
+        ],
+        "webhookId": "a096bced-0194-4a57-8f83-2b6368511787",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "jUb7ZjztncX5ACpc",
+            "name": "HPF GHL Webhook Auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Unifica las dos vías de entrada: sub-workflow y webhook de prueba.\n// El carril de test y el de producción comparten TODO lo de abajo: la única\n// diferencia es por dónde entró el pedido.\nconst out = [];\nfor (const it of $input.all()) {\n  const j = it.json || {};\n  const porWebhook = !!(j.body && (j.body.op !== undefined));\n  const src = porWebhook ? j.body : j;\n  if (!src.op) {\n    throw new Error('W0: falta el argumento \"op\" en el pedido');\n  }\n  let args = src.args ?? {};\n  if (typeof args === 'string') {\n    try { args = JSON.parse(args); }\n    catch (e) { throw new Error('W0: \"args\" no es JSON válido: ' + args); }\n  }\n  out.push({ json: { op: String(src.op), args, _via: porWebhook ? 'webhook' : 'subworkflow' } });\n}\nreturn out;"
+        },
+        "id": "e77ca54d-e5a3-4ea1-bd35-e7947a5506f4",
+        "name": "Normalizar entrada",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -220,
+          100
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Tabla de contratos GHL. Todo lo de acá fue corroborado en L2 con read-back real\n// (ver 07_testing/evidencia-migracion/L2-informe-primitivas.md).\nconst API      = 'https://services.leadconnectorhq.com';\nconst LOC      = 'onRwi0ZF4uYi0Lp6GAbE';\nconst PIPELINE = 'RMnhLPqtXoWUBGZ0gvbh';\nconst STAGES   = {\n  \"Lead Nuevo\": \"cf8fc770-81b1-422c-8394-d00bfb97a3f0\",\n  \"Saludo Enviado\": \"f9709293-d03c-47f1-949f-0c03ab077a45\",\n  \"Evento Identificado\": \"fec50c94-fba0-444b-8c75-7a97da9e0daa\",\n  \"Productos Mostrados\": \"49c7401f-8af1-4d8f-a1b4-e989b6d0a5e2\",\n  \"Cotizado\": \"96fa0ade-c853-4db3-97f4-56d58d69af8c\",\n  \"Esperando Pago\": \"843a06f1-1214-4baa-a3a0-f197cb240b5d\",\n  \"Pago Confirmado\": \"96d760e5-f290-456c-a117-57e61ce6c27d\",\n  \"Diseño en Proceso\": \"d35bb30d-97d5-48c4-81f8-5ecabf32e57d\",\n  \"En Producción\": \"008689c6-80d8-4712-981b-1d800e1e6137\",\n  \"Enviado\": \"218b9b41-4007-4b1c-bbe4-4e775ddf00b5\",\n  \"En Espera\": \"48de80e9-31a9-472a-b030-5b9fe9174810\",\n  \"Ganado\": \"909a816d-997e-4d90-8dc1-dc4b0dcd16d7\",\n  \"Ventas Perdidas\": \"6abfe419-adf2-4df5-87c5-ef4f62e01464\"\n};\nconst CF       = {\n  \"cantidad_cilindros\": [\n    \"1Xo6QgstbpNRu0TiKM7d\",\n    \"NUMERICAL\"\n  ],\n  \"diseno_aprobado_at\": [\n    \"3Qo691OqUvdHgy19Mu9t\",\n    \"DATE\"\n  ],\n  \"imagen_input\": [\n    \"4zvcyl95qQpnJOpKx6wy\",\n    \"CHECKBOX\"\n  ],\n  \"last_inbound_at\": [\n    \"5KDgrZMK7pha8oO0VmJt\",\n    \"TEXT\"\n  ],\n  \"comprobante_anticipo_at\": [\n    \"7P3cnSOeLJSovzI6m6XM\",\n    \"TEXT\"\n  ],\n  \"payment_proof_detectado\": [\n    \"7U96fnkNbLy1Bj2BQ4Gr\",\n    \"CHECKBOX\"\n  ],\n  \"time_to_close_hours\": [\n    \"7XcZT790aiApLPE7bACF\",\n    \"NUMERICAL\"\n  ],\n  \"re_engagement_completed_at\": [\n    \"B3nrry4BcwtJGWyQxCPi\",\n    \"DATE\"\n  ],\n  \"cotizacion_anticipo_mxn\": [\n    \"BKXYT8Bv4lxJy2durCC0\",\n    \"NUMERICAL\"\n  ],\n  \"talla_sandalias\": [\n    \"HN7EV1XOh5XjsSlC8Bq9\",\n    \"TEXT\"\n  ],\n  \"productos_mostrados\": [\n    \"IukLzqy6bZCCtuJTPzBu\",\n    \"LARGE_TEXT\"\n  ],\n  \"cantidad_mandiles\": [\n    \"KZp0egPZZpdPk16bUMLW\",\n    \"NUMERICAL\"\n  ],\n  \"cantidad_sandalias\": [\n    \"L68MYmGDZhLMbVU3VxMb\",\n    \"NUMERICAL\"\n  ],\n  \"had_information\": [\n    \"NaqWKjsZrYLN0mGsV6U2\",\n    \"CHECKBOX\"\n  ],\n  \"paqueteria\": [\n    \"RXAZLR1JFyFchlSI6a5V\",\n    \"TEXT\"\n  ],\n  \"notas_postventa\": [\n    \"SQNM1WOMu42dtFoB74jj\",\n    \"LARGE_TEXT\"\n  ],\n  \"attention_motive\": [\n    \"TTjvs6uXHwppBxbyab2y\",\n    \"TEXT\"\n  ],\n  \"tracking_number\": [\n    \"VvfK034u8gXfHu5U8O2f\",\n    \"TEXT\"\n  ],\n  \"fecha_prometida_envio\": [\n    \"WKVYhWFzJNmNgYJRBV5F\",\n    \"DATE\"\n  ],\n  \"cotizacion_emitida\": [\n    \"WvS1z4CvV6UTVU7ZpL6p\",\n    \"CHECKBOX\"\n  ],\n  \"cantidad_otros\": [\n    \"XxGTN1MLWhBFBEGHLDo6\",\n    \"NUMERICAL\"\n  ],\n  \"last_outbound_at\": [\n    \"YUoSJZklOjsnh6l3KgmV\",\n    \"TEXT\"\n  ],\n  \"evento_detectado\": [\n    \"ahVpF5ldsRcuOIn9Mxdk\",\n    \"MULTIPLE_OPTIONS\"\n  ],\n  \"created_at_first_contact\": [\n    \"bAu2xA3TBx2vCLTFVpv7\",\n    \"DATE\"\n  ],\n  \"ultima_imagen_clasificada\": [\n    \"dseuLadHs3dRLup2sRIV\",\n    \"TEXT\"\n  ],\n  \"cp_entrega\": [\n    \"dwqVZEekKwE3sNSnWvvi\",\n    \"TEXT\"\n  ],\n  \"cotizacion_generada_at\": [\n    \"ewuFioQF7h26yD5fN7U2\",\n    \"DATE\"\n  ],\n  \"tipo_suela\": [\n    \"i8zWb498oK7SSOulvM9g\",\n    \"SINGLE_OPTIONS\"\n  ],\n  \"comprobante_liquidacion_url\": [\n    \"iqZFq6sIoabZq5Vrjx1i\",\n    \"TEXT\"\n  ],\n  \"last_re_engagement_wave\": [\n    \"j8xbPFvAnlowIcC9ZzmC\",\n    \"TEXT\"\n  ],\n  \"had_image\": [\n    \"k4jHbS2HHH3d74Z7121a\",\n    \"CHECKBOX\"\n  ],\n  \"time_to_quote_hours\": [\n    \"oUDC43WUGiKhTkN3Sg42\",\n    \"NUMERICAL\"\n  ],\n  \"comprobante_anticipo_url\": [\n    \"te6n4eJtmKLg0Nktk3za\",\n    \"TEXT\"\n  ],\n  \"monto_cotizado_mxn\": [\n    \"xznzWZlvPHQI3HdsQfzM\",\n    \"NUMERICAL\"\n  ],\n  \"comprobante_liquidacion_at\": [\n    \"yLakDK5rk5lX2fxc0PZi\",\n    \"TEXT\"\n  ],\n  \"had_quote\": [\n    \"zMaaLTYTREw2InLnbimW\",\n    \"CHECKBOX\"\n  ]\n};\n\nconst { op, args, _via } = $input.first().json;\n\nfunction exigir(campos) {\n  for (const c of campos) {\n    const v = args[c];\n    if (v === undefined || v === null || v === '') {\n      throw new Error(`W0 op \"${op}\": falta el argumento obligatorio \"${c}\"`);\n    }\n  }\n}\n\nfunction idEtapa(nombre) {\n  if (STAGES[nombre]) return STAGES[nombre];\n  // permitir pasar el UUID directo\n  if (Object.values(STAGES).includes(nombre)) return nombre;\n  throw new Error(`W0: etapa desconocida \"${nombre}\" (${Object.keys(STAGES).length} válidas)`);\n}\n\n// Traduce {clave: valor} a customFields[], validando la clave contra el schema.\n// Sin esto, un id con typo se escribe \"bien\" (GHL devuelve 200) y el dato se pierde\n// en silencio — comprobado en T-17.\nfunction camposCustom(campos) {\n  const salida = [];\n  for (const [clave, valor] of Object.entries(campos)) {\n    const def = CF[clave];\n    if (!def) {\n      // Mensaje corto a propósito: n8n trunca los errores largos por el final.\n      throw new Error(`W0: campo custom desconocido \"${clave}\" ` +\n        `(${Object.keys(CF).length} válidos) — GHL lo aceptaría y perdería el dato`);\n    }\n    const [id, tipo] = def;\n    let v = valor;\n    if (tipo === 'CHECKBOX' || tipo === 'MULTIPLE_OPTIONS') {\n      v = Array.isArray(v) ? v : [v];\n    }\n    salida.push({ id, field_value: v });\n  }\n  return salida;\n}\n\n// pageLimit 100 trae el catálogo entero en una sola llamada. (El 403 que se le\n// atribuía a pageLimit>20 en los docs previos era en realidad el User-Agent.)\nfunction buscarObjeto(objectKey) {\n  return { method: 'POST', path: `/objects/${objectKey}/records/search`, body: {\n    locationId: LOC, page: args.page || 1, pageLimit: args.pageLimit || 100,\n    query: args.query || '', searchAfter: args.searchAfter || [] } };\n}\n\nconst OPS = {\n  upsert_contact: () => {\n    // phone O email: GHL acepta cualquiera de los dos como clave de upsert.\n    //\n    // El email hace falta para los testers de Telegram, que no tienen teléfono.\n    // Fabricarles uno NO sirve: GHL valida el código de país y devuelve HTTP 400\n    // \"Invalid country calling code\" ante un prefijo libre como +999 (medido el 14/08).\n    // El teléfono sintético se sigue usando, pero sólo puertas adentro — como clave de\n    // `hpf_identity` y para que W2 sepa por qué canal contestar; a GHL no llega.\n    if (!args.phone && !args.email) {\n      throw new Error('W0 upsert_contact: hace falta \"phone\" o \"email\"');\n    }\n    return { method: 'POST', path: '/contacts/upsert', body: {\n      locationId: LOC, phone: args.phone, email: args.email,\n      firstName: args.firstName, lastName: args.lastName, name: args.name,\n      tags: args.tags, source: args.source || 'hpf-n8n' } };\n  },\n  get_contact: () => {\n    exigir(['contactId']);\n    return { method: 'GET', path: `/contacts/${args.contactId}` };\n  },\n  find_or_create_opportunity: () => {\n    exigir(['contactId']);\n    // POST optimista: es autoritativo y SIN lag, a diferencia de /opportunities/search.\n    return { method: 'POST', path: '/opportunities/', body: {\n      pipelineId: PIPELINE, locationId: LOC, contactId: args.contactId,\n      name: args.name || 'Lead WhatsApp', status: 'open',\n      pipelineStageId: idEtapa(args.etapa || 'Lead Nuevo') } };\n  },\n  get_opportunity: () => {\n    exigir(['opportunityId']);\n    return { method: 'GET', path: `/opportunities/${args.opportunityId}` };\n  },\n  update_stage: () => {\n    exigir(['opportunityId', 'etapa']);\n    return { method: 'PUT', path: `/opportunities/${args.opportunityId}`,\n      body: { pipelineId: PIPELINE, pipelineStageId: idEtapa(args.etapa) } };\n  },\n  update_cf: () => {\n    exigir(['opportunityId', 'campos']);\n    return { method: 'PUT', path: `/opportunities/${args.opportunityId}`,\n      body: { customFields: camposCustom(args.campos) } };\n  },\n  add_tag: () => {\n    exigir(['contactId', 'tags']);\n    return { method: 'POST', path: `/contacts/${args.contactId}/tags`,\n      body: { tags: Array.isArray(args.tags) ? args.tags : [args.tags] } };\n  },\n  remove_tag: () => {\n    exigir(['contactId', 'tags']);\n    return { method: 'DELETE', path: `/contacts/${args.contactId}/tags`,\n      body: { tags: Array.isArray(args.tags) ? args.tags : [args.tags] } };\n  },\n  send_text: () => {\n    exigir(['contactId', 'mensaje']);\n    return { method: 'POST', path: '/conversations/messages', body: {\n      type: 'WhatsApp', contactId: args.contactId, message: args.mensaje } };\n  },\n  send_media: () => {\n    exigir(['contactId', 'adjuntos']);\n    const adj = Array.isArray(args.adjuntos) ? args.adjuntos : [args.adjuntos];\n    return { method: 'POST', path: '/conversations/messages', body: {\n      type: 'WhatsApp', contactId: args.contactId,\n      message: args.mensaje || '', attachments: adj } };\n  },\n  // Las dos ops del relay de entrada (W8). GHL no tiene webhook por location ni API\n  // para crear Workflows, así que la entrada se resuelve puliendo conversaciones en\n  // vez de esperar un push. `sortBy` va en snake_case, como el resto de /search.\n  buscar_conversaciones: () => {\n    return { method: 'GET', path: '/conversations/search', query: {\n      locationId: LOC, limit: args.limit || 20,\n      sortBy: 'last_message_date', sort: 'desc' } };\n  },\n  get_mensajes: () => {\n    exigir(['conversationId']);\n    return { method: 'GET',\n      path: `/conversations/${args.conversationId}/messages`,\n      query: { limit: args.limit || 20 } };\n  },\n  search_products: () => buscarObjeto('custom_objects.productos'),\n  // Fichas de catálogo: las ~65 tarjetas que el bot manda (texto + asset).\n  // Objeto aparte de `productos`, que son los 15 SKU con precio/mínimo/peso.\n  search_fichas: () => buscarObjeto('custom_objects.fichas'),\n};\n\nif (!OPS[op]) {\n  throw new Error(`W0: op desconocida \"${op}\" (${Object.keys(OPS).length} válidas)`);\n}\nconst spec = OPS[op]();\n// limpia claves undefined para no mandar nulls que GHL interpreta como borrado\nif (spec.body) {\n  for (const k of Object.keys(spec.body)) if (spec.body[k] === undefined) delete spec.body[k];\n}\n// Query string para las ops de lectura. Va acá y no en cada op para que ninguna se\n// arme la URL a mano y se olvide de encodear.\nlet qs = '';\nif (spec.query) {\n  const partes = [];\n  for (const [k, v] of Object.entries(spec.query)) {\n    if (v === undefined || v === null || v === '') continue;\n    partes.push(encodeURIComponent(k) + '=' + encodeURIComponent(String(v)));\n  }\n  if (partes.length) qs = '?' + partes.join('&');\n}\nreturn [{ json: { op, _via, _req: { ...spec, url: API + spec.path + qs } } }];"
+        },
+        "id": "1c7061ad-eead-4b38-a71d-e3b6750fb1f8",
+        "name": "Construir request",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          0,
+          100
+        ]
+      },
+      {
+        "parameters": {
+          "method": "={{ $json._req.method }}",
+          "url": "={{ $json._req.url }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Version",
+                "value": "2021-07-28"
+              },
+              {
+                "name": "Accept",
+                "value": "application/json"
+              },
+              {
+                "name": "User-Agent",
+                "value": "hpf-n8n/1.0"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json._req.body || {}) }}",
+          "options": {
+            "response": {
+              "response": {
+                "fullResponse": true,
+                "neverError": true
+              }
+            }
+          }
+        },
+        "id": "c29210f8-ebc0-419f-bae0-28f8166c55b9",
+        "name": "GHL",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          240,
+          100
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "Zz21t1RdLIMvud4j",
+            "name": "GHL PIT HPF"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// La evidencia es el status real, no que el nodo haya quedado verde.\nconst r    = $input.first().json;\nconst ctx  = $('Construir request').first().json;\nconst spec = ctx._req;\nconst op   = ctx.op;\n\nconst status = r.statusCode ?? 0;\nlet data = r.body;\nif (typeof data === 'string') { try { data = JSON.parse(data); } catch (e) { /* queda como texto */ } }\n\nconst ok = status >= 200 && status < 300;\n\n// Único no-2xx que NO es un error: el contacto ya tenía oportunidad.\n// GHL devuelve el id existente en meta.existingId — autoritativo y sin lag.\nif (!ok && op === 'find_or_create_opportunity' && data && data.code === 'OPPORTUNITY_NO_DUPLICATE') {\n  return [{ json: { ok: true, op, http_status: status, via: 'existente',\n    data: { opportunity: { id: data.meta.existingId } }, error: null } }];\n}\n\nif (!ok) {\n  // throw a propósito: que reviente acá y no que el LLM reciba el error como resultado.\n  throw new Error(`W0 ${op}: GHL ${spec.method} ${spec.path} → HTTP ${status} :: ` +\n    JSON.stringify(data).slice(0, 500));\n}\n\nreturn [{ json: { ok: true, op, http_status: status,\n  via: op === 'find_or_create_opportunity' ? 'creada' : null, data, error: null } }];"
+        },
+        "id": "4015be2b-6d7f-4247-a52a-17e0309d8a98",
+        "name": "Normalizar salida",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          480,
+          100
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "version": 2,
+              "typeValidation": "loose"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "5e85c88b-de22-48bf-b0eb-40ef2966aa3d",
+                "leftValue": "={{ $('Normalizar entrada').first().json._via }}",
+                "rightValue": "webhook",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "138fdb62-7674-4c04-ac8c-6b7756b80d58",
+        "name": "¿Vino por webhook?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          700,
+          100
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "allIncomingItems",
+          "options": {}
+        },
+        "id": "c1d83765-e3ce-4728-863a-f63c79064771",
+        "name": "Respond to Webhook",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          940,
+          0
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "b4170f90-91e9-426e-8972-24eb45b8ec9d",
+        "name": "Devolver al llamador",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          940,
+          200
+        ]
+      }
+    ],
+    "connections": {
+      "Ejecutado por otro workflow": {
+        "main": [
+          [
+            {
+              "node": "Normalizar entrada",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook (carril de prueba)": {
+        "main": [
+          [
+            {
+              "node": "Normalizar entrada",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalizar entrada": {
+        "main": [
+          [
+            {
+              "node": "Construir request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Construir request": {
+        "main": [
+          [
+            {
+              "node": "GHL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "GHL": {
+        "main": [
+          [
+            {
+              "node": "Normalizar salida",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalizar salida": {
+        "main": [
+          [
+            {
+              "node": "¿Vino por webhook?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Vino por webhook?": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Devolver al llamador",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "la agencia",
+    "name": null,
+    "description": null
+  }
+}

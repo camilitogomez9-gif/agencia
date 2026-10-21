@@ -1,0 +1,467 @@
+{
+  "name": "Chequear disponibilidad | Tofo",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "fecha_hora"
+            },
+            {
+              "name": "nombre"
+            }
+          ]
+        }
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -352,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "calendar",
+        "calendar": {
+          "__rl": true,
+          "value": "mauriciogarciadelav@gmail.com",
+          "mode": "list",
+          "cachedResultName": "mauriciogarciadelav@gmail.com"
+        },
+        "timeMin": "={{ $json.fecha_hora.toDateTime().format('yyyy-MM-dd') }}T00:00:00",
+        "timeMax": "={{ $json.fecha_hora.toDateTime().format('yyyy-MM-dd') }}T23:59:00",
+        "options": {
+          "outputFormat": "bookedSlots"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -128,
+        304
+      ],
+      "id": "3dd816ab-a194-4302-a665-509dfcb007fd",
+      "name": "Get availability in a calendar",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "z0IngCgigP1wgAux",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=## ROL \n\nEres un asistente que evalúa disponibilidad para agendar citas.\n\n## Entradas (siempre juntas en un único JSON)\n\n- Intervalo objetivo: Desde las {{ $('When Executed by Another Workflow').first().json.fecha_hora.toDateTime() }} hasta las {{ $('When Executed by Another Workflow').first().json.fecha_hora.toDateTime().plus(1, 'hour') }}\n\n- Horarios OCUPADOS: \n{{ $json.horarios_ocupados }}\n\n#### Aclaración: \n\nTodos los 'inicio' y 'fin' caen el mismo día calendario de la zona indicada.\n\n## Ventana laboral y formato\n\n- Considerar solo el rango laboral del día: desde 10:00 hasta 13:00 (siendo las 12:00 horas el último horario donde se pueden agendar las personas.\n\n- Los horarios sugeridos deben ser bloques de 1 hora con inicios en cada hora exacta.\n\n- No ofrecer el bloque 16:00–17:00. El último bloque sugerible es 12:00–13:00.\n\n- Formatear horas legibles como \"HH:mm\" (24h) en los mensajes (ej.: \"10:00\", \"12:00\").  \n\n- El resultado debe ser **exclusivamente** un JSON con dos claves:\n  - `\"libre\"`: `\"1\"` si el `intervalo_objetivo` NO choca con reservas y además está íntegramente dentro de la ventana laboral; de lo contrario `\"0\"`.\n  - `\"mensaje\"`: string. Si `\"libre\" = \"1\"`, debe ser `\"\"` (vacío). Si `\"libre\" = \"0\"`, debe indicar que el horario está ocupado y listar **solo** los horarios disponibles en bloques de 1 hora dentro de 10:00 – 13:00 del mismo día. El mensaje debe indicar clararmente si es que no está disponible.\n\n## Reglas de solapamiento\n\n- EL horario objetivo está disponible si NO solapa con ningún intervalo de horario ocupado y cae completamente dentro de 10:00 – 12:00"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        768,
+        304
+      ],
+      "id": "4e959918-9d12-4b96-8909-6d1aa1733b69",
+      "name": "Crear mensaje",
+      "credentials": {
+        "openAiApi": {
+          "id": "FFvzKtFpWXw9hVT8",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.content.libre }}",
+                    "rightValue": "1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "29b5578c-d3c7-479c-ba8d-3b601149e670"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "LIBRE"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1ad6c838-efbe-48a9-9ebc-c62d8846300e",
+                    "leftValue": "={{ $json.message.content.libre }}",
+                    "rightValue": "0",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "OCUPADO"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        1120,
+        304
+      ],
+      "id": "2edc13fc-d93e-47bb-a842-6adc17fe625b",
+      "name": "Diferir"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "mauriciogarciadelav@gmail.com",
+          "mode": "list",
+          "cachedResultName": "mauriciogarciadelav@gmail.com"
+        },
+        "start": "={{ $('When Executed by Another Workflow').first().json.fecha_hora.toDateTime() }}",
+        "end": "={{ $('When Executed by Another Workflow').first().json.fecha_hora.toDateTime().plus(1,\"hour\") }}",
+        "additionalFields": {
+          "summary": "=Reunión TOFO con {{ $('When Executed by Another Workflow').first().json.nombre }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1344,
+        208
+      ],
+      "id": "7691c1d5-4970-44d3-89d1-9fb081d28b00",
+      "name": "Crear evento",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "z0IngCgigP1wgAux",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d2f7a5d8-6885-473e-a303-71c40871f139",
+              "name": "mensaje",
+              "value": "={{ $('Crear mensaje').item.json.message.content.mensaje }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1344,
+        400
+      ],
+      "id": "13ce97a7-8a50-4fba-be0f-4f80cee7d963",
+      "name": "No disponible"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d2f7a5d8-6885-473e-a303-71c40871f139",
+              "name": "mensaje",
+              "value": "=El horario está disponible y la cita fue agendada correctamente para el día y hora: {{ $('When Executed by Another Workflow').item.json.fecha_hora }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1568,
+        208
+      ],
+      "id": "eb531230-14a9-4457-b876-23dc5e43276b",
+      "name": "Disponible"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "948bb088-fa06-4403-b12d-f5629da30487",
+              "leftValue": "={{ $json.start }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        96,
+        304
+      ],
+      "id": "40435314-4f11-473e-898a-0f094c0558f3",
+      "name": "Vacío?"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener todos los items de entrada\nconst items = $input.all();\n\n// Si no hay items, devolvemos mensaje vacío\nif (items.length === 0) {\n  return [{ json: { mensaje: \"No hay horarios ocupados.\" } }];\n}\n\n// Formatear cada slot con el formato requerido\nconst formatter = new Intl.DateTimeFormat('es-ES', {\n  hour: '2-digit',\n  minute: '2-digit',\n  hour12: false,\n});\n\nconst lineas = items.map(item => {\n  const start = new Date(item.json.start);\n  const end = new Date(item.json.end);\n  const inicio = formatter.format(start);\n  const fin = formatter.format(end);\n  return `Desde ${inicio} hasta ${fin}`;\n});\n\n// Si no hay líneas (ningún horario ocupado)\nif (lineas.length === 0) {\n  return [{ json: { mensaje: \"No hay horarios ocupados.\" } }];\n}\n\n// Mensaje final solo con las líneas\nconst mensaje = lineas.join('\\n');\n\nreturn [\n  {\n    json: {\n      mensaje,\n      slots: lineas, // opcional\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        320,
+        400
+      ],
+      "id": "491322b8-de81-4509-9f2c-d8269ec10752",
+      "name": "Obtener intervalos ocupados"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a5bd7081-7603-4164-8081-584b990419fd",
+              "name": "horarios_ocupados",
+              "value": "No existen horarios ocupados en este caso!",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        544,
+        208
+      ],
+      "id": "c14dd838-71d2-431f-b99b-441c114e00dc",
+      "name": "Sin horarios ocupados"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7a8aeeca-5494-4e0c-834e-ec29d7ff2009",
+              "name": "horarios_ocupados",
+              "value": "={{ $json.mensaje }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        544,
+        400
+      ],
+      "id": "728b9157-9015-48d9-a19b-cd411e58783d",
+      "name": "Horarios ocupados"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "fecha_hora": "2026-06-08T13:00:00",
+          "nombre": "Bally Hoo"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get availability in a calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get availability in a calendar": {
+      "main": [
+        [
+          {
+            "node": "Vacío?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear mensaje": {
+      "main": [
+        [
+          {
+            "node": "Diferir",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Diferir": {
+      "main": [
+        [
+          {
+            "node": "Crear evento",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No disponible",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear evento": {
+      "main": [
+        [
+          {
+            "node": "Disponible",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vacío?": {
+      "main": [
+        [
+          {
+            "node": "Sin horarios ocupados",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Obtener intervalos ocupados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener intervalos ocupados": {
+      "main": [
+        [
+          {
+            "node": "Horarios ocupados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sin horarios ocupados": {
+      "main": [
+        [
+          {
+            "node": "Crear mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Horarios ocupados": {
+      "main": [
+        [
+          {
+            "node": "Crear mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "callerPolicy": "any"
+  },
+  "versionId": "867f65bb-e443-4611-9eb3-38930c1b0ff8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c1ba6feaa6a193d007ad82da6440581c8d7568c90e248228239c4fc34db48d20"
+  },
+  "nodeGroups": [],
+  "id": "vpLmZ299yXJrOSBv",
+  "tags": []
+}

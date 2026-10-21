@@ -1,0 +1,130 @@
+[
+  {
+    "id": "2PSekVBxarsrnVBu",
+    "name": "Confirmación de agenda - Venttur",
+    "active": true,
+    "nodes": 22,
+    "doc_alias": "wf-confirmacion-agenda",
+    "file": "2PSekVBxarsrnVBu__Confirmaci_n_de_agenda_-_Venttur.json"
+  },
+  {
+    "id": "9yCbynoKDt9hgiBq",
+    "name": "CAPI Registro Folio - Venttur",
+    "active": true,
+    "nodes": 5,
+    "doc_alias": "wf-capi-registro-folio",
+    "file": "9yCbynoKDt9hgiBq__CAPI_Registro_Folio_-_Venttur.json"
+  },
+  {
+    "id": "CUuFxbst3iHpgeXS",
+    "name": "VTR - Outreach Form Meta",
+    "active": true,
+    "nodes": 37,
+    "doc_alias": "wf-outreach-form-meta",
+    "file": "CUuFxbst3iHpgeXS__VTR_-_Outreach_Form_Meta.json"
+  },
+  {
+    "id": "H6qYB3Oj97bxaTCX",
+    "name": "Estado interrumpida (barrido) - Venttur",
+    "active": true,
+    "nodes": 3,
+    "doc_alias": "wf-estado-interrumpida",
+    "file": "H6qYB3Oj97bxaTCX__Estado_interrumpida_barrido_-_Venttur.json"
+  },
+  {
+    "id": "ZB6erhWicZmDfC4I",
+    "name": "Formulario Clientify - Venttur",
+    "active": true,
+    "nodes": 11,
+    "doc_alias": "",
+    "file": "ZB6erhWicZmDfC4I__Formulario_Clientify_-_Venttur.json"
+  },
+  {
+    "id": "k3aivKSP67S97IHn",
+    "name": "[Venttur]",
+    "active": true,
+    "nodes": 39,
+    "doc_alias": "",
+    "file": "k3aivKSP67S97IHn___Venttur_.json"
+  },
+  {
+    "id": "2m8knqC0IIgGixiP",
+    "name": "Cortar para resumen - Venttur [[[OUTDATED]]]",
+    "active": false,
+    "nodes": 3,
+    "doc_alias": "",
+    "file": "2m8knqC0IIgGixiP__Cortar_para_resumen_-_Venttur_OUTDATED_.json"
+  },
+  {
+    "id": "BrFfQyDfamdUzq64",
+    "name": "Venttur | Correo Semanal",
+    "active": false,
+    "nodes": 5,
+    "doc_alias": "wf-correo-semanal",
+    "file": "BrFfQyDfamdUzq64__Venttur_Correo_Semanal.json"
+  },
+  {
+    "id": "DZlSEQS5qzX1Y01K",
+    "name": "Seguimiento agenda - Venttur",
+    "active": false,
+    "nodes": 5,
+    "doc_alias": "wf-seguimiento-agenda",
+    "file": "DZlSEQS5qzX1Y01K__Seguimiento_agenda_-_Venttur.json"
+  },
+  {
+    "id": "DyrDumQgb6S4zHsS",
+    "name": "Resumen, etiquetas, seguimientos - Venttur",
+    "active": false,
+    "nodes": 31,
+    "doc_alias": "wf-resumen-etiquetas-seguimientos",
+    "file": "DyrDumQgb6S4zHsS__Resumen_etiquetas_seguimientos_-_Venttur.json"
+  },
+  {
+    "id": "b52CUYEkI2Ah3Xj6",
+    "name": "Estado lead (Contestó) - Venttur",
+    "active": false,
+    "nodes": 4,
+    "doc_alias": "",
+    "file": "b52CUYEkI2Ah3Xj6__Estado_lead_Contest_-_Venttur.json"
+  },
+  {
+    "id": "cZUNKQyZNOHy5twQ",
+    "name": "Crear contacto Clientify y Airtable - Venttur",
+    "active": false,
+    "nodes": 4,
+    "doc_alias": "",
+    "file": "cZUNKQyZNOHy5twQ__Crear_contacto_Clientify_y_Airtable_-_Venttur.json"
+  },
+  {
+    "id": "gRSMjzxggA4UePjz",
+    "name": "Actualizar 'Link enviado' - Venttur",
+    "active": false,
+    "nodes": 7,
+    "doc_alias": "",
+    "file": "gRSMjzxggA4UePjz__Actualizar_Link_enviado_-_Venttur.json"
+  },
+  {
+    "id": "mkEP1qFN7MVb9qP0",
+    "name": "Rescate Post-Link - Venttur",
+    "active": false,
+    "nodes": 23,
+    "doc_alias": "wf-rescate-post-link",
+    "file": "mkEP1qFN7MVb9qP0__Rescate_Post-Link_-_Venttur.json"
+  },
+  {
+    "id": "rQj7p6qfcwYMMnQN",
+    "name": "VTR Data Export Runner v1 (Clientify + ManyChat + Supabase)",
+    "active": false,
+    "nodes": 25,
+    "doc_alias": "",
+    "file": "rQj7p6qfcwYMMnQN__VTR_Data_Export_Runner_v1_Clientify_ManyChat_Supabase_.json"
+  },
+  {
+    "id": "z98w2yWVEMOfifMl",
+    "name": "Meta CAPI - Venttur",
+    "active": false,
+    "nodes": 20,
+    "doc_alias": "wf-meta-capi",
+    "file": "z98w2yWVEMOfifMl__Meta_CAPI_-_Venttur.json"
+  }
+]

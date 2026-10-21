@@ -1,0 +1,21 @@
+{
+  "caso": "C-05",
+  "titulo": "producto inexistente → 0 cards, sin romper",
+  "resultado": "CORROBORADO",
+  "detalle": "http=200 cantidad=0",
+  "pasos": [
+    {
+      "resp": {
+        "ok": true,
+        "evento": "Boda",
+        "subcategoria": null,
+        "productos_pedidos": [
+          "helicoptero"
+        ],
+        "cantidad": 0,
+        "cards": [],
+        "sin_media": []
+      }
+    }
+  ]
+}

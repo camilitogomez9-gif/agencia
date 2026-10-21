@@ -1,0 +1,43 @@
+{
+  "caso": "I-03",
+  "titulo": "etapa bloqueante → agente en silencio",
+  "resultado": "CORROBORADO",
+  "detalle": "ruta=bloqueado motivo=atencion_humana llegó_al_router=False (debe ser False)",
+  "aristas": [
+    "bloqueado"
+  ],
+  "pasos": [
+    {
+      "evaluar": {
+        "contactId": "3tzzBVjsKlOF2RJjKNOL",
+        "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+        "messageId": "f94b99fe-4e27-4249-8e13-050871313c59",
+        "messageId_derivado": false,
+        "phone": "+5213300000199",
+        "canal": "WhatsApp",
+        "texto": "sigo ahi?",
+        "adjuntos": [],
+        "tipo": "texto",
+        "debounce_seg": 0,
+        "recibido_at": "2026-08-24T19:00:05.557-03:00",
+        "_forzar_fuera_horario": false,
+        "sessionId": "+52133000001992131",
+        "opportunityId": "vzYAb3P86uJ08CI9jKyV",
+        "etapa_id": "48de80e9-31a9-472a-b030-5b9fe9174810",
+        "etapa": "En Espera",
+        "via_oportunidad": "existente",
+        "ruta": "bloqueado",
+        "motivo_bloqueo": "atencion_humana",
+        "primer_contacto": false,
+        "turnos_previos": 109,
+        "gates": {
+          "etapa": "En Espera",
+          "bloqueo": "atencion_humana",
+          "via": "existente",
+          "cliente_vuelve": false,
+          "primer_contacto": false
+        }
+      }
+    }
+  ]
+}

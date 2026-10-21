@@ -1,0 +1,16 @@
+{
+  "caso": "I-07",
+  "titulo": "ruteo por tipo (imagen / audio / pdf)",
+  "resultado": "CORROBORADO",
+  "detalle": "detectado={'imagen': 'imagen', 'audio': 'audio', 'pdf': 'pdf'}",
+  "aristas": [],
+  "pasos": [
+    {
+      "detectado": {
+        "imagen": "imagen",
+        "audio": "audio",
+        "pdf": "pdf"
+      }
+    }
+  ]
+}

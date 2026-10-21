@@ -1,0 +1,931 @@
+{
+  "name": "[Sistemas & Soluciones]",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "82741ec0-2f54-4e9a-9261-7ef13e36bc7e",
+      "name": "Recibir Mensaje Telegram",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -3648,
+        -144
+      ],
+      "webhookId": "17304cd7-0933-44d7-8d42-a4075bbd4888",
+      "credentials": {
+        "telegramApi": {
+          "id": "C9qVjWqz37kwS1YT",
+          "name": "imp_con_pruebas"
+        }
+      },
+      "notes": "Trigger que recibe todos los mensajes del bot de Telegram de prueba. Solo para testing — no conectar al bot de producción."
+    },
+    {
+      "parameters": {
+        "jsCode": "const msg = $input.first().json;\nconst text = msg.message?.text || '';\nif (text.startsWith('/')) {\n  return [{ json: { skip: true, chatId: msg.message.chat.id.toString(), text } }];\n}\nconst username = msg.message?.from?.username || msg.message?.from?.first_name || 'tester';\nreturn [{\n  json: {\n    skip: false,\n    chatId: msg.message.chat.id.toString(),\n    leadIdentifier: 'tg_' + username.toLowerCase().replace(/[^a-z0-9_]/g, '_'),\n    mensajeActual: text.trim(),\n    canal: 'telegram_test',\n    fuente: 'telegram_test'\n  }\n}];"
+      },
+      "id": "3b67983c-6c11-4fb4-b1f2-ecf505150619",
+      "name": "Normalizar Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3424,
+        -144
+      ],
+      "notes": "Extrae chatId, username y texto. Construye leadIdentifier con prefijo 'tg_'. Ignora comandos (/)."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-skip",
+              "leftValue": "={{ $json.skip }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "be7ee640-d430-422c-bc59-e997c4152c7d",
+      "name": "¿Ignorar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -3200,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Normalizar Payload').first().json.chatId }}",
+        "text": "dale, escribime lo que necesitás y arrancamos",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "59f57e78-131f-4dff-91ab-3aaf98cf5d8a",
+      "name": "Responder Comando",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -2976,
+        -240
+      ],
+      "webhookId": "6d8c6fc8-8c21-4219-824b-5b5415aa114a",
+      "credentials": {
+        "telegramApi": {
+          "id": "C9qVjWqz37kwS1YT",
+          "name": "imp_con_pruebas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "filterByFormula": "={nombre} = \"{{ $json.leadIdentifier }}\"",
+        "options": {
+          "fields": [
+            "nombre",
+            "historial",
+            "perfil_lead",
+            "etapa_conversion"
+          ]
+        }
+      },
+      "id": "48262198-ad14-4559-92df-df01bd2d0fba",
+      "name": "Buscar Lead en Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -2976,
+        -48
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "UABoC1ea3sOyfie1",
+          "name": "Visuality Prueba"
+        }
+      },
+      "disabled": true,
+      "notes": "Busca el leadIdentifier en la tabla Leads. Trae solo los campos necesarios para no sobrecargar el payload."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-existe",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "49647c40-3107-4ff3-8895-b249e9db3894",
+      "name": "¿Lead Existe?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -2752,
+        -48
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nombre": "={{ $('Normalizar Payload').first().json.leadIdentifier }}",
+            "canal_ingreso": "telegram_test",
+            "fuente": "telegram_test",
+            "pais": "sin_definir",
+            "perfil_lead": "sin_clasificar",
+            "etapa_conversion": "apertura",
+            "producto_interes": "sin_definir",
+            "califica": "pendiente",
+            "historial": "",
+            "fecha_primer_contacto": "={{ new Date().toISOString().split('T')[0] }}",
+            "fecha_ultima_interaccion": "={{ new Date().toISOString().split('T')[0] }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "284c1fee-e85b-4fec-ab8e-b6a3b9ea5c7d",
+      "name": "Crear Lead en Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -2528,
+        32
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "UABoC1ea3sOyfie1",
+          "name": "Visuality Prueba"
+        }
+      },
+      "disabled": true,
+      "notes": "Crea nuevo registro con datos iniciales. El agente completará los campos a medida que avanza la conversación."
+    },
+    {
+      "parameters": {
+        "jsCode": "const normalizado = $('Normalizar Payload').first().json;\nconst airtableRecord = $input.first().json;\n\nconst historialExistente = airtableRecord?.fields?.historial || airtableRecord?.historial || '';\nconst perfilLead = airtableRecord?.fields?.perfil_lead || airtableRecord?.perfil_lead || 'sin_clasificar';\nconst etapaConversion = airtableRecord?.fields?.etapa_conversion || airtableRecord?.etapa_conversion || 'apertura';\nconst recordId = airtableRecord?.id || '';\n\n// Agregar mensaje actual al historial\nconst historialConMensaje = historialExistente\n  ? historialExistente + '\\n[LEAD]: ' + normalizado.mensajeActual\n  : '[LEAD]: ' + normalizado.mensajeActual;\n\nconst historialTruncado = historialConMensaje.length > 3000\n  ? '...(historial truncado)\\n' + historialConMensaje.slice(-3000)\n  : historialConMensaje;\n\nreturn [{\n  json: {\n    ...normalizado,\n    historial: historialTruncado,\n    historialExistente,\n    perfilLead,\n    etapaConversion,\n    recordId\n  }\n}];"
+      },
+      "id": "78c68920-1889-4b80-882a-5f6082878449",
+      "name": "Preparar Datos del Lead",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2304,
+        -48
+      ],
+      "disabled": true,
+      "notes": "Consolida datos del lead (sea nuevo o existente). Construye el historial con el mensaje actual ya incluido. El recordId se usa más adelante para actualizar Airtable."
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.mensajeActual }}",
+        "options": {
+          "systemMessage": "="
+        }
+      },
+      "id": "a618f664-3965-4069-b3cb-2c66d4ebe110",
+      "name": "AI Agent — Asesor Diego Labores",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -2080,
+        -48
+      ],
+      "notes": "Nodo AI Agent que centraliza la lógica del agente.\n\nSub-nodos conectados:\n- Google Gemini Chat Model (requerido)\n- Tools opcionales para el futuro (ver sección de extensibilidad)\n\nCómo agregar tools en el futuro:\n1. Crear un nodo tool (Airtable Tool, HTTP Request Tool, Execute Workflow Tool)\n2. Conectarlo al AI Agent por la entrada 'tool'\n3. El agente decide cuándo llamarlo automáticamente — n8n maneja el loop de tool-calling\n\nEjemplos de tools útiles:\n- Consultar disponibilidad en el calendario de Diego\n- Registrar datos del lead en Airtable directamente\n- Buscar información de productos\n- Enviar link de pago"
+    },
+    {
+      "parameters": {
+        "jsCode": "const agentOutput = $input.first().json.output || '';\n\n// Split por separador ---\nconst partes = agentOutput\n  .replace(/[ \\t]*\\n[ \\t]*---[ \\t]*(?:\\n|$)/g, '\\n|||SEP|||\\n')\n  .split('|||SEP|||')\n  .map(p => p.trim())\n  .filter(p => p.length > 0);\n\n// Extraer etiquetas de notificación\nconst notificarCierre = agentOutput.includes('[NOTIFICAR_CIERRE]');\nconst notificarAgenda = agentOutput.includes('[NOTIFICAR_AGENDA]');\nconst notificarDescalificado = agentOutput.includes('[NOTIFICAR_DESCALIFICADO]');\nconst notificarFollowup = agentOutput.includes('[NOTIFICAR_FOLLOWUP]');\n\n// Limpiar etiquetas del texto visible\nconst mensajesConDelay = partes.map((texto, idx) => {\n  const textoLimpio = texto.replace(/\\[NOTIFICAR_[A-Z_]+\\]/g, '').trim();\n  const delay = idx === 0\n    ? Math.min(Math.max(textoLimpio.length * 50, 1500), 4)\n    : Math.min(Math.max(textoLimpio.length * 50, 1000), 6);\n  return { texto: textoLimpio, delay };\n});\n\n// Actualizar historial con respuesta del agente\nconst respuestaAgente = mensajesConDelay.map(m => m.texto).join(' ');\nconst lead = $('Preparar Datos del Lead').first().json;\nconst historialNuevo = lead.historial + '\\n[ASESOR]: ' + respuestaAgente;\nconst historialTruncado = historialNuevo.length > 3000\n  ? '...(truncado)\\n' + historialNuevo.slice(-3000)\n  : historialNuevo;\n\n// Nueva etapa del pipeline\nlet nuevaEtapa = lead.etapaConversion;\nif (notificarCierre) nuevaEtapa = 'ganado';\nelse if (notificarDescalificado) nuevaEtapa = 'descalificado';\nelse if (notificarAgenda) nuevaEtapa = 'agenda_solicitada';\nelse if (notificarFollowup) nuevaEtapa = 'pendiente_followup';\nelse if (nuevaEtapa === 'apertura') nuevaEtapa = 'diagnostico';\nelse if (nuevaEtapa === 'diagnostico' && agentOutput.includes('$')) nuevaEtapa = 'propuesta';\n\nreturn [{\n  json: {\n    ...lead,\n    mensajesConDelay,\n    historialNuevo: historialTruncado,\n    nuevaEtapa,\n    notificarCierre,\n    notificarAgenda,\n    notificarDescalificado,\n    notificarFollowup,\n    totalMensajes: mensajesConDelay.length\n  }\n}];"
+      },
+      "id": "3d33ba97-518a-4a22-8fc5-d3bd6e5a81c3",
+      "name": "Parsear Respuesta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1728,
+        -48
+      ],
+      "notes": "Lee el output del AI Agent (campo 'output'). Divide por '---', calcula delays, limpia etiquetas de notificación y determina nueva etapa del pipeline."
+    },
+    {
+      "parameters": {
+        "amount": "={{ $json.mensajesConDelay[0].delay }}"
+      },
+      "id": "329f32e6-3b36-4416-9bed-ee1f667d7db4",
+      "name": "Delay Msg 1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1504,
+        -48
+      ],
+      "webhookId": "e4ce8d76-e61c-4577-acf2-434731f90bf4"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Normalizar Payload').first().json.chatId }}",
+        "text": "={{ $('Parsear Respuesta').first().json.mensajesConDelay[0].texto }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "347fe044-0155-4147-95c3-34362e80f7b6",
+      "name": "Enviar Msg 1",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1280,
+        -48
+      ],
+      "webhookId": "094648bc-2969-4489-80a6-dc80eac3ab49",
+      "credentials": {
+        "telegramApi": {
+          "id": "C9qVjWqz37kwS1YT",
+          "name": "imp_con_pruebas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c2",
+              "leftValue": "={{ $('Parsear Respuesta').first().json.totalMensajes }}",
+              "rightValue": 2,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "39ddcb2b-0cea-4853-a6f6-f925151e78fc",
+      "name": "¿Hay Msg 2?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1056,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "amount": "={{ $('Parsear Respuesta').first().json.mensajesConDelay[1]?.delay || 2 }}"
+      },
+      "id": "132301e5-6d9a-474b-90d1-922ef06594cb",
+      "name": "Delay Msg 2",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -832,
+        -128
+      ],
+      "webhookId": "61f26110-6572-4829-96a1-dc778f3f3d5d"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Normalizar Payload').first().json.chatId }}",
+        "text": "={{ $('Parsear Respuesta').first().json.mensajesConDelay[1]?.texto || '' }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "ccdab0ed-bd9b-4638-8d18-36a082edde10",
+      "name": "Enviar Msg 2",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -608,
+        -128
+      ],
+      "webhookId": "22ab82ef-e8c0-412b-8d1f-5487fc141953",
+      "credentials": {
+        "telegramApi": {
+          "id": "C9qVjWqz37kwS1YT",
+          "name": "imp_con_pruebas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c3",
+              "leftValue": "={{ $('Parsear Respuesta').first().json.totalMensajes }}",
+              "rightValue": 3,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3e76c6bd-f323-4fc9-b78f-9b6c167f9e6c",
+      "name": "¿Hay Msg 3?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -384,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "amount": "={{ $('Parsear Respuesta').first().json.mensajesConDelay[2]?.delay || 2 }}"
+      },
+      "id": "c1e53edc-6573-4e24-984b-34447104de42",
+      "name": "Delay Msg 3",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -160,
+        -192
+      ],
+      "webhookId": "9ede913f-f23c-4b1e-89ce-c0acdda63a29"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Normalizar Payload').first().json.chatId }}",
+        "text": "={{ $('Parsear Respuesta').first().json.mensajesConDelay[2]?.texto || '' }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "72bf6a0b-9318-49b4-99c9-d0018aa37b9f",
+      "name": "Enviar Msg 3",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        -192
+      ],
+      "webhookId": "f6b443c1-c554-4f02-b63b-0d299791ecef",
+      "credentials": {
+        "telegramApi": {
+          "id": "C9qVjWqz37kwS1YT",
+          "name": "imp_con_pruebas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "historial": "={{ $('Parsear Respuesta').first().json.historialNuevo }}",
+            "etapa_conversion": "={{ $('Parsear Respuesta').first().json.nuevaEtapa }}",
+            "fecha_ultima_interaccion": "={{ new Date().toISOString().split('T')[0] }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "058bcbc2-d08a-4ed3-8c7c-f16633b255a1",
+      "name": "Actualizar Lead en Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        288,
+        -48
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "UABoC1ea3sOyfie1",
+          "name": "Visuality Prueba"
+        }
+      },
+      "disabled": true,
+      "notes": "Actualiza historial, etapa del pipeline y fecha de última interacción. Se ejecuta después de enviar todos los mensajes."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-notif",
+              "leftValue": "={{ $('Parsear Respuesta').first().json.notificarCierre || $('Parsear Respuesta').first().json.notificarAgenda || $('Parsear Respuesta').first().json.notificarDescalificado || $('Parsear Respuesta').first().json.notificarFollowup }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "32c99ae5-e3bd-4ca8-bb78-493af7d9b007",
+      "name": "¿Notificar Equipo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        512,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const parsed = $('Parsear Respuesta').first().json;\nconst lead = $('Preparar Datos del Lead').first().json;\nlet emoji = '🔔', tipo = 'Seguimiento';\nif (parsed.notificarCierre) { emoji = '🎉'; tipo = 'VENTA CERRADA'; }\nelse if (parsed.notificarAgenda) { emoji = '📅'; tipo = 'AGENDA SOLICITADA'; }\nelse if (parsed.notificarDescalificado) { emoji = '❌'; tipo = 'Lead descalificado'; }\nelse if (parsed.notificarFollowup) { emoji = '🔄'; tipo = 'Follow-up pendiente'; }\nconst msg = `${emoji} *${tipo}*\\n\\nLead: \\`${lead.leadIdentifier}\\`\\nCanal: ${lead.canal}\\nPerfil: ${lead.perfilLead}\\nEtapa: ${parsed.nuevaEtapa}\\n\\n_Revisá Airtable para el historial completo._`;\nreturn [{ json: { mensaje: msg } }];"
+      },
+      "id": "2873b1ed-52c8-46bd-8650-0b6332b87f6a",
+      "name": "Construir Notificación",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        736,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID_EQUIPO }}",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "2340a97c-216e-40de-91f7-ab9c1a82afe3",
+      "name": "Notificar Equipo",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        960,
+        -48
+      ],
+      "webhookId": "08bbb41f-d111-4e09-8e5b-91b03903bd4b",
+      "credentials": {
+        "telegramApi": {
+          "id": "FMRcLPf0ibseD1rC",
+          "name": "Video Prueba"
+        }
+      },
+      "disabled": true,
+      "notes": "Para pruebas, puede ser el mismo chat del tester. En producción, apuntar al grupo del equipo de Diego."
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -2128,
+        160
+      ],
+      "id": "04cd0e0a-fd97-47ac-981b-befdfb0fd8b4",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Fa3aaCsYTBS79y3Y",
+          "name": "OpenAI la agencia®"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Recibir Mensaje Telegram').item.json.message.from.id }}",
+        "contextWindowLength": 15
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -1984,
+        160
+      ],
+      "id": "728a9049-6579-41a6-9b55-1177b6748441",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {
+    "Recibir Mensaje Telegram": [
+      {
+        "json": {
+          "update_id": 50166919,
+          "message": {
+            "message_id": 5,
+            "from": {
+              "id": 6390727286,
+              "is_bot": false,
+              "first_name": "la agencia",
+              "last_name": "Prueba",
+              "language_code": "en"
+            },
+            "chat": {
+              "id": 6390727286,
+              "first_name": "la agencia",
+              "last_name": "Prueba",
+              "type": "private"
+            },
+            "date": 1774257704,
+            "text": "prueba"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Recibir Mensaje Telegram": {
+      "main": [
+        [
+          {
+            "node": "Normalizar Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar Payload": {
+      "main": [
+        [
+          {
+            "node": "¿Ignorar?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Ignorar?": {
+      "main": [
+        [
+          {
+            "node": "Responder Comando",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Buscar Lead en Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Lead en Airtable": {
+      "main": [
+        [
+          {
+            "node": "¿Lead Existe?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Lead Existe?": {
+      "main": [
+        [
+          {
+            "node": "Preparar Datos del Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Crear Lead en Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear Lead en Airtable": {
+      "main": [
+        [
+          {
+            "node": "Preparar Datos del Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Datos del Lead": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Asesor Diego Labores",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Asesor Diego Labores": {
+      "main": [
+        [
+          {
+            "node": "Parsear Respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parsear Respuesta": {
+      "main": [
+        [
+          {
+            "node": "Delay Msg 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delay Msg 1": {
+      "main": [
+        [
+          {
+            "node": "Enviar Msg 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Msg 1": {
+      "main": [
+        [
+          {
+            "node": "¿Hay Msg 2?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay Msg 2?": {
+      "main": [
+        [
+          {
+            "node": "Delay Msg 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actualizar Lead en Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delay Msg 2": {
+      "main": [
+        [
+          {
+            "node": "Enviar Msg 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Msg 2": {
+      "main": [
+        [
+          {
+            "node": "¿Hay Msg 3?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay Msg 3?": {
+      "main": [
+        [
+          {
+            "node": "Delay Msg 3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actualizar Lead en Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delay Msg 3": {
+      "main": [
+        [
+          {
+            "node": "Enviar Msg 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Msg 3": {
+      "main": [
+        [
+          {
+            "node": "Actualizar Lead en Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar Lead en Airtable": {
+      "main": [
+        [
+          {
+            "node": "¿Notificar Equipo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Notificar Equipo?": {
+      "main": [
+        [
+          {
+            "node": "Construir Notificación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Construir Notificación": {
+      "main": [
+        [
+          {
+            "node": "Notificar Equipo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Asesor Diego Labores",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent — Asesor Diego Labores",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7e730ffa-3b72-42a0-8d96-8e99ddf2a6ad",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  },
+  "id": "SxftYTvwIHvVLlGt",
+  "tags": [
+    {
+      "updatedAt": "2026-03-23T08:51:29.527Z",
+      "createdAt": "2026-03-23T08:51:29.527Z",
+      "id": "Kp3UTzuxdTuMQSo7",
+      "name": "produccion"
+    },
+    {
+      "updatedAt": "2026-03-23T08:50:33.344Z",
+      "createdAt": "2026-03-23T08:50:33.344Z",
+      "id": "jCZqEfuqi964YP51",
+      "name": "test"
+    },
+    {
+      "updatedAt": "2026-03-23T08:50:33.350Z",
+      "createdAt": "2026-03-23T08:50:33.350Z",
+      "id": "tn6sVWIfr9rYYa57",
+      "name": "agente-ventas"
+    }
+  ]
+}

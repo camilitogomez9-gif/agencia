@@ -1,0 +1,285 @@
+{
+  "name": "Elevar conversación | Tofo",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "id_manychat"
+            },
+            {
+              "name": "resumen"
+            },
+            {
+              "name": "tipo"
+            }
+          ]
+        }
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        496,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer 3882072:b1c5f61336dcf3b9f2a0f0642648b7ab"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $('When Executed by Another Workflow').item.json.id_manychat }}\",\n  \"flow_ns\": \"content20260526142445_613819\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1168,
+        544
+      ],
+      "id": "aff5627b-944e-401f-9a3d-b8e0d7bfddb0",
+      "name": "Elevar a Mauricio",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "chatId": "8067142805",
+        "text": "=🔔 *Nuevo cliente necesita atención *\n\n*Revisa los detalles a continuación*:    \n\n_{{ $('When Executed by Another Workflow').item.json.resumen }}_  \n\n📎 *Accede a la conversación*: https://app.manychat.com/fb3882072/chat/{{ $('When Executed by Another Workflow').item.json.id_manychat }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        944,
+        352
+      ],
+      "id": "43d7b465-bb6f-43a7-a27e-b14a2b1c03ea",
+      "name": "Mensaje a Miguel",
+      "webhookId": "fa755ae1-aa64-4da0-8c06-046919eecdc6",
+      "credentials": {
+        "telegramApi": {
+          "id": "armkWWROo7lljFIm",
+          "name": "TOFO Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5839874323",
+        "text": "=🔔 *Tienes un nuevo lead B2B*\n\n*Revisa los detalles a continuación*:  \n\n_{{ $('When Executed by Another Workflow').item.json.resumen }}_\n\n📎 *Accede a la conversación*: https://app.manychat.com/fb3882072/chat/{{ $('When Executed by Another Workflow').item.json.id_manychat }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        944,
+        544
+      ],
+      "id": "7d901df9-91ab-451c-9752-5b5479f2e38d",
+      "name": "Mensaje a Mauricio",
+      "webhookId": "fa755ae1-aa64-4da0-8c06-046919eecdc6",
+      "credentials": {
+        "telegramApi": {
+          "id": "armkWWROo7lljFIm",
+          "name": "TOFO Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer 3882072:b1c5f61336dcf3b9f2a0f0642648b7ab"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $('When Executed by Another Workflow').item.json.id_manychat }}\",\n  \"flow_ns\": \"content20251129220130_658273\"\n  \n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1168,
+        352
+      ],
+      "id": "3c9d7d5b-6f89-47ca-8320-6ce4f3cd68cb",
+      "name": "Elevar Miguel",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('When Executed by Another Workflow').item.json.tipo }}",
+                    "rightValue": "repo",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "2f9948d9-e04a-49ba-9f72-724948031d5d"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Reposición"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d772c9c6-8299-4c29-8f13-46b8829dd8b8",
+                    "leftValue": "={{ $('When Executed by Another Workflow').item.json.tipo }}",
+                    "rightValue": "b2b",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "B2B"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        720,
+        432
+      ],
+      "id": "1430db16-f592-4542-839a-a475d7aec8ca",
+      "name": "Elegir persona"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Elegir persona",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje a Miguel": {
+      "main": [
+        [
+          {
+            "node": "Elevar Miguel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensaje a Mauricio": {
+      "main": [
+        [
+          {
+            "node": "Elevar a Mauricio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Elegir persona": {
+      "main": [
+        [
+          {
+            "node": "Mensaje a Miguel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mensaje a Mauricio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mensaje a Mauricio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "callerPolicy": "any"
+  },
+  "versionId": "2e0f65ee-504e-4914-9edb-9684d9c53097",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c1ba6feaa6a193d007ad82da6440581c8d7568c90e248228239c4fc34db48d20"
+  },
+  "nodeGroups": [],
+  "id": "yJA04Pfyk2Id1aMo",
+  "tags": []
+}

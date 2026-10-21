@@ -1,0 +1,15 @@
+{
+  "wf": "W6",
+  "descripcion": "R10 — el turno de pantuflas reenviaba tambien el material de sandalias del turno anterior.",
+  "causa": "SOBRA un termino, no falta. En B5 el orden observado es exactamente el ORDER BY de W3 para ['pantuflas','sandalias']: `Products` arrastra el producto del turno previo.",
+  "guarda_critica": "Solo filtra si el mensaje ACTUAL nombra un producto. Con 'cuanto cuestan?' o 'dale' NO filtra, porque ahi el arrastre es correcto y es lo que sostienen B4 y el bloque 'Sugerencia anterior' de Products, que se restituyo hoy mismo.",
+  "probado": "13 casos en Node: B5 recorta, B4 y 'dale' no se tocan, 'todos los productos' no se toca, sinonimos (chanclas/costalitos/popote) resuelven, y los 3 casos de exclusion ('todos menos cilindros', 'sin sandalias', nombra algo que no esta) los salva la guarda de 'si el filtro vaciaria, se conserva'.",
+  "ediciones": [
+    {
+      "nodo": "Leer canónicos",
+      "campo": "parameters.jsCode",
+      "anchor": "const _txtLead = String(previo.texto || '').toLowerCase();\nconst _pidioMaterial = /peluche|satin|sat[ií]n/.test(_txtLead);",
+      "reemplazo": "const _txtLead = String(previo.texto || '').toLowerCase();\n\n// ── R10: no arrastrar productos de turnos anteriores ─────────────────────────────────\n// En B5 el lead pide pantuflas y recibe TAMBIÉN el catálogo y el video de sandalias: venían\n// del turno anterior, `Products` los deja en la lista y W3 los devuelve. El viejo manda sólo\n// material de pantuflas. (El orden observado en B5 es exactamente el ORDER BY de W3 para\n// ['pantuflas','sandalias'], o sea que el término SOBRA, no falta.)\n//\n// ⚠️ Sólo se filtra si el mensaje ACTUAL nombra algún producto. Si no nombra ninguno\n// (\"cuánto cuestan?\", \"dale\"), el arrastre es CORRECTO: el lead se refiere a lo último\n// ofrecido, y es lo que sostienen B4 y el bloque \"Sugerencia anterior\" de `Products`.\n// Filtrar ahí rompería las dos cosas.\n//\n// Y si el filtro dejaría la lista VACÍA se conserva la original: cubre \"todos menos\n// cilindros\", donde el canonicalizador ya excluyó el producto y el texto igual lo nombra.\nconst _FAM = [\n  ['sandalias', /sandalia|zandalia|sandalea|chancla/],\n  ['cilindros', /cilindro|silindro/],\n  ['mandiles',  /mandil|delantal/],\n  ['anticruda', /anticrud|anticrur|costalit|costale|costal\\b/],\n  ['pantuflas', /pantufla|pantus|pantofla/],\n  ['vasos',     /vaso|popote/],\n];\nconst _nombradas = _FAM.filter(([, re]) => re.test(_txtLead)).map(([f]) => f);\nif (_nombradas.length) {\n  const _famDe = (p) => (_FAM.find(([, re]) => re.test(String(p).toLowerCase())) || [null])[0];\n  const _soloPedidos = productos.filter(p => _nombradas.includes(_famDe(p)));\n  if (_soloPedidos.length && _soloPedidos.length !== productos.length) {\n    console.log('R10 arrastre recortado:', productos, '->', _soloPedidos, '| nombradas:', _nombradas);\n    productos = _soloPedidos;\n  }\n}\n\nconst _pidioMaterial = /peluche|satin|sat[ií]n/.test(_txtLead);"
+    }
+  ]
+}

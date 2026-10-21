@@ -1,0 +1,116 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.manychat.com/fb/subscriber/findBySystemField",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "whatsapp_phone",
+              "value": "={{ $('Split In Batches (1)').item.json.telefono.replace('+', '') }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "mcf-find-0001",
+      "name": "findBySystemField (ya existe)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -340,
+        560
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vF5lC1UM2oXdatjQ",
+          "name": "CLZ Manychat API Header Auth"
+        }
+      },
+      "notes": "Se invoca solo cuando createSubscriber rechaza el duplicado. Dos detalles que ya nos mordieron: (a) el numero va SIN '+' porque en un query string el '+' se decodifica como espacio; (b) el param es whatsapp_phone, no phone -- con 'phone' devolvia data:[] vacio. Si vuelve a devolver vacio, probar 'phone' sin '+' antes de descartar el endpoint."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "found-ok",
+              "leftValue": "={{ !!($json.data && $json.data[0] && $json.data[0].id) }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-found-0001",
+      "name": "¿Encontrado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -120,
+        560
+      ],
+      "notes": "Valida que data[0].id exista, NO que status sea success: ManyChat devuelve success con data:[] cuando no encuentra al subscriber. Con el chequeo de status el 'no encontrado' pasaba la compuerta y hacia explotar al resolver."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Punto unico donde queda resuelto el subscriber_id, sin importar si el contacto\n// se acaba de crear o si ya existia.\n//\n// OJO: los dos endpoints devuelven shapes DISTINTOS --\n//   createSubscriber    -> data: { id: ... }        (objeto)\n//   findBySystemField   -> data: [ { id: ... } ]    (array)\n// De ahi el chequeo de Array.isArray.\n//\n// Existe para que setCustomFields y sendFlow tengan UN solo nombre de nodo al que\n// referenciar, en vez de ramificar la expresion segun por que camino vino el contacto.\nconst r = $json;\nconst d = r?.data;\nconst id = Array.isArray(d) ? d?.[0]?.id : d?.id;\n\nif (!id) {\n  // No deberia pasar: las compuertas de arriba ya filtran los casos sin subscriber.\n  // Si igual llega aca, se corta SOLO este contacto en vez de abortar el batch entero.\n  return [{ json: { _error: true, _detalle: JSON.stringify(r) } }];\n}\n\nreturn [{ json: { subscriber_id: String(id) } }];"
+      },
+      "id": "cod-resolver-0001",
+      "name": "Resolver subscriber_id",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        100,
+        380
+      ]
+    }
+  ],
+  "connections": {
+    "findBySystemField (ya existe)": {
+      "main": [
+        [
+          {
+            "node": "¿Encontrado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Encontrado?": {
+      "main": [
+        [
+          {
+            "node": "Resolver subscriber_id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  }
+}

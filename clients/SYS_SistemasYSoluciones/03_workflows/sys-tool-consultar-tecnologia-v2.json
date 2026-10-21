@@ -1,0 +1,202 @@
+{
+  "name": "sys-tool-consultar-tecnologia-v2",
+  "nodes": [
+    {
+      "id": "6b8deb75-3c05-5719-847f-bd1c2adbf5e1",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"tecnologia\": \"DTF Textil\",\n  \"aspecto\": \"\",\n  \"session_id\": \"\"\n}"
+      }
+    },
+    {
+      "id": "4689361a-8a9a-5f1f-a591-e4e8a74ea755",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "const args = $input.first().json;\nif (!args.tecnologia || String(args.tecnologia).trim() === '') {\n  return [{ json: { status: 'ERROR', message_to_agent: 'Faltó parámetro tecnologia. Valores válidos: DTF Textil, DTF UV, UV, Sublimación, Eco-Solvente, Solvente, RISO, IDL Láser, Gran Formato, Corte.', _skip: true } }];\n}\nreturn [{ json: args }];"
+      }
+    },
+    {
+      "id": "af6a1b9e-96d2-52a1-a232-f4e77f1306fc",
+      "name": "Search Tecnologías",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        300
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "3zohdTBWzW8UUN6P",
+          "name": "Airtable SYS"
+        }
+      },
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": "appMD3g2HWxzBaZAM"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": "tblddBiE2e1PElFOF"
+        },
+        "filterByFormula": "={{ '{Nombre} = \"' + $json.tecnologia + '\"' }}",
+        "limit": 1,
+        "options": {},
+        "view": {
+          "__rl": true,
+          "mode": "list",
+          "value": "viwTcatfyam1NzJTp"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "9ca636ef-6170-50bd-aec2-caafd3098099",
+      "name": "Format Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "// v2 — Fix F1: filtra records vacíos antes de procesar.\n// Airtable con alwaysOutputData=true devuelve [{}] cuando no hay match; sin este\n// filtro, el Format Output ve length=1 y devuelve RESOLVED con campos undefined.\n\nconst matches = $input.all().filter(m => m.json && m.json.id && m.json.Nombre);\nconst args = $('Execute Workflow Trigger').first().json;\n\nif (matches.length === 0) {\n  return [{ json: {\n    status: 'NOT_FOUND',\n    data: null,\n    message_to_agent: `No encontré la tecnología \"${args.tecnologia}\". Las disponibles son: DTF Textil, DTF UV, UV, Sublimación, Eco-Solvente, Solvente, RISO, IDL Láser, Gran Formato, Corte. Verificá el nombre exacto.`,\n    trace_id: $execution.id\n  } }];\n}\n\nconst rec = matches[0].json;\nreturn [{ json: {\n  status: 'RESOLVED',\n  data: {\n    nombre: rec.Nombre,\n    descripcion_larga: rec['Descripción larga'] || '',\n    materiales_recomendados: rec['Materiales recomendados'] || '',\n    restricciones: rec['Restricciones / Limitaciones'] || '',\n    aplicaciones_tipicas: rec['Aplicaciones típicas'] || '',\n    linea_principal: rec['Línea principal'] || ''\n  },\n  message_to_agent: `Ficha técnica de ${rec.Nombre} cargada. Usá la información para responder al cliente con tono natural.`,\n  trace_id: $execution.id\n} }];"
+      },
+      "notes": "v2 — F1: filtra records vacíos. Resuelve 1.2.D/1.2.E (devuelve NOT_FOUND correctamente para tecnología fuera del ENUM o naming sin tilde)."
+    },
+    {
+      "id": "21cb3fc0-15d6-54c2-8a34-f40c13cd2b89",
+      "name": "Log to sys_tool_calls",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        960,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sys_tool_calls (session_id, tool_name, input_payload, output_payload, status, duration_ms)\nVALUES ($1, 'consultar-tecnologia', $2::jsonb, $3::jsonb, $4, $5)",
+        "options": {
+          "queryReplacement": "={{ [$('Execute Workflow Trigger').first().json.session_id || 'unknown', JSON.stringify($('Execute Workflow Trigger').first().json), JSON.stringify($json), $json.status || 'success', $json.duration_ms || 0] }}"
+        },
+        "continueOnFail": true
+      },
+      "continueOnFail": true,
+      "notes": "Log a sys_tool_calls. continueOnFail=true para no romper la tool si Postgres falla."
+    },
+    {
+      "id": "3f2d1071-21e2-569d-8b2f-002e675b5801",
+      "name": "Return Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        300
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $('Format Output').first().json }}",
+        "options": {}
+      },
+      "notes": "v2 — F2: .item.json → .first().json para robustez ante paired item tracking roto."
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Search Tecnologías",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Tecnologías": {
+      "main": [
+        [
+          {
+            "node": "Format Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Output": {
+      "main": [
+        [
+          {
+            "node": "Log to sys_tool_calls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to sys_tool_calls": {
+      "main": [
+        [
+          {
+            "node": "Return Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "SYS"
+    },
+    {
+      "name": "F4"
+    },
+    {
+      "name": "tool"
+    }
+  ],
+  "versionId": "7209e63d-bf35-4565-bacb-1cb3c1e1bfa6",
+  "id": "jtnr7FRSDvKs5N6g"
+}

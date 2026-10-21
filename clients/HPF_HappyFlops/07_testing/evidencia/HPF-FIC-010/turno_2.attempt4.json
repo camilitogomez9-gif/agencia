@@ -1,0 +1,70 @@
+{
+  "probe_id": "sess_hpf_fic_010_1785961918#d936883f7dd4",
+  "session_id": "sess_hpf_fic_010_1785961918",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "quiero mandiles",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 58.8,
+  "version_antes": "d691a4dc-2590-4e3d-b62b-165318732206",
+  "version_despues": "d691a4dc-2590-4e3d-b62b-165318732206",
+  "capturado_utc": "2026-08-05T20:34:14.945213+00:00",
+  "execution_id": "990383",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T20:33:11.753Z",
+  "stoppedAt": "2026-08-05T20:34:09.610Z",
+  "n_esperadas": 2,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Así es, los mandiles están disponibles solo para bodas. Para XV años, te puedo ofrecer sandalias, pantuflas, cilindros, kit anticruda y vasos popote",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "Te gustaría ver alguno de estos productos para tus XV?",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 189,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2215,
+      "chat_id": 6390727286,
+      "texto_entregado": "Así es, los mandiles están disponibles solo para bodas. Para XV años, te puedo ofrecer sandalias, pantuflas, cilindros, kit anticruda y vasos popote",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 197,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2216,
+      "chat_id": 6390727286,
+      "texto_entregado": "Te gustaría ver alguno de estos productos para tus XV?",
+      "error": null
+    }
+  ],
+  "n_entregadas": 2,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Así es, los mandiles están disponibles solo para bodas. Para XV años, te puedo ofrecer sandalias, pantuflas, cilindros, kit anticruda y vasos popote. ¿Te gustaría ver alguno de estos productos para tus XV?",
+    "tools": []
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-FIC-010"
+}

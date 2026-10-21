@@ -1,0 +1,203 @@
+{
+  "name": "sys-tool-consultar-url-tienda-v3",
+  "nodes": [
+    {
+      "id": "6c6e83db-ea01-5621-9971-3772bcd9bbbe",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"producto\": \"\",\n  \"categoria\": \"\",\n  \"session_id\": \"\"\n}"
+      }
+    },
+    {
+      "id": "7472a8d1-d79f-5084-a176-d141bda730cd",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "return [{ json: $input.first().json || {} }];"
+      }
+    },
+    {
+      "id": "a752f105-c111-5ec9-ba52-5e55d56f4000",
+      "name": "Search Insumos",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        300
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "3zohdTBWzW8UUN6P",
+          "name": "Airtable SYS"
+        }
+      },
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": "appMD3g2HWxzBaZAM"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": "tblG5U2rEtu9G8lPH"
+        },
+        "filterByFormula": "={{ $json.producto ? `OR(FIND(LOWER(\"${String($json.producto).toLowerCase()}\"), LOWER({Insumo}))>0, FIND(LOWER(\"${String($json.producto).toLowerCase()}\"), LOWER({Categoría}))>0)` : ($json.categoria ? `{Categoría} = \"${$json.categoria}\"` : 'TRUE()') }}",
+        "limit": 5,
+        "options": {},
+        "view": {
+          "__rl": true,
+          "mode": "list",
+          "value": "viwM6RjuUufxZMuI6"
+        }
+      },
+      "alwaysOutputData": true,
+      "notes": "Fix V-01 (auditoria-2026-07-01.md): cablea vista 'Para agente' viwM6RjuUufxZMuI6 (antes view=None)."
+    },
+    {
+      "id": "0878d1ec-ef01-579c-8d43-e4878fa19e44",
+      "name": "Format Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "// v2 — F1: filtra records vacíos antes de procesar.\n// Cuando el Search no encuentra match, Airtable con alwaysOutputData devuelve [{}]\n// y el v1 anterior decía \"Encontré undefined en el catálogo\".\n\nconst matches = $input.all()\n  .map(i => i.json)\n  .filter(r => r && r.id && r['Insumo']);\nconst args = $('Execute Workflow Trigger').first().json;\nconst URL_TIENDA = \"https://www.sistemasysoluciones.com\";\n\n// Si no hay match real, o no hay producto ni categoría pasados, devolvemos URL general.\nif (matches.length === 0 || (!args.producto && !args.categoria)) {\n  return [{ json: {\n    status: 'RESOLVED',\n    data: {\n      url_general: URL_TIENDA,\n      url_categoria: null,\n      url_producto_especifico: null,\n      producto_referencia: null,\n      mensaje_sugerido_agente: `Podés ver y comprar insumos online en ${URL_TIENDA}. Si necesitás ayuda para elegir, te paso con el equipo.`\n    },\n    trace_id: $execution.id\n  } }];\n}\n\nconst primer = matches[0].json;\nconst urlEspecifica = primer['URL tienda'] || null;\nreturn [{ json: {\n  status: 'RESOLVED',\n  data: {\n    url_general: URL_TIENDA,\n    url_categoria: null,\n    url_producto_especifico: urlEspecifica,\n    producto_referencia: primer['Insumo'] || '',\n    mensaje_sugerido_agente: urlEspecifica\n      ? `Encontré ${primer['Insumo']}. Link directo: ${urlEspecifica}. También podés ver el catálogo general en ${URL_TIENDA}.`\n      : `Encontré ${primer['Insumo']} en el catálogo. Para verlo: ${URL_TIENDA}. Si querés que alguien te ayude, te paso con el equipo.`\n  },\n  trace_id: $execution.id\n} }];"
+      },
+      "notes": "v2 — F1: filtra records vacíos. Resuelve 1.7.A/1.7.C (no más 'Encontré undefined')."
+    },
+    {
+      "id": "4b361faf-249a-5ed6-a96b-c78e4856c36a",
+      "name": "Log to sys_tool_calls",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        960,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sys_tool_calls (session_id, tool_name, input_payload, output_payload, status, duration_ms)\nVALUES ($1, 'consultar-url-tienda', $2::jsonb, $3::jsonb, $4, $5)",
+        "options": {
+          "queryReplacement": "={{ [$('Execute Workflow Trigger').first().json.session_id || 'unknown', JSON.stringify($('Execute Workflow Trigger').first().json), JSON.stringify($json), $json.status || 'success', $json.duration_ms || 0] }}"
+        },
+        "continueOnFail": true
+      },
+      "continueOnFail": true,
+      "notes": "Log a sys_tool_calls. continueOnFail=true para no romper la tool si Postgres falla."
+    },
+    {
+      "id": "6b2c477d-a394-5e7e-a85a-0d33e66c5827",
+      "name": "Return Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        300
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $('Format Output').first().json }}",
+        "options": {}
+      },
+      "notes": "v2 — F2: .first().json"
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Search Insumos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Insumos": {
+      "main": [
+        [
+          {
+            "node": "Format Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Output": {
+      "main": [
+        [
+          {
+            "node": "Log to sys_tool_calls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to sys_tool_calls": {
+      "main": [
+        [
+          {
+            "node": "Return Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "SYS"
+    },
+    {
+      "name": "F4"
+    },
+    {
+      "name": "tool"
+    }
+  ],
+  "versionId": "v3-v01-fix-2026-07-01",
+  "id": "EDoSNfvaEQTevJmj"
+}

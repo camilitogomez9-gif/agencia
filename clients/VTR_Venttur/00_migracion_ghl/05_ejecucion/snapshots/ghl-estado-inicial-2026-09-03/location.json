@@ -1,0 +1,123 @@
+{
+  "status": 200,
+  "params": null,
+  "data": {
+    "location": {
+      "id": "7aXb4JCKsWV5nUyBXeSF",
+      "brandId": "wymXWP3sHbJzYnXsmd43",
+      "companyId": "WbuYAfjKqOU9k7R5t9RL",
+      "name": "Venttur ",
+      "address": "Juan Palomar y Arias 616",
+      "city": "Guadalajara",
+      "state": "Jalisco",
+      "country": "MX",
+      "postalCode": "44670",
+      "website": "https://www.venttur.com",
+      "timezone": "America/Mexico_City",
+      "firstName": "Mauricio",
+      "lastName": "Garcia De La Vega Delfin",
+      "email": "administracion@venttur.com",
+      "phone": "+523331275715",
+      "logoUrl": "https://msgsndr-private.storage.googleapis.com/locationPhotos/ab43fe8f-db63-42e9-9965-1f78e910e8e5.png",
+      "automaticMobileAppInvite": false,
+      "business": {
+        "name": "Venttur ",
+        "address": "Juan Palomar y Arias 616",
+        "city": "Guadalajara",
+        "state": "Jalisco",
+        "country": "MX",
+        "postalCode": "44670",
+        "website": "https://www.venttur.com",
+        "timezone": "America/Mexico_City",
+        "logoUrl": "https://msgsndr-private.storage.googleapis.com/locationPhotos/ab43fe8f-db63-42e9-9965-1f78e910e8e5.png",
+        "email": "administracion@venttur.com"
+      },
+      "social": {
+        "facebookUrl": "",
+        "googlePlus": "",
+        "linkedIn": "",
+        "foursquare": "",
+        "twitter": "",
+        "yelp": "",
+        "instagram": "",
+        "youtube": "",
+        "pinterest": "",
+        "blogRss": "",
+        "googlePlacesId": ""
+      },
+      "settings": {
+        "allowDuplicateContact": false,
+        "allowDuplicateOpportunity": false,
+        "allowFacebookNameMerge": false,
+        "disableContactTimezone": false,
+        "contactUniqueIdentifiers": [
+          "email",
+          "phone"
+        ],
+        "crmSettings": {
+          "deSyncOwners": true,
+          "syncFollowers": {
+            "contact": true,
+            "opportunity": true
+          }
+        },
+        "saasSettings": {
+          "saasMode": "not_activated",
+          "twilioRebilling": {
+            "markup": 10,
+            "enabled": false
+          }
+        }
+      },
+      "dateAdded": "2026-09-02T17:14:47.414Z",
+      "domain": "",
+      "currency": "MXN",
+      "isAgencySubAccount": true,
+      "defaultEmailService": "",
+      "permissions": {
+        "dashboardStatsEnabled": true,
+        "funnelsEnabled": true,
+        "phoneCallEnabled": true,
+        "formsEnabled": true,
+        "quizzesEnabled": true,
+        "textToPayEnabled": true,
+        "gmbMessagingEnabled": true,
+        "htmlBuilderEnabled": true,
+        "contactsEnabled": true,
+        "tagsEnabled": true,
+        "botServiceEnabled": true,
+        "websitesEnabled": true,
+        "appointmentsEnabled": true,
+        "proposalsEnabled": true,
+        "qrCodesEnabled": true,
+        "webChatEnabled": true,
+        "facebookMessengerEnabled": true,
+        "launchpadEnabled": true,
+        "affiliateManagerEnabled": true,
+        "gmbCallTrackingEnabled": true,
+        "marketingEnabled": true,
+        "emailBuilderEnabled": true,
+        "attributionsReportingEnabled": true,
+        "triggerLinksEnabled": true,
+        "membershipEnabled": true,
+        "settingsEnabled": true,
+        "surveysEnabled": true,
+        "opportunitiesEnabled": true,
+        "reviewsEnabled": true,
+        "smsEmailTemplatesEnabled": true,
+        "facebookAdsReportingEnabled": true,
+        "adManagerEnabled": true,
+        "bloggingEnabled": true,
+        "workflowsEnabled": true,
+        "campaignsEnabled": true,
+        "conversationsEnabled": true,
+        "adwordsReportingEnabled": true,
+        "bulkRequestsEnabled": true,
+        "agentReportingEnabled": true,
+        "triggersEnabled": true
+      },
+      "snapshotId": ""
+    },
+    "traceId": "ffdec927-4182-4949-8819-350d90d031b1"
+  }
+}

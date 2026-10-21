@@ -1,0 +1,130 @@
+{
+  "probe_id": "sess_hpf_fic_032_1785955991#950e13d1843d",
+  "session_id": "sess_hpf_fic_032_1785955991",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "quiero las pantuflas de moño de satín",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 8.0,
+  "version_antes": "f787487c-8332-405d-8053-16b9b8eb1189",
+  "version_despues": "f787487c-8332-405d-8053-16b9b8eb1189",
+  "capturado_utc": "2026-08-05T18:53:58.999222+00:00",
+  "execution_id": "989745",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T18:53:45.859Z",
+  "stoppedAt": "2026-08-05T18:53:52.953Z",
+  "n_esperadas": 5,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Perfecto! Las pantuflas de moño satín son súper cómodas y quedan padrísimas para boda",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "✨ Pantufla de moño de satín para boda\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada, rosa, cielo y beige\n\n💰 Precio promo: $30 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 2,
+      "message_part": "Aquí tienes el catálogo completo 📋",
+      "photo_url": null,
+      "doc_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701855188345b27e310918.pdf",
+      "video_url": null
+    },
+    {
+      "idx": 3,
+      "message_part": "Cuántos pares Así te hago la cotización",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 4,
+      "message_part": "¿Le interesa sumarlas a la cotización?\nDígame:\n- Cantidad\n- Código postal\n\n¡Gracias!",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 0,
+      "ms": 186,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2010,
+      "chat_id": 6390727286,
+      "texto_entregado": "✨ Pantufla de moño de satín para boda\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada, rosa, cielo y beige\n\n💰 Precio promo: $30 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "error": null
+    },
+    {
+      "emisor": "Send Document (Telegram)",
+      "run": 0,
+      "ms": 405,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2011,
+      "chat_id": 6390727286,
+      "texto_entregado": "Aquí tienes el catálogo completo 📋",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 602,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2009,
+      "chat_id": 6390727286,
+      "texto_entregado": "Perfecto! Las pantuflas de moño satín son súper cómodas y quedan padrísimas para boda",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 421,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2012,
+      "chat_id": 6390727286,
+      "texto_entregado": "Cuántos pares Así te hago la cotización",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 2,
+      "ms": 365,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2013,
+      "chat_id": 6390727286,
+      "texto_entregado": "¿Le interesa sumarlas a la cotización?\nDígame:\n- Cantidad\n- Código postal\n\n¡Gracias!",
+      "error": null
+    }
+  ],
+  "n_entregadas": 5,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Perfecto! Las pantuflas de moño satín son súper cómodas y quedan padrísimas para boda. ¿Cuántos pares necesitas y a qué código postal sería el envío? Así te hago la cotización.",
+    "tools": [
+      "IDENTIFICAR_EVENTO",
+      "MOSTRAR_PRODUCTOS"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-FIC-032"
+}

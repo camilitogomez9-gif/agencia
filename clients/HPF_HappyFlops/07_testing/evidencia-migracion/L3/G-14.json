@@ -1,0 +1,22 @@
+{
+  "caso": "G-14",
+  "titulo": "etapa inexistente",
+  "resultado": "CORROBORADO",
+  "detalle": "http=500 · ejecución=error · error='etapa desconocida \"Etapa Inventada\" (13 válidas) [line 183]'",
+  "pasos": [
+    {
+      "req": {
+        "op": "update_stage",
+        "args": {
+          "opportunityId": "vzYAb3P86uJ08CI9jKyV",
+          "etapa": "Etapa Inventada"
+        }
+      },
+      "resp_webhook": {
+        "message": "Workflow execution failed"
+      },
+      "estado_ejecucion": "error",
+      "error_ejecucion": "etapa desconocida \"Etapa Inventada\" (13 válidas) [line 183]"
+    }
+  ]
+}

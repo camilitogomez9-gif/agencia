@@ -1,0 +1,94 @@
+{
+  "probe_id": "sess_hpf_can_025_1785953775#51a5f463722b",
+  "session_id": "sess_hpf_can_025_1785953775",
+  "contact_id": "KSLMGxHkYbEUEwfkFjdk",
+  "canal": "ghl",
+  "texto_enviado": "boda",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 12.8,
+  "version_antes": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "version_despues": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "capturado_utc": "2026-08-05T18:16:59.449047+00:00",
+  "execution_id": "989517",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T18:16:41.688Z",
+  "stoppedAt": "2026-08-05T18:16:54.261Z",
+  "n_esperadas": 2,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Perfecto! Para bodas tenemos varias opciones de recuerditos personalizados como sandalias, pantuflas, cilindros, mandiles, kit anticruda y vasos con popote",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "Qué producto te gustaría ver primero para tu evento?",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send Message via GHL",
+      "run": 0,
+      "ms": 1048,
+      "reintentos_posibles": false,
+      "canal": "ghl",
+      "entregado": true,
+      "message_id": "Loqq3COXexG7Aiwqn5e6",
+      "chat_id": "jrEzTusVDghOAJ7VXf60",
+      "texto_entregado": null,
+      "error": null
+    },
+    {
+      "emisor": "Send Message via GHL",
+      "run": 1,
+      "ms": 799,
+      "reintentos_posibles": false,
+      "canal": "ghl",
+      "entregado": true,
+      "message_id": "eQ5SoE8GAgFWVuouqmLz",
+      "chat_id": "jrEzTusVDghOAJ7VXf60",
+      "texto_entregado": null,
+      "error": null
+    },
+    {
+      "emisor": "Send Imagen Principal",
+      "run": 0,
+      "ms": 706,
+      "reintentos_posibles": false,
+      "canal": "ghl",
+      "entregado": true,
+      "message_id": "IReaTl8QEosDxgv9248A",
+      "chat_id": "jrEzTusVDghOAJ7VXf60",
+      "texto_entregado": null,
+      "error": null
+    },
+    {
+      "emisor": "Send Promo Evento",
+      "run": 0,
+      "ms": 847,
+      "reintentos_posibles": false,
+      "canal": "ghl",
+      "entregado": true,
+      "message_id": "MdNQyr0Qa5CryPS8v9eL",
+      "chat_id": "jrEzTusVDghOAJ7VXf60",
+      "texto_entregado": null,
+      "error": null
+    }
+  ],
+  "n_entregadas": 4,
+  "cero_partes": false,
+  "agente": {
+    "output": "Perfecto! Para bodas tenemos varias opciones de recuerditos personalizados como sandalias, pantuflas, cilindros, mandiles, kit anticruda y vasos con popote. ¿Qué producto te gustaría ver primero para tu evento?",
+    "tools": [
+      "IDENTIFICAR_EVENTO"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-CAN-025"
+}

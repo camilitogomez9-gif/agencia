@@ -1,0 +1,608 @@
+{
+  "test_id": "T-14",
+  "punto": "PM-CAT-02",
+  "titulo": "catalog-query sobre custom object productos",
+  "resultado": "CORROBORADO",
+  "detalle": "http=201 registros=15 con_imagen_url=0 · ⚠️ hueco de datos → PM-CAT-05 (L4): 0/15 tienen imagen_url",
+  "pasos": [
+    {
+      "paso": "records/search",
+      "method": "POST",
+      "path": "/objects/custom_objects.productos/records/search",
+      "request": {
+        "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+        "page": 1,
+        "pageLimit": 20,
+        "query": "",
+        "searchAfter": []
+      },
+      "status": 201,
+      "response": {
+        "records": [
+          {
+            "id": "6a45c0e9f61374e33056cde3",
+            "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+            "objectId": "6a45ad7071894788dde80ae7",
+            "objectKey": "custom_objects.productos",
+            "createdBy": {
+              "source": "BULK_IMPORT",
+              "channel": "ISTIO_MESH",
+              "sourceId": "productos_ghl_import.csv-1_JUL_2026_10_38_PM",
+              "createdAt": "2026-07-02T01:37:45.179Z"
+            },
+            "createdAt": "2026-07-02T01:37:45.184Z",
+            "lastUpdatedBy": {},
+            "updatedAt": "2026-07-02T01:37:45.184Z",
+            "owners": [],
+            "followers": [],
+            "properties": {
+              "producto_id": "BOL-GEN",
+              "evento": "todos",
+              "categoria": "otros",
+              "nombre": "Bolsa personalizada",
+              "precio_unitario_mxn": 7,
+              "descripcion": "Bolsa de tela personalizada (add-on)",
+              "activo": [
+                "true"
+              ]
+            },
+            "sort": [
+              1782956265184,
+              "6a45c0e9f61374e33056cde3"
+            ],
+            "searchAfter": [
+              1782956265184,
+              "6a45c0e9f61374e33056cde3"
+            ]
+          },
+          {
+            "id": "6a45c0e857f73c826f16565c",
+            "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+            "objectId": "6a45ad7071894788dde80ae7",
+            "objectKey": "custom_objects.productos",
+            "createdBy": {
+              "source": "BULK_IMPORT",
+              "channel": "ISTIO_MESH",
+              "sourceId": "productos_ghl_import.csv-1_JUL_2026_10_38_PM",
+              "createdAt": "2026-07-02T01:37:44.342Z"
+            },
+            "createdAt": "2026-07-02T01:37:44.346Z",
+            "lastUpdatedBy": {},
+            "updatedAt": "2026-07-02T01:37:44.346Z",
+            "owners": [],
+            "followers": [],
+            "properties": {
+              "producto_id": "KIT-GEN",
+              "evento": "todos",
+              "categoria": "kit_anticrudas",
+              "nombre": "Kit Anticrudas",
+              "precio_unitario_mxn": 10,
+              "descripcion": "Kit anticrudas para eventos",
+              "activo": [
+                "true"
+              ]
+            },
+            "sort": [
+              1782956264346,
+              "6a45c0e857f73c826f16565c"
+            ],
+            "searchAfter": [
+              1782956264346,
+              "6a45c0e857f73c826f16565c"
+            ]
+          },
+          {
+            "id": "6a45c0e7dd7ad1610b24d24b",
+            "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+            "objectId": "6a45ad7071894788dde80ae7",
+            "objectKey": "custom_objects.productos",
+            "createdBy": {
+              "source": "BULK_IMPORT",
+              "channel": "ISTIO_MESH",
+              "sourceId": "productos_ghl_import.csv-1_JUL_2026_10_38_PM",
+              "createdAt": "2026-07-02T01:37:43.477Z"
+            },
+            "createdAt": "2026-07-02T01:37:43.481Z",
+            "lastUpdatedBy": {},
+            "updatedAt": "2026-07-02T01:37:43.481Z",
+            "owners": [],
+            "followers": [],
+            "properties": {
+              "producto_id": "PAN-MON-SAT",
+              "evento": "todos",
+              "categoria": "pantuflas",
+              "nombre": "Pantufla mono satin",
+              "precio_unitario_mxn": 30,
+              "pedido_minimo": 50,
+              "descripcion": "Pantufla de mono de satin unitalla 23-26 (precio por confirmar con Oscar)",
+              "activo": [
+                "true"
+              ],
+              "solo_mujeres": [
+                "true"
+              ]
+            },
+            "sort": [
+              1782956263481,
+              "6a45c0e7dd7ad1610b24d24b"
+            ],
+            "searchAfter": [
+              1782956263481,
+              "6a45c0e7dd7ad1610b24d24b"
+            ]
+          },
+          {
+            "id": "6a45c0e693b6766d0ec098cd",
+            "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+            "objectId": "6a45ad7071894788dde80ae7",
+            "objectKey": "custom_objects.productos",
+            "createdBy": {
+              "source": "BULK_IMPORT",
+              "channel": "ISTIO_MESH",
+              "sourceId": "productos_ghl_import.csv-1_JUL_2026_10_38_PM",
+              "createdAt": "2026-07-02T01:37:42.636Z"
+            },
+            "createdAt": "2026-07-02T01:37:42.641Z",
+            "lastUpdatedBy": {},
+            "updatedAt": "2026-07-02T01:37:42.641Z",
+            "owners": [],
+            "followers": [],
+            "properties": {
+              "producto_id": "PAN-SAT",
+              "evento": "todos",
+              "categoria": "pantuflas",
+              "nombre": "Pantufla satin clasica",
+              "precio_unitario_mxn": 30,
+              "pedido_minimo": 50,
+              "descripcion": "Pantufla de satin clasica unitalla 23-26",
+              "activo": [
+                "true"
+              ],
+              "solo_mujeres": [
+                "true"
+              ]
+            },
+            "sort": [
+              1782956262641,
+              "6a45c0e693b6766d0ec098cd"
+            ],
+            "searchAfter": [
+              1782956262641,
+              "6a45c0e693b6766d0ec098cd"
+            ]
+          },
+          {
+            "id": "6a45c0e559eb5a5c99b9243c",
+            "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+            "objectId": "6a45ad7071894788dde80ae7",
+            "objectKey": "custom_objects.productos",
+            "createdBy": {
+              "source": "BULK_IMPORT",
+              "channel": "ISTIO_MESH",
+              "sourceId": "productos_ghl_import.csv-1_JUL_2026_10_38_PM",
+              "createdAt": "2026-07-02T01:37:41.791Z"
+            },
+            "createdAt": "2026-07-02T01:37:41.795Z",
+            "lastUpdatedBy": {},
+            "updatedAt": "2026-07-02T01:37:41.795Z",
+            "owners": [],
+            "followers": [],
+            "properties": {
+              "producto_id": "CIL-BOD",
+              "evento": "boda",
+              "categoria": "cilindros",
+              "nombre": "Cilindro Boda",
+              "precio_unitario_mxn": 10,
+              "descripcion": "Cilindro personalizado para Boda (minimo por confirmar con Oscar)",
+              "activo": [
+                "true"
+              ]
+            },
+            "sort": [
+              1782956261795,
+              "6a45c0e559eb5a5c99b9243c"
+            ],
+            "searchAfter": [
+              1782956261795,
+              "6a45c0e559eb5a5c99b9243c"
+            ]
+          },
+          {
+            "id": "6a45c0e49b47e60f526d8a5f",
+            "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+            "objectId": "6a45ad7071894788dde80ae7",
+            "objectKey": "custom_objects.productos",
+            "createdBy": {
+              "source": "BULK_IMPORT",
+              "channel": "ISTIO_MESH",
+              "sourceId": "productos_ghl_import.csv-1_JUL_2026_10_38_PM",
+              "createdAt": "2026-07-02T01:37:40.955Z"
+            },
+            "createdAt": "2026-07-02T01:37:40.958Z",
+            "lastUpdatedBy": {},
+            "updatedAt": "2026-07-02T01:37:40.958Z",
+            "owners": [],
+            "followers": [],
+            "properties": {
+              "producto_id": "PAN-MON-PEL",
+              "evento": "todos",
+              "categoria": "pantuflas",
+              "nombre": "Pantufla mono peluche",
+              "precio_unitario_mxn": 35,
+              "pedido_minimo": 50,
+              "descripcion": "Pantufla de mono peluche colores blanca/negra/morada/rosa (precio por confirmar con Oscar)",
+              "activo": [
+                "true"
+              ],
+              "solo_mujeres": [
+                "true"
+              ]
+            },
+            "sort": [
+              1782956260958,
+              "6a45c0e49b47e60f526d8a5f"
+            ],
+            "searchAfter": [
+              1782956260958,
+              "6a45c0e49b47e60f526d8a5f"
+            ]
+          },
+          {
+            "id": "6a45c0e408a6743aa9c5c88d",
+            "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+            "objectId": "6a45ad7071894788dde80ae7",
+            "objectKey": "custom_objects.productos",
+            "createdBy": {
+              "source": "BULK_IMPORT",
+              "channel": "ISTIO_MESH",
+              "sourceId": "productos_ghl_import.csv-1_JUL_2026_10_38_PM",
+              "createdAt": "2026-07-02T01:37:40.104Z"
+            },
+            "createdAt": "2026-07-02T01:37:40.110Z",
+            "lastUpdatedBy": {},
+            "updatedAt": "2026-07-02T01:37:40.110Z",
+            "owners": [],
+            "followers": [],
+            "properties": {
+              "producto_id": "MAN-BOD",
+              "evento": "boda",
+              "categoria": "mandiles",
+              "nombre": "Mandil Boda",
+              "precio_unitario_mxn": 12,
+              "descripcion": "Mandil personalizado exclusivo para Boda",
+              "activo": [
+                "true"
+              ],
+              "solo_boda": [
+                "true"
+              ]
+            },
+            "sort": [
+              1782956260110,
+              "6a45c0e408a6743aa9c5c88d"
+            ],
+            "searchAfter": [
+              1782956260110,
+              "6a45c0e408a6743aa9c5c88d"
+            ]
+          },
+          {
+            "id": "6a45c0e3c4210da733146d49",
+            "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+            "objectId": "6a45ad7071894788dde80ae7",
+            "objectKey": "custom_objects.productos",
+            "createdBy": {
+              "source": "BULK_IMPORT",
+              "channel": "ISTIO_MESH",
+              "sourceId": "productos_ghl_import.csv-1_JUL_2026_10_38_PM",
+              "createdAt": "2026-07-02T01:37:39.260Z"
+            },
+            "createdAt": "2026-07-02T01:37:39.263Z",
+            "lastUpdatedBy": {},
+            "updatedAt": "2026-07-02T01:37:39.263Z",
+            "owners": [],
+            "followers": [],
+            "properties": {
+              "producto_id": "SAN-XV-YUT",
+              "evento": "xv",
+              "categoria": "sandalias",
+              "nombre": "Sandalia Yute XV",
+              "precio_unitario_mxn": 35,
+              "pedido_minimo": 50,
+              "descripcion": "Sandalia personalizada suela yute para XV",
+              "activo": [
+                "true"
+              ],
+              "solo_mujeres": [
+                "true"
+              ]
+            },
+            "sort": [
+              1782956259263,
+              "6a45c0e3c4210da733146d49"
+            ],
+            "searchAfter": [
+              1782956259263,
+              "6a45c0e3c4210da733146d49"
+            ]
+          },
+          {
+            "id": "6a45c0e2f48c1f35fb062c24",
+            "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+            "objectId": "6a45ad7071894788dde80ae7",
+            "objectKey": "custom_objects.productos",
+            "createdBy": {
+              "source": "BULK_IMPORT",
+              "channel": "ISTIO_MESH",
+              "sourceId": "productos_ghl_import.csv-1_JUL_2026_10_38_PM",
+              "createdAt": "2026-07-02T01:37:38.407Z"
+            },
+            "createdAt": "2026-07-02T01:37:38.416Z",
+            "lastUpdatedBy": {},
+            "updatedAt": "2026-07-02T01:37:38.416Z",
+            "owners": [],
+            "followers": [],
+            "properties": {
+              "producto_id": "SAN-BOD-DEL",
+              "evento": "boda",
+              "categoria": "sandalias",
+              "nombre": "Sandalia Delgada Boda",
+              "precio_unitario_mxn": 25,
+              "pedido_minimo": 50,
+              "descripcion": "Sandalia personalizada suela delgada para Boda",
+              "activo": [
+                "true"
+              ],
+              "solo_mujeres": [
+                "true"
+              ]
+            },
+            "sort": [
+              1782956258416,
+              "6a45c0e2f48c1f35fb062c24"
+            ],
+            "searchAfter": [
+              1782956258416,
+              "6a45c0e2f48c1f35fb062c24"
+            ]
+          },
+          {
+            "id": "6a45c0e1c2075497e958224e",
+            "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+            "objectId": "6a45ad7071894788dde80ae7",
+            "objectKey": "custom_objects.productos",
+            "createdBy": {
+              "source": "BULK_IMPORT",
+              "channel": "ISTIO_MESH",
+              "sourceId": "productos_ghl_import.csv-1_JUL_2026_10_38_PM",
+              "createdAt": "2026-07-02T01:37:37.564Z"
+            },
+            "createdAt": "2026-07-02T01:37:37.569Z",
+            "lastUpdatedBy": {},
+            "updatedAt": "2026-07-02T01:37:37.569Z",
+            "owners": [],
+            "followers": [],
+            "properties": {
+              "producto_id": "SAN-XV-DEL",
+              "evento": "xv",
+              "categoria": "sandalias",
+              "nombre": "Sandalia Delgada XV",
+              "precio_unitario_mxn": 25,
+              "pedido_minimo": 50,
+              "descripcion": "Sandalia personalizada suela delgada para XV",
+              "activo": [
+                "true"
+              ],
+              "solo_mujeres": [
+                "true"
+              ]
+            },
+            "sort": [
+              1782956257569,
+              "6a45c0e1c2075497e958224e"
+            ],
+            "searchAfter": [
+              1782956257569,
+              "6a45c0e1c2075497e958224e"
+            ]
+          },
+          {
+            "id": "6a45c0e09965695074634c52",
+            "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+            "objectId": "6a45ad7071894788dde80ae7",
+            "objectKey": "custom_objects.productos",
+            "createdBy": {
+              "source": "BULK_IMPORT",
+              "channel": "ISTIO_MESH",
+              "sourceId": "productos_ghl_import.csv-1_JUL_2026_10_38_PM",
+              "createdAt": "2026-07-02T01:37:36.729Z"
+            },
+            "createdAt": "2026-07-02T01:37:36.732Z",
+            "lastUpdatedBy": {},
+            "updatedAt": "2026-07-02T01:37:36.732Z",
+            "owners": [],
+            "followers": [],
+            "properties": {
+              "producto_id": "SAN-XV-GRU",
+              "evento": "xv",
+              "categoria": "sandalias",
+              "nombre": "Sandalia Gruesa XV",
+              "precio_unitario_mxn": 30,
+              "pedido_minimo": 50,
+              "descripcion": "Sandalia personalizada suela gruesa para XV",
+              "activo": [
+                "true"
+              ],
+              "solo_mujeres": [
+                "true"
+              ]
+            },
+            "sort": [
+              1782956256732,
+              "6a45c0e09965695074634c52"
+            ],
+            "searchAfter": [
+              1782956256732,
+              "6a45c0e09965695074634c52"
+            ]
+          },
+          {
+            "id": "6a45c0df56ea46c83abc3d32",
+            "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+            "objectId": "6a45ad7071894788dde80ae7",
+            "objectKey": "custom_objects.productos",
+            "createdBy": {
+              "source": "BULK_IMPORT",
+              "channel": "ISTIO_MESH",
+              "sourceId": "productos_ghl_import.csv-1_JUL_2026_10_38_PM",
+              "createdAt": "2026-07-02T01:37:35.859Z"
+            },
+            "createdAt": "2026-07-02T01:37:35.863Z",
+            "lastUpdatedBy": {},
+            "updatedAt": "2026-07-02T01:37:35.863Z",
+            "owners": [],
+            "followers": [],
+            "properties": {
+              "producto_id": "SAN-BOD-YUT",
+              "evento": "boda",
+              "categoria": "sandalias",
+              "nombre": "Sandalia Yute Boda",
+              "precio_unitario_mxn": 35,
+              "pedido_minimo": 50,
+              "descripcion": "Sandalia personalizada suela yute para Boda",
+              "activo": [
+                "true"
+              ],
+              "solo_mujeres": [
+                "true"
+              ]
+            },
+            "sort": [
+              1782956255863,
+              "6a45c0df56ea46c83abc3d32"
+            ],
+            "searchAfter": [
+              1782956255863,
+              "6a45c0df56ea46c83abc3d32"
+            ]
+          },
+          {
+            "id": "6a45c0df48efd12007d312a2",
+            "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+            "objectId": "6a45ad7071894788dde80ae7",
+            "objectKey": "custom_objects.productos",
+            "createdBy": {
+              "source": "BULK_IMPORT",
+              "channel": "ISTIO_MESH",
+              "sourceId": "productos_ghl_import.csv-1_JUL_2026_10_38_PM",
+              "createdAt": "2026-07-02T01:37:34.998Z"
+            },
+            "createdAt": "2026-07-02T01:37:35.003Z",
+            "lastUpdatedBy": {},
+            "updatedAt": "2026-07-02T01:37:35.003Z",
+            "owners": [],
+            "followers": [],
+            "properties": {
+              "producto_id": "SAN-BOD-GRU",
+              "evento": "boda",
+              "categoria": "sandalias",
+              "nombre": "Sandalia Gruesa Boda",
+              "precio_unitario_mxn": 30,
+              "pedido_minimo": 50,
+              "descripcion": "Sandalia personalizada suela gruesa para Boda",
+              "activo": [
+                "true"
+              ],
+              "solo_mujeres": [
+                "true"
+              ]
+            },
+            "sort": [
+              1782956255003,
+              "6a45c0df48efd12007d312a2"
+            ],
+            "searchAfter": [
+              1782956255003,
+              "6a45c0df48efd12007d312a2"
+            ]
+          },
+          {
+            "id": "6a45c0de781bdd12ca7920d8",
+            "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+            "objectId": "6a45ad7071894788dde80ae7",
+            "objectKey": "custom_objects.productos",
+            "createdBy": {
+              "source": "BULK_IMPORT",
+              "channel": "ISTIO_MESH",
+              "sourceId": "productos_ghl_import.csv-1_JUL_2026_10_38_PM",
+              "createdAt": "2026-07-02T01:37:34.127Z"
+            },
+            "createdAt": "2026-07-02T01:37:34.137Z",
+            "lastUpdatedBy": {},
+            "updatedAt": "2026-07-02T01:37:34.137Z",
+            "owners": [],
+            "followers": [],
+            "properties": {
+              "producto_id": "CIL-XV",
+              "evento": "xv",
+              "categoria": "cilindros",
+              "nombre": "Cilindro XV",
+              "precio_unitario_mxn": 10,
+              "descripcion": "Cilindro personalizado para XV (minimo por confirmar con Oscar)",
+              "activo": [
+                "true"
+              ]
+            },
+            "sort": [
+              1782956254137,
+              "6a45c0de781bdd12ca7920d8"
+            ],
+            "searchAfter": [
+              1782956254137,
+              "6a45c0de781bdd12ca7920d8"
+            ]
+          },
+          {
+            "id": "6a45c0dd66fe53e9e55e2ed4",
+            "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+            "objectId": "6a45ad7071894788dde80ae7",
+            "objectKey": "custom_objects.productos",
+            "createdBy": {
+              "source": "BULK_IMPORT",
+              "channel": "ISTIO_MESH",
+              "sourceId": "productos_ghl_import.csv-1_JUL_2026_10_38_PM",
+              "createdAt": "2026-07-02T01:37:33.272Z"
+            },
+            "createdAt": "2026-07-02T01:37:33.282Z",
+            "lastUpdatedBy": {},
+            "updatedAt": "2026-07-02T01:37:33.282Z",
+            "owners": [],
+            "followers": [],
+            "properties": {
+              "producto_id": "VAS-POP",
+              "evento": "todos",
+              "categoria": "otros",
+              "nombre": "Vaso con popote",
+              "precio_unitario_mxn": 35,
+              "pedido_minimo": 50,
+              "descripcion": "Vaso 24oz con popote personalizado en serigrafia",
+              "activo": [
+                "true"
+              ]
+            },
+            "sort": [
+              1782956253282,
+              "6a45c0dd66fe53e9e55e2ed4"
+            ],
+            "searchAfter": [
+              1782956253282,
+              "6a45c0dd66fe53e9e55e2ed4"
+            ]
+          }
+        ],
+        "total": 15,
+        "traceId": "213ddfba-ed64-4c4c-ada6-d5d7aa352b1f"
+      }
+    }
+  ]
+}

@@ -1,0 +1,193 @@
+{
+  "name": "sys-tool-consultar-lineas-priorizadas-v1",
+  "nodes": [
+    {
+      "id": "8e5a8f2c-f2a0-5bdf-b37f-3bdef76c0777",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"session_id\": \"\"\n}"
+      }
+    },
+    {
+      "id": "cb75d265-10d9-5d27-b5b7-83251e5f4030",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "return [{ json: $input.first().json || {} }];"
+      }
+    },
+    {
+      "id": "fab7d407-a5cc-573f-8704-0bb1318d9fe6",
+      "name": "Search Config Mensual",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        300
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "3zohdTBWzW8UUN6P",
+          "name": "Airtable SYS"
+        }
+      },
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": "appMD3g2HWxzBaZAM"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": "tblnAgy7elvQXEtiA"
+        },
+        "filterByFormula": "={{ \"{Activo} = TRUE()\" }}",
+        "limit": 1,
+        "options": {}
+      }
+    },
+    {
+      "id": "7847b48d-00f3-5ef1-98a6-493cf72af3f5",
+      "name": "Format Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "const matches = $input.all();\nif (matches.length === 0) {\n  return [{ json: {\n    status: 'RESOLVED',\n    data: { mes: null, lineas_priorizadas: [], notas_para_agente: '' },\n    message_to_agent: 'No hay configuración mensual activa. Procedé sin priorización específica.',\n    trace_id: $execution.id\n  } }];\n}\nconst cfg = matches[0].json;\nreturn [{ json: {\n  status: 'RESOLVED',\n  data: {\n    mes: cfg.Mes || '',\n    lineas_priorizadas: cfg['Líneas priorizadas'] || [],\n    notas_para_agente: cfg['Notas para agente'] || ''\n  },\n  message_to_agent: cfg['Notas para agente'] ? `Líneas priorizadas este mes: ${(cfg['Líneas priorizadas'] || []).join(', ')}. Nota: ${cfg['Notas para agente']}` : 'Sin priorización particular este mes.',\n  trace_id: $execution.id\n} }];"
+      }
+    },
+    {
+      "id": "8ce4883a-acd4-5751-b62c-b91e9ee8b3ad",
+      "name": "Log to sys_tool_calls",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        960,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sys_tool_calls (session_id, tool_name, input_payload, output_payload, status, duration_ms)\nVALUES ($1, 'consultar-lineas-priorizadas', $2::jsonb, $3::jsonb, $4, $5)",
+        "options": {
+          "queryReplacement": "={{ [$('Execute Workflow Trigger').first().json.session_id || 'unknown', JSON.stringify($('Execute Workflow Trigger').first().json), JSON.stringify($json), $json.status || 'success', $json.duration_ms || 0] }}"
+        },
+        "continueOnFail": true
+      },
+      "continueOnFail": true,
+      "notes": "Log a sys_tool_calls. continueOnFail=true para no romper la tool si Postgres falla."
+    },
+    {
+      "id": "a3730dba-05f6-5a86-9e38-3d14a347456d",
+      "name": "Return Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        300
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $('Format Output').item.json }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Search Config Mensual",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Config Mensual": {
+      "main": [
+        [
+          {
+            "node": "Format Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Output": {
+      "main": [
+        [
+          {
+            "node": "Log to sys_tool_calls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to sys_tool_calls": {
+      "main": [
+        [
+          {
+            "node": "Return Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "SYS"
+    },
+    {
+      "name": "F4"
+    },
+    {
+      "name": "tool"
+    }
+  ],
+  "versionId": "c538bc2e-f048-4159-812b-45269c35def5"
+}

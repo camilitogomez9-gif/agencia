@@ -1,0 +1,38 @@
+{
+  "caso": "C-01",
+  "titulo": "arranque en frío: refresca la caché solo",
+  "resultado": "CORROBORADO",
+  "detalle": "http=200 2.4s cards=23 esperadas=23 iguales",
+  "pasos": [
+    {
+      "req": {
+        "evento": "Boda"
+      },
+      "cards": [
+        "Bolsa tipo shein de regalo",
+        "Catalogo de Mandiles",
+        "Catálogo de frases anticruda",
+        "Cilindros de 500ml boda personalizados",
+        "Cilindros el catalogo boda",
+        "Cilindros video",
+        "Colores de tintas 2025",
+        "Correas 15MM",
+        "Correas 9MM",
+        "Kit anticruda Video",
+        "Kit anticruda principal",
+        "Mandiles",
+        "Mandiles Video",
+        "Pantuflas Video",
+        "Pantuflas boda",
+        "Pantuflas de satín boda personalizadas",
+        "Pantuflas mono peluche",
+        "Pantuflas mono satin",
+        "Sandalias Video",
+        "Sandalias para boda personalizadas",
+        "Tapas termos",
+        "Todos los productos",
+        "Vasos popote 24 oz"
+      ]
+    }
+  ]
+}

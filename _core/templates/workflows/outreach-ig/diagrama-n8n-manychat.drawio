@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+
+    <!-- Title -->
+    <mxCell id="2" value="N8N + ManyChat: Automatizacion de WhatsApp con IA" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="30" y="20" width="1450" height="45" as="geometry"/>
+    </mxCell>
+
+    <!-- User -->
+    <mxCell id="3" value="Usuario" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="35" y="420" width="130" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="4" value="WhatsApp / Instagram / Facebook" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="10" y="485" width="180" height="25" as="geometry"/>
+    </mxCell>
+
+    <!-- ManyChat Background -->
+    <mxCell id="5" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#9C27B0;strokeWidth=3;" vertex="1" parent="1">
+      <mxGeometry x="215" y="75" width="430" height="730" as="geometry"/>
+    </mxCell>
+    <mxCell id="6" value="ManyChat" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=20;fontStyle=1;fontColor=#9C27B0;" vertex="1" parent="1">
+      <mxGeometry x="215" y="83" width="430" height="32" as="geometry"/>
+    </mxCell>
+
+    <!-- Flujo 1 Background -->
+    <mxCell id="7" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EDE7F6;strokeColor=#7B1FA2;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="228" y="124" width="404" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="8" value="Flujo 1 — Recibir Mensajes" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontStyle=3;fontColor=#7B1FA2;" vertex="1" parent="1">
+      <mxGeometry x="228" y="132" width="404" height="22" as="geometry"/>
+    </mxCell>
+
+    <!-- Trigger -->
+    <mxCell id="9" value="Trigger: usuario envia mensaje" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9C27B0;strokeColor=#6A1B9A;fontSize=13;fontColor=#fff;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="243" y="164" width="374" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- Condition -->
+    <mxCell id="10" value="respuesta_definitiva&lt;br/&gt;tiene valor?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#CE93D8;strokeColor=#7B1FA2;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="315" y="220" width="230" height="75" as="geometry"/>
+    </mxCell>
+
+    <!-- NO: Save message -->
+    <mxCell id="11" value="Guardar ultimo mensaje&lt;br/&gt;en respuesta_definitiva" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#9C27B0;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="240" y="315" width="165" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- Wait 10s -->
+    <mxCell id="12" value="Esperar 10 segundos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#9C27B0;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="240" y="380" width="165" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- YES: Concatenate -->
+    <mxCell id="13" value="Concatenar nuevo mensaje&lt;br/&gt;a respuesta_definitiva" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#9C27B0;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="428" y="315" width="160" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- Remove line breaks -->
+    <mxCell id="14" value="IA: eliminar saltos de linea (evita errores en webhook)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#9C27B0;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="240" y="440" width="350" height="38" as="geometry"/>
+    </mxCell>
+
+    <!-- POST Webhook -->
+    <mxCell id="15" value="POST Webhook a N8N&lt;br/&gt;(envia respuesta_definitiva)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9C27B0;strokeColor=#6A1B9A;fontSize=13;fontColor=#fff;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="240" y="494" width="350" height="52" as="geometry"/>
+    </mxCell>
+
+    <!-- Clear field -->
+    <mxCell id="16" value="Limpiar respuesta_definitiva" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#9C27B0;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="240" y="562" width="350" height="38" as="geometry"/>
+    </mxCell>
+
+    <!-- Flujo 2 Background -->
+    <mxCell id="17" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EDE7F6;strokeColor=#7B1FA2;strokeWidth=2;" vertex="1" parent="1">
+      <mxGeometry x="228" y="645" width="404" height="140" as="geometry"/>
+    </mxCell>
+    <mxCell id="18" value="Flujo 2 — Enviar Mensajes" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontStyle=3;fontColor=#7B1FA2;" vertex="1" parent="1">
+      <mxGeometry x="228" y="653" width="404" height="22" as="geometry"/>
+    </mxCell>
+    <mxCell id="19" value="Enviar Parte 1 al usuario&lt;br/&gt;&amp;gt; Si Parte 2 existe: enviar&lt;br/&gt;&amp;gt; Si Parte 3 existe: enviar&lt;br/&gt;&amp;gt; Limpiar campos parte_1 / parte_2 / parte_3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CE93D8;strokeColor=#7B1FA2;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="243" y="678" width="374" height="95" as="geometry"/>
+    </mxCell>
+
+    <!-- N8N Background -->
+    <mxCell id="20" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FF6D00;strokeWidth=3;" vertex="1" parent="1">
+      <mxGeometry x="700" y="75" width="460" height="730" as="geometry"/>
+    </mxCell>
+    <mxCell id="21" value="N8N" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=20;fontStyle=1;fontColor=#FF6D00;" vertex="1" parent="1">
+      <mxGeometry x="700" y="83" width="460" height="32" as="geometry"/>
+    </mxCell>
+
+    <!-- Webhook receive -->
+    <mxCell id="22" value="Webhook — recibe mensaje de ManyChat" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF6D00;strokeColor=#E65100;fontSize=13;fontColor=#fff;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="715" y="148" width="430" height="42" as="geometry"/>
+    </mxCell>
+
+    <!-- ACK -->
+    <mxCell id="23" value="Respond to Webhook — ACK inmediato a ManyChat&lt;br/&gt;(evita timeout; el procesamiento continua en paralelo)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#FF6D00;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="715" y="207" width="430" height="52" as="geometry"/>
+    </mxCell>
+
+    <!-- Process message -->
+    <mxCell id="24" value="Procesar mensaje (JavaScript)&lt;br/&gt;Separar: texto / audio / imagen&lt;br/&gt;Transcribir audio (si existe)&lt;br/&gt;Analizar imagen (si existe)&lt;br/&gt;Armar mensaje_completo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#FF6D00;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="715" y="277" width="430" height="100" as="geometry"/>
+    </mxCell>
+
+    <!-- AI Agent -->
+    <mxCell id="25" value="AI Agent&lt;br/&gt;(prompt + memoria + herramientas)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF6D00;strokeColor=#E65100;fontSize=14;fontColor=#fff;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="715" y="395" width="430" height="55" as="geometry"/>
+    </mxCell>
+
+    <!-- Format response -->
+    <mxCell id="26" value="Formatear respuesta&lt;br/&gt;Dividir en Parte 1 / Parte 2 / Parte 3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#FF6D00;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="715" y="468" width="430" height="52" as="geometry"/>
+    </mxCell>
+
+    <!-- HTTP Set fields -->
+    <mxCell id="27" value="HTTP API ManyChat — Set Custom Fields&lt;br/&gt;Asignar parte_1, parte_2, parte_3 al contacto" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#FF6D00;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="715" y="538" width="430" height="52" as="geometry"/>
+    </mxCell>
+
+    <!-- HTTP Trigger flow 2 -->
+    <mxCell id="28" value="HTTP API ManyChat — Disparar Flujo 2&lt;br/&gt;Enviar Mensajes para el contacto" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FF6D00;strokeColor=#E65100;fontSize=13;fontColor=#fff;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="715" y="608" width="430" height="52" as="geometry"/>
+    </mxCell>
+
+    <!-- Notes -->
+    <mxCell id="29" value="Si llega un nuevo mensaje durante los 10s,&lt;br/&gt;se re-dispara el flujo y el mensaje nuevo&lt;br/&gt;se concatena al anterior." style="text;html=1;strokeColor=#FFB300;fillColor=#FFF9C4;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="1210" y="335" width="265" height="75" as="geometry"/>
+    </mxCell>
+    <mxCell id="30" value="Canales disponibles en ManyChat:&lt;br/&gt;WhatsApp · Instagram · Facebook&lt;br/&gt;TikTok · Messenger · SMS · Email · Telegram" style="text;html=1;strokeColor=#9C27B0;fillColor=#F3E5F5;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="1210" y="75" width="265" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="31" value="Campos personalizados en ManyChat:&lt;br/&gt;· respuesta_definitiva&lt;br/&gt;· parte_1 · parte_2 · parte_3" style="text;html=1;strokeColor=#7B1FA2;fillColor=#EDE7F6;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="1210" y="175" width="265" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="32" value="Webhook N8N: configurar&lt;br/&gt;Respond: Using Respond to Webhook&lt;br/&gt;para responder de inmediato a ManyChat." style="text;html=1;strokeColor=#FF6D00;fillColor=#FFF3E0;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="1210" y="440" width="265" height="80" as="geometry"/>
+    </mxCell>
+
+    <!-- ===== ARROWS ===== -->
+
+    <!-- User → Trigger -->
+    <mxCell id="33" value="nuevo mensaje" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#82b366;strokeWidth=2;fontSize=11;fontStyle=1;" edge="1" source="3" target="9" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- Trigger → Condition -->
+    <mxCell id="34" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="9" target="10" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- Condition → Save (NO) -->
+    <mxCell id="35" value="NO (vacia)" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=11;fontStyle=1;" edge="1" source="10" target="11" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- Save → Wait -->
+    <mxCell id="36" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="11" target="12" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- Wait → Remove (no new message) -->
+    <mxCell id="37" value="sin nuevo mensaje" style="edgeStyle=orthogonalEdgeStyle;fontSize=10;" edge="1" source="12" target="14" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- Condition → Concat (YES) -->
+    <mxCell id="38" value="SI (tiene valor)" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=11;fontStyle=1;" edge="1" source="10" target="13" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- Concat → Remove -->
+    <mxCell id="39" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="13" target="14" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- Remove → POST Webhook -->
+    <mxCell id="40" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="14" target="15" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- POST Webhook → Clear -->
+    <mxCell id="41" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="15" target="16" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- POST Webhook → N8N Webhook -->
+    <mxCell id="42" value="POST webhook" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#FF6D00;strokeWidth=3;fontSize=12;fontStyle=1;" edge="1" source="15" target="22" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- N8N Webhook → ACK -->
+    <mxCell id="43" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="22" target="23" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- ACK → Process -->
+    <mxCell id="44" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="23" target="24" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- Process → AI Agent -->
+    <mxCell id="45" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="24" target="25" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- AI Agent → Format -->
+    <mxCell id="46" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="25" target="26" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- Format → HTTP Set -->
+    <mxCell id="47" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="26" target="27" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- HTTP Set → HTTP Trigger -->
+    <mxCell id="48" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="27" target="28" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- HTTP Set → ManyChat Flujo 2 (dashed) -->
+    <mxCell id="49" value="set parte_1/2/3" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.3;entryDx=0;entryDy=0;strokeColor=#9C27B0;strokeWidth=2;dashed=1;fontSize=11;" edge="1" source="27" target="19" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- HTTP Trigger → Flujo 2 -->
+    <mxCell id="50" value="dispara flujo 2" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.7;entryDx=0;entryDy=0;strokeColor=#9C27B0;strokeWidth=3;fontSize=12;fontStyle=1;" edge="1" source="28" target="19" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- Flujo 2 → User -->
+    <mxCell id="51" value="mensajes al usuario" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#82b366;strokeWidth=2;fontSize=12;fontStyle=1;" edge="1" source="19" target="3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- Note → Wait (annotation arrow) -->
+    <mxCell id="52" style="edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#FFB300;" edge="1" source="29" target="12" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+  </root>
+</mxGraphModel>

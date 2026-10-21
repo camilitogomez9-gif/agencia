@@ -1,0 +1,31 @@
+{
+  "caso": "C-08",
+  "titulo": "sin filtro de producto → todas las del evento",
+  "resultado": "CORROBORADO",
+  "detalle": "cards=19 esperadas=19 iguales",
+  "pasos": [
+    {
+      "cards": [
+        "Bolsa tipo shein de regalo",
+        "Catalogo de anticrudas",
+        "Catalogo pantuflas",
+        "Catalogo sandalias",
+        "Cilindros Catálogo 1",
+        "Cilindros Catálogo 2",
+        "Cilindros Info",
+        "Cilindros video",
+        "Colores de tintas 2025",
+        "Comparativa sandalias suelas delgadas y gruesas",
+        "Correas 15MM",
+        "Correas 9MM",
+        "Kit Anticruda Info.",
+        "Kit anticruda Video",
+        "Pantuflas Video",
+        "Pantuflas XV",
+        "Sandalias Video",
+        "Tapas termos",
+        "Todos los productos"
+      ]
+    }
+  ]
+}

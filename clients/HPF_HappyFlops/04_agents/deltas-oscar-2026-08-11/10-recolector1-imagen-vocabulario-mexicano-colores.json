@@ -1,0 +1,28 @@
+{
+  "prompt": "recolector1-imagen",
+  "item_reunion": "estandarización de vocabulario mexicano en nombres de colores (sesión 2026-08-27)",
+  "descripcion": "Espejo del delta 09 sobre el prompt del Recolector1 (rama de imagen, W7). Recolector y Recolector1 tienen `systemMessage` distintos que comparten trozos textuales (ubicación, tapas, correa). Todo cambio léxico de colores tiene que replicarse en los dos para evitar drift entre las dos ramas.",
+  "cita_usuario": "'lila' → 'morado'  ·  'fucsia' → 'fiusha'  ·  'rosado' → 'rosa'",
+  "contexto": "Precedente inmediato: el fix 'mandiles se eligen' del 2026-08-17 tocó Recolector en W6 (parche `w6-mandiles-se-eligen.json`) y Recolector1 en W7 (parche `w7-mandiles-se-eligen.json`) porque ambos leían la misma sección. Este delta sigue el mismo patrón: cambios idénticos, dos parches separados por workflow.",
+  "distincion_central": "Idem delta 09.",
+  "anti_alucinacion": "Idem delta 09.",
+  "no_se_toca": "Idem delta 09.",
+  "ATENCION_no_deployar_con_este_script": "Este delta se aplica al vivo como PARCHE DE NODO (`scripts/utilities/hpf-deploy-workflow.py --apply` sobre el `systemMessage` de Recolector1 en W7), NO con `hpf-aplicar-deltas-prompt.py --deploy`. Motivo idéntico al delta 08/09.",
+  "ediciones": [
+    {
+      "anchor": "Fachada Fucsia, Portones Negros",
+      "reemplazo": "Fachada Fiusha, Portones Negros",
+      "motivo": "Idem delta 09."
+    },
+    {
+      "anchor": "COLORES DE TAPAS DE CILINDROS: FIUSHA O FUCSIA, NARANJA O ANARANJADO, NEGRO, MORADO, VERDE, ORO O DORADO, AMARILLO, ROJO, AZUL CIELO, AZUL MARINO, BLANCA, LILA, PLATA O PLATEADO.",
+      "reemplazo": "COLORES DE TAPAS DE CILINDROS: FIUSHA, NARANJA O ANARANJADO, NEGRO, MORADO, VERDE, ORO O DORADO, AMARILLO, ROJO, AZUL CIELO, AZUL MARINO, BLANCA, PLATA O PLATEADO.",
+      "motivo": "Idem delta 09."
+    },
+    {
+      "anchor": "- Correa de Sandalia: Negro, Blanco, Lila, Plata, Oro, Rojo, Fuxia, Rosado",
+      "reemplazo": "- Correa de Sandalia: Negro, Blanco, Morado, Plata, Oro, Rojo, Fiusha, Rosa",
+      "motivo": "Idem delta 09 — incluido el caveat de mutua exclusión con el edit del punto 4 si se aplica el trigger de ficha visual."
+    }
+  ]
+}

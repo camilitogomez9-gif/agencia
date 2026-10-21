@@ -1,0 +1,258 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "appNSuKCNtwn0Na6P",
+          "mode": "list",
+          "cachedResultName": "Panel de Control de Leads TOFO",
+          "cachedResultUrl": "https://airtable.com/appNSuKCNtwn0Na6P"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl7xE8w94gpKmIOg",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/appNSuKCNtwn0Na6P/tbl7xE8w94gpKmIOg"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID Manychat": "={{ $('Webhook').first().json.body.id }}",
+            "Canal": "={{ $('Code in JavaScript').first().json.canal }}",
+            "Nombre / Usuario": "={{ $('Webhook').first().json.body.name }}",
+            "Whatsapp": "={{ $('Code in JavaScript').first().json.canal === 'WhatsApp' ? ($('Webhook').first().json.body.whatsapp_phone || '') : '' }}",
+            "Fecha captado": "={{ $now }}",
+            "Ultimo contacto": "={{ $now }}",
+            "Nombre completo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Nombre_completo', `Nombre del lead tal como lo escribio en el chat`, 'string') }}",
+            "Ubicación Mencionada": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Ubicacion', `Ciudad zona o pais que el lead menciono en el chat`, 'string') }}",
+            "Intento / Tipo de Lead": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Intento', `Uno de: Curioso solo informacion / Evaluando opciones / Listo para operar`, 'string') }}",
+            "Mensaje Original": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Mensaje_Original', `Primer mensaje textual del lead`, 'string') }}",
+            "Resumen del Mensaje": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Resumen', `Una o dos oraciones de que quiere el lead`, 'string') }}",
+            "Emoción / Tono Detectado": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Emocion', `Uno de: Entusiasta / Dudoso / Interesado pero cauteloso / Urgente / Frio`, 'string') }}",
+            "Respuesta Enviada": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Respuesta', `Resumen breve de la ultima respuesta del agente`, 'string') }}",
+            "Estado": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Estado', `Estado del lead. Debe ser EXACTAMENTE uno de estos valores: 3. Vio los precios y siguió interactuando / 4. Pide más información / 5. Se manda informacion / 6. Programa videollamada / 7. Cierre / Datos de contrato / 8. Firma / 9. Pago / 10. Envío / Instalación`, 'string') }}"
+          },
+          "matchingColumns": [
+            "ID Manychat"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Nombre / Usuario",
+              "displayName": "Nombre / Usuario",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Nombre completo",
+              "displayName": "Nombre completo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha captado",
+              "displayName": "Fecha captado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Canal",
+              "displayName": "Canal",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                { "name": "Instagram", "value": "Instagram" },
+                { "name": "WhatsApp", "value": "WhatsApp" },
+                { "name": "Facebook", "value": "Facebook" },
+                { "name": "TikTok", "value": "TikTok" },
+                { "name": "Otro", "value": "Otro" },
+                { "name": "Desconocido", "value": "Desconocido" }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                { "name": "1.⁠ Contacto RRSS", "value": "1.⁠ Contacto RRSS" },
+                { "name": "2.⁠ ⁠⁠Contacto WhatsApp", "value": "2.⁠ ⁠⁠Contacto WhatsApp" },
+                { "name": "3.⁠ ⁠⁠Vio los precios y siguió interactuando", "value": "3.⁠ ⁠⁠Vio los precios y siguió interactuando" },
+                { "name": "4.⁠ ⁠⁠Pide más información", "value": "4.⁠ ⁠⁠Pide más información" },
+                { "name": "5. Se manda informacion", "value": "5. Se manda informacion" },
+                { "name": "6.⁠ Programa videollamada", "value": "6.⁠ Programa videollamada" },
+                { "name": "7.⁠ ⁠⁠Cierre / Datos de contrato", "value": "7.⁠ ⁠⁠Cierre / Datos de contrato" },
+                { "name": "8.⁠ ⁠⁠Firma", "value": "8.⁠ ⁠⁠Firma" },
+                { "name": "9.⁠ ⁠⁠Pago", "value": "9.⁠ ⁠⁠Pago" },
+                { "name": " 10.⁠ ⁠⁠Envío / Instalación", "value": " 10.⁠ ⁠⁠Envío / Instalación" },
+                { "name": "1. Contacto RRSS", "value": "1. Contacto RRSS" }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Whatsapp",
+              "displayName": "Whatsapp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ID Manychat",
+              "displayName": "ID Manychat",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Ubicación Mencionada",
+              "displayName": "Ubicación Mencionada",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Emoción / Tono Detectado",
+              "displayName": "Emoción / Tono Detectado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Intento / Tipo de Lead",
+              "displayName": "Intento / Tipo de Lead",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Respuesta Enviada",
+              "displayName": "Respuesta Enviada",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Ultimo contacto",
+              "displayName": "Ultimo contacto",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Mensaje Original",
+              "displayName": "Mensaje Original",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Resumen del Mensaje",
+              "displayName": "Resumen del Mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [13488, 1056],
+      "id": "2dca1b7f-8ca9-4dbf-aeab-00ad37f17fea",
+      "name": "registrar",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "IqlTFB6TcLt59UKt",
+          "name": "Tofo Pizza"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "registrar": {
+      "ai_tool": [[]]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c1ba6feaa6a193d007ad82da6440581c8d7568c90e248228239c4fc34db48d20"
+  }
+}

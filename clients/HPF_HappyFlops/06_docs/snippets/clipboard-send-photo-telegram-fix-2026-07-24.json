@@ -1,0 +1,31 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $('Auth + Normalize').first().json.contact_id }}",
+        "binaryData": false,
+        "file": "={{ $json.photo_url }}",
+        "additionalFields": {
+          "caption": "={{ $json.message_part }}"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [-304, -640],
+      "id": "f0f0abcd-0001-4a1a-9a1a-777000000001",
+      "name": "Send Photo (Telegram)",
+      "webhookId": "05681af8-76cc-408a-aee4-d2b82f4514a7",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      },
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {}
+}

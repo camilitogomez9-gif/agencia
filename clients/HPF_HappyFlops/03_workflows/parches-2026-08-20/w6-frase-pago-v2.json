@@ -1,0 +1,15 @@
+{
+  "wf": "W6",
+  "descripcion": "S3-c v2 — la primera version del fix de la frase de pago era demasiado angosta.",
+  "medicion": "Sonda de 3 corridas del escenario de pago DESPUES de aplicar la v1: 1/3 seguia diciendo 'el enlace'. El texto que se escapo: 'Aqui tienes el enlace con toda la informacion para realizar el pago'. La regex v1 exigia 'el enlace' inmediatamente seguido de 'para el pago'.",
+  "enfoque_nuevo": "Atacar el SUSTANTIVO en vez de la frase. Dentro del bloque `teniaMarcador` lo que se adjunta es siempre el PDF de numeros de cuenta, asi que cualquier 'enlace'/'link' ahi es falso por construccion. La regla larga va primero para no dejar 'los datos con toda la informacion'.",
+  "ediciones": [
+    {
+      "nodo": "Partir en burbujas",
+      "campo": "parameters.jsCode",
+      "anchor": "  txt = txt\n    .replace(/\\bel\\s+(?:enlace|link)\\s+(?:para\\s+(?:realizar\\s+|hacer\\s+)?el\\s+pago|de\\s+pago|para\\s+el\\s+pago)/gi,\n             'toda la info para el pago')\n    .replace(/\\b(?:este|ese)\\s+(?:enlace|link)\\b/gi, 'esta info');",
+      "reemplazo": "  // ⚠️ La primera versión de esto exigía que \"el enlace\" estuviera PEGADO a \"para el pago\"\n  // y falló 1 de 3 corridas: el modelo escribió \"el enlace CON TODA LA INFORMACIÓN para\n  // realizar el pago\" y la regex no matcheó. No se puede enumerar cómo lo va a redactar.\n  //\n  // Se ataca el SUSTANTIVO, no la frase: dentro de este bloque lo que se adjunta es siempre\n  // el PDF de números de cuenta, así que cualquier \"enlace\"/\"link\" acá es falso por\n  // construcción. El orden de las 4 reglas importa y está probado con 8 redacciones:\n  //   · la larga primero, para no dejar \"la info con toda la información\";\n  //   · el plural CON artículo antes que el pelado, o \"los enlaces\" deja \"los la info\";\n  //   · el catch-all último, que sólo ve los que quedaron sin artículo.\n  txt = txt\n    .replace(/\\b(?:el|este|ese|un)\\s+(?:enlace|link)\\s+con\\s+toda\\s+la\\s+informaci[óo]n\\b/gi,\n             'toda la info')\n    .replace(/\\b(?:los|estos|esos|unos)\\s+(?:enlaces|links)\\b/gi, 'la info')\n    .replace(/\\b(?:el|este|ese|un)\\s+(?:enlace|link)\\b/gi, 'la info')\n    .replace(/\\b(?:enlaces|links|enlace|link)\\b/gi, 'la info');"
+    }
+  ],
+  "probado": "8 redacciones simuladas en Node, incluidas las 2 que rompian la version intermedia: 'los enlaces' -> 'los los datos' y 'datos ... datos' redundante. 8/8 limpios, sin palabra repetida y sin que quede 'enlace'/'link'."
+}

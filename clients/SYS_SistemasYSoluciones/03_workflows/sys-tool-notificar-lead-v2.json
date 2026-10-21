@@ -1,0 +1,382 @@
+{
+  "name": "sys-tool-notificar-lead-v2",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"nombre\": \"\",\n  \"telefono\": \"\",\n  \"ubicacion\": \"\",\n  \"equipo_o_aplicacion\": \"\",\n  \"mail\": \"\",\n  \"empresa\": \"\",\n  \"perfil\": \"Sin clasificar\",\n  \"urgencia\": false,\n  \"notas\": \"\",\n  \"tecnologia_interes\": \"\",\n  \"subscriber_id\": \"\",\n  \"canal\": \"\",\n  \"session_id\": \"\"\n}"
+      },
+      "id": "1e3f51e1-c283-4c79-ad7a-ae91f6bc82da",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1072,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const args = $input.first().json;\nconst required = ['nombre', 'telefono', 'ubicacion', 'equipo_o_aplicacion'];\nconst missing = required.filter(f => !args[f] || String(args[f]).trim() === '');\nif (missing.length > 0) {\n  return [{ json: { status: 'ERROR', _skip: true, message_to_agent: `Faltó capturar: ${missing.join(', ')}. Pedile al cliente.` } }];\n}\n\n// Derive zona desde ubicacion\nconst ubic = String(args.ubicacion).toLowerCase();\nlet zona = 'Interior';\nif (ubic.includes('caba') || ubic.includes('capital') || ubic.includes('buenos aires capital') || ubic.includes('ciudad de buenos aires')) zona = 'CABA';\nelse if (ubic.includes('gba') || ubic.includes('gran buenos aires') || ubic.includes('conurbano') || ubic.match(/(zona norte|zona sur|zona oeste)/)) zona = 'GBA';\n\n// Derive linea desde equipo_o_aplicacion o tecnologia_interes\nconst mapping = {\n  'dtf textil': 'DTF Textil', 'dtf uv': 'DTF UV',\n  'sublimacion': 'Sublimación', 'sublimación': 'Sublimación',\n  'eco-solvente': 'Eco-Solvente', 'ecosolvente': 'Eco-Solvente',\n  'solvente': 'Solvente', 'corte': 'Corte', 'sinajet': 'Sinajet',\n  'riso': 'RISO', 'konica': 'Konica Minolta IDL',\n  'uv': 'UV'\n};\nconst texto = String(args.tecnologia_interes || args.equipo_o_aplicacion || '').toLowerCase();\nlet linea = null;\nfor (const [k, v] of Object.entries(mapping)) {\n  if (texto.includes(k)) { linea = v; break; }\n}\n\n// Build live chat URL — ManyChat dashboard direct link\n// PAGE_ID se debe completar con el real de la cuenta ManyChat de SyS\nconst PAGE_ID = '5013937';\nconst subscriberId = String(args.subscriber_id || '').trim();\nconst canal = String(args.canal || '').trim() || 'desconocido';\nlet liveChatUrl = '';\nif (subscriberId && PAGE_ID && !PAGE_ID.startsWith('<<<')) {\n  liveChatUrl = `https://app.manychat.com/fb${PAGE_ID}/chat/${subscriberId}`;\n}\n\nreturn [{ json: { ...args, zona_derivada: zona, linea_derivada: linea, canal, subscriber_id: subscriberId, live_chat_url: liveChatUrl } }];"
+      },
+      "id": "8414d880-34f7-433c-8a3e-2f9af051d3e9",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -848,
+        -48
+      ],
+      "notes": "v2: agrega derivación de canal + subscriber_id + live_chat_url. PAGE_ID hardcoded — completar con el page_id real de ManyChat de SyS antes de activar."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "skip-check",
+              "leftValue": "={{ $json._skip }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f384b77f-f19e-44f0-8b76-b14697f008ee",
+      "name": "IF skip?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -624,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $('Validate Input').first().json }}",
+        "options": {}
+      },
+      "id": "36f1c991-936f-4816-8a11-05a7ddf79409",
+      "name": "Return ERROR (faltan datos)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -400,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sys_session_state (session_id, etapa, datos_capturados, ultima_actividad)\nVALUES ($1, 'derivado', $2::jsonb, NOW())\nON CONFLICT (session_id) DO UPDATE SET\n  etapa = 'derivado',\n  datos_capturados = sys_session_state.datos_capturados || EXCLUDED.datos_capturados,\n  ultima_actividad = NOW();",
+        "options": {
+          "queryReplacement": "={{ [$('Validate Input').first().json.session_id || 'unknown', JSON.stringify({nombre: $('Validate Input').first().json.nombre, telefono: $('Validate Input').first().json.telefono, mail: $('Validate Input').first().json.mail, ubicacion: $('Validate Input').first().json.ubicacion, equipo: $('Validate Input').first().json.equipo_o_aplicacion, canal: $('Validate Input').first().json.canal, live_chat_url: $('Validate Input').first().json.live_chat_url})] }}"
+        }
+      },
+      "id": "7e471634-8b76-430c-a48b-187e7f3918be",
+      "name": "Update session_state",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        48,
+        48
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const v = $('Validate Input').first().json;\nreturn [{ json: {\n  status: 'RESOLVED',\n  data: {\n    destino_notificacion_to: '<<<MAIL_CM>>>',\n    destino_notificacion_cc: 'info@sistemasysoluciones.com',\n    canal: v.canal,\n    live_chat_url: v.live_chat_url || null,\n    mail_enviado: true,\n    telegram_enviado: true,\n    lead_id: null,\n    lead_airtable_url: null\n  },\n  message_to_agent: 'Lead notificado al equipo comercial (mail + Telegram). Confirmá al cliente que un comercial se va a contactar y cerrá la conversación con calidez.',\n  trace_id: $execution.id\n} }];"
+      },
+      "id": "3f34cb99-0274-40c1-8642-c04fab7a395c",
+      "name": "Format Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sys_tool_calls (session_id, tool_name, input_payload, output_payload, status, duration_ms)\nVALUES ($1, 'notificar-lead', $2::jsonb, $3::jsonb, $4, $5)",
+        "options": {
+          "queryReplacement": "={{ [$('Execute Workflow Trigger').first().json.session_id || 'unknown', JSON.stringify($('Execute Workflow Trigger').first().json), JSON.stringify($json), $json.status || 'success', $json.duration_ms || 0] }}"
+        }
+      },
+      "id": "a6719a36-b9c5-4a77-9bb8-29f27de29957",
+      "name": "Log to sys_tool_calls",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        496,
+        48
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "Log a sys_tool_calls. continueOnFail=true para no romper la tool si Postgres falla."
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $('Format Output').item.json }}",
+        "options": {}
+      },
+      "id": "a2af2473-e227-4758-8577-e7ee5b37a260",
+      "name": "Return Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "marketing@sistemasysoluciones.com",
+        "subject": "={{ '🟢 Lead nuevo SyS — ' + $json.nombre + ' (' + $json.zona_derivada + ') — TOMAR CHAT' }}",
+        "message": "=<!DOCTYPE html><html><body style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; max-width: 640px; margin: 0 auto; padding: 24px; color: #1a1a1a; background-color: #ffffff;\"><div style=\"background: #0d0a1f; color: #ffffff; padding: 20px 24px; border-radius: 8px 8px 0 0;\"><h2 style=\"margin: 0; font-size: 20px; font-weight: 600;\">🟢 Lead nuevo — {{ $json.nombre }}</h2><p style=\"margin: 4px 0 0 0; font-size: 14px; color: #a78bfa;\">Zona {{ $json.zona_derivada }} · Canal {{ $json.canal }}</p></div><div style=\"background: #ffffff; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;\"><p style=\"margin: 0 0 20px 0; font-size: 15px; color: #374151;\">El asistente virtual terminó la calificación y le confirmó al cliente que un comercial se va a comunicar. <strong>Tomá la conversación desde el link de abajo.</strong></p>{{ $json.live_chat_url ? '<a href=\"' + $json.live_chat_url + '\" style=\"display: inline-block; background: #7c3aed; color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px; margin-bottom: 24px;\">→ Abrir conversación en ManyChat</a>' : '<p style=\"color: #b91c1c; font-size: 13px; margin-bottom: 24px;\">⚠ Link directo no disponible (falta configurar PAGE_ID). Entrá a ManyChat y buscá al subscriber por nombre o teléfono.</p>' }}<table style=\"width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 14px;\"><tr><td style=\"padding: 8px 0; color: #6b7280; width: 150px; border-bottom: 1px solid #f3f4f6;\">Nombre</td><td style=\"padding: 8px 0; border-bottom: 1px solid #f3f4f6;\"><strong>{{ $json.nombre }}</strong></td></tr><tr><td style=\"padding: 8px 0; color: #6b7280; border-bottom: 1px solid #f3f4f6;\">Empresa</td><td style=\"padding: 8px 0; border-bottom: 1px solid #f3f4f6;\">{{ $json.empresa || '—' }}</td></tr><tr><td style=\"padding: 8px 0; color: #6b7280; border-bottom: 1px solid #f3f4f6;\">Teléfono</td><td style=\"padding: 8px 0; border-bottom: 1px solid #f3f4f6;\"><a href=\"tel:{{ $json.telefono }}\" style=\"color: #7c3aed; text-decoration: none;\">{{ $json.telefono }}</a></td></tr><tr><td style=\"padding: 8px 0; color: #6b7280; border-bottom: 1px solid #f3f4f6;\">Mail</td><td style=\"padding: 8px 0; border-bottom: 1px solid #f3f4f6;\">{{ $json.mail ? '<a href=\"mailto:' + $json.mail + '\" style=\"color: #7c3aed; text-decoration: none;\">' + $json.mail + '</a>' : '<span style=\"color: #9ca3af;\">no provisto</span>' }}</td></tr><tr><td style=\"padding: 8px 0; color: #6b7280; border-bottom: 1px solid #f3f4f6;\">Ubicación</td><td style=\"padding: 8px 0; border-bottom: 1px solid #f3f4f6;\">{{ $json.ubicacion }}</td></tr><tr><td style=\"padding: 8px 0; color: #6b7280; border-bottom: 1px solid #f3f4f6;\">Consulta</td><td style=\"padding: 8px 0; border-bottom: 1px solid #f3f4f6;\"><strong>{{ $json.equipo_o_aplicacion }}</strong></td></tr><tr><td style=\"padding: 8px 0; color: #6b7280; border-bottom: 1px solid #f3f4f6;\">Línea inferida</td><td style=\"padding: 8px 0; border-bottom: 1px solid #f3f4f6;\">{{ $json.linea_derivada || '—' }}</td></tr><tr><td style=\"padding: 8px 0; color: #6b7280; border-bottom: 1px solid #f3f4f6;\">Perfil</td><td style=\"padding: 8px 0; border-bottom: 1px solid #f3f4f6;\">{{ $json.perfil }}</td></tr><tr><td style=\"padding: 8px 0; color: #6b7280; border-bottom: 1px solid #f3f4f6;\">Urgencia</td><td style=\"padding: 8px 0; border-bottom: 1px solid #f3f4f6;\">{{ $json.urgencia ? '<span style=\"color: #b91c1c; font-weight: 600;\">🔴 SÍ</span>' : 'no' }}</td></tr>{{ $json.notas ? '<tr><td style=\"padding: 8px 0; color: #6b7280;\">Notas</td><td style=\"padding: 8px 0;\">' + $json.notas + '</td></tr>' : '' }}</table></div><div style=\"margin-top: 20px; padding: 16px 24px; background: #f9fafb; border-radius: 8px; font-size: 12px; color: #6b7280;\"><p style=\"margin: 0;\">session_id: <code style=\"background: #ffffff; padding: 2px 6px; border-radius: 4px;\">{{ $json.session_id }}</code></p><p style=\"margin: 8px 0 0 0;\">Notificación generada automáticamente por el agente de Sistemas y Soluciones · <a href=\"#\" style=\"color: #7c3aed; text-decoration: none;\">la agencia</a></p></div></body></html>",
+        "options": {
+          "ccList": "info@sistemasysoluciones.com"
+        }
+      },
+      "id": "c1960bdf-e43c-4bce-9929-4adb77cb9979",
+      "name": "Gmail Send (CM + cc info@)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -176,
+        48
+      ],
+      "webhookId": "b1eb3826-e4c4-4c3d-840b-5550c689b73a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "5R0ScEVqcfjKYanp",
+          "name": "Gmail | la agencia®"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "v2: TO = CM (mail), CC = info@. emailType=html con link directo a ManyChat. continueOnFail=true para no romper la tool si Gmail falla. REEMPLAZAR sendTo y Gmail credential ID por los reales."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $('Validate Input').first().json.subscriber_id }}\",\n  \"flow_ns\": \"content20260605164825_697855\"\n}",
+        "options": {}
+      },
+      "id": "54e332a1-eece-4641-8a97-4c55ae65bdb7",
+      "name": "Asignar a Jimena (ManyChat)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -400,
+        48
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "UnA18VVz7bSrSUNX",
+          "name": "Webhook SYS Inbound"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "Dispara el flow de ManyChat que asigna la conversación a Jimena + pausa el bot. flow_ns y Credential a completar."
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "nombre": "Smoke Test",
+          "telefono": "1122334455",
+          "ubicacion": "CABA",
+          "equipo_o_aplicacion": "DTF textil para remeras",
+          "mail": "test@example.com",
+          "empresa": "Test SRL",
+          "perfil": "Pyme",
+          "urgencia": false,
+          "notas": "Test E2E elevación CM",
+          "tecnologia_interes": "DTF Textil",
+          "subscriber_id": "2004316097",
+          "canal": "WhatsApp",
+          "session_id": "smoke-test-001"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "IF skip?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF skip?": {
+      "main": [
+        [
+          {
+            "node": "Return ERROR (faltan datos)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Asignar a Jimena (ManyChat)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update session_state": {
+      "main": [
+        [
+          {
+            "node": "Format Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Output": {
+      "main": [
+        [
+          {
+            "node": "Log to sys_tool_calls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to sys_tool_calls": {
+      "main": [
+        [
+          {
+            "node": "Return Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Send (CM + cc info@)": {
+      "main": [
+        [
+          {
+            "node": "Update session_state",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Asignar a Jimena (ManyChat)": {
+      "main": [
+        [
+          {
+            "node": "Gmail Send (CM + cc info@)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "versionId": "d9116814-0b85-4d6e-8c31-0433802f32a5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  },
+  "id": "QI1gO4dZ5vXXo7V3",
+  "tags": [
+    {
+      "updatedAt": "2026-05-29T18:34:17.006Z",
+      "createdAt": "2026-05-29T18:34:17.006Z",
+      "id": "8KGVKaedBOKyDmaP",
+      "name": "F4"
+    },
+    {
+      "updatedAt": "2026-05-29T18:34:16.992Z",
+      "createdAt": "2026-05-29T18:34:16.992Z",
+      "id": "K2c7bmHkgH9GCys0",
+      "name": "tool"
+    },
+    {
+      "updatedAt": "2026-05-29T18:34:16.955Z",
+      "createdAt": "2026-05-29T18:34:16.955Z",
+      "id": "frzN1ezwC8wCA6mR",
+      "name": "SYS"
+    },
+    {
+      "updatedAt": "2026-06-05T14:32:47.250Z",
+      "createdAt": "2026-06-05T14:32:47.250Z",
+      "id": "tzCmkzx1SWzxOyKm",
+      "name": "F8"
+    },
+    {
+      "updatedAt": "2026-05-29T18:35:41.897Z",
+      "createdAt": "2026-05-29T18:35:41.897Z",
+      "id": "z1UucmEyF4r9NzCa",
+      "name": "write"
+    }
+  ]
+}

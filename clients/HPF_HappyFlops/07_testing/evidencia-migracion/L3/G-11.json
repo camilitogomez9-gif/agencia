@@ -1,0 +1,19 @@
+{
+  "caso": "G-11",
+  "titulo": "op desconocida",
+  "resultado": "CORROBORADO",
+  "detalle": "http=500 · ejecución=error · error='op desconocida \"borrar_todo\" (12 válidas) [line 279]'",
+  "pasos": [
+    {
+      "req": {
+        "op": "borrar_todo",
+        "args": {}
+      },
+      "resp_webhook": {
+        "message": "Workflow execution failed"
+      },
+      "estado_ejecucion": "error",
+      "error_ejecucion": "op desconocida \"borrar_todo\" (12 válidas) [line 279]"
+    }
+  ]
+}

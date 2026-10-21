@@ -1,0 +1,16 @@
+
+============================================================================
+DIFF  _baseline-pre.json → _baseline-post.json
+============================================================================
+
+── oferta_precio
+   T4 «cuanto cuestan?»  ·  etapa_destino
+      antes:   null
+      después: "Cotizado"
+
+── xv_cilindros
+   T3 «me interesan los cilindros y los t»  ·  nodos
+      antes:   ["Canonicalizar productos", "Cards a partes", "Elegir ruta", "LM Products", "LM Router", "Leer Products", "Leer canónicos", "Leer evento", "Leer suger
+      después: []
+
+2 diferencia(s). Cada una tiene que estar justificada por un punto de la lista aprobada; si no, es una regresión.

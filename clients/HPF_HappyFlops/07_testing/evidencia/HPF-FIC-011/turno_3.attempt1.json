@@ -1,0 +1,149 @@
+{
+  "probe_id": "sess_hpf_fic_011_1785955687#0108c7ecfa0d",
+  "session_id": "sess_hpf_fic_011_1785955687",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "quiero mandiles",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 7.0,
+  "version_antes": "f787487c-8332-405d-8053-16b9b8eb1189",
+  "version_despues": "f787487c-8332-405d-8053-16b9b8eb1189",
+  "capturado_utc": "2026-08-05T18:48:57.453638+00:00",
+  "execution_id": "989706",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T18:48:45.879Z",
+  "stoppedAt": "2026-08-05T18:48:51.942Z",
+  "n_esperadas": 6,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Perfecto! Los mandiles son un detalle que todos van a agradecer en la boda",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "✨ Mandiles para boda\n🍾 Ideales para el novio y sus amigos\n🖤 Diseño divertido para la fiesta\n\nℹ️ No se personalizan.\n\n💰 Precio promo: $12 c/u\n📦 Pedido mínimo de 12 piezas.",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a6d2a32c4ee0386890ac8b4.jpeg",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 2,
+      "message_part": "Mira este video para que veas cómo se ve 🎥",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701848a4c8a1a2c39fef93.mp4"
+    },
+    {
+      "idx": 3,
+      "message_part": "Te comparto el *catalogo de frases* que tenemos para los *MANDILES*",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701852cf81b06f0580819f.jpeg",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 4,
+      "message_part": "Así puedo cotizarle",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 5,
+      "message_part": "¿Le interesa sumarlos a la cotización?\nDígame:\n- Cantidad\n- Código postal\n\n¡Gracias!",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 0,
+      "ms": 245,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1941,
+      "chat_id": 6390727286,
+      "texto_entregado": "✨ Mandiles para boda\n🍾 Ideales para el novio y sus amigos\n🖤 Diseño divertido para la fiesta\n\nℹ️ No se personalizan.\n\n💰 Precio promo: $12 c/u\n📦 Pedido mínimo de 12 piezas.",
+      "error": null
+    },
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 1,
+      "ms": 290,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1943,
+      "chat_id": 6390727286,
+      "texto_entregado": "Te comparto el *catalogo de frases* que tenemos para los *MANDILES*",
+      "error": null
+    },
+    {
+      "emisor": "Send Video (Telegram)",
+      "run": 0,
+      "ms": 246,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1942,
+      "chat_id": 6390727286,
+      "texto_entregado": "Mira este video para que veas cómo se ve 🎥",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 196,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1940,
+      "chat_id": 6390727286,
+      "texto_entregado": "Perfecto! Los mandiles son un detalle que todos van a agradecer en la boda",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 199,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1944,
+      "chat_id": 6390727286,
+      "texto_entregado": "Así puedo cotizarle",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 2,
+      "ms": 184,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1945,
+      "chat_id": 6390727286,
+      "texto_entregado": "¿Le interesa sumarlos a la cotización?\nDígame:\n- Cantidad\n- Código postal\n\n¡Gracias!",
+      "error": null
+    }
+  ],
+  "n_entregadas": 6,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Perfecto! Los mandiles son un detalle que todos van a agradecer en la boda. ¿Cuántos mandiles le gustaría pedir y a qué código postal sería el envío? Así puedo cotizarle.",
+    "tools": [
+      "IDENTIFICAR_EVENTO",
+      "MOSTRAR_PRODUCTOS"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-FIC-011"
+}

@@ -1,0 +1,11 @@
+{
+  "caso": "C-02",
+  "titulo": "segunda llamada pega en caché",
+  "resultado": "CORROBORADO",
+  "detalle": "http=200 1.46s (esperado <3s) cards=23",
+  "pasos": [
+    {
+      "dur": 1.4571120738983154
+    }
+  ]
+}

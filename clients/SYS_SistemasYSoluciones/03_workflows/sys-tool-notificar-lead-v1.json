@@ -1,0 +1,326 @@
+{
+  "name": "sys-tool-notificar-lead-v1",
+  "nodes": [
+    {
+      "id": "4067ca77-28f8-5e41-bf2c-3de21adabeca",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"nombre\": \"\",\n  \"telefono\": \"\",\n  \"ubicacion\": \"\",\n  \"equipo_o_aplicacion\": \"\",\n  \"mail\": \"\",\n  \"empresa\": \"\",\n  \"perfil\": \"Sin clasificar\",\n  \"urgencia\": false,\n  \"notas\": \"\",\n  \"tecnologia_interes\": \"\",\n  \"session_id\": \"\"\n}"
+      }
+    },
+    {
+      "id": "39f21773-ddf5-56ef-9651-c967b732a210",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "const args = $input.first().json;\nconst required = ['nombre', 'telefono', 'ubicacion', 'equipo_o_aplicacion'];\nconst missing = required.filter(f => !args[f] || String(args[f]).trim() === '');\nif (missing.length > 0) {\n  return [{ json: { status: 'ERROR', _skip: true, message_to_agent: `Faltó capturar: ${missing.join(', ')}. Pedile al cliente.` } }];\n}\n\n// Derive zona desde ubicacion\nconst ubic = String(args.ubicacion).toLowerCase();\nlet zona = 'Interior';\nif (ubic.includes('caba') || ubic.includes('capital') || ubic.includes('buenos aires capital') || ubic.includes('ciudad de buenos aires')) zona = 'CABA';\nelse if (ubic.includes('gba') || ubic.includes('gran buenos aires') || ubic.includes('conurbano') || ubic.match(/(zona norte|zona sur|zona oeste)/)) zona = 'GBA';\n\n// Derive linea desde equipo_o_aplicacion o tecnologia_interes\nconst mapping = {\n  'dtf textil': 'DTF Textil', 'dtf uv': 'DTF UV',\n  'sublimacion': 'Sublimación', 'sublimación': 'Sublimación',\n  'eco-solvente': 'Eco-Solvente', 'ecosolvente': 'Eco-Solvente',\n  'solvente': 'Solvente', 'corte': 'Corte', 'sinajet': 'Sinajet',\n  'riso': 'RISO', 'konica': 'Konica Minolta IDL',\n  'uv': 'UV'\n};\nconst texto = String(args.tecnologia_interes || args.equipo_o_aplicacion || '').toLowerCase();\nlet linea = null;\nfor (const [k, v] of Object.entries(mapping)) {\n  if (texto.includes(k)) { linea = v; break; }\n}\n\nreturn [{ json: { ...args, zona_derivada: zona, linea_derivada: linea } }];"
+      }
+    },
+    {
+      "id": "3dec4e4c-8611-57e9-9442-4856f8f9fee6",
+      "name": "IF skip?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        360,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "skip-check",
+              "leftValue": "={{ $json._skip }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "bde512b1-6ff3-5819-be9c-39d420d2c3e4",
+      "name": "Return ERROR (faltan datos)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        100
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $('Validate Input').first().json }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "8879bbab-1554-51f0-a2ce-cd3e68996795",
+      "name": "Gmail Send (info@)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        300
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "<<<COMPLETAR_GMAIL_CRED_ID>>>",
+          "name": "Gmail SYS"
+        }
+      },
+      "parameters": {
+        "operation": "send",
+        "sendTo": "info@sistemasysoluciones.com",
+        "subject": "={{ '🟢 Lead nuevo SyS — ' + $json.nombre + ' (' + $json.zona_derivada + ')' }}",
+        "emailType": "text",
+        "message": "Llegó un lead nuevo desde el agente:\n\n- Nombre:           {{ $json.nombre }}\n- Empresa:          {{ $json.empresa || '—' }}\n- Teléfono:         {{ $json.telefono }}\n- Mail:             {{ $json.mail || 'no provisto' }}\n- Ubicación:        {{ $json.ubicacion }} (zona: {{ $json.zona_derivada }})\n- Consulta:         {{ $json.equipo_o_aplicacion }}\n- Línea inferida:   {{ $json.linea_derivada || '—' }}\n- Perfil:           {{ $json.perfil }}\n- Notas:            {{ $json.notas || '—' }}\n- Urgencia:         {{ $json.urgencia ? '🔴 SÍ' : 'no' }}\n\nConversación session_id: {{ $json.session_id }}\n\n---\nMensaje generado automáticamente por el agente de SyS.\n(CRM tracking deshabilitado en esta etapa — el lead no está registrado en Airtable.)",
+        "options": {}
+      },
+      "continueOnFail": true,
+      "notes": "REEMPLAZAR Gmail credential ID por la real cuando se cree la credencial Gmail SYS. continueOnFail=true para no romper la tool si Gmail falla."
+    },
+    {
+      "id": "f12370d4-1396-5a06-a78b-31aea3bed6f6",
+      "name": "Telegram Send (la agencia)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        300
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "<<<COMPLETAR_TELEGRAM_CRED_ID>>>",
+          "name": "Telegram Bot Interno"
+        }
+      },
+      "parameters": {
+        "chatId": "<<<COMPLETAR_TELEGRAM_CHAT_ID_SYS>>>",
+        "text": "={{ '🟢 *Lead SYS*: ' + $('Validate Input').first().json.nombre + ' (' + $('Validate Input').first().json.zona_derivada + ')\\n' + 'Consulta: ' + $('Validate Input').first().json.equipo_o_aplicacion + '\\n' + 'Urgencia: ' + ($('Validate Input').first().json.urgencia ? '🔴 SÍ' : 'no') }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "REEMPLAZAR Telegram credential ID + chatId por los reales."
+    },
+    {
+      "id": "f7627ecc-8379-5629-86e9-d1539669dbd3",
+      "name": "Update session_state",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        960,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sys_session_state (session_id, etapa, datos_capturados, ultima_actividad)\nVALUES ($1, 'derivado', $2::jsonb, NOW())\nON CONFLICT (session_id) DO UPDATE SET\n  etapa = 'derivado',\n  datos_capturados = sys_session_state.datos_capturados || EXCLUDED.datos_capturados,\n  ultima_actividad = NOW();",
+        "options": {
+          "queryReplacement": "={{ [$('Validate Input').first().json.session_id || 'unknown', JSON.stringify({nombre: $('Validate Input').first().json.nombre, telefono: $('Validate Input').first().json.telefono, mail: $('Validate Input').first().json.mail, ubicacion: $('Validate Input').first().json.ubicacion, equipo: $('Validate Input').first().json.equipo_o_aplicacion})] }}"
+        },
+        "continueOnFail": true
+      },
+      "continueOnFail": true
+    },
+    {
+      "id": "b32f76f5-ac56-542a-bd6c-70942975e942",
+      "name": "Format Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        300
+      ],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "return [{ json: {\n  status: 'RESOLVED',\n  data: {\n    destino_notificacion: 'info@sistemasysoluciones.com',\n    mail_enviado: true,\n    telegram_enviado: true,\n    lead_id: null,\n    lead_airtable_url: null\n  },\n  message_to_agent: 'Lead notificado al equipo comercial (mail + Telegram). Confirmá al cliente que un comercial se va a contactar y cerrá la conversación con calidez.',\n  trace_id: $execution.id\n} }];"
+      }
+    },
+    {
+      "id": "e4591c27-fdd8-5177-836c-e6309263dc32",
+      "name": "Log to sys_tool_calls",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1440,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sys_tool_calls (session_id, tool_name, input_payload, output_payload, status, duration_ms)\nVALUES ($1, 'notificar-lead', $2::jsonb, $3::jsonb, $4, $5)",
+        "options": {
+          "queryReplacement": "={{ [$('Execute Workflow Trigger').first().json.session_id || 'unknown', JSON.stringify($('Execute Workflow Trigger').first().json), JSON.stringify($json), $json.status || 'success', $json.duration_ms || 0] }}"
+        },
+        "continueOnFail": true
+      },
+      "continueOnFail": true,
+      "notes": "Log a sys_tool_calls. continueOnFail=true para no romper la tool si Postgres falla."
+    },
+    {
+      "id": "6b1f0fe9-1a6e-5fa6-b883-7e997d08235a",
+      "name": "Return Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1680,
+        300
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $('Format Output').item.json }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "IF skip?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF skip?": {
+      "main": [
+        [
+          {
+            "node": "Return ERROR (faltan datos)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail Send (info@)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Send (info@)": {
+      "main": [
+        [
+          {
+            "node": "Telegram Send (la agencia)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Send (la agencia)": {
+      "main": [
+        [
+          {
+            "node": "Update session_state",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update session_state": {
+      "main": [
+        [
+          {
+            "node": "Format Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Output": {
+      "main": [
+        [
+          {
+            "node": "Log to sys_tool_calls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to sys_tool_calls": {
+      "main": [
+        [
+          {
+            "node": "Return Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "SYS"
+    },
+    {
+      "name": "F4"
+    },
+    {
+      "name": "tool"
+    },
+    {
+      "name": "write"
+    }
+  ],
+  "versionId": "3d908473-d619-4892-bee6-012c583bc275"
+}

@@ -1,0 +1,90 @@
+{
+  "name": "LinkedIn — Infografía desde YT Long",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [{ "mode": "everyHour" }]
+        },
+        "feedUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UCFyCPx6tlCJCaqxXCg2uVNQ"
+      },
+      "id": "e455a55a-853e-465b-8427-4d09c86703f6",
+      "name": "RSS Feed — Canal YT",
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [-32, 320]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://la agencia-tools.vercel.app/api/linkedin/generate",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "videoUrl",
+              "value": "={{ $json.link }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "id": "6896a1ec-9f7a-4fda-a94c-e9c0fdabb8c8",
+      "name": "Generar Infografía",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [240, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst imageBase64 = item.json.imageBase64;\nconst mimeType = item.json.mimeType || 'image/jpeg';\n\nif (!imageBase64) throw new Error('No se recibió imagen del pipeline');\n\nreturn [{\n  json: item.json,\n  binary: {\n    infografia: {\n      data: imageBase64,\n      mimeType: mimeType,\n      fileName: 'infografia-linkedin.jpg',\n      fileExtension: 'jpg'\n    }\n  }\n}];"
+      },
+      "id": "4f913d36-7ace-4d99-8999-f921836c2cb5",
+      "name": "Base64 → Binario",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [496, 320]
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "-5222520529",
+        "binaryData": true,
+        "binaryPropertyName": "infografia",
+        "additionalFields": {
+          "caption": "=🎨 *Nueva infografía generada*\n\n{{ $('Base64 → Binario').first().json.extractedContent }}\n\n_Revisá y publicá en LinkedIn si está ok._",
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "a62e78e9-5856-428b-9310-64cd4d4cd590",
+      "name": "Telegram — Enviar para Aprobar",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [928, 320],
+      "credentials": {
+        "telegramApi": {
+          "id": "0aKSpmK6tq07Vh5E",
+          "name": "Bot Asistente Claude"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "RSS Feed — Canal YT": {
+      "main": [[{ "node": "Generar Infografía", "type": "main", "index": 0 }]]
+    },
+    "Generar Infografía": {
+      "main": [[{ "node": "Base64 → Binario", "type": "main", "index": 0 }]]
+    },
+    "Base64 → Binario": {
+      "main": [[{ "node": "Telegram — Enviar para Aprobar", "type": "main", "index": 0 }]]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  }
+}

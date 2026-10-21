@@ -1,0 +1,13 @@
+{
+  "wf": "W7",
+  "descripcion": "P5 · espejo del upsell en Recolector1 (W7).",
+  "ediciones": [
+    {
+      "nodo": "Recolector1",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "Ya que pides sandalias y cilindros, ¿le gustaría agregar kits anticrudas para su evento? ¡Son un hit! ✨",
+      "reemplazo": "Mira, ya que pides *sandalias y cilindros*, ¿le gustaría agregar *kits anticrudas* para su evento? ¡Son un hit! ✨",
+      "motivo": "P5 reunión Oscar 2026-08-27: alinea el ejemplo canónico de upsell al fraseo que confirmó Oscar (arranque 'Mira,' + negritas en los productos). El comportamiento (upsell específico + CTA tras cotizar) ya existía; esto sólo alinea el formato. Espejo W7."
+    }
+  ]
+}

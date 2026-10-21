@@ -1,0 +1,53 @@
+{
+  "probe_id": "sess_hpf_cot_014_1785957400#5ca0bc9eefdf",
+  "session_id": "sess_hpf_cot_014_1785957400",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "35 cilindros, cp 44680",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 58.7,
+  "version_antes": "cff6a505-9b93-437e-8535-df2be25e399f",
+  "version_despues": "cff6a505-9b93-437e-8535-df2be25e399f",
+  "capturado_utc": "2026-08-05T19:20:15.720606+00:00",
+  "execution_id": "989920",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T19:19:12.442Z",
+  "stoppedAt": "2026-08-05T19:20:10.146Z",
+  "n_esperadas": 1,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Gracias por la información. El mínimo para los cilindros personalizados es de 40 piezas, te gustaría ajustar la cantidad para poder cotizarle?",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 217,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2100,
+      "chat_id": 6390727286,
+      "texto_entregado": "Gracias por la información. El mínimo para los cilindros personalizados es de 40 piezas, te gustaría ajustar la cantidad para poder cotizarle?",
+      "error": null
+    }
+  ],
+  "n_entregadas": 1,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Gracias por la información. El mínimo para los cilindros personalizados es de 40 piezas, ¿te gustaría ajustar la cantidad para poder cotizarle?",
+    "tools": [
+      "CALCULAR_ENVIO"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-COT-014"
+}

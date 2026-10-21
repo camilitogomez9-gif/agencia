@@ -1,0 +1,187 @@
+{
+  "test_id": "T-16",
+  "punto": "PM-IDN-03",
+  "titulo": "1 contacto = 1 oportunidad (incluso lost)",
+  "resultado": "CORROBORADO",
+  "detalle": "crear estando lost → http=400 code=OPPORTUNITY_NO_DUPLICATE existingId==la nuestra=True → DELTA vs Kommo: el cliente que vuelve reusa la misma oportunidad",
+  "pasos": [
+    {
+      "paso": "marcar lost",
+      "method": "PUT",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": {
+        "status": "lost"
+      },
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "cf8fc770-81b1-422c-8394-d00bfb97a3f0",
+          "status": "lost",
+          "lastStatusChangeAt": "2026-08-06T23:31:12.667Z",
+          "lastStageChangeAt": "2026-08-06T23:29:51.624Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:12.667Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:12.667Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "60e8e653-70a0-4529-aec4-7f887dc64461"
+      }
+    },
+    {
+      "paso": "intentar crear otra estando lost",
+      "method": "POST",
+      "path": "/opportunities/",
+      "request": {
+        "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+        "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+        "contactId": "3tzzBVjsKlOF2RJjKNOL",
+        "name": "ZZ Test recontacto",
+        "status": "open",
+        "pipelineStageId": "cf8fc770-81b1-422c-8394-d00bfb97a3f0"
+      },
+      "status": 400,
+      "response": {
+        "statusCode": 400,
+        "message": "Can not create duplicate opportunity for the contact.",
+        "code": "OPPORTUNITY_NO_DUPLICATE",
+        "meta": {
+          "existingId": "vzYAb3P86uJ08CI9jKyV"
+        },
+        "error": "Bad Request",
+        "traceId": "1f7c062d-dddd-4be5-92e7-ac92f5d6be69"
+      }
+    },
+    {
+      "paso": "restaurar open",
+      "method": "PUT",
+      "path": "/opportunities/vzYAb3P86uJ08CI9jKyV",
+      "request": {
+        "status": "open"
+      },
+      "status": 200,
+      "response": {
+        "opportunity": {
+          "id": "vzYAb3P86uJ08CI9jKyV",
+          "name": "ZZ Test Migracion GHL",
+          "monetaryValue": 0,
+          "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+          "pipelineStageId": "cf8fc770-81b1-422c-8394-d00bfb97a3f0",
+          "status": "open",
+          "lastStatusChangeAt": "2026-08-06T23:31:13.624Z",
+          "lastStageChangeAt": "2026-08-06T23:29:51.624Z",
+          "createdAt": "2026-08-06T19:14:44.490Z",
+          "updatedAt": "2026-08-06T23:31:13.624Z",
+          "contactId": "3tzzBVjsKlOF2RJjKNOL",
+          "isAttribute": false,
+          "internalSource": {
+            "type": "CREATED",
+            "id": "6a355d3fd70f7bc6633d2172",
+            "apiVersion": "2021-07-28",
+            "channel": "OAUTH",
+            "source": "INTEGRATION"
+          },
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "lastActionDate": "2026-08-06T23:31:13.624Z",
+          "customFields": [
+            {
+              "id": "5KDgrZMK7pha8oO0VmJt",
+              "fieldValue": "2026-08-06T18:00:00.000Z"
+            },
+            {
+              "id": "IukLzqy6bZCCtuJTPzBu",
+              "fieldValue": "L3-1786056484"
+            },
+            {
+              "id": "dwqVZEekKwE3sNSnWvvi",
+              "fieldValue": "44100"
+            },
+            {
+              "id": "4zvcyl95qQpnJOpKx6wy",
+              "fieldValue": [
+                "Tuvo imagen"
+              ]
+            },
+            {
+              "id": "zMaaLTYTREw2InLnbimW",
+              "fieldValue": [
+                "Tuvo cotización"
+              ]
+            },
+            {
+              "id": "ahVpF5ldsRcuOIn9Mxdk",
+              "fieldValue": [
+                "Otros"
+              ]
+            }
+          ],
+          "followers": [],
+          "contact": {
+            "id": "3tzzBVjsKlOF2RJjKNOL",
+            "name": "ZZ Test Migracion GHL",
+            "phone": "+5213300000199",
+            "tags": [
+              "lead_prueba"
+            ],
+            "followers": []
+          }
+        },
+        "traceId": "f9d6499b-7318-4900-9a9d-c3645e9fab8b"
+      }
+    }
+  ]
+}

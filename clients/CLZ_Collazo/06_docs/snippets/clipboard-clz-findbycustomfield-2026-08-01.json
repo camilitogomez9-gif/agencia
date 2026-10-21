@@ -1,0 +1,90 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.manychat.com/fb/subscriber/findByCustomField",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "field_id",
+              "value": "14840611"
+            },
+            {
+              "name": "field_value",
+              "value": "={{ $('Split In Batches (1)').item.json.telefono.replace('+', '') }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "mcf-find-0001",
+      "name": "findByCustomField (ya existe)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -340,
+        560
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vF5lC1UM2oXdatjQ",
+          "name": "CLZ Manychat API Header Auth"
+        }
+      },
+      "notes": "Reemplaza a findBySystemField, que NO sirve para contactos de WhatsApp: el system field Phone y el numero de WhatsApp son campos distintos y ese endpoint devuelve data:[] aunque el contacto exista (confirmado en el foro de ManyChat, no es un problema de formato). Busca por el custom field clz_wa_id, que setea el propio workflow en setCustomFields. Consecuencia: solo encuentra contactos creados por ESTE workflow -- los subscribers preexistentes no tienen el campo y siguen sin poder resolverse. Su valor real es hacer que re-correr el flujo sea seguro. field_id 14840611 = clz_wa_id (verificado 2026-08-01 via GET /fb/page/getCustomFields)."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/subscriber/setCustomFields",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $json.subscriber_id }}\",\n  \"fields\": [\n    { \"field_name\": \"clz_servicio\", \"field_value\": \"{{ $json.servicio }}\" },\n    { \"field_name\": \"clz_fecha_servicio\", \"field_value\": \"{{ $json.fecha_servicio }}\" },\n    { \"field_name\": \"clz_wa_id\", \"field_value\": \"{{ $json.telefono.replace('+', '') }}\" }\n  ]\n}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "mcf-set-0001",
+      "name": "setCustomFields ManyChat",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        380
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vF5lC1UM2oXdatjQ",
+          "name": "CLZ Manychat API Header Auth"
+        }
+      },
+      "notes": "Alimenta {{2}} y {{3}} de la plantilla (clz_servicio, clz_fecha_servicio) MAS clz_wa_id, que no va a la plantilla: es el indice que despues usa findByCustomField para resolver a este contacto si el workflow se vuelve a correr. Los 3 custom fields deben ser tipo TEXT."
+    }
+  ],
+  "connections": {}
+}

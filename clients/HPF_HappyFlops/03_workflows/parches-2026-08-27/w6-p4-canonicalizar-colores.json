@@ -1,0 +1,13 @@
+{
+  "wf": "W6",
+  "descripcion": "P4 fix raíz: el LLM 'Canonicalizar productos' tenía lista cerrada de accesorios sin 'colores de correas', así que mapeaba el pedido a 'correas 15/9' (grosor) y el cliente nunca recibía la paleta de colores. Se agrega el valor.",
+  "ediciones": [
+    {
+      "nodo": "Canonicalizar productos",
+      "campo": "parameters.messages.values[1].content",
+      "anchor": "# Valores posibles para \"productos\", si la subcategoria es \"Accesorios\".\n- shein\n- tinta\n- correas 15\n- correas 9\n- tapas termos",
+      "reemplazo": "# Valores posibles para \"productos\", si la subcategoria es \"Accesorios\".\n- shein\n- tinta\n- correas 15\n- correas 9\n- tapas termos\n- colores de correas\n\n## Cuándo usar \"colores de correas\"\n- \"colores de correas\" → cuando el usuario pregunta por los COLORES disponibles de las correas o de las sandalias (la paleta de colores), NO por el grosor. Dejá EXACTAMENTE \"colores de correas\": no lo cambies por \"correas 15\" ni \"correas 9\".",
+      "motivo": "El Products ya emite productos=['colores de correas'] (Ejemplo 9 OK); esta capa de canonicalización lo pisaba porque el valor no estaba en su vocabulario cerrado."
+    }
+  ]
+}

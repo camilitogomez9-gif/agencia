@@ -1,0 +1,23 @@
+{
+  "caso": "G-13",
+  "titulo": "campo custom con typo: corta ANTES del PUT",
+  "resultado": "CORROBORADO",
+  "detalle": "http=500 (esperado ≥400) · cp_entrega intacto=True ('44100') → sin W0 esto se perdía en silencio",
+  "pasos": [
+    {
+      "req": {
+        "op": "update_cf",
+        "args": {
+          "opportunityId": "vzYAb3P86uJ08CI9jKyV",
+          "campos": {
+            "producto_mostrado": "NO-DEBE-ESCRIBIRSE-1786059146",
+            "cp_entrega": "99999"
+          }
+        }
+      },
+      "resp": {
+        "message": "Workflow execution failed"
+      }
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "probe_id": "sess_hpf_nrp_020_1785955783#922712c48ed7",
+  "session_id": "sess_hpf_nrp_020_1785955783",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "cotizame 50",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 6.1,
+  "version_antes": "f787487c-8332-405d-8053-16b9b8eb1189",
+  "version_despues": "f787487c-8332-405d-8053-16b9b8eb1189",
+  "capturado_utc": "2026-08-05T18:50:46.908966+00:00",
+  "execution_id": "989717",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T18:50:36.442Z",
+  "stoppedAt": "2026-08-05T18:50:41.561Z",
+  "n_esperadas": 1,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Solo me falta que me diga cuál prefieres: Pantufla Moño Satín o Pantufla Moño Peluche? Y si me puede compartir su código postal, le hago la cotización enseguida",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 283,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1966,
+      "chat_id": 6390727286,
+      "texto_entregado": "Solo me falta que me diga cuál prefieres: Pantufla Moño Satín o Pantufla Moño Peluche? Y si me puede compartir su código postal, le hago la cotización enseguida",
+      "error": null
+    }
+  ],
+  "n_entregadas": 1,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Solo me falta que me diga cuál prefieres: ¿Pantufla Moño Satín o Pantufla Moño Peluche? Y si me puede compartir su código postal, le hago la cotización enseguida.",
+    "tools": []
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-NRP-020"
+}

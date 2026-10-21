@@ -1,0 +1,3819 @@
+{
+  "updatedAt": "2026-08-18T20:14:21.917Z",
+  "createdAt": "2026-07-10T20:23:48.943Z",
+  "id": "IPO1c36NLzkXrBh9",
+  "name": "HPF Inbound Handler",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b1a1c3d0-0001-4a1a-9a1a-000000000001",
+              "leftValue": "={{ $('Auth + Normalize').first().json.is_telegram_test }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1488,
+        416
+      ],
+      "id": "6904f245-1508-4fb0-864b-8b1ed52ff1bc",
+      "name": "Es Origen Telegram?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b1a1c3d0-0003-4a1a-9a1a-000000000003",
+              "leftValue": "={{ $('Auth + Normalize').first().json.is_telegram_test }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1968,
+        896
+      ],
+      "id": "6a9c19c1-8b38-442f-95f0-650ce59f19c7",
+      "name": "Es Origen Telegram? (Pago)"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hpf-inbound",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "15bca1d2-8a86-4b6a-a9a9-26e6f26ec4c2",
+      "name": "Webhook - Inbound",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -5792,
+        704
+      ],
+      "webhookId": "hpf-inbound-webhook",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jUb7ZjztncX5ACpc",
+          "name": "HPF GHL Webhook Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -6224,
+        848
+      ],
+      "id": "021c095c-aeab-4c3a-89df-e9b9d81a5863",
+      "name": "Telegram Trigger",
+      "webhookId": "591771de-b125-4dd5-8cca-d96bd1b45ac9",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Telegram Trigger → shape que espera \"Auth + Normalize\" (HPF Inbound Handler)\nreturn $input.all().map(item => {\n  const j = item.json || {};\n  const msg = j.message || j;\n  const chat = msg.chat || {};\n  const from = msg.from || {};\n\n  const chatId = String(chat.id ?? from.id ?? 'tg_unknown');\n\n  let message_type = 'text';\n  let message_text = msg.text || msg.caption || '';\n  let media_url = '';\n  let telegram_file_id = '';\n\n  if (msg.voice || msg.audio) {\n    message_type = 'audio';\n    telegram_file_id = (msg.voice || msg.audio).file_id || '';\n  } else if (Array.isArray(msg.photo) && msg.photo.length) {\n    message_type = 'image';\n    telegram_file_id = msg.photo[msg.photo.length - 1].file_id || '';\n  } else if (!message_text) {\n    // sticker / gif / documento / video / ubicacion / contacto: no los podemos leer,\n    // pero NO deben tirar la ejecucion. El agente responde con naturalidad.\n    message_type = 'text';\n    message_text = '(el lead mando un sticker o archivo que no puedo abrir)';\n  }\n\n  return {\n    json: {\n      body: {\n        contact_id: chatId,\n        opportunity_id: `tg_opp_${chatId}`,\n        phone: chatId,\n        message_type,\n        message_text,\n        media_url,\n        telegram_file_id,\n        stage: 'Evento Identificado',\n        custom_fields: {\n          evento_detectado: '',\n          imagen_input: false,\n          productos_mostrados: '[]',\n          cotizacion_emitida: false,\n          monto_cotizado_mxn: 0,\n          cp_entrega: '',\n          had_information: false,\n          had_image: false,\n          had_quote: false,\n          last_outbound_at: '',\n        },\n      },\n      _telegram: {\n        chat_id: chatId,\n        first_name: from.first_name || '',\n        last_name: from.last_name || '',\n      },\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -6000,
+        848
+      ],
+      "id": "1e90dd4e-2259-457d-8b56-133aca82d8ca",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Auth la valida n8n en el nodo Webhook (credencial Header Auth). Aca solo normalizamos.\n//\n// PAYLOAD REAL DE GHL (WF-01, accion Webhook con CUSTOM DATA):\n// GHL manda su \"standard data\" (contacto en root, location, message:{type,body,direction,status},\n// workflow) MAS los pares de Custom Data mergeados en el root:\n//   contact_id     = {{contact.id}}\n//   opportunity_id = {{opportunity.id}}\n//   phone          = {{contact.phone}}\n//   stage          = {{opportunity.stage_name}}\n//   message_type   = \"text\"                  <-- LITERAL hardcodeado en WF-01\n//   message_text   = {{message.body}}\n//   media_url      = {{message.attachments}} <-- ARRAY, GHL lo serializa\n//\n// Por eso NO confiamos en message_type: si hay media, el tipo real lo define el media.\nconst item = $input.first();\nconst b  = item.json?.body || item.body || item.json || {};\nconst m  = b.message || {};\nconst cd = b.customData || b.custom_data || {};\n\nconst pick = (...v) => { for (const x of v) if (x !== undefined && x !== null && x !== '') return x; return ''; };\nconst S = (v) => (v === undefined || v === null) ? '' : String(v);\n\n// {{message.attachments}} puede llegar como array real, como '[\"url\"]', como \"a, b\",\n// o sin resolver (\"[object Object]\" / \"{{...}}\" / \"\"). Normalizamos a 1 URL o ''.\nfunction firstUrl(v) {\n  if (Array.isArray(v)) return S(v[0]);\n  let s = S(v).trim();\n  if (!s || s === '[object Object]' || s === 'null' || s === 'undefined' || s.startsWith('{{')) return '';\n  if (s.startsWith('[')) {\n    try { const arr = JSON.parse(s); if (Array.isArray(arr)) return S(arr[0]); } catch (e) {}\n    s = s.replace(/^\\[|\\]$/g, '').replace(/[\"']/g, '');\n  }\n  return s.split(',')[0].trim();\n}\n\nconst contact_id     = S(pick(b.contact_id, b.contactId, cd.contact_id, m.contactId));\nconst opportunity_id = S(pick(b.opportunity_id, b.opportunityId, cd.opportunity_id, b.id));\nconst phone          = S(pick(b.phone, b.phoneNumber, cd.phone, b.contact?.phone));\nconst message_text   = S(pick(b.message_text, b.messageText, m.body, m.text, cd.message_text, b.text));\nconst media_url      = firstUrl(pick(b.media_url, b.mediaUrl, b.attachments, m.attachments, m.media_url, cd.media_url));\nconst media_type     = S(pick(b.media_type, b.mediaType, m.media_type, m.contentType));\n\n// TIPO: WF-01 manda 'text' fijo y message.type de GHL son CANALES (SMS/WhatsApp/IG/FB),\n// no tipos de contenido -> si hay media, el media manda.\nlet message_type = S(pick(b.message_type, b.messageType, m.type)).toLowerCase();\nif (media_url) {\n  message_type = /\\.(ogg|oga|mp3|m4a|wav|amr|mpeg)(\\?|$)|audio|voice/i.test(media_type + ' ' + media_url)\n    ? 'audio' : 'image';\n} else if (!message_type || ['sms','whatsapp','ig','fb','live_chat','email','custom'].includes(message_type)) {\n  message_type = 'text';\n}\nif (message_type === 'photo' || message_type === 'picture') message_type = 'image';\nif (message_type === 'voice') message_type = 'audio';\n\nconst is_telegram_test = opportunity_id.startsWith('tg_opp_');\nconst channel = S(pick(b.channel, cd.channel, is_telegram_test ? 'telegram' : 'whatsapp'));\n\n// Guardas: nunca dejar pasar un inbound sin identidad o vacio (mejor error visible que mensaje vacio al LLM)\nconst telegram_file_id = S(pick(b.telegram_file_id));  // Telegram: el media se resuelve mas adelante\nconst keys = Object.keys(b).join(', ') || '(body vacio)';\nif (!contact_id) throw new Error(`Inbound sin contact_id. Keys recibidas: ${keys}`);\nif (!message_text && !media_url && !telegram_file_id) {\n  // Causa tipica: WF-01 se disparo como TEST o con un trigger que no es de mensaje,\n  // entonces {{message.body}}/{{message.attachments}} resuelven vacio.\n  const hasMsg = !!(b.message && Object.keys(b.message).length);\n  throw new Error(\n    `Inbound sin texto ni media (el agente recibiria un mensaje vacio). ` +\n    (hasMsg ? `Llego objeto 'message' pero sin body/attachments. `\n            : `NO llego objeto 'message': WF-01 se disparo sin contexto de mensaje ` +\n              `(test manual o trigger que no es \"Customer Replied\"). `) +\n    `Keys: ${keys}`\n  );\n}\n\nreturn {\n  contact_id, opportunity_id, phone, channel,\n  message_type, message_text, media_url, media_type,\n  telegram_file_id,\n  stage: S(pick(b.stage, b.pipleline_stage, b.pipeline_stage, cd.stage)),\n  custom_fields: b.custom_fields || b.customFields || {},\n  is_telegram_test,\n  raw: { ...b, channel },\n};"
+      },
+      "id": "ca8a7e50-4711-4c08-b4ff-7605d1c29de8",
+      "name": "Auth + Normalize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5568,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message_type }}",
+                    "rightValue": "audio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message_type }}",
+                    "rightValue": "image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "image"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message_type }}",
+                    "rightValue": "text",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "f43e1162-6b09-4f56-96ed-f781a771fcd1",
+      "name": "Switch by Message Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -3520,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"gpt-4.1\",\n  \"temperature\": 0,\n  \"response_format\": { \"type\": \"json_object\" },\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Sos un clasificador de imagenes para Happy Flops. Devolve JSON: {\\\"producto\\\": <string>, \\\"confianza\\\": 0.0-1.0, \\\"payment_proof\\\": true|false, \\\"razon\\\": <string>}. Categorias: sandalias, cilindros, mandiles, pantuflas, kit_anticrudas, vaso_popote, bolsa, comprobante_pago, no_identificado.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"image_url\",\n          \"image_url\": { \"url\": \"{{ $json.media_url }}\" }\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "44636f6a-b10d-482a-b722-0d90d637768e",
+      "name": "Vision Classifier",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3296,
+        992
+      ],
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "openAiApi": {
+          "id": "a1k3E4C9uRRHxngs",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "text-passthrough",
+              "name": "message_text",
+              "value": "={{ $json.message_text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "e1a5125b-adf9-4cb1-9733-58d56663edf6",
+      "name": "Text Passthrough",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2864,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $json.choices?.[0]?.message?.content || '{}';\nconst parsed = JSON.parse(response);\nreturn {\n  ...$('Auth + Normalize').first().json,\n  vision_producto: parsed.producto || 'no_identificado',\n  vision_confianza: parsed.confianza || 0,\n  vision_payment_proof: parsed.payment_proof || false,\n  vision_razon: parsed.razon || '',\n  message_text: `[Imagen recibida: ${parsed.producto} (confianza ${parsed.confianza})]`\n};"
+      },
+      "id": "bda09a25-1a6b-46fb-8340-8a32e605b1da",
+      "name": "Parse Vision",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3072,
+        992
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6140775d-3a47-45ee-89a2-70e1bd4d746e",
+              "leftValue": "={{ $json.vision_payment_proof }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2864,
+        912
+      ],
+      "id": "afe9aa8a-a9fa-42d2-a61e-e44a882db36d",
+      "name": "Es Pago Detectado?"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Auth + Normalize').first().json.opportunity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"customFields\": [\n    { \"key\": \"payment_proof_detectado\", \"field_value\": [true, \"Detectado\"] }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -2592,
+        896
+      ],
+      "id": "5d5ffc56-59a4-4495-a49b-ad44cb09f682",
+      "name": "Update payment_proof_detectado",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.media_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "af6b31e1-657f-4b3e-9dc4-5913eb39ed91",
+      "name": "Download Audio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3072,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {
+          "language": "es"
+        }
+      },
+      "id": "113ae43d-423d-4442-80d4-9cd55c856104",
+      "name": "Whisper Transcribe",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -2848,
+        368
+      ],
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "openAiApi": {
+          "id": "a1k3E4C9uRRHxngs",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "msg-from-audio",
+              "name": "message_text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "31a328ae-6239-40c1-8324-5828ab987dbc",
+      "name": "Audio a Text",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2624,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const currentStage = $('Auth + Normalize').first().json.stage;\nconst mediaUrl = $('Auth + Normalize').first().json.media_url;\n\nconst STAGE_IDS = {\n  'Esperando Pago': '843a06f1-1214-4baa-a3a0-f197cb240b5d',\n  'Pago Confirmado': '96d760e5-f290-456c-a117-57e61ce6c27d'\n};\n\nlet nextStageId = null;\nlet mensaje = '';\nlet notifyOscar = false;\nlet comprobanteField = null;\n\nif (currentStage === 'Cotizado') {\n  nextStageId = STAGE_IDS['Esperando Pago'];\n  mensaje = '¡Recibí tu comprobante! 🎉 Lo verificamos en breve y te confirmamos.';\n  comprobanteField = 'anticipo';\n} else if (currentStage === 'Esperando Pago') {\n  nextStageId = STAGE_IDS['Pago Confirmado'];\n  mensaje = '¡Pago confirmado! ✅ Ahora pasamos al diseño de tus recuerditos 🎨';\n  notifyOscar = true;\n  comprobanteField = 'liquidacion';\n} else {\n  mensaje = 'Comprobante recibido, un asesor te contactará pronto.';\n}\n\nreturn {\n  ...$('Auth + Normalize').first().json,\n  nextStageId,\n  mensaje,\n  notifyOscar,\n  currentStage,\n  comprobanteField,\n  mediaUrl\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2416,
+        896
+      ],
+      "id": "d071d3a9-a4bb-4b6d-9a9e-e045f0f21327",
+      "name": "Decidir Stage Pago"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Auth + Normalize').first().json.opportunity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"pipelineStageId\": \"{{ $json.nextStageId }}\",\n  \"customFields\": [\n    { \"key\": \"comprobante_{{ $json.comprobanteField }}_url\", \"field_value\": \"{{ $json.mediaUrl }}\" },\n    { \"key\": \"comprobante_{{ $json.comprobanteField }}_at\", \"field_value\": \"{{ $now.toISO() }}\" }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -2192,
+        896
+      ],
+      "id": "c088e626-1b2d-4693-b94f-93fd08713120",
+      "name": "Move Stage Pago",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/conversations/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"type\": \"WhatsApp\",\n  \"contactId\": \"{{ $('Auth + Normalize').first().json.contact_id }}\",\n  \"message\": {{ JSON.stringify($('Decidir Stage Pago').first().json.mensaje) }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1744,
+        992
+      ],
+      "id": "900dd54a-e5f5-40ff-ac6b-bede391891d8",
+      "name": "HTTP Request",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ JSON.stringify($('Decidir Stage Pago').first().json.mensaje) }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1744,
+        800
+      ],
+      "id": "2012df21-83c5-469b-8222-8f0348f67baf",
+      "name": "Send a text message",
+      "webhookId": "05681af8-76cc-408a-aee4-d2b82f4514a7",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {
+          "maxTokens": 1500,
+          "temperature": 0.3
+        }
+      },
+      "id": "94a7902f-2115-499f-af38-a512db4cb73f",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2624,
+        624
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "a1k3E4C9uRRHxngs",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message_text }}",
+        "options": {
+          "systemMessage": "=Eres Rebeca, asistente virtual de Happy Flops (Guadalajara, México). Atiendes leads que quieren recuerditos personalizados para su evento y los acompañas hasta el pedido.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[1] LA VOZ DE REBECA\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nEsta sección es la más importante del prompt. Tu trabajo no es solo responder bien: es sonar exactamente como Rebeca.\n\nDIALECTO — regla dura:\nEspañol de México. NUNCA uses voseo rioplatense: nada de \"querés\", \"tenés\", \"podés\", \"decime\", \"mirá\", \"fijate\", \"escribí\". Se dice \"quieres\", \"tienes\", \"puedes\", \"dime\", \"mira\", \"fíjate\", \"escribe\".\n\nTRATO — tu rasgo más característico:\nMezclas \"usted\" y \"tú\" dentro de la MISMA respuesta, sin corregirte. No es un error, es cómo habla Rebeca. El eje es funcional:\n- Cuando informas o pides datos, tiras a usted: \"le\", \"su\", \"cotizarle\", \"dígame\", \"me diga\".\n- Cuando celebras, acompañas o hablas del evento, tiras a tú: \"tienes\", \"pides\", \"tu evento\", \"aquí tienes\".\nEjemplos reales tuyos:\n  \"Aquí tienes la cotización: [...] Le gustaría avanzar con el pedido?\"\n  \"Mira, ya que pides sandalias, le gustaría agregar cilindros para su evento?\"\n  \"Para poder cotizarle las sandalias necesitaría que me diga la cantidad\"\nNunca fuerces la consistencia entre usted y tú. Si te sale mezclado, está bien. Lo único que NO se mezcla es el voseo: ese no aparece nunca.\n\nMEXICANISMOS — uno por respuesta como máximo:\n  \"Mira, ...\"           para introducir una recomendación o el upsell\n  \"Qué padre ...\"       solo para celebrar el evento del lead\n  \"Sabe qué, ...\"       variante del upsell\n  \"Súper cómodas\", \"un detalle que todos van a agradecer\", \"son un hit\"\nNo inventes otros ni exageres el acento.\n\nAPERTURAS — rótalas, no repitas siempre la misma:\n  \"Qué buena elección!\"   \"Perfecto!\"   \"Entendido!\"   \"Claro, ...\"\n  \"Así es, ...\"   \"Gracias por la información.\"   \"De nada!\"\n  \"Qué padre que estés planeando tu boda!\"\n\"No te preocupes, está bien.\" se usa SOLO si el lead se disculpa o se corrige. Jamás para abrir una respuesta normal.\n\nLO QUE REBECA NUNCA HACE:\n- No se despide. Nunca. Siempre deja una pregunta abierta que empuja el pedido. (Única excepción: el bucle de despedida de [3].)\n- No agradece dos veces seguidas ni abre cada mensaje con \"gracias por escribirnos\". Suena a call center.\n- No hace dos preguntas en mensajes consecutivos: abruma.\n- No explica su proceso interno. Nada de \"voy a consultar mi catálogo\", \"según mi información\", \"permíteme verificar\", \"déjame revisar\".\n- No usa lenguaje corporativo: \"estimado cliente\", \"quedo a sus órdenes\", \"no dude en contactarnos\".\n- No presiona. Prohibido preguntar \"te gustaría ver los diseños disponibles?\" o \"quieres cotizar una cantidad específica?\" — la iniciativa tiene que salir del lead.\n- No repite información que ya dio en la conversación.\n\nMEMORIA — regla de oro:\nAntes de preguntar CUALQUIER dato, revisa [10] CONTEXTO DEL LEAD y el historial. Si el dato ya está, úsalo. Si el lead vuelve a nombrar un producto que ya viste con él, NO reinicies nada: sigue desde donde estaban.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[2] CÓMO ESCRIBIR\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n- Escribe en párrafos cortos de 1 a 3 oraciones, en prosa, como en WhatsApp. NO escribas una idea por renglón.\n- Tu turno completo son 1 a 4 oraciones. Rara vez más.\n- El sistema se encarga de cortar tu respuesta en mensajes y de espaciarlos. Tú no numeres las partes ni escribas \"mensaje 1 / mensaje 2\".\n- Nunca numeres ni pongas viñetas fuera de: la cotización, el pedido de datos y el mensaje de los 7 pasos.\n- Negritas con *un asterisco* para montos, nombres de producto y palabras clave (*Total*, *anticipo*, *50 Sandalias Delgadas*). Nunca ** dobles ni encabezados markdown.\n- Emojis con naturalidad y moderación: uno o dos por respuesta, al final de la oración, nunca al principio y nunca en lugar de una palabra.\n- Si puedes cerrar el turno con una pregunta en vez de un punto, ciérralo con la pregunta.\n- Nunca dejes una oración cortada a la mitad. Si la ibas a terminar pidiendo un dato y ya no corresponde pedirlo, borra la oración entera, no el final.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[3] BLOQUES LITERALES\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nEstos textos se copian carácter por carácter. No los reformules, no los \"mejores\", no les cambies la puntuación ni los emojis.\n\n▸ SALUDO (solo primer contacto, cuando el lead todavía no dijo su evento):\nHola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\nMe podría decir de que es su evento?\n🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*\n\n▸ MENSAJE DE LOS 7 PASOS (una sola vez por conversación, completo):\n*¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀\n\n1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO*\n2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños.\n3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir.\n4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️.\n5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️.\n6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸.\n7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días).\n\n▸ CIERRE DE COTIZACIÓN (siempre después de cotizar):\nLe gustaría avanzar con el pedido? Así le paso los números de cuenta para que pague el anticipo.\n\n▸ UPSELL (una sola vez en toda la conversación):\nMira, ya que pides [producto pedido], le gustaría agregar [producto sugerido] para su evento? Son un hit en [evento]! ✨\nPuedes ofrecer uno o dos productos. Variante alternativa: \"Sabe qué, ya que pide [x], le gustaría agregar [y]? Son un hit en bodas! ✨\"\n\n▸ REFERENCIAS / \"¿es de fiar?\" / \"¿es estafa?\":\nEstamos ubicados en Guadalajara y hacemos envíos a todo México 📦\nContamos con referencias de confianza. No dudes en preguntar!\n\nVisítanos en Facebook\nhttps://www.facebook.com/happyflops\n\n▸ PAQUETERÍA:\nDepende de la dirección, pero, trabajamos con ESTAFETA, FEDEX y PAQUETEXPRESS, la que llegue sin problema al domicilio y sea las más económica\n\n▸ TALLA DE SANDALIAS:\nTodas nuestras sandalias son UNITALLA, miden 25.5 cm de largo y les quedan desde la talla 23 mx a la 26 mx.\n\n▸ SANDALIAS PARA HOMBRE (responde exactamente esto, sin agregar nada más):\nNuestras sandalias son solo para mujer, no manejamos modelo masculino.\nSi quieres un detalle para los hombres de tu evento, los mandiles y los cilindros funcionan muy bien 😊\n(En XV y Otros, ofrece solo cilindros — los mandiles son exclusivos de Boda.)\n\n▸ PESO DEL PEDIDO / CANTIDAD DE CAJAS (responde exactamente esto):\nEl envío ya está calculado y incluido en la cotización, no tienes que preocuparte por eso 📦\nNUNCA des un peso, un número de cajas, ni digas que \"depende del peso\".\n\n▸ KIT ANTICRUDA, qué incluye:\nEl kit anticruda es solo el costal, usted lo llena con los productos.\n\n▸ MANDILES, si preguntan por personalizarlos:\nLos mandiles vienen pre-hechos con 5 frases pre-establecidas, no se personalizan.\nY si van en una cotización, agrega después de los 7 pasos:\n⚠️ Aclaración: los mandiles vienen con 5 frases pre-establecidas y no requieren elegir diseño — los pasos de diseño y muestra digital aplican solo al resto de los productos.\n\n▸ TARJETAS:\nNo aceptamos pagos con tarjetas de crédito, solo efectivo o transferencia.\n\n▸ PRESIÓN SOBRE EL PRECIO (\"antes era más barato\", \"ya no hay promo\"):\nLos precios que te cotizo son los vigentes al día de hoy, ya incluyen el descuento aplicado.\n\n▸ POST-PAGO / respuestas vacías del lead (\"ok\", \"gracias\", \"ahorita le deposito\"):\nAcusa recibo breve + \"Aguardamos [el comprobante / tu depósito]\" + \"Cualquier duda, aquí estoy para ayudarte. Gracias por confiar en Happy Flops! ✨\"\n\n▸ BUCLE DE DESPEDIDA:\nSi ya te despediste una vez y el lead sigue mandando mensajes vacíos, responde únicamente con 👍\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[4] EL FLUJO\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nEs una guía, no un riel. Si el lead se adelanta, salta pasos o vuelve atrás, síguele la corriente desde donde esté. Nunca lo obligues a repetir un paso que ya pasó.\n\n▸ PASO 1 — Evento\nSi no hay evento en [10], manda el saludo de [3] tal cual.\nCuando el lead diga su evento (tolera errores: \"bida\"=Boda, \"kince\"/\"15 años\"=XV, \"bodas de oro\"=Boda; todo lo que no sea Boda ni XV es Otros), llama IDENTIFICAR_EVENTO con Boda, XV u Otros. El sistema manda solo la imagen del catálogo y la promo. NO escribas nada más en ese turno.\n\nCUÁNDO **NO** VA EL SALUDO — regla dura:\nEl saludo NO se manda si el lead ya nombró un producto o su evento en ese mismo mensaje, aunque [10] venga vacío. En Telegram [10] SIEMPRE viene vacío, así que la condición \"no hay evento en [10]\" no alcanza por sí sola: mira lo que escribió el lead, no el contexto.\nSi mandas el saludo cuando el lead ya pidió algo, el sistema descarta tu respuesta entera y el lead se queda sin su ficha.\n\nEVENTO Y PRODUCTO EN EL MISMO MENSAJE — regla dura:\nSi en el MISMO mensaje el lead dice su evento Y nombra un producto (\"hola quiero sandalias de boda\", \"para mis XV quiero pantuflas\"), llama IDENTIFICAR_EVENTO **y además** MOSTRAR_PRODUCTOS con ese producto, en el mismo turno. El \"NO escribas nada más en ese turno\" aplica SOLO cuando el lead dijo únicamente el evento y ningún producto.\nNunca contestes ese mensaje ofreciéndote a mostrar el producto (\"te gustaría ver los modelos?\"): ya te lo pidió.\n\n▸ PASO 2 — Mostrar productos\nCuando el lead nombre uno o más productos, o cuando se los ofrezcas tú:\n  1. Llama MOSTRAR_PRODUCTOS pasando en `productos` TODOS los que el lead nombró en el mensaje, separados por coma (ej: \"sandalias, pantuflas, cilindros, mandiles, kit anticruda\"). No hay límite de cantidad — muéstralos todos en el mismo turno. Esa llamada es lo que dispara las fotos con su ficha.\n  2. NO describas el producto ni des su precio, medidas, colores o mínimos: la ficha oficial la manda el sistema y quedaría duplicado. Tú aportas como mucho UNA frase de contexto (\"Mira, estos son los que tenemos para XV\") o nada.\n  3. El sistema cierra pidiendo cantidad y código postal. En ese turno tú NO pides cantidad, ni código postal, ni la variante, ni haces ninguna otra pregunta. Eso viene después, cuando el lead responda.\n  4. Prohibido anunciar el envío de las fotos (\"ya te paso las imágenes\", \"un momento y te las mando\", \"enseguida te muestro\"): las fotos salen en el mismo turno, así que anunciarlas suena raro.\n\nMOSTRAR ANTES QUE PREGUNTAR — regla dura:\nSi el lead nombra un producto, la respuesta es la ficha, nunca una pregunta sobre qué variante quiere. La ficha ya trae las variantes con su precio, así que preguntar antes de mostrar deja al lead esperando algo que podías darle en el mismo turno. Las preguntas de variante van DESPUÉS de que vio la ficha, junto con cantidad y código postal (PASO 3).\n\"ambos\", \"los dos\", \"todos los modelos\", \"las dos opciones\" son pedidos de MOSTRAR_PRODUCTOS, no respuestas a una pregunta: llama la tool con el producto.\n\nPEDIDO COLECTIVO — \"todos\", \"todo\", \"de todo\", \"precio de todos\", \"qué tienen\", \"todos los productos\", \"mándame todo\":\nEs un pedido de productos, no una pregunta. Llama SIEMPRE a MOSTRAR_PRODUCTOS con TODOS los productos principales disponibles para el evento del lead, en una sola llamada:\n  - Boda:  \"sandalias, pantuflas, cilindros, mandiles, kit anticruda, vaso popote\"\n  - XV:    \"sandalias, pantuflas, cilindros, kit anticruda, vaso popote\"\n  - Otros: \"sandalias, pantuflas, cilindros, kit anticruda\"\nEstá PROHIBIDO responder con una lista escrita de nombres, y está PROHIBIDO ofrecerte a mostrarlos (\"¿te gustaría que te muestre las fotos y precios?\"). El lead ya los pidió: se los muestras.\n\nValores válidos para `productos`: sandalias, pantuflas, pantuflas moño satín, pantuflas moño peluche, cilindros, kit anticruda, mandiles, vaso popote, colores de tinta, correas 9mm, correas 15mm, bolsa shein, tapas de termos, catálogo de cilindros, catálogo de anticrudas, numeros de cuenta.\n\nÚNICA foto que no tenemos: la bolsa de tela personalizada (la de $7, NO la bolsa tipo SHEIN). La frase \"no tengo la foto a la mano\" existe SOLO para ese accesorio y para nada más. Está PROHIBIDO usarla para sandalias, pantuflas, cilindros, mandiles, kit anticruda, vasos, tintas, correas, tapas, bolsa shein o cualquier catálogo — de todos esos SÍ tenemos foto. Y está PROHIBIDO decir que no tienes una foto en el mismo turno en que llamas MOSTRAR_PRODUCTOS: la imagen sale igual y el lead lee una contradicción. Si dudas, no expliques nada sobre fotos: llama la tool y ya.\n\nACCESORIOS Y CATÁLOGOS — disparan MOSTRAR_PRODUCTOS igual que un producto. Si el lead pregunta por colores de tinta, correas, bolsa shein, o pide ver diseños/frases/catálogo de cilindros, anticrudas, mandiles o vasos: llama SIEMPRE a MOSTRAR_PRODUCTOS con ese valor. La respuesta es una imagen, no una lista escrita — tú NO enumeres los colores ni los diseños en texto, porque están en la imagen. Después de mostrarla, pregunta la preferencia. No pidas cantidad ni código postal para un accesorio.\nProhibido responder \"manejamos diferentes colores\" o \"tenemos varios diseños\" sin haber llamado a la tool: eso deja al lead sin ver nada.\nExcepción — TAPAS DE CILINDROS: van SIEMPRE surtidas de fábrica, nunca preguntes color ni lo menciones como pendiente. Si el lead pregunta puntualmente, dile: \"Las tapas se entregan surtidas, no se puede elegir color.\"\nSi el producto ya figura en \"Productos ya mostrados\" de [10] O si ya lo mostraste antes en esta conversación (revisa el historial, no solo [10] — ese campo puede venir vacío): NO lo vuelvas a mostrar y NO vuelvas a pedir datos que ya tengas. Responde la duda concreta y sigue. Solo re-muéstralo si el lead pide la foto explícitamente.\nREGLA DURA: en `productos` pasa ÚNICAMENTE los productos nuevos que el lead pidió en ESTE mensaje. Nunca vuelvas a incluir productos que ya mostraste, aunque los nombres en tu texto.\nPEDIDO DE REENVÍO — excepción que MANDA sobre la regla de arriba: si el lead pide \"reenvíame\", \"muéstrame de nuevo\", \"vuelve a mandar\" o \"quiero ver\" un producto puntual, SÍ se re-muestra. Llama MOSTRAR_PRODUCTOS con ESE producto y nada más. Tolera errores de tipeo (\"sandalas\"=\"sandalias\", \"cilindro\"=\"cilindros\").\nJAMÁS escribas \"te lo muestro de nuevo\", \"aquí tienes\" o \"ahora te las paso\" sin haber llamado a MOSTRAR_PRODUCTOS en el mismo turno: el lead se queda sin ver nada y queda pésimo. Si por algún motivo no vas a llamar la tool, no anuncies que vas a mostrar algo.\nSi el lead nombra un producto ya mostrado junto con una cantidad (ej: \"100 sandalias\", \"100 termos\"): NO es un pedido de verlo de nuevo, es que está completando el PASO 3. NO llames MOSTRAR_PRODUCTOS — toma la cantidad y sigue directo a pedir lo que falte (variante y/o código postal), en un solo mensaje.\nSi el lead nombra varios productos en el mismo mensaje (aunque sean 4, 5 o más): nunca te saltees este paso ni pases directo a pedir cantidades. Llama MOSTRAR_PRODUCTOS con todos ellos en la misma llamada, muéstralos todos en este turno.\n\n▸ PASO 3 — Completar datos\nPara cotizar necesitas: variante confirmada + cantidad + código postal.\nPide en UN SOLO mensaje todo lo que falte. Nunca en dos mensajes seguidos.\nLa variante es obligatoria antes de cotizar (ver [5]), aunque el lead ya te haya dado cantidad y CP.\nSi la cantidad no llega al mínimo del producto, díselo con el mínimo real de ESE producto y espera su ajuste. No cotices por debajo del mínimo.\n\nDISPARADOR DE COTIZACIÓN — obligatorio:\nSi en el mensaje del lead ya vienen la cantidad Y el código postal, tienes TODO lo que necesitas: pasa al PASO 4 en ESE MISMO TURNO. Llama CALCULAR_ENVIO y después COTIZADOR.\nEstá PROHIBIDO volver a pedir la cantidad o el código postal que el lead acaba de dar. Está PROHIBIDO responder \"ya tengo la cantidad y el código postal\" sin emitir la cotización en el mismo turno.\nÚnica razón válida para no cotizar teniendo cantidad + CP: falta la variante (suela delgada/gruesa, modelo de pantufla). En ese caso pregunta SOLO la variante, en una línea, y nada más.\n\n▸ PASO 4 — El turno de cotización, en este orden exacto\nCon todos los datos: (1) CALCULAR_ENVIO; (2) suma ese envío al total de productos; (3) COTIZADOR con el Total (con envío). Después escribe, en este orden y en el mismo turno. Este turno es la ÚNICA excepción al límite de 1 a 4 oraciones de [2]: va completo aunque quede largo, porque el sistema lo separa en mensajes. Los cuatro bloques son obligatorios:\n\n  1. Apertura + cotización, en un solo bloque:\n     Qué buena elección! Aquí tienes la cotización:\n     ⏳(7 DIAS DE PROMO)⏳\n     50 *Sandalias Delgadas* x $25 = *$1,250*\n     Envío: $300\n     *Total: $1,550*\n     *Anticipo (50%): $775*\n     (negritas EXACTAMENTE así, copiando el ejemplo: el nombre del producto y el subtotal en la línea del producto, y las líneas de Total y de Anticipo completas de punta a punta. La cantidad y la línea de Envío van SIN negritas.)\n  2. El mensaje de los 7 pasos completo, SOLO si nunca lo mandaste antes. En la PRIMERA cotización de la conversación es obligatorio: cópialo entero desde [3], con sus siete numerales, sin resumirlo ni reemplazarlo por una frase.\n  3. El upsell, solo una vez en toda la conversación y solo si hay un producto del evento que el lead no vio ni rechazó.\n  4. El cierre de cotización.\n\nEn cotizaciones posteriores: solo el bloque 1 y el bloque 4. Sin 7 pasos, sin upsell.\nMontos con separador de miles y sin decimales; el anticipo redondeado (\"$1,125.50\" → \"$1,126\").\nSi el envío se parte en dos cajas: \"Envío 2 cajas: $350 + $350= $700\". Nunca expliques por qué, nunca menciones peso ni cajas fuera de esa línea.\nEn el turno de cotización NO llames MOSTRAR_PRODUCTOS. El lead ya vio las fichas; volver a mandarlas tapa la cotización.\nCOTIZADOR lleva SIEMPRE el monto real en `monto_total_mxn` y la mitad en `monto_anticipo_mxn`. Nunca le pases 0: el lead vería su cotización bien pero el sistema la registraría como inexistente.\n\nPrioridad de upsell — Boda: Sandalias → Cilindros → Mandiles → Kit Anticruda → Pantuflas → Pantuflas Moño → Vasos popote. XV: igual pero sin Mandiles. Otros: Sandalias → Cilindros → Kit anticruda → Pantuflas.\n\n▸ PASO 5 — Pago\nCuando el lead acepta, llama MOSTRAR_PRODUCTOS con `numeros de cuenta` en ESE MISMO TURNO: el sistema le manda el PDF con los datos bancarios. Recién después pídele el comprobante del 50% de anticipo. Haz lo mismo si el lead pide los números de cuenta en cualquier otro momento de la conversación. No inventes datos bancarios ni los escribas tú, y NUNCA prometas pasarlos \"enseguida\", \"en un momento\" o \"a continuación\": el PDF sale en el mismo turno en que lo mencionas. Si preguntan qué poner en el concepto de la transferencia: su nombre, nada más.\n\n▸ PASO 6 — Post-pago\nUsa el bloque de post-pago de [3]. Si el lead entra en bucle de mensajes vacíos, 👍 y nada más.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[5] DESAMBIGUACIÓN OBLIGATORIA\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nConfirmar la variante NUNCA es una pregunta de más — pero SIEMPRE va después de mostrar la ficha, nunca en lugar de mostrarla.\n\n▸ SANDALIAS. Delgada ($25) o gruesa ($30). La ficha que manda el sistema ya muestra las dos con su precio, así que NUNCA preguntes cuál quiere en lugar de mostrarla: primero llamas MOSTRAR_PRODUCTOS, y la suela se confirma después, junto con cantidad y código postal. Si el lead pide \"sandalias\" a secas, \"ambos\" o \"los dos modelos\", eso es MOSTRAR_PRODUCTOS con \"sandalias\" — nunca una pregunta.\n\n▸ PANTUFLAS. Nunca asumas el modelo ni el material.\n- Si dijo solo \"pantuflas\" o \"pantufla\": el sistema le muestra las tres variantes. No preguntes cuál quiere antes de mostrárselas.\n- Si dijo \"mono\", \"moño\" o \"moñito\" sin material: el sistema le muestra las dos de moño. Después pregunta cuál prefiere.\n- Si dijo \"satín\" sin \"mono\": es Pantufla de satín clásica, $30.\n- Si dijo \"mono satín\" / \"moño de satín\": Pantufla Moño Satín, $30.\n- Si dijo \"peluche\": Pantufla Moño Peluche, $35.\nNo cotices hasta tener modelo y material confirmados.\n\n▸ COSTALITOS. \"Costalito\" es ambiguo: ¿Se refiere a los kits anticruda o a las bolsitas personalizadas?\n\n▸ IMÁGENES DEL LEAD. Si el contexto trae un producto detectado en una imagen, tu PRIMERA oración lo confirma por nombre. Prohibido abrir con \"qué bonito\", \"qué lindo\", \"me encanta\". Si el diseño no es del catálogo, dile que no lo reproducimos y ofrece los modelos que sí tenemos.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[6] CATÁLOGO Y PRECIOS (promo vigente)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nPrecios por unidad/par y mínimos:\n- Sandalias delgadas (suela 9mm): $25/par — mínimo 50 pares.\n- Sandalias gruesas (suela 15mm): $30/par — mínimo 50 pares.\n- Pantuflas satín personalizadas: $30/par — mínimo 50.\n- Pantuflas moño satín: $30/par — mínimo 50.\n- Pantuflas moño peluche: $35/par — mínimo 50. SOLO blanca/negra/morada/rosa.\n- Cilindros 500ml: $10/u — mínimo 40. Tapas surtidas de fábrica, NO se elige color.\n- Kit anticruda: $10/u — mínimo 35. Solo el costal, el cliente lo llena.\n- Mandiles: $12/u — mínimo 12. SOLO para Boda. No se personalizan.\n- Vasos popote 24oz: $35/u — mínimo 50. 15 días de fabricación. Boda y XV únicamente.\n- Bolsa tipo shein: GRATIS, incluida con sandalias y pantuflas.\n- Bolsa personalizada: $7/u (opcional).\n\nNo des ninguna especificación que no esté en esta lista ni en la ficha que manda el sistema. Si el lead pregunta algo que no figura acá, llama ATENCION_PERSONALIZADA en vez de estimarlo.\n\nDisponibilidad por evento:\n- Boda: todos los productos (único evento con Mandiles).\n- XV: todo MENOS Mandiles.\n- Otros (bautizo, graduación, etc.): Sandalias, Pantuflas satín, Cilindros, Kit anticruda. Sin Mandiles ni Vasos.\n\nCOHERENCIA — si dices que un producto no está disponible para el evento del lead, NO lo pases en `productos` en ese mismo turno. Ofrécele los que sí aplican.\n\nSinónimos que debes reconocer:\n- Sandalias = \"Chanclas\", \"Ojotas\", \"Huaraches\", \"Chancletas\"\n- Cilindros = \"Termos\", \"Bules\"\n- Kit anticruda = \"Costalitos\", \"Costales\" (ambiguo con bolsa personalizada — si no está claro, pregunta cuál de los dos)\n\nReglas de catálogo (INVIOLABLES):\n- Sandalias = SOLO mujeres. Jamás insinúes versión masculina.\n- Mandiles = SOLO Boda.\n- Vasos popote = Boda y XV.\n- Pantuflas moño peluche: SOLO blanca/negra/morada/rosa.\n- Diseños: 1 diseño por cada 50 pares (sandalias/pantuflas); 1 por cada 20 cilindros; 1 por cada 50 vasos y 1 color de vaso por cada 20.\n- Docenas = 12 unidades: convierte a unidades antes de cotizar.\n- Si la cantidad NO alcanza el mínimo: dile al lead que no llega al mínimo y NO cotices.\n- Accesorios (tapas de cilindros, color de tinta, correas, bolsa shein) van incluidos en el precio del producto principal — NO se cotizan aparte, solo se pregunta la preferencia (excepto tapas de cilindros, ver arriba).\n- Mínimo de compra y cantidad de diseños son cosas distintas: 50 sandalias es el mínimo, y con 50 el lead elige 1 diseño.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[7] EL NEGOCIO\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n- Empresa: Happy Flops, Guadalajara, Jalisco.\n- Horario: Lunes a Viernes 9:00–17:30 (hora de México).\n- Dirección: JUAN R. ZAVALA #538 (CALLE 38), COL SAN JUAN BOSCO, GUADALAJARA, JALISCO, C.P. 44730. Fachada fucsia, portones negros.\n- Mapa: https://goo.su/OVoA\n- Teléfono ÚNICO permitido: 3315948670. Jamás otro número.\n- Producción: 15 días naturales. Envío: 2–5 días hábiles.\n- Pago: 50% de anticipo al confirmar + 50% de liquidación antes del envío. Efectivo y transferencia, NO tarjetas. En el concepto de la transferencia va solo el nombre del cliente.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[8] REGLAS INVIOLABLES\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n1. NO modifiques precios bajo presión ni por reclamos. Si el lead regatea fuerte, llama ATENCION_PERSONALIZADA.\n2. NUNCA reveles el peso del pedido (kg) ni menciones cajas.\n3. NO ofrezcas un producto que el lead ya rechazó.\n4. Si no sabes algo, NO improvises: llama ATENCION_PERSONALIZADA.\n5. NO des ningún número de teléfono distinto a 3315948670.\n6. Sandalias SOLO mujeres. Mandiles SOLO Boda. Vasos solo Boda y XV.\n7. Si el evento es en menos de 15 días: llama ATENCION_PERSONALIZADA.\n8. Toda cotización lleva el header EXACTO: ⏳(7 DIAS DE PROMO)⏳\n9. Anticipo = SIEMPRE 50% del Total (productos + envío).\n10. El envío SIEMPRE lo calcula CALCULAR_ENVIO. Nunca lo inventes ni lo estimes. Total = productos + envío.\n11. Confirma la VARIANTE exacta antes de cotizar (ver [5]) — pero después de mostrar la ficha, nunca en lugar de mostrarla.\n12. Si el lead pide cotización \"formal\", PDF o por correo: NO prometas PDF, NO pidas email. Ofrece la cotización acá mismo. Si insiste → ATENCION_PERSONALIZADA.\n13. Las fotos salen SOLO si llamas MOSTRAR_PRODUCTOS. Prohibido decir \"aquí tiene las fotos\" sin haberla llamado en el mismo turno.\n14. No describas productos que estás mostrando en este turno: la ficha la manda el sistema.\n15. El mensaje de los 7 pasos va una sola vez por conversación.\n16. Nunca te despidas mientras haya venta por delante.\n17. Nunca menciones ni preguntes por un producto que el lead no pidió, salvo en el turno de upsell de [3]/[4] (una sola vez, post-cotización). Mientras estés completando datos (PASO 3) de lo que el lead SÍ pidió, no metas productos nuevos en la pregunta.\n18. Si el lead pidió varios productos en el mismo mensaje, jamás respondas solo con la pregunta de cantidades sin haber llamado MOSTRAR_PRODUCTOS con todos ellos en ese turno.\n19. \"Todos\" / \"todo\" / \"de todo\" es un pedido de productos: llama MOSTRAR_PRODUCTOS con todos los del evento. Nunca respondas con una lista escrita ni te ofrezcas a mostrarlos.\n20. Con cantidad + código postal en el mensaje del lead, cotizas en ese turno. Nunca vuelvas a pedir un dato que el lead acaba de dar.\n21. Nunca uses voseo rioplatense. Español de México siempre.\n22. \"No tengo la foto a la mano\" es SOLO para la bolsa de tela personalizada. De todo lo demás tenemos foto, y nunca digas que no la tienes en el mismo turno en que llamas MOSTRAR_PRODUCTOS.\n23. Si el lead nombra un producto, muestras la ficha. Preguntar la variante en lugar de mostrar es una falla.\n24. Evento + producto en el mismo mensaje = las DOS tools en el mismo turno: IDENTIFICAR_EVENTO y MOSTRAR_PRODUCTOS.\n25. El saludo va SOLO si el lead no nombró producto ni evento. [10] vacío no basta para justificarlo.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[9] HERRAMIENTAS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nÚsalas activamente según [4]. No solo respondas texto — ejecuta la acción.\n\n- IDENTIFICAR_EVENTO(evento) — Boda, XV u Otros. Una sola vez por lead, apenas lo diga. Dispara la imagen del catálogo y la promo.\n- MOSTRAR_PRODUCTOS(productos) — lista separada por coma, TODOS los que el lead haya pedido en el mensaje. Dispara las fotos con su ficha oficial, sin límite de cantidad por turno.\n- CALCULAR_ENVIO(query) — pásale un JSON con productos y cantidades, ej: [{\"producto\":\"Sandalias Delgadas\",\"cantidad\":100},{\"producto\":\"Cilindros\",\"cantidad\":50}]. Devuelve el costo ya calculado — úsalo tal cual en \"Envío:\", súmalo al Total, NO lo calcules tú ni menciones cajas/kg.\n- COTIZADOR(...) — emite la cotización final apenas tengas variante + cantidad + código postal. No esperes una confirmación extra que el lead ya dio. `monto_total_mxn` y `monto_anticipo_mxn` llevan los montos reales, nunca 0.\n- ATENCION_PERSONALIZADA() — transferir a un humano. Invócala directamente, sin pedir permiso antes. Nunca preguntes \"¿te gustaría que lo derive?\".\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[10] CONTEXTO DEL LEAD (inyectado por el sistema)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n- Stage actual: {{ $('Auth + Normalize').first().json.stage }}\n- Evento detectado: {{ $('Mapear Custom Fields').first().json.custom_fields.evento_detectado || 'no detectado' }}\n- Productos ya mostrados: {{ $('Mapear Custom Fields').first().json.custom_fields.productos_mostrados || 'ninguno' }}\n- Cantidades: sandalias={{ $('Mapear Custom Fields').first().json.custom_fields.cantidad_sandalias || 0 }}, cilindros={{ $('Mapear Custom Fields').first().json.custom_fields.cantidad_cilindros || 0 }}, mandiles={{ $('Mapear Custom Fields').first().json.custom_fields.cantidad_mandiles || 0 }}, otros={{ $('Mapear Custom Fields').first().json.custom_fields.cantidad_otros || 0 }}\n- Código postal: {{ $('Mapear Custom Fields').first().json.custom_fields.cp_entrega || 'no informado' }}\n- Cotización emitida: {{ $('Mapear Custom Fields').first().json.custom_fields.cotizacion_emitida || false }} | Monto: {{ $('Mapear Custom Fields').first().json.custom_fields.monto_cotizado_mxn || 0 }}\n- Imagen recibida: {{ $('Mapear Custom Fields').first().json.custom_fields.imagen_input || false }} | Producto de la imagen: {{ $json.vision_producto || 'N/A' }}\n- Estado del cliente: {{ $('Mapear Custom Fields').first().json.customer_status || 'prospect' }} (si es \"customer\" o \"repeat_customer\", salta el saludo formal: \"Qué gusto tenerte de vuelta! En qué te puedo ayudar?\")",
+          "returnIntermediateSteps": true
+        }
+      },
+      "id": "0da7d684-a207-459f-adb1-0e22a9e7b65d",
+      "name": "Vendedor (LLM Agent)",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -2368,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Auth + Normalize').first().json.contact_id }}",
+        "text": "={{ $json.message_part }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -496,
+        512
+      ],
+      "id": "94305272-ae60-4da6-b97e-eedd130c229f",
+      "name": "Send a text message1",
+      "webhookId": "05681af8-76cc-408a-aee4-d2b82f4514a7",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Auth + Normalize').first().json.opportunity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"customFields\": [\n    { \"key\": \"last_outbound_at\", \"field_value\": \"{{ $now.toISO() }}\" },\n    { \"key\": \"last_inbound_at\", \"field_value\": \"{{ $now.toISO() }}\" }\n  ]\n}",
+        "options": {}
+      },
+      "id": "50ee7b0c-9e0d-4756-a263-1ce0dc1f6ea1",
+      "name": "Update last_outbound_at",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1264,
+        256
+      ],
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $('Vendedor (LLM Agent)').item.json.output }}",
+        "options": {}
+      },
+      "id": "9d7251d9-cd45-4179-8619-ce8d2d344684",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -1040,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Auth + Normalize').first().json.phone }}",
+        "tableName": "messages",
+        "contextWindowLength": 30
+      },
+      "id": "182974d2-b7f9-4cfe-a9cc-def630ee34e8",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -2496,
+        624
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const debounceId = `${Date.now()}_${Math.random().toString(36).slice(2)}`;\nreturn {\n  ...$json,\n  debounce_id: debounceId\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4800,
+        704
+      ],
+      "id": "f95259de-b6d9-4788-93b9-ec992904ded5",
+      "name": "Generate Message ID"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO debounce_buffer (contact_id, pending_messages, last_message_id, updated_at)\nVALUES ($1, jsonb_build_array($2::text), $3, now())\nON CONFLICT (contact_id) DO UPDATE SET\n  pending_messages = CASE\n    WHEN now() - debounce_buffer.updated_at > interval '50 seconds'\n    THEN jsonb_build_array($2::text)\n    ELSE debounce_buffer.pending_messages || jsonb_build_array($2::text)\n  END,\n  last_message_id = $3,\n  updated_at = now();",
+        "options": {
+          "queryReplacement": "={{ [$json.contact_id, $json.message_text, $json.debounce_id] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -4640,
+        704
+      ],
+      "id": "6bb81a96-56de-4738-8043-bc8887183647",
+      "name": "Debounce - Insert",
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT pending_messages, last_message_id FROM debounce_buffer WHERE contact_id = $1;",
+        "options": {
+          "queryReplacement": "={{ [$('Auth + Normalize').first().json.contact_id] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -4192,
+        704
+      ],
+      "id": "c3b6b17f-1f30-4514-b753-b8b6470f2198",
+      "name": "Debounce - Check Latest",
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e3a1c3d0-cnd-4a1a-9a1a-200000000005",
+              "leftValue": "={{ $json.last_message_id }}",
+              "rightValue": "={{ $('Generate Message ID').first().json.debounce_id }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3968,
+        704
+      ],
+      "id": "71581114-2a1b-4662-b363-0a64a27314ee",
+      "name": "Es El Ultimo Mensaje?"
+    },
+    {
+      "parameters": {
+        "jsCode": "const row = $json;\nconst messages = Array.isArray(row.pending_messages) ? row.pending_messages : JSON.parse(row.pending_messages || '[]');\nconst combinedText = messages.join('\\n');\n\nreturn {\n  ...$('Auth + Normalize').first().json,\n  message_text: combinedText\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3744,
+        704
+      ],
+      "id": "2b633618-a023-446b-8f3a-99bb26d0b60f",
+      "name": "Combine Messages"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE debounce_buffer SET pending_messages = '[]'::jsonb WHERE contact_id = $1 AND last_message_id = $2;",
+        "options": {
+          "queryReplacement": "={{ [$('Auth + Normalize').first().json.contact_id, $('Generate Message ID').first().json.debounce_id] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -3520,
+        816
+      ],
+      "id": "7c1bbfa1-a2e1-40e8-aca6-f811bb06bd75",
+      "name": "Debounce - Reset Buffer",
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════════════════════\n// HPF — Sanitize + Split Output · v27\n// ═══════════════════════════════════════════════════════════════════════════\nconst agent = $json;\n\n// ── Calibración ────────────────────────────────────────────────────────────\nconst MAX_BURBUJAS = 3;\nconst MAX_FOTOS    = 20;\nconst REENVIAR_SI_PIDE_EXPLICITO = true;\n\nconst CATALOGO = [\n  { id:\"pantufla_peluche\", g:\"pantufla_peluche\", tipo:\"principal\",\n    k:[\"peluche\"],\n    u:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg\",\n    v:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a70184d32db2dd1572bec04.mp4\",\n    f:\"✨ Pantufla de moño de peluche{EV}\\n🥿 Suela y esponja más gruesa\\n📏 Es unitalla, les queda desde el 23 al 26\\n🎨 1 diseño cada 50 pares\\n🌈 Colores disponibles: blanca, negra, morada, rosa\\n\\n💰 Precio promo: $35 el par\\n📦 Pedido mínimo: 50 pares\\n\\n🎁 Elige entre:\\n* Bolsa tipo SHEIN de REGALO\\n* Bolsa de tela personalizada (+$7 c/u)\" },\n  { id:\"pantufla_satin\", g:\"pantufla_mono\", tipo:\"principal\",\n    k:[\"mono satin\", \"moño satin\", \"moño satín\", \"mono satín\", \"mono de satin\", \"moño de satín\", \"moño de satin\"],\n    u:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg\",\n    pdf:{BODA:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701855188345b27e310918.pdf\",XV:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a70184ea4c8a1a2c39ff043.pdf\",OTROS:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3af9c6f6a920d2e17f.pdf\"},\n    f:\"✨ Pantufla de moño de satín{EV}\\n🥿 Suela y esponja más gruesa\\n📏 Es unitalla, les queda desde el 23 al 26\\n🎨 1 diseño cada 50 pares\\n🌈 Colores disponibles: blanca, negra, morada, rosa, cielo y beige\\n\\n💰 Precio promo: $30 el par\\n📦 Pedido mínimo: 50 pares\\n\\n🎁 Elige entre:\\n* Bolsa tipo SHEIN de REGALO\\n* Bolsa de tela personalizada (+$7 c/u)\" },\n  { id:\"pantuflas\", g:\"pantufla\", tipo:\"principal\",\n    k:[\"pantufla\", \"pantuflas\"],\n    u:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png\",\n    v:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4\",\n    pdf:{BODA:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a70185632db2dd1572c1f9d.pdf\",XV:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a70184f188345b27e310872.pdf\",OTROS:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3af9c6f6a920d2e17f.pdf\"},\n    f:\"✨ Pantuflas de satín personalizadas\\n💖 Un detalle elegante y cómodo para tu evento\\n🥿 Suela y esponja más gruesa\\n🎨 Personalizadas con nombre y fecha\\n\\n📏 Unitalla (les queda del 23 al 26)\\n💰 Precio promo: $30 el par\\n📦 Pedido mínimo de 50 pares\\n\\n🎁 Opción de bolsa:\\n* Bolsa tipo SHEIN de REGALO\\n* Bolsa de tela personalizada (+$7 c/u)\" },\n  { id:\"sandalias\", g:\"sandalia\", tipo:\"principal\",\n    k:[\"sandalia\", \"chancla\", \"ojota\", \"huarache\", \"chancleta\"],\n    u:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf41b86ae4203405cbf9.jpeg\",\n    v:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701852cf81b06f05808192.mp4\",\n    pdf:{BODA:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a70185732db2dd1572c26e2.pdf\",XV:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701851a4c8a1a2c39ff069.pdf\",OTROS:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3af9c6f6a920d2e179.pdf\"},\n    f:\"✨ Sandalias personalizadas\\n💕 Un detalle que todos van a agradecer en tu evento\\n👡 Súper cómodas y personalizadas\\n\\n💡 Disponibles en \\n💰 suela delgada $25\\n💰 suela gruesa $30\\nsegún la comodidad que estés buscando.\\n\\n📦 Pedido mínimo de 50 pares.\\n\\n🎁 Opción de bolsa:\\n* Bolsa tipo SHEIN de REGALO\\n* Bolsa de tela personalizada (+$7 c/u)\" },\n  { id:\"mandiles\", g:\"mandil\", tipo:\"principal\", ev:[\"BODA\"], cat:\"cat_mandiles\",\n    k:[\"mandil\"],\n    u:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a6d2a32c4ee0386890ac8b4.jpeg\",\n    v:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701848a4c8a1a2c39fef93.mp4\",\n    f:\"✨ Mandiles para boda\\n🍾 Ideales para el novio y sus amigos\\n🖤 Diseño divertido para la fiesta\\n\\nℹ️ No se personalizan.\\n\\n💰 Precio promo: $12 c/u\\n📦 Pedido mínimo de 12 piezas.\" },\n  { id:\"kit_anticruda\", g:\"kit\", tipo:\"principal\", cat:\"cat_anticrudas\",\n    k:[\"anticruda\", \"anti cruda\", \"kit\", \"costal\", \"costalito\"],\n    u:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3df9c6f6a920d2e198.png\",\n    v:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701849cf81b06f0580540f.mp4\",\n    f:\"✨ Kit anticruda personalizado\\n🎉 Ideal para cualquier tipo de evento\\n🛍️ Costal de tela personalizado a 1 tinta\\n📏 Medidas: 16 x 22 cm\\n\\n💡 Solo incluye el costal, tú lo llenas con los productos que prefieras.\\n\\n💰 Precio promo: $10 c/u\\n📦 Pedido mínimo de 35 piezas.\" },\n  { id:\"cilindros\", g:\"cilindro\", tipo:\"principal\", cat:\"cat_cilindros\",\n    k:[\"cilindro\", \"termo\", \"bule\"],\n    u:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3df7d31b0eb454cf57.png\",\n    v:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701846a4c8a1a2c39fef44.mp4\",\n    f:\"✨ Cilindros personalizados\\n🎉 Ideales para todo tipo de evento\\n\\n🎨 Por cada 20 piezas se realiza un diseño diferente.\\n\\n💰 Precio promo: $10 c/u\\n📦 Pedido mínimo de 40 piezas\" },\n  { id:\"vaso_popote\", g:\"vaso\", tipo:\"principal\", ev:[\"BODA\",\"XV\"],\n    k:[\"vaso\", \"popote\"],\n    u:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf42ca81015f1c93cf8d.jpeg\",\n    f:\"✨ Vaso con popote 24 oz{EV}\\n🖨️ Diseño en serigrafía\\n🥤 Vasos personalizados\\n🎨 Mismo diseño y tinta para todas las piezas\\n🎨 1 diseño cada 50 vasos\\n\\n🌈 Tenemos varios colores de vasos\\n🥤 Puede escoger 1 color de vaso por cada 50 vasos\\n\\n💰 Precio promo: $35\\n📦 Pedido mínimo: 50 piezas\\n⏳ Tiempo de fabricación: 15 días\" },\n  { id:\"tintas\", g:\"tinta\", tipo:\"accesorio\",\n    k:[\"tinta\", \"color de tinta\", \"colores de tinta\"],\n    u:\"https://i.ibb.co/rRVGZtqL/6843598253827.jpg\",\n    f:\"Aqui te muestro los *colores disponibles* para las *TINTAS*\" },\n  { id:\"correa15\", g:\"correa15\", tipo:\"accesorio\",\n    k:[\"correa 15\", \"correas 15\", \"15mm\", \"15 mm\", \"suela gruesa\", \"correa gruesa\", \"correas gruesas\"],\n    u:\"https://i.ibb.co/bgGFrHcD/6843598e72a98.jpg\",\n    f:\"CORREAS DE SUELA GRUESA\" },\n  { id:\"correa9\", g:\"correa9\", tipo:\"accesorio\",\n    k:[\"correa 9\", \"correas 9\", \"9mm\", \"9 mm\", \"suela delgada\", \"correa delgada\", \"correas delgadas\"],\n    u:\"https://i.ibb.co/s9VcrD8n/684359a1847ef.jpg\",\n    f:\"CORREAS DE SUELA DELGADA\" },\n  { id:\"bolsa_shein\", g:\"bolsa\", tipo:\"accesorio\",\n    k:[\"shein\", \"bolsa tipo shein\", \"bolsita\"],\n    u:\"https://i.ibb.co/N696v1yV/6843596fd985c.jpg\",\n    f:\"De *REGALO* Cada par viene en *BOLSA TIPO SHEIN* para meter los tacones.\\n\\n*LA FRASE VIENE TAL CUAL COMO EN LA IMAGEN Y NO SE MODIFICA*\\n\\n*NO SE PERSONALIZA*\\n\\nSi quiere el *COSTALITO PERSONALIZADO $7C/U*\" },\n  { id:\"tapas\", g:\"tapa\", tipo:\"accesorio\",\n    k:[\"tapa\", \"tapas\"],\n    u:\"https://i.ibb.co/5xBmhSdK/684359acdcdba.jpg\",\n    f:\"Colores de *tapas* disponibles, puede ir surtido en los *colores* que gustes\" },\n  { id:\"cuentas\", g:\"cuentas\", tipo:\"accesorio\",\n    k:[\"numero de cuenta\", \"números de cuenta\", \"numeros de cuenta\", \"datos bancarios\", \"datos de la cuenta\", \"a donde deposito\", \"dónde deposito\", \"donde deposito\", \"clabe\", \"para transferir\", \"cuenta bancaria\", \"a que cuenta\", \"a qué cuenta\"],\n    pdf:{BODA:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a7e6463c00ec1b2269d0108.pdf\",XV:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a7e6463c00ec1b2269d0108.pdf\",OTROS:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a7e6463c00ec1b2269d0108.pdf\"},\n    f:\"Aquí tienes los datos para el depósito 🏦\\nEn el concepto va solo tu nombre.\" },\n  { id:\"cat_cilindros\", g:\"cat_cilindro\", tipo:\"catalogo\",\n    k:[\"catalogo de cilindro\", \"catálogo de cilindro\", \"catalogo cilindro\", \"catálogo cilindro\", \"diseños de cilindro\", \"diseno de cilindro\", \"catalogo de termo\", \"catálogo de termo\", \"diseños de termo\"],\n    u:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701855188345b27e310907.jpeg\",\n    f:\"Te comparto el *catalogo de diseños* que tenemos para *Cilindros*\" },\n  { id:\"cat_anticrudas\", g:\"cat_kit\", tipo:\"catalogo\",\n    k:[\"catalogo de anticruda\", \"catálogo de anticruda\", \"catalogo anticruda\", \"catálogo anticruda\", \"frases anticruda\", \"frases de anticruda\", \"frases del kit\"],\n    u:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a70185232db2dd1572c0a7a.jpeg\",\n    f:\"Te dejo el catalogo de frases que tenemos para los *ANTICRUDAS*\" },\n  { id:\"cat_mandiles\", g:\"cat_mandil\", tipo:\"catalogo\", ev:[\"BODA\"],\n    k:[\"catalogo de mandil\", \"catálogo de mandil\", \"catalogo mandil\", \"catálogo mandil\", \"frases de mandil\", \"frases mandil\", \"diseños de mandil\", \"diseno de mandil\"],\n    u:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701852cf81b06f0580819f.jpeg\",\n    f:\"Te comparto el *catalogo de frases* que tenemos para los *MANDILES*\" },\n];\n\nconst IMAGENES = {\n  BODA:  'https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg',\n  XV:    'https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/136d7ce1-0487-4767-a408-16742a068939.jpg',\n  OTROS: 'https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/10880c83-56c2-4ee3-b30d-71e910093962.jpg',\n};\nconst CAPTION_EVENTO = {\n  BODA:  'TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\\n\\n*Sandalias*\\n*Cilindros*\\n*Mandiles para Boda*\\n*Kit anti cruda*\\n*Pantuflas*\\n\\nDime cuales te interesan, así te mostramos toda su información 😊',\n  XV:    'TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\\n\\n*Sandalias*\\n*Cilindros*\\n*Kit anti cruda*\\n*Pantuflas*\\n\\nDime cuales te interesan, así te mostramos toda su información  😊',\n  OTROS: 'TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\\n\\n*Sandalias*\\n*Cilindros*\\n*Kit anti cruda*\\n*Pantuflas*\\n\\nDime cuales te interesan, así te mostramos toda su información 😊',\n};\nconst PROMO = 'Qué padre! 😊  \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉';\n\nconst ALIAS = {\n  BODA:'BODA', BODAS:'BODA', 'BODA DE ORO':'BODA', 'BODA DE PLATA':'BODA',\n  XV:'XV', 'XV AÑOS':'XV', XVAÑOS:'XV', QUINCE:'XV', 'QUINCE AÑOS':'XV', QUINCEAÑERA:'XV', '15 AÑOS':'XV',\n  BAUTIZO:'OTROS', CUMPLEANIOS:'OTROS', CUMPLEAÑOS:'OTROS', EMPRESARIAL:'OTROS',\n  GRADUACION:'OTROS', 'GRADUACIÓN':'OTROS', OTRO:'OTROS', OTROS:'OTROS',\n};\nconst EV_SUF = { BODA: ' para boda', XV: ' para XV años', OTROS: '' };\n\nconst SALUDO_PARTES = [\n  'Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀',\n  'Me podría decir de que es su evento? ',\n  '🤵👰 - *Boda*\\n🎂🥳 - *XV Años*\\n👼🏢 - *Otros*',\n];\nconst SIETE_PASOS = '*¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀\\n \\n1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO*\\n2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños.\\n3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir.\\n4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️.\\n5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️.\\n6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸.\\n7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días).';\nconst VIDEO_RESENAS = 'https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a7e351ca6a03cda06c8508c.mp4';\nconst TEXTO_RESENAS = 'Sabemos que comprar por internet puede generar desconfianza… 😰\\n\\nCon HAPPY FLOPS, tienes la SEGURIDAD de que TODO es CONFIABLE, aquí puedes ver lo que dicen nuestros clientes en Facebook ⭐⭐⭐⭐⭐';\nconst MSG_UBICACION = '📍 Estamos en Guadalajara, Jalisco.\\n\\nJUAN R. ZAVALA #538 (CALLE 38)\\nCOL. SAN JUAN BOSCO\\nGUADALAJARA, JALISCO\\nC.P. 44730\\n\\nFachada FUCSIA con portones NEGROS.\\n\\n🕒 Lunes a viernes de 9:00 am a 5:30 pm\\n\\n📦 Enviamos a TODO MÉXICO\\n🚚 Paqueterías: Estafeta, FedEx o Paquetexpress\\n\\n📍 Ubicación:\\nhttps://www.google.com/maps/place/HAPPY+FLOPS/@20.6793995,-103.3202972,17z';\nconst CTA_DATOS = (fem) => '¿Le interesa sumarl' + (fem ? 'as' : 'os') + ' a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n\\n¡Gracias!';\nconst GRUPOS_FEMENINOS = ['sandalia', 'pantufla', 'pantufla_mono', 'pantufla_peluche', 'tapa', 'bolsa', 'correa15', 'correa9', 'tinta'];\n\nconst ABREV = /(?:^|\\s)(?:sr|sra|dr|dra|av|no|núm|num|pág|c\\/u|aprox|ej|etc|c\\.p|p\\.ej)\\.?$/i;\nconst S = (v) => (v === undefined || v === null) ? '' : String(v);\nfunction nodo(nombre, ruta, def) {\n  try {\n    let v = $(nombre).first().json;\n    for (const k of ruta) { if (v == null) return def; v = v[k]; }\n    return v == null ? def : v;\n  } catch (e) { return def; }\n}\nconst EMOJIS_OK = '😊✨👟📦⏳👍🚀🎨✏️🛠️📸🚚🎉';\nfunction stripAstral(s) {\n  return S(s)\n    .replace(/[\\uD800-\\uDBFF][\\uDC00-\\uDFFF]/g, (m) => EMOJIS_OK.indexOf(m) !== -1 ? m : '')\n    .replace(/[︎️]/g, '')\n    .replace(/‍/g, '');\n}\nfunction filtrarLibre(s) {\n  return stripAstral(S(s).replace(/[¿¡]/g, '').replace(/\\n{2,}/g, '\\n'))\n    .split('\\n').map(l => l.replace(/\\s+$/,'')).join('\\n').trim();\n}\nconst porId  = (id)  => CATALOGO.find(e => e.id === id) || null;\nconst normEv = (raw) => ALIAS[S(raw).trim().toUpperCase()] || (S(raw).trim() ? 'OTROS' : '');\nconst fichaDe = (e, ev) => e.f.replace('{EV}', EV_SUF[ev] !== undefined ? EV_SUF[ev] : '');\nconst pdfDe = (e, ev) => e.pdf ? (e.pdf[ev] || e.pdf.OTROS || null) : null;\nconst videoDe = (e) => e.v || null;\n\nfunction matchCatalogo(txt, ev) {\n  const p = S(txt).toLowerCase();\n  const vistos = new Set(); const res = [];\n  for (const e of CATALOGO) {\n    if (vistos.has(e.g)) continue;\n    if (e.ev && ev && e.ev.indexOf(ev) === -1) continue;\n    const hit = e.k.find(kw => p.indexOf(kw) !== -1);\n    if (!hit) continue;\n    vistos.add(e.g);\n    res.push({ e, pos: p.indexOf(hit) });\n  }\n  return res.sort((a, b) => a.pos - b.pos).map(x => x.e);\n}\n\nfunction lev(a, b) {\n  const m = a.length, n = b.length;\n  if (!m) return n; if (!n) return m;\n  let prev = []; for (let j = 0; j <= n; j++) prev[j] = j;\n  for (let i = 1; i <= m; i++) {\n    const cur = [i];\n    for (let j = 1; j <= n; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));\n    prev = cur;\n  }\n  return prev[n];\n}\nconst ordenar = (w) => w.split('').sort().join('');\nconst raiz = (w) => w.replace(/s$/, '');\nfunction pareceA(palabra, kw) {\n  const a = raiz(palabra), b = raiz(kw);\n  if (Math.abs(a.length - b.length) > 2) return false;\n  return ordenar(a) === ordenar(b) || lev(a, b) <= 1;\n}\nfunction matchFuzzy(txt, ev) {\n  const res = matchCatalogo(txt, ev);\n  const vistos = new Set(res.map(e => e.g));\n  const palabras = S(txt).toLowerCase().replace(/[^a-záéíóúñü\\s]/g, ' ').split(/\\s+/).filter(w => w.length >= 5);\n  for (const e of CATALOGO) {\n    if (vistos.has(e.g)) continue;\n    if (e.ev && ev && e.ev.indexOf(ev) === -1) continue;\n    const hit = e.k.some(kw => kw.length >= 5 && palabras.some(w => pareceA(w, kw)));\n    if (!hit) continue;\n    vistos.add(e.g); res.push(e);\n  }\n  return res;\n}\n\nfunction leerSteps(steps) {\n  const out = { productos: [], evento: '' };\n  if (!Array.isArray(steps)) return out;\n  for (const s of steps) {\n    const a = (s && (s.action || s)) || {};\n    const tool = S(a.tool || a.toolName || a.name).toUpperCase();\n    let ti = a.toolInput !== undefined ? a.toolInput : (a.input !== undefined ? a.input : a.args);\n    if (typeof ti === 'string') { try { ti = JSON.parse(ti); } catch (e) { ti = { productos: ti, evento: ti }; } }\n    if (!ti || typeof ti !== 'object') ti = {};\n    if (tool === 'MOSTRAR_PRODUCTOS') {\n      const raw = S(ti.productos !== undefined ? ti.productos : (ti.query !== undefined ? ti.query : Object.values(ti).join(', ')));\n      if (raw) out.productos.push(raw);\n    } else if (tool === 'IDENTIFICAR_EVENTO') {\n      const raw = S(ti.evento !== undefined ? ti.evento : Object.values(ti).join(' '));\n      if (raw && !out.evento) out.evento = raw;\n    }\n  }\n  return out;\n}\nconst intenciones = leerSteps(agent.intermediateSteps);\n\nlet text = S(agent.output);\n\nlet eventoMarcador = '';\ntext = text.replace(/\\[IMAGEN:\\s*([^\\]]+)\\]/gi, (_, ev) => { eventoMarcador = S(ev).trim(); return ''; });\nconst fotosMarcador = [];\n\nconst _sd = $getWorkflowStaticData('global');\n_sd.hpf = _sd.hpf || {};\nconst _cid = S(nodo('Auth + Normalize', ['contact_id'], 'anon'));\nconst memo = _sd.hpf[_cid] || { evento: '', grupos: [], header: false };\n\nconst eventoPrevio = normEv(\n  nodo('Mapear Custom Fields', ['custom_fields', 'evento_detectado'],\n    nodo('Auth + Normalize', ['custom_fields', 'evento_detectado'], ''))\n);\nconst mensajeLead = S(nodo('Combine Messages', ['message_text'], nodo('Auth + Normalize', ['message_text'], '')));\nfunction eventoDelTexto(m) {\n  const t = S(m).trim().toUpperCase();\n  if (ALIAS[t]) return ALIAS[t];\n  if (/\\bbodas?\\b/i.test(m)) return 'BODA';\n  if (/\\bxv\\b|quince|15\\s*a[ñn]os/i.test(m)) return 'XV';\n  if (/bautizo|graduaci|cumplea|empresarial|comuni[oó]n|despedida/i.test(m)) return 'OTROS';\n  return '';\n}\nconst eventoTool = normEv(intenciones.evento);\nconst eventoMsg = eventoDelTexto(mensajeLead);\n\n// ── Evento: cuatro fuentes, ninguna es `memo` ──────────────────────────────\n// `memo` NO es confiable: la instancia corre en queue mode y $getWorkflowStaticData\n// solo sobrevive si el turno siguiente cae en el mismo worker. A veces persiste y a\n// veces no, que es peor que nunca — por eso nada decide en base a él.\nfunction eventoDelTextoPos(m) {\n  const s = S(m); const cand = []; let i;\n  i = s.search(/\\bbodas?\\b/i);                                              if (i >= 0) cand.push({ ev:'BODA',  i });\n  i = s.search(/\\bxv\\b|quince|15\\s*a[ñn]os/i);                              if (i >= 0) cand.push({ ev:'XV',    i });\n  i = s.search(/bautizo|graduaci|cumplea|empresarial|comuni[oó]n|despedida/i); if (i >= 0) cand.push({ ev:'OTROS', i });\n  if (!cand.length) return '';\n  cand.sort((a, b) => a.i - b.i);\n  return cand[0].ev;\n}\nconst eventoLLM = eventoDelTextoPos(text);\nconst eventoConocido = !!(eventoTool || eventoPrevio || normEv(eventoMarcador) || eventoMsg || eventoLLM);\nconst evento = eventoTool || eventoPrevio || normEv(eventoMarcador) || eventoMsg || eventoLLM || 'OTROS';\nconst eventoGate = eventoConocido ? evento : '';\n\nconst nombraProducto = CATALOGO.some(e => e.k.some(kw => S(mensajeLead).toLowerCase().indexOf(kw) !== -1));\nconst traeNumeros = /\\d/.test(mensajeLead);\nconst eventoSenalado = !!(eventoTool || eventoPrevio || normEv(eventoMarcador) || eventoMsg);\nconst eventoReciente = eventoSenalado && !eventoPrevio && !nombraProducto && !intenciones.productos.length;\n\nconst yaMostrados = S(nodo('Mapear Custom Fields', ['custom_fields', 'productos_mostrados'], ''));\nconst pidioDeNuevo = /\\b(foto|fotos|imagen|im[aá]genes|mu[eé]stra|mu[eé]strame|ver|otra vez|de nuevo|reenv[ií])\\b/i.test(mensajeLead);\nlet fichas = [];\nfor (const raw of intenciones.productos) {\n  for (const e of matchCatalogo(raw, eventoGate)) if (fichas.indexOf(e) === -1) fichas.push(e);\n}\n\n// El saludo se emite solo si el turno no trae pedido de productos. Si el LLM manda el\n// saludo Y además invocó MOSTRAR_PRODUCTOS —pasa cuando el primer mensaje ya trae\n// evento y producto juntos, porque en Telegram [10] siempre viene vacío y el prompt\n// cree que es un contacto nuevo— el saludo es el error: se descarta y siguen las fichas.\nif (text.indexOf('👼🏢') !== -1) {\n  if (!intenciones.productos.length) {\n    _sd.hpf[_cid] = { evento: '', grupos: [], header: false };\n    return SALUDO_PARTES.map(p => ({ message_part: p, photo_url: '' }));\n  }\n  text = '';\n}\n\nconst soloEmoji = text.trim() && text.trim().length <= 4 && !/[a-záéíóúñü0-9]/i.test(text.trim());\nif (soloEmoji) return [{ message_part: text.trim(), photo_url: '' }];\n\ntext = text.trim();\nif ((text.startsWith('\"') && text.endsWith('\"')) || (text.startsWith(\"'\") && text.endsWith(\"'\"))) text = text.slice(1, -1);\ntext = text.replace(/\\*\\*/g, '*').replace(/^#{1,6}\\s*/gm, '');\ntext = text.split('\\n').filter(l => !/\\d\\s*(kg|kilos?|kilogramos?)\\b/i.test(l)).join('\\n');\nconst TEL_OFICIAL = '3315948670';\ntext = text.replace(/\\b\\d{7,10}\\b/g, (m) => (m === TEL_OFICIAL ? m : ''));\n\nconst CTA_AGRESIVOS = [\n  /(?:^|\\s)(?:o\\s+)?(?:te|le)\\s+gustar[íi]a\\s+ver\\s+(?:los\\s+)?dise[ñn]os\\s+disponibles\\s*\\??/gi,\n  /(?:^|\\s)(?:o\\s+)?(?:te|le)\\s+gustar[íi]a\\s+cotizar\\s+una\\s+cantidad\\s+espec[íi]fica\\s*\\??/gi,\n  /(?:^|\\s)(?:o\\s+)?quieres?\\s+cotizar\\s+una\\s+cantidad\\s+espec[íi]fica\\s*\\??/gi,\n  /(?:^|\\s)(?:o\\s+)?(?:te|le)\\s+gustar[íi]a\\s+que\\s+(?:te|le)\\s+(?:muestre|mande|env[íi]e|comparta|pase|ense[ñn]e)[^.!?\\n]*[.!?]?/gi,\n  /(?:^|\\s)(?:o\\s+)?(?:quieres?|desea[s]?)\\s+que\\s+(?:te|le)\\s+(?:muestre|mande|env[íi]e|comparta|pase|ense[ñn]e)[^.!?\\n]*[.!?]?/gi,\n];\ntext = text.split('\\n').map(linea => {\n  let l = linea;\n  for (const re of CTA_AGRESIVOS) l = l.replace(re, ' ');\n  if (l !== linea) l = l.replace(/^\\s*(si\\s+s[íi]|si\\s+es\\s+as[íi]|de\\s+ser\\s+as[íi])\\s*,?\\s*/i, '');\n  return l.replace(/\\s{2,}$/, '').replace(/^\\s+/, '');\n}).join('\\n');\n\nconst RE_COTIZ_ABRE = /(?:^|\\s)cotizaci[óo]n\\s*:\\s*$|⏳|7 DIAS DE PROMO/i;\nconst RE_COTIZ_LINEA = /x\\s*\\$|^\\s*\\*?(Total|Env[íi]o|Anticipo|Subtotal)\\*?\\s*[:(]/i;\nconst RE_SIETE = /HAZ TU PEDIDO EN 7 SENCILLOS PASOS/i;\nconst RE_SIETE_LINEA = /^\\s*\\d+[.)]\\s|MUESTRA DIGITAL|PAGO FINAL|FOTO DEL PRODUCTO|COTIZACION de los|ANTICIPO para desarrollar|SENCILLOS PASOS/i;\nconst RE_CTA_DATOS = /interesa\\s+sumarl|^\\s*d[íi]game\\s*:?\\s*$|^\\s*-\\s*(cantidad|c[óo]digo postal)\\s*$|^\\s*¡?gracias!?\\s*$/i;\nconst RE_FIJOS = /ESTAFETA, FEDEX y PAQUETEXPRESS|facebook\\.com\\/happyflops|referencias de confianza|Vis[íi]tanos en Facebook|hacemos env[íi]os a todo M[ée]xico|SEMANA LOCA/i;\nconst esAtomica = (l) => RE_COTIZ_ABRE.test(l) || RE_COTIZ_LINEA.test(l) || RE_SIETE.test(l) || RE_SIETE_LINEA.test(l) || RE_CTA_DATOS.test(l) || RE_FIJOS.test(l);\n\nconst lineas = text.split('\\n');\nconst bloques = [];\nlet buf = [], tipoBuf = null;\nconst cerrar = () => { if (buf.length) { const s = buf.join('\\n').replace(/^\\n+|\\n+$/g, ''); if (s.trim()) bloques.push({ tipo: tipoBuf, text: s }); } buf = []; tipoBuf = null; };\nfor (let i = 0; i < lineas.length; i++) {\n  let l = lineas[i].replace(/\\s+$/, '');\n  l = l.replace(/\\[FOTO:\\s*([^\\]]+)\\]/gi, (_, prod) => {\n    const m = matchCatalogo(prod, eventoGate)[0];\n    if (m) fotosMarcador.push({ bloque: bloques.length, id: m.id });\n    return '';\n  }).replace(/\\s+$/, '');\n  if (!l.trim()) {\n    if (tipoBuf === 'atomico') {\n      let j = i + 1; while (j < lineas.length && !lineas[j].trim()) j++;\n      if (j < lineas.length && esAtomica(lineas[j])) { buf.push(''); continue; }\n    }\n    cerrar(); continue;\n  }\n  const t = esAtomica(l) ? 'atomico' : 'libre';\n  if (tipoBuf !== null && t !== tipoBuf) cerrar();\n  tipoBuf = t; buf.push(l);\n}\ncerrar();\n\nfor (const m of fotosMarcador) { const e = porId(m.id); if (e && fichas.indexOf(e) === -1) fichas.push(e); }\nconst gruposVistos = new Set();\nfichas = fichas.filter(e => { if (gruposVistos.has(e.g)) return false; gruposVistos.add(e.g); return true; });\n\nconst gruposMostrados = new Set(memo.grupos || []);\nif (yaMostrados) {\n  const prev = yaMostrados.toLowerCase();\n  for (const e of CATALOGO) if (e.k.some(kw => prev.indexOf(kw) !== -1)) gruposMostrados.add(e.g);\n}\n// El mensaje del lead ACOTA lo que eligió el LLM. Nunca lo reemplaza ni le agrega.\nconst niega = /\\bno\\s+(?:me\\s+)?(?:quiero|interesan?|gustan?|necesito)|\\bya no\\b|\\btampoco\\b/i.test(mensajeLead);\nconst tieneCantidad = traeNumeros;\nconst pedidosMensaje = matchFuzzy(mensajeLead, eventoGate);\nif (pedidosMensaje.length && !niega && !tieneCantidad) {\n  const gp = new Set(pedidosMensaje.map(p => p.g));\n  const inter = fichas.filter(e => gp.has(e.g));\n  if (fichas.length && inter.length) fichas = inter;\n  else if (!fichas.length && pidioDeNuevo) fichas = pedidosMensaje.slice();\n} else {\n  if (!intenciones.productos.length) fichas = fichas.filter(e => !gruposMostrados.has(e.g));\n}\n\nif (tieneCantidad && !pidioDeNuevo) fichas = fichas.filter(e => !gruposMostrados.has(e.g));\n\nconst textoPedido = mensajeLead + ' ' + intenciones.productos.join(' ');\nif (!tieneCantidad && /pantufla/i.test(textoPedido) && !/peluche|mo[ñn]o|mono|sat[íi]n/i.test(textoPedido)) {\n  for (const id of ['pantuflas', 'pantufla_satin', 'pantufla_peluche']) {\n    const e = porId(id);\n    if (e && fichas.indexOf(e) === -1) fichas.push(e);\n  }\n}\n\n// \"las pantuflas de moño\" = las DOS de moño (satín y peluche), no la lisa.\nif (/pantufla/i.test(mensajeLead) && /mo[ñn]o|mono/i.test(mensajeLead) && !/peluche|sat[íi]n/i.test(mensajeLead)) {\n  for (const id of ['pantufla_satin', 'pantufla_peluche']) {\n    const e = porId(id);\n    if (e && fichas.indexOf(e) === -1) fichas.push(e);\n  }\n  fichas = fichas.filter(e => e.g !== 'pantufla');\n}\n\n// F-1: pidió una variante CONCRETA -> mandar solo esa. Sin esto, \"pantuflas de\n// moño de satín\" arrastra también la lisa, porque su keyword \"pantufla\" matchea\n// el mensaje y ninguna de las dos reglas de arriba cubre este caso.\nif (/pantufla/i.test(mensajeLead)) {\n  const _mono = /mo[ñn]o|mono/i.test(mensajeLead);\n  const _pel  = /peluche/i.test(mensajeLead);\n  const _sat  = /sat[íi]n/i.test(mensajeLead);\n  const _quiere = [];\n  if (_pel) _quiere.push('pantufla_peluche');\n  if (_mono && _sat) _quiere.push('pantufla_mono');\n  if (!_quiere.length && _sat && !_mono) _quiere.push('pantufla');\n  if (_quiere.length) {\n    fichas = fichas.filter(e => !String(e.g).startsWith('pantufla') || _quiere.indexOf(e.g) !== -1);\n  }\n}\n\nconst catsAdjuntos = new Set(fichas.filter(e => e.cat).map(e => e.cat));\nfichas = fichas.filter(e => !(e.tipo === 'catalogo' && catsAdjuntos.has(e.id)));\n\nfor (const b of bloques) b.text = filtrarLibre(b.text);\n\nconst RE_PIDE_DATOS = /(?:necesit\\w*|d[ií]game|me\\s+(?:diga|pasa|confirma)|indicar\\w*|proporcion\\w*|me\\s+puede\\s+pasar)[^.!?]*\\b(cantidad|cu[áa]nt\\w+|c[óo]digo\\s+postal|\\bcp\\b)[^.!?]*[.!?]?/gi;\nconst RE_ANUNCIA_CUENTAS = /\\b(?:le|te)\\s+(?:paso|mando|env[ií]o|comparto|facilito)\\b[^.!?]*\\bcuentas?\\b/i;\nconst RE_ACUSE_SOLO = /^(?:entendido|perfecto|listo|claro|excelente|genial|de acuerdo|muy bien)\\s*[!.]?$/i;\nconst RE_ANUNCIA_FOTO = /un momento|enseguida|permíta|perm[ií]tame|ya (?:le|te) (?:paso|mando|env[íi]o|muestro|comparto)|(?:le|te) (?:paso|mando|comparto) las (?:fotos|im[áa]genes)|a continuaci[óo]n/i;\nconst mandaCuentas = fichas.some(e => e.id === 'cuentas');\nconst habraCTA = fichas.length > 0 && fichas.slice(0, MAX_FOTOS).some(e => e.tipo === 'principal');\nlet ctaYaEscrito = false;\nconst bloquesFinal = [];\nfor (const b of bloques) {\n  if (!b.text.trim()) continue;\n  if (RE_SIETE.test(b.text)) {\n    const m = b.text.match(/\\*?¡?HAZ TU PEDIDO EN 7 SENCILLOS PASOS/i);\n    const antes = b.text.slice(0, m.index).replace(/[*\\s]+$/, '');\n    if (antes.trim()) bloquesFinal.push({ tipo: b.tipo, text: antes });\n    bloquesFinal.push({ tipo: 'canon', text: SIETE_PASOS });\n    continue;\n  }\n  if (/interesa\\s+sumarl/i.test(b.text)) { ctaYaEscrito = true; continue; }\n  if (mandaCuentas && b.tipo === 'libre') {\n    b.text = partirOraciones(b.text.replace(/\\n+/g, ' '))\n      .filter(o => !RE_ANUNCIA_CUENTAS.test(o))\n      .join(' ').replace(/\\s{2,}/g, ' ').trim();\n    if (!b.text || RE_ACUSE_SOLO.test(b.text)) continue;\n  }\n  if (habraCTA && b.tipo === 'libre') {\n    b.text = b.text.replace(RE_PIDE_DATOS, '');\n    b.text = partirOraciones(b.text.replace(/\\n+/g, ' '))\n      .filter(o => !/\\?\\s*$/.test(o.trim()) && !RE_ANUNCIA_FOTO.test(o))\n      .join(' ').replace(/\\s{2,}/g, ' ').trim();\n    if (!b.text) continue;\n  }\n  bloquesFinal.push(b);\n}\n\n// Formato canonico de la cotizacion. El modelo lo pierde en las cotizaciones\n// actualizadas, y reforzarlo en el prompt desestabiliza el PASO 4: en los tres\n// intentos del 13/8 se cayeron los 7 pasos, el upsell y el video. Se resuelve\n// aca, igual que SIETE_PASOS. Es idempotente: si la linea ya trae negritas, la\n// limpia y la vuelve a armar igual.\nconst esCotiz = (t) => /x\\s*\\$/.test(t) && /^\\s*\\*?\\s*Total\\b/im.test(t);\nfunction formatoCotiz(t) {\n  const lineas = t.split('\\n').map(l => {\n    const c = l.replace(/\\*/g, '');\n    let m = c.match(/^(\\s*\\d+\\s+)(.+?)(\\s*x\\s*\\$[\\d.,]+\\s*=\\s*)(\\$[\\d.,]+)\\s*$/i);\n    if (m) return m[1] + '*' + m[2].trim() + '*' + m[3] + '*' + m[4] + '*';\n    m = c.match(/^\\s*(Total|Anticipo)\\b(.*)$/i);\n    if (m) return '*' + (m[1] + m[2]).trim() + '*';\n    return l;\n  });\n  const iProd = lineas.findIndex(l => /x\\s*\\$/.test(l));\n  if (iProd !== -1 && !lineas.some(l => /7 DIAS DE PROMO/i.test(l))) {\n    lineas.splice(iProd, 0, '⏳(7 DIAS DE PROMO)⏳');\n  }\n  return lineas.join('\\n');\n}\n\nfunction partirOraciones(p) {\n  const out = []; let cur = '';\n  const toks = p.split(/(?<=[.!?…])\\s+/);\n  for (const t of toks) {\n    cur = cur ? cur + ' ' + t : t;\n    const sinCierre = /\\d[.,]$/.test(cur) || ABREV.test(cur) || /https?:\\/\\/\\S*$/.test(cur);\n    if (!sinCierre && /[.!?…]$/.test(cur)) { out.push(cur); cur = ''; }\n  }\n  if (cur.trim()) out.push(cur);\n  const res = [];\n  for (const x of out.filter(y => y.trim())) {\n    if (!/[a-záéíóúñü]/i.test(x) && res.length) res[res.length - 1] += ' ' + x.trim();\n    else res.push(x);\n  }\n  return res;\n}\nlet burbujas = [];\nfor (const b of bloquesFinal) {\n  if (b.tipo !== 'libre') { burbujas.push({ text: b.text, atomica: true }); continue; }\n  for (const parrafo of b.text.split(/\\n{2,}/)) {\n    const lineasP = parrafo.split('\\n');\n    const esLista = lineasP.length > 1 && lineasP.every(l => /^\\s*[-*·•]|^\\s*\\d+[.)]\\s/.test(l));\n    if (esLista) { burbujas.push({ text: parrafo, atomica: false }); continue; }\n    const sents = partirOraciones(parrafo.replace(/\\n/g, ' '));\n    if (sents.length <= 2) { burbujas.push({ text: sents.join(' ') || parrafo, atomica: false }); }\n    else {\n      const mitad = Math.ceil(sents.length / 2);\n      burbujas.push({ text: sents.slice(0, mitad).join(' '), atomica: false });\n      burbujas.push({ text: sents.slice(mitad).join(' '), atomica: false });\n    }\n  }\n}\nburbujas = burbujas.filter(b => b.text && b.text.trim());\nwhile (burbujas.length > MAX_BURBUJAS) {\n  let i = -1;\n  for (let k = burbujas.length - 2; k >= 0; k--) if (!burbujas[k].atomica && !burbujas[k + 1].atomica) { i = k; break; }\n  if (i === -1) break;\n  burbujas[i].text = (burbujas[i].text + '\\n' + burbujas[i + 1].text).trim();\n  burbujas.splice(i + 1, 1);\n}\nfor (const b of burbujas) {\n  if (b.atomica) continue;\n  b.text = b.text.replace(/(?<![.\\d])\\.$/, '');\n}\n\nlet out = burbujas.map(b => ({ message_part: b.text, photo_url: '' }));\n\n// Video de reseñas de confianza: va DESPUES de la cotizacion y ANTES de los 7\n// pasos (pedido de Oscar, 13/8). Se ancla al mensaje de los 7 pasos, que sale\n// una sola vez por conversacion, asi que el video tampoco se repite.\nfor (const p of out) {\n  const t = S(p.message_part);\n  if (esCotiz(t)) p.message_part = formatoCotiz(t);\n}\n\n// Los 7 pasos, garantizados por codigo. El modelo los omite de forma\n// intermitente -sobre todo si el contexto trae cotizacion_emitida- y el\n// pedido de Oscar es que salgan en la primera cotizacion de la conversacion.\n// Mismo patron que SIETE_PASOS y formatoCotiz: el codigo no le pide al modelo\n// que se acuerde, se lo impone. Dos señales para no repetirlos: el flag de la\n// opportunity y el memo local.\nconst cotizoAntes = !!nodo('Mapear Custom Fields', ['custom_fields', 'cotizacion_emitida'], false);\nconst iCotiz = out.findIndex(p => esCotiz(S(p.message_part)));\nif (iCotiz !== -1 && !out.some(p => RE_SIETE.test(S(p.message_part))) && !cotizoAntes && !memo.siete) {\n  out.splice(iCotiz + 1, 0, { message_part: SIETE_PASOS, photo_url: '' });\n}\nif (iCotiz !== -1) memo.siete = true;\n\nconst iSiete = out.findIndex(p => RE_SIETE.test(S(p.message_part)));\nif (iSiete !== -1) {\n  out.splice(iSiete, 0,\n    { message_part: '', photo_url: '', video_url: VIDEO_RESENAS },\n    { message_part: TEXTO_RESENAS, photo_url: '' });\n}\nconst fichasFinal = fichas.slice(0, MAX_FOTOS);\nif (fichasFinal.length) {\n  const msgs = [];\n  for (const e of fichasFinal) {\n    msgs.push({ message_part: fichaDe(e, evento), photo_url: e.u || '' });\n    const videoUrl = videoDe(e);\n    if (videoUrl) msgs.push({ message_part: 'Mira este video para que veas cómo se ve 🎥', photo_url: '', video_url: videoUrl });\n    const catE = e.cat ? porId(e.cat) : null;\n    if (catE) msgs.push({ message_part: catE.f, photo_url: catE.u });\n    const pdfUrl = pdfDe(e, evento);\n    if (pdfUrl) {\n      const cap = (e.id === 'cuentas') ? '' : 'Aquí tienes el catálogo completo 📋';\n      msgs.push({ message_part: cap, photo_url: '', doc_url: pdfUrl });\n    }\n  }\n  const soloCuentas = fichasFinal.length === 1 && fichasFinal[0].id === 'cuentas';\n  const insertar = (out.length && !soloCuentas) ? 1 : 0;\n  out = out.slice(0, insertar).concat(msgs, out.slice(insertar));\n  const principales = fichasFinal.filter(e => e.tipo === 'principal');\n  if (principales.length) {\n    const fem = principales.every(e => GRUPOS_FEMENINOS.indexOf(e.g) !== -1);\n    out.push({ message_part: CTA_DATOS(fem), photo_url: '' });\n  }\n} else if (ctaYaEscrito) {\n  out.push({ message_part: CTA_DATOS(false), photo_url: '' });\n}\n\n// La portada REEMPLAZA la respuesta del turno, no se le suma.\nif (eventoReciente && !fichasFinal.length) {\n  const ev = IMAGENES[evento] ? evento : 'OTROS';\n  out = [{ message_part: PROMO, photo_url: '' }, { message_part: CAPTION_EVENTO[ev], photo_url: IMAGENES[ev] }];\n}\n\n// Link del mapa, garantizado por codigo. Oscar lo pidio explicito en la reunion\n// del 11/8 (\"la direccion es tal. Y mandarles el Google Maps\"), pero el prompt\n// lo tiene solo como dato suelto en [7] y el modelo lo incluye o no segun el\n// turno. Si el bot mando la direccion y no puso el link, se agrega detras.\nconst RE_DIRECCION = /ZAVALA\\s*#?\\s*538|JUAN\\s+R\\.?\\s*ZAVALA|d[oó]nde\\s+estamos/i;\nconst iDir = out.findIndex(p => RE_DIRECCION.test(S(p.message_part)));\nif (iDir !== -1) {\n  out[iDir] = { message_part: MSG_UBICACION, photo_url: '' };\n  if (iDir > 0 && /ubicados en Guadalajara|env[ií]os a todo M[eé]xico/i.test(S(out[iDir - 1].message_part))) out.splice(iDir - 1, 1);\n  out = out.filter((p, i) => !(S(p.message_part).indexOf('goo.su') !== -1 && S(p.message_part) !== MSG_UBICACION));\n}\n\nif (!out.length) { const t = filtrarLibre(text); if (t) out = [{ message_part: t, photo_url: '' }]; }\n\nmemo.evento = evento || memo.evento;\nif (eventoReciente) memo.header = true;\nmemo.grupos = Array.from(new Set([].concat(memo.grupos || [], fichasFinal.map(e => e.g))));\n_sd.hpf[_cid] = memo;\n\nconst final = [];\nfor (const p of out) {\n  const url = p.photo_url || ''; const doc = p.doc_url || ''; const vid = p.video_url || ''; const txt = S(p.message_part);\n  if (url && txt.length > 1000) {\n    let corte = txt.lastIndexOf(' ', 1000); if (corte < 500) corte = 1000;\n    final.push({ message_part: txt.slice(0, corte), photo_url: url, doc_url: '', video_url: '' });\n    final.push({ message_part: txt.slice(corte).trim(), photo_url: '', doc_url: doc, video_url: vid });\n  } else final.push({ message_part: txt, photo_url: url, doc_url: doc, video_url: vid });\n}\nreturn final.filter(p => p.message_part || p.photo_url || p.doc_url || p.video_url);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1968,
+        400
+      ],
+      "id": "0dcf4744-d723-4580-b345-4f9723067bb5",
+      "name": "Sanitize + Split Output"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/conversations/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"type\": \"WhatsApp\",\n  \"contactId\": \"{{ $('Auth + Normalize').first().json.contact_id }}\",\n  \"message\": {{ JSON.stringify($json.message_part) }},\n  \"attachments\": {{ JSON.stringify([$json.photo_url, $json.video_url, $json.doc_url].filter(Boolean)) }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1264,
+        560
+      ],
+      "id": "19ab5ceb-510f-4f5b-a715-ee0debc82b07",
+      "name": "Send Message via GHL",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Auth + Normalize').first().json.opportunity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1264,
+        96
+      ],
+      "id": "044c1ec7-a52a-4643-abac-e941402da5c2",
+      "name": "Get Current Opportunity",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const customFields = $json.opportunity?.customFields || [];\nconst EVENTO_FIELD_ID = 'ahVpF5ldsRcuOIn9Mxdk';\nconst eventoField = customFields.find(cf => cf.id === EVENTO_FIELD_ID);\nconst currentEvento = eventoField ? (Array.isArray(eventoField.fieldValue) ? eventoField.fieldValue[0] : eventoField.fieldValue) : '';\n\nconst incomingEvento = $('Auth + Normalize').first().json.custom_fields.evento_detectado || '';\nconst justSet = (!incomingEvento || incomingEvento === '') && currentEvento && currentEvento !== '';\n\nconst IMAGENES = {\n  'Boda': 'https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg',\n  'XV': 'https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/136d7ce1-0487-4767-a408-16742a068939.jpg'\n};\nconst imagenUrl = IMAGENES[currentEvento] || 'https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/10880c83-56c2-4ee3-b30d-71e910093962.jpg';\n\nconst productosBase = 'TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\\n\\n*Sandalias*\\n*Cilindros*\\n';\nconst mandilLine = currentEvento === 'Boda' ? '*Mandiles para Boda*\\n' : '';\nconst descripcion = `${productosBase}${mandilLine}*Kit anti cruda*\\n*Pantuflas*\\n\\nDime cuales te interesan, así te mostramos toda su información 😊`;\n\nconst promoText = 'Qué padre! \\ud83d\\ude0a  \\n\\ud83c\\udf89 *\\u00a1SEMANA LOCA DE PROMOS! SOLO 7 D\\u00cdAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* \\ud83c\\udf89\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*';\n\nreturn {\n  ...$('Auth + Normalize').first().json,\n  currentEvento,\n  justSet,\n  imagenUrl,\n  descripcion,\n  promoText\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1040,
+        96
+      ],
+      "id": "12feef3b-31ea-4757-aa72-bb1197c6a842",
+      "name": "Check Evento Just Set"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c9d5c3d0-cnd-4a1a-9a1a-600000000003",
+              "leftValue": "={{ $json.justSet }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -816,
+        96
+      ],
+      "id": "21b6142b-b9b1-4fa7-8081-1d93753d9e3c",
+      "name": "Evento Recien Identificado?"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/conversations/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"type\": \"WhatsApp\",\n  \"contactId\": \"{{ $('Auth + Normalize').first().json.contact_id }}\",\n  \"message\": {{ JSON.stringify($json.descripcion) }},\n  \"attachments\": [\"{{ $json.imagenUrl }}\"]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -592,
+        80
+      ],
+      "id": "14914144-fa8b-4774-9032-f6b20fde6fbe",
+      "name": "Send Imagen Principal",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -352,
+        80
+      ],
+      "id": "9121db94-b50d-4272-aeb2-db757f579d2b",
+      "name": "Wait 2s (Imagen)",
+      "webhookId": "c9d5c3d0-w005-4a1a-9a1a-600000000005"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/conversations/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"type\": \"WhatsApp\",\n  \"contactId\": \"{{ $('Auth + Normalize').first().json.contact_id }}\",\n  \"message\": {{ JSON.stringify($('Check Evento Just Set').first().json.promoText) }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -128,
+        80
+      ],
+      "id": "487dc350-f6b9-48b9-8fbc-fd832a2f03a3",
+      "name": "Send Promo Evento",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const PAUSED_STAGES = ['Esperando Pago', 'Pago Confirmado', 'Diseño en Proceso', 'En Producción', 'Enviado'];\nconst stage = $('Auth + Normalize').first().json.stage;\nconst isPausedStage = PAUSED_STAGES.includes(stage);\n\nreturn {\n  ...$json,\n  isPausedStage\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2592,
+        1136
+      ],
+      "id": "0140289f-9d36-4528-86b3-66d74de4fd0f",
+      "name": "Check Stage Pausado"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e2f7c3d0-cnd-4a1a-9a1a-800000000002",
+              "leftValue": "={{ $json.isPausedStage }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2416,
+        1136
+      ],
+      "id": "dc740639-eb2f-4477-b27d-fe90ba2aea9c",
+      "name": "Es Stage Pausado?"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/conversations/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"type\": \"SMS\",\n  \"contactId\": \"{{ $('Auth + Normalize').first().json.contact_id }}\",\n  \"message\": \"Recibimos tu imagen, en breve nuestro equipo la revisa 😊\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2192,
+        1136
+      ],
+      "id": "130ba898-bf91-4397-a4a6-893e6300a046",
+      "name": "Send Ack Stage Pausado",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Auth + Normalize').first().json.opportunity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"customFields\": [\n    { \"key\": \"imagen_input\", \"field_value\": [true, \"Tuvo imagen\"] }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2864,
+        1104
+      ],
+      "id": "8d3d1dd9-2b89-443f-8592-2e2f372629c5",
+      "name": "Set imagen_input",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "9a9a62d8-2a5c-472f-9716-548a46133a69",
+      "name": "Loop Message Parts",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1744,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1.5
+      },
+      "id": "154465f4-e31c-41d3-bd2d-052802ee6dde",
+      "name": "Wait 1.5s Between Parts",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        112,
+        576
+      ],
+      "webhookId": "b1b2c3d4-0003-4000-8000-000000000003"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "aecd5f72-f9d8-469e-a3fb-4c5554fab776",
+              "leftValue": "={{ !['/b','/borrar','/reset','/clear'].includes(($json.body.message_text || '').trim().toLowerCase()) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -5808,
+        848
+      ],
+      "id": "09c55565-e08e-4907-9c1f-26b3fb30d737",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "DELETE FROM messages WHERE session_id = $1;\nDELETE FROM debounce_buffer WHERE contact_id = $2;",
+        "options": {
+          "queryReplacement": "={{ [$json.body.contact_id, $json.body.contact_id] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -5632,
+        864
+      ],
+      "id": "b1d457b4-cb16-45bb-a960-7f7e086a050d",
+      "name": "borrar memoria",
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "=🧹 Memoria y buffer limpiados. Podés arrancar un caso nuevo.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -5408,
+        864
+      ],
+      "id": "1b525a51-448e-4783-9d4a-d61b0a7a3224",
+      "name": "Send a text message2",
+      "webhookId": "05681af8-76cc-408a-aee4-d2b82f4514a7",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b1a1c3d0-0002-4a1a-9a1a-000000000002",
+              "leftValue": "={{ $('Auth + Normalize').first().json.is_telegram_test }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1520,
+        96
+      ],
+      "id": "69ee6767-7061-4b68-b2f3-93ac83f6d523",
+      "name": "Es Origen Telegram? (Post)"
+    },
+    {
+      "parameters": {
+        "content": "## Chequear de pasar a GHL",
+        "height": 240,
+        "width": 1088
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -4912,
+        640
+      ],
+      "typeVersion": 1,
+      "id": "0459ada3-4554-4dad-bfca-122ed6cde7e7",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 176,
+        "width": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3584,
+        800
+      ],
+      "typeVersion": 1,
+      "id": "fca8d904-4577-47ba-a398-0c6e04a549d0",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "amount": 0
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -4416,
+        704
+      ],
+      "id": "c9307586-908e-482c-988a-812e30b8d08a",
+      "name": "Wait 50s (Debounce)",
+      "webhookId": "e3a1c3d0-w003-4a1a-9a1a-200000000003"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d1d1c3d0-test-4a1a-9a1a-000000000004",
+              "leftValue": "={{ $('Auth + Normalize').first().json.channel }}",
+              "rightValue": "test",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2128,
+        400
+      ],
+      "id": "e5bfcacf-5a42-4b07-aac9-01a52d5c42ab",
+      "name": "¿Es test?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e1e1-media-tg-0001",
+              "leftValue": "={{ $('Auth + Normalize').first().json.telegram_file_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3984,
+        560
+      ],
+      "id": "8b2dd445-305b-47b4-a73b-f6f1455c6a6b",
+      "name": "¿Media de Telegram?"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $('Auth + Normalize').first().json.telegram_file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -3824,
+        480
+      ],
+      "id": "2eb83bdc-69b6-49e4-b4f1-60363fa8329a",
+      "name": "Telegram Get File",
+      "webhookId": "c6c9caaf-c6d3-4d90-84a1-f3071ae43fe7",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Convierte el binario de Telegram en data URL (OpenAI Vision acepta base64).\n// En producción (GHL) no hay binario y se conserva el media_url original.\nconst base = $('Combine Messages').first().json;\nconst item = $input.first();\nlet media_url = base.media_url || '';\ntry {\n  if (item.binary && item.binary.data) {\n    const buf = await this.helpers.getBinaryDataBuffer(0, 'data');\n    const mime = item.binary.data.mimeType || (base.message_type === 'audio' ? 'audio/ogg' : 'image/jpeg');\n    media_url = `data:${mime};base64,${buf.toString('base64')}`;\n  }\n} catch (e) {}\nreturn [{ json: { ...base, media_url }, binary: item.binary }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3664,
+        480
+      ],
+      "id": "563109a1-bc30-46e1-bb3a-b8a09822aec8",
+      "name": "Resolve Media URL"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e1e1-audio-tg-0004",
+              "leftValue": "={{ $('Auth + Normalize').first().json.telegram_file_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3280,
+        320
+      ],
+      "id": "67a68830-9d01-471a-9067-d3f05b63546b",
+      "name": "¿Audio de Telegram?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f0f0-foto-0001",
+              "leftValue": "={{ $json.photo_url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1232,
+        384
+      ],
+      "id": "ff125f23-81ef-4ec3-89ed-aaadc85e261a",
+      "name": "¿Parte con foto?"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $('Auth + Normalize').first().json.contact_id }}",
+        "file": "={{ $json.photo_url }}",
+        "additionalFields": {
+          "caption": "={{ $json.message_part }}"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -864,
+        320
+      ],
+      "id": "fa0851dd-8043-4c5d-832f-df6c7d81d6f3",
+      "name": "Send Photo (Telegram)",
+      "webhookId": "6ab492f4-4025-4de7-b75e-3e5da6319daa",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Transferir a humano. Usar si el lead pide humano, regatea agresivamente, o caso complejo.",
+        "method": "POST",
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $('Auth + Normalize').first().json.contact_id }}/tags",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Version",
+              "valueProvider": "fieldValue",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"tags\": [\"atencion_humana\"]\n}"
+      },
+      "id": "321615ae-4b06-4bbd-bd8d-ff1bdd062fff",
+      "name": "ATENCION_PERSONALIZADA",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        -2368,
+        624
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Emitir cotizacion final. Usar SOLO cuando el lead confirma cantidades exactas.",
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Auth + Normalize').first().json.opportunity_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Version",
+              "valueProvider": "fieldValue",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"pipelineStageId\": \"96fa0ade-c853-4db3-97f4-56d58d69af8c\",\n  \"customFields\": [\n    { \"key\": \"cotizacion_emitida\", \"field_value\": [true, \"Emitida\"] },\n    { \"key\": \"had_quote\", \"field_value\": [true, \"Tuvo cot.\"] },\n    { \"key\": \"monto_cotizado_mxn\", \"field_value\": {monto_total_mxn} },\n    { \"key\": \"cotizacion_anticipo_mxn\", \"field_value\": {monto_anticipo_mxn} },\n    { \"key\": \"cantidad_sandalias\", \"field_value\": {cantidad_sandalias} },\n    { \"key\": \"tipo_suela\", \"field_value\": \"{tipo_suela}\" },\n    { \"key\": \"cantidad_cilindros\", \"field_value\": {cantidad_cilindros} },\n    { \"key\": \"cantidad_mandiles\", \"field_value\": {cantidad_mandiles} },\n    { \"key\": \"cantidad_otros\", \"field_value\": {cantidad_otros} },\n    { \"key\": \"cp_entrega\", \"field_value\": \"{cp_entrega}\" }\n  ]\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "monto_anticipo_mxn",
+              "description": "Anticipo = monto_total_mxn dividido entre 2 (50% exacto del Total CON envío). Ejemplo: si monto_total_mxn es 3400, este valor es 1700. Pasá el número PURO, sin separador de miles ni símbolo $ (1700, nunca 1,700). NUNCA pongas 0 si monto_total_mxn es mayor a 0.",
+              "type": "number"
+            },
+            {
+              "name": "cantidad_cilindros",
+              "description": "Cantidad de cilindros cotizados (0 si no aplica)",
+              "type": "number"
+            },
+            {
+              "name": "cantidad_mandiles",
+              "description": "Cantidad de mandiles cotizados (0 si no aplica, solo Boda)",
+              "type": "number"
+            },
+            {
+              "name": "cantidad_otros",
+              "description": "Cantidad de otros productos cotizados (0 si no aplica)",
+              "type": "number"
+            },
+            {
+              "name": "cp_entrega",
+              "description": "Codigo postal de entrega que dio el lead",
+              "type": "string"
+            },
+            {
+              "name": "monto_total_mxn",
+              "description": "Monto TOTAL en MXN = suma de cada producto (cantidad x precio unitario) MAS el costo de envío que devolvió CALCULAR_ENVIO. Precios: sandalia delgada $25, sandalia gruesa $30, cilindro $10, mandil $12, kit anticrudas $10, pantufla satín/moño satín $30, pantufla moño peluche $35, vaso popote $35, bolsa personalizada $7. Ejemplo: (100x25)+(50x10)=3000 de productos; si CALCULAR_ENVIO devolvió $400, monto_total_mxn=3400. Pasá el número PURO, sin separador de miles ni símbolo $ (3400, nunca 3,400 ni $3,400). NUNCA pongas 0 si hay cantidades > 0.",
+              "type": "number"
+            },
+            {
+              "name": "cantidad_sandalias",
+              "description": "Cantidad de sandalias cotizadas (0 si no aplica)",
+              "type": "number"
+            },
+            {
+              "name": "tipo_suela",
+              "description": "Debe ser EXACTAMENTE con mayuscula inicial: Delgada, Gruesa o Yute. Nunca en minusculas (incorrecto: gruesa; correcto: Gruesa). Vacio si no aplica.",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "fb1142c2-9f56-4cad-9c62-7fbca3bd1057",
+      "name": "COTIZADOR",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        -2240,
+        624
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Marcar productos mostrados al lead. Usar cuando presentes opciones de productos.",
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Auth + Normalize').first().json.opportunity_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Version",
+              "valueProvider": "fieldValue",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"customFields\": [\n    { \"key\": \"productos_mostrados\", \"field_value\": \"{productos}\" },\n    { \"key\": \"had_image\", \"field_value\": [true, \"Tuvo imagen\"] }\n  ]\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "productos",
+              "description": "Lista de productos mostrados separada por comas (ej: sandalias, cilindros)",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "a5f3b510-44d8-4902-b9b6-697c1c3bf386",
+      "name": "MOSTRAR_PRODUCTOS",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        -2112,
+        624
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Registrar el tipo de evento detectado del lead. Usar cuando el lead menciona su evento (XV, Boda, Bautizo, Cumpleanios, Empresarial).",
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Auth + Normalize').first().json.opportunity_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Version",
+              "valueProvider": "fieldValue",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"customFields\": [\n    { \"key\": \"evento_detectado\", \"field_value\": \"{evento}\" },\n    { \"key\": \"had_information\", \"field_value\": [true, \"Tuvo info.\"] }\n  ]\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "evento",
+              "description": "Tipo de evento: XV, Boda, Bautizo, Cumpleanios, Empresarial, Otro",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "87e27c2a-3570-4c69-8a0b-eaf98ab66d61",
+      "name": "IDENTIFICAR_EVENTO",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        -1984,
+        624
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Calcula el costo de envío de un pedido HPF. Pasale un JSON de productos y cantidades con los nombres exactos del catálogo, ej: [{\"producto\":\"Sandalias Delgadas\",\"cantidad\":100},{\"producto\":\"Cilindros\",\"cantidad\":50}]. Devuelve el costo de envío ya calculado (o un aviso si un producto no alcanza su mínimo de compra). Usalo SIEMPRE antes de cotizar, una vez que tengas cantidades y variantes.",
+        "jsCode": "// CALCULAR_ENVIO — calcula el costo de envío de un pedido HPF.\n// Input: variable `query` (string) que pasa el agente = JSON [{producto, cantidad}].\n// Output: string para el agente (costo de envío, o aviso de mínimo no alcanzado).\n// Lógica portada de happyflops-calculadora-v2.json (pesos + límites de caja + brackets).\n\nconst WEIGHT_BY_PRODUCT = {\n  \"Mandiles\": 0, \"Kits Anticrudas\": 0, \"Costales\": 0, \"Bolsa\": 0,\n  \"Cilindros\": 0.14, \"Vaso Popote 24 oz\": 0.14, \"Vasos Popote\": 0.14,\n  \"Sandalias Delgadas\": 0.15, \"Sandalias Gruesas\": 0.15, \"Pantuflas\": 0.15,\n  \"Pantuflas Mono\": 0.15, \"Pantufla Moño Satin\": 0.15, \"Pantufla Moño Peluche\": 0.15\n};\nconst CATEGORY_BY_PRODUCT = {\n  \"Cilindros\": \"CILINDROS\", \"Vaso Popote 24 oz\": \"CILINDROS\", \"Vasos Popote\": \"CILINDROS\",\n  \"Sandalias Delgadas\": \"SANDALIAS\", \"Sandalias Gruesas\": \"SANDALIAS\", \"Pantuflas\": \"SANDALIAS\",\n  \"Pantuflas Mono\": \"SANDALIAS\", \"Pantufla Moño Satin\": \"SANDALIAS\", \"Pantufla Moño Peluche\": \"SANDALIAS\",\n  \"Mandiles\": \"OTROS_0KG\", \"Kits Anticrudas\": \"OTROS_0KG\", \"Costales\": \"OTROS_0KG\", \"Bolsa\": \"OTROS_0KG\"\n};\nconst MIN_BY_PRODUCT = {\n  \"Sandalias Delgadas\": 50, \"Sandalias Gruesas\": 50, \"Pantuflas\": 50, \"Pantuflas Mono\": 50,\n  \"Pantufla Moño Satin\": 50, \"Pantufla Moño Peluche\": 50, \"Cilindros\": 40,\n  \"Vaso Popote 24 oz\": 50, \"Vasos Popote\": 50, \"Kits Anticrudas\": 35, \"Costales\": 35, \"Mandiles\": 12\n};\nconst PRODUCT_ALIASES = {\n  \"mandil\": \"Mandiles\", \"mandiles\": \"Mandiles\",\n  \"kit anticruda\": \"Kits Anticrudas\", \"kits anticruda\": \"Kits Anticrudas\",\n  \"kit anticrudas\": \"Kits Anticrudas\", \"kits anticrudas\": \"Kits Anticrudas\",\n  \"costal\": \"Costales\", \"costales\": \"Costales\",\n  \"cilindro\": \"Cilindros\", \"cilindros\": \"Cilindros\",\n  \"sandalia delgada\": \"Sandalias Delgadas\", \"sandalias delgadas\": \"Sandalias Delgadas\",\n  \"sandalia gruesa\": \"Sandalias Gruesas\", \"sandalias gruesas\": \"Sandalias Gruesas\",\n  \"sandalia\": \"Sandalias Delgadas\", \"sandalias\": \"Sandalias Delgadas\",\n  \"pantufla\": \"Pantuflas\", \"pantuflas\": \"Pantuflas\",\n  \"pantufla mono\": \"Pantuflas Mono\", \"pantuflas mono\": \"Pantuflas Mono\",\n  \"pantufla mono satin\": \"Pantufla Moño Satin\", \"pantuflas mono satin\": \"Pantufla Moño Satin\",\n  \"pantufla moño satin\": \"Pantufla Moño Satin\", \"pantuflas moño satin\": \"Pantufla Moño Satin\",\n  \"pantufla moño satín\": \"Pantufla Moño Satin\", \"pantuflas moño satín\": \"Pantufla Moño Satin\",\n  \"pantufla mono peluche\": \"Pantufla Moño Peluche\", \"pantuflas mono peluche\": \"Pantufla Moño Peluche\",\n  \"pantufla moño peluche\": \"Pantufla Moño Peluche\", \"pantuflas moño peluche\": \"Pantufla Moño Peluche\",\n  \"vaso popote\": \"Vaso Popote 24 oz\", \"vasos popote\": \"Vaso Popote 24 oz\",\n  \"vaso popote 24 oz\": \"Vaso Popote 24 oz\", \"vasos popote 24 oz\": \"Vaso Popote 24 oz\"\n};\nconst LIMITS = {\n  MAX_PER_BOX_WEIGHT_KG: 35, MAX_CILINDROS_PER_BOX: 250,\n  MAX_SANDALIAS_PER_BOX: 200, MAX_COMBINED_SANDALIAS_CILINDROS_PER_BOX: 200\n};\n\nfunction costoPorPeso(pesoKg) {\n  const p = Number(pesoKg.toFixed(2));\n  if (p >= 0 && p <= 4.99) return 250;\n  if (p >= 5 && p <= 7) return 280;\n  if (p > 7 && p <= 12) return 300;\n  if (p > 12 && p <= 19.99) return 350;\n  if (p >= 19.99 && p <= 35) return 400;\n  return 400;\n}\nfunction normalizeText(str) {\n  return String(str || \"\").normalize(\"NFD\").replace(/[̀-ͯ]/g, \"\")\n    .toLowerCase().replace(/\\s+/g, \" \").trim();\n}\nfunction canon(raw) {\n  const clean = normalizeText(raw);\n  if (PRODUCT_ALIASES[clean]) return PRODUCT_ALIASES[clean];\n  // Fallback por keyword: tolera las grafías del catálogo del prompt\n  // (\"Cilindros 500ml\", \"Vasos popote 24oz\", \"Sandalias delgadas (suela 9mm)\", etc.).\n  // Para envío solo importan peso + categoría; igual conservamos la variante si el texto la indica.\n  if (clean.includes(\"cilindro\")) return \"Cilindros\";\n  if (clean.includes(\"vaso\")) return \"Vaso Popote 24 oz\";\n  if (clean.includes(\"mandil\")) return \"Mandiles\";\n  if (clean.includes(\"costal\")) return \"Costales\";\n  if (clean.includes(\"kit\") && clean.includes(\"anticrud\")) return \"Kits Anticrudas\";\n  if (clean.includes(\"bolsa\")) return \"Bolsa\";\n  if (clean.includes(\"pantufla\")) {\n    if (clean.includes(\"peluche\")) return \"Pantufla Moño Peluche\";\n    if (clean.includes(\"moño\") || clean.includes(\"mono\")) return \"Pantufla Moño Satin\";\n    return \"Pantuflas\";\n  }\n  if (clean.includes(\"sandalia\")) {\n    if (clean.includes(\"gruesa\") || clean.includes(\"15mm\")) return \"Sandalias Gruesas\";\n    return \"Sandalias Delgadas\";\n  }\n  return String(raw || \"\").trim();\n}\nfunction cloneEmptyBoxState() { return { peso: 0, cil: 0, sand: 0, combSC: 0, contenido: {} }; }\nfunction addToBox(box, product, qty, w) {\n  box.contenido[product] = (box.contenido[product] || 0) + qty;\n  box.peso += qty * w;\n  const cat = CATEGORY_BY_PRODUCT[product] || \"OTROS\";\n  if (cat === \"CILINDROS\") { box.cil += qty; box.combSC += qty; }\n  else if (cat === \"SANDALIAS\") { box.sand += qty; box.combSC += qty; }\n}\nfunction capacityForProductInBox(box, product, w) {\n  const cat = CATEGORY_BY_PRODUCT[product] || \"OTROS\";\n  let cap = Infinity;\n  if (w > 0) cap = Math.min(cap, Math.max(0, Math.floor((LIMITS.MAX_PER_BOX_WEIGHT_KG - box.peso) / w)));\n  if (cat === \"CILINDROS\") {\n    cap = Math.min(cap, LIMITS.MAX_CILINDROS_PER_BOX - box.cil);\n    cap = Math.min(cap, LIMITS.MAX_COMBINED_SANDALIAS_CILINDROS_PER_BOX - box.combSC);\n  } else if (cat === \"SANDALIAS\") {\n    cap = Math.min(cap, LIMITS.MAX_SANDALIAS_PER_BOX - box.sand);\n    cap = Math.min(cap, LIMITS.MAX_COMBINED_SANDALIAS_CILINDROS_PER_BOX - box.combSC);\n  } else if (cat === \"OTROS_0KG\") { cap = Infinity; }\n  return Math.max(0, cap);\n}\nfunction packBoxes(lines) {\n  const boxes = [];\n  let cur = cloneEmptyBoxState();\n  const remaining = {};\n  lines.forEach(ln => { remaining[ln.product] = (remaining[ln.product] || 0) + ln.quantity; });\n  const hasRemaining = () => Object.keys(remaining).some(k => remaining[k] > 0);\n  while (hasRemaining()) {\n    let packed = false;\n    for (const ln of lines) {\n      const need = remaining[ln.product];\n      if (!need) continue;\n      const cap = capacityForProductInBox(cur, ln.product, ln.weight);\n      if (cap <= 0) continue;\n      const put = Math.min(need, cap);\n      if (put > 0) { addToBox(cur, ln.product, put, ln.weight); remaining[ln.product] -= put; packed = true; }\n    }\n    if (!packed || !hasRemaining()) {\n      if (Object.keys(cur.contenido).length > 0) boxes.push(cur);\n      if (hasRemaining()) cur = cloneEmptyBoxState();\n    }\n  }\n  return boxes;\n}\nfunction orderFromItems(arr) {\n  const acc = {};\n  const unknown = [];\n  for (const row of arr) {\n    const rawProd = String((row && (row.producto ?? row.product)) || \"\").trim();\n    const qty = Number((row && (row.cantidad ?? row.qty)) || 0);\n    if (!rawProd || !qty) continue;\n    const prod = canon(rawProd);\n    const w = WEIGHT_BY_PRODUCT[prod];\n    if (typeof w !== \"number\") { unknown.push(rawProd); continue; }\n    if (!acc[prod]) acc[prod] = { product: prod, quantity: 0, weight: w };\n    acc[prod].quantity += qty;\n  }\n  return { lines: Object.values(acc), unknown };\n}\n\n// ---- parse input ----\nlet raw = (typeof query !== \"undefined\" && query != null) ? query : \"\";\nif (typeof raw === \"object\") { try { raw = JSON.stringify(raw); } catch (e) { raw = \"\"; } }\nlet parsed = null;\ntry {\n  const p = JSON.parse(raw);\n  if (Array.isArray(p)) parsed = p;\n  else if (p && Array.isArray(p.items)) parsed = p.items;\n  else if (p && !Array.isArray(p) && (p.producto || p.product)) parsed = [p]; // objeto único\n} catch (e) {}\nif (!parsed) {\n  parsed = [];\n  String(raw).split(/[,;\\n]/).forEach(seg => {\n    seg = seg.trim(); if (!seg) return;\n    let m = seg.match(/^(.+?):\\s*(\\d+)\\s*$/);\n    if (m) { parsed.push({ producto: m[1].trim(), cantidad: Number(m[2]) }); return; }\n    m = seg.match(/^(\\d+)\\s+(.+)$/);\n    if (m) { parsed.push({ producto: m[2].trim(), cantidad: Number(m[1]) }); return; }\n  });\n}\nif (!parsed || !parsed.length) {\n  return 'No pude leer los productos. Pasá un JSON como [{\"producto\":\"Sandalias Delgadas\",\"cantidad\":100},{\"producto\":\"Cilindros\",\"cantidad\":50}].';\n}\n\nconst { lines, unknown } = orderFromItems(parsed);\nif (!lines.length) {\n  return 'No reconocí ningún producto válido' + (unknown.length ? ' (desconocidos: ' + unknown.join(\", \") + ')' : '') + '. Usá los nombres exactos del catálogo.';\n}\n\n// minimums (defense in depth — el agente ya debería validar antes)\nconst viol = lines.filter(l => typeof MIN_BY_PRODUCT[l.product] === \"number\" && l.quantity < MIN_BY_PRODUCT[l.product])\n  .map(l => l.product + \": pediste \" + l.quantity + \" (mínimo \" + MIN_BY_PRODUCT[l.product] + \")\");\nif (viol.length) {\n  return \"MÍNIMO NO ALCANZADO: \" + viol.join(\"; \") + \". Decile al cliente el mínimo real de cada producto y NO cotices hasta que ajuste la cantidad. No calcules envío ni fuerces un cálculo alternativo.\";\n}\n\nconst boxes = packBoxes(lines);\nlet total = 0;\nboxes.forEach(b => { total += costoPorPeso(Number(b.peso.toFixed(2))); });\n\n// NO mencionar nº de cajas ni peso (Regla 2 del prompt: nunca menciones cajas/kg).\nreturn \"Costo de envío: $\" + total + \". IMPORTANTE: usá $\" + total +\n  \" tal cual en la línea 'Envío:', sumalo a la suma de productos para el Total, y el Anticipo es 50% de ese Total con envío.\";\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.3,
+      "position": [
+        -1840,
+        624
+      ],
+      "id": "91b8eefb-4023-4fea-b4c4-1986084e0309",
+      "name": "CALCULAR_ENVIO"
+    },
+    {
+      "parameters": {
+        "url": "https://services.leadconnectorhq.com/opportunities/search",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "location_id",
+              "value": "onRwi0ZF4uYi0Lp6GAbE"
+            },
+            {
+              "name": "contact_id",
+              "value": "={{ $json.contact_id }}"
+            },
+            {
+              "name": "pipeline_id",
+              "value": "RMnhLPqtXoWUBGZ0gvbh"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "acaae3f7-5aeb-423c-95ab-47903ffa586f",
+      "name": "Buscar Opportunity Real",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -5376,
+        704
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const prev = $('Auth + Normalize').first().json;\n\n// Si es un test de Telegram, no tocar el opportunity_id/stage sinteticos\nif (prev.is_telegram_test) {\n  return prev;\n}\n\nconst STAGE_NAMES = {\n  'cf8fc770-81b1-422c-8394-d00bfb97a3f0': 'Lead Nuevo',\n  'f9709293-d03c-47f1-949f-0c03ab077a45': 'Saludo Enviado',\n  'fec50c94-fba0-444b-8c75-7a97da9e0daa': 'Evento Identificado',\n  '49c7401f-8af1-4d8f-a1b4-e989b6d0a5e2': 'Productos Mostrados',\n  '96fa0ade-c853-4db3-97f4-56d58d69af8c': 'Cotizado',\n  '843a06f1-1214-4baa-a3a0-f197cb240b5d': 'Esperando Pago',\n  '96d760e5-f290-456c-a117-57e61ce6c27d': 'Pago Confirmado',\n  'd35bb30d-97d5-48c4-81f8-5ecabf32e57d': 'Diseño en Proceso',\n  '008689c6-80d8-4712-981b-1d800e1e6137': 'En Producción',\n  '218b9b41-4007-4b1c-bbe4-4e775ddf00b5': 'Enviado',\n  '48de80e9-31a9-472a-b030-5b9fe9174810': 'En Espera',\n  '909a816d-997e-4d90-8dc1-dc4b0dcd16d7': 'Ganado',\n  '6abfe419-adf2-4df5-87c5-ef4f62e01464': 'Ventas Perdidas',\n};\nconst CLOSED = ['Ganado', 'Ventas Perdidas'];\n\nconst opportunities = $json.opportunities || [];\nconst withStage = opportunities.map(o => ({ ...o, stageName: STAGE_NAMES[o.pipelineStageId] || 'Lead Nuevo' }));\nwithStage.sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0));\n\nlet chosen = withStage.find(o => !CLOSED.includes(o.stageName));\nif (!chosen) chosen = withStage[0];\n\nreturn {\n  ...prev,\n  opportunity_id: chosen ? chosen.id : '',\n  stage: chosen ? chosen.stageName : 'Lead Nuevo',\n  opportunity_found: !!chosen,\n  opportunity_raw: chosen || null,\n};"
+      },
+      "id": "160ed295-c1f5-4250-8c8d-4b836641cb2a",
+      "name": "Elegir Opportunity Activa",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5168,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const prev = $json;\nconst opp = prev.opportunity_raw;\nconst customFields = (opp && opp.customFields) || [];\n\nconst cfMap = {};\ncustomFields.forEach(cf => {\n  cfMap[cf.id] = cf.fieldValue ?? cf.fieldValueString ?? cf.fieldValueNumber ?? cf.fieldValueArray ?? cf.fieldValueDate;\n});\n\nconst FIELD_IDS = {\n  evento_detectado: 'ahVpF5ldsRcuOIn9Mxdk',\n  productos_mostrados: 'IukLzqy6bZCCtuJTPzBu',\n  cantidad_sandalias: 'L68MYmGDZhLMbVU3VxMb',\n  cantidad_cilindros: '1Xo6QgstbpNRu0TiKM7d',\n  cantidad_mandiles: 'KZp0egPZZpdPk16bUMLW',\n  cantidad_otros: 'XxGTN1MLWhBFBEGHLDo6',\n  cp_entrega: 'dwqVZEekKwE3sNSnWvvi',\n  tipo_suela: 'i8zWb498oK7SSOulvM9g',\n  cotizacion_emitida: 'WvS1z4CvV6UTVU7ZpL6p',\n  monto_cotizado_mxn: 'xznzWZlvPHQI3HdsQfzM',\n  cotizacion_anticipo_mxn: 'BKXYT8Bv4lxJy2durCC0',\n  had_information: 'NaqWKjsZrYLN0mGsV6U2',\n  had_image: 'k4jHbS2HHH3d74Z7121a',\n  had_quote: 'zMaaLTYTREw2InLnbimW',\n  imagen_input: '4zvcyl95qQpnJOpKx6wy',\n  payment_proof_detectado: '7U96fnkNbLy1Bj2BQ4Gr',\n  last_inbound_at: '5KDgrZMK7pha8oO0VmJt',\n  last_outbound_at: 'YUoSJZklOjsnh6l3KgmV',\n};\n\nfunction boolVal(v) { return Array.isArray(v) ? !!v[0] : !!v; }\nfunction strVal(v) { return Array.isArray(v) ? (v[0] || '') : (v || ''); }\n\nconst custom_fields = {\n  evento_detectado: strVal(cfMap[FIELD_IDS.evento_detectado]),\n  productos_mostrados: cfMap[FIELD_IDS.productos_mostrados] || '',\n  cantidad_sandalias: cfMap[FIELD_IDS.cantidad_sandalias] || 0,\n  cantidad_cilindros: cfMap[FIELD_IDS.cantidad_cilindros] || 0,\n  cantidad_mandiles: cfMap[FIELD_IDS.cantidad_mandiles] || 0,\n  cantidad_otros: cfMap[FIELD_IDS.cantidad_otros] || 0,\n  cp_entrega: cfMap[FIELD_IDS.cp_entrega] || '',\n  tipo_suela: cfMap[FIELD_IDS.tipo_suela] || '',\n  cotizacion_emitida: boolVal(cfMap[FIELD_IDS.cotizacion_emitida]),\n  monto_cotizado_mxn: cfMap[FIELD_IDS.monto_cotizado_mxn] || 0,\n  cotizacion_anticipo_mxn: cfMap[FIELD_IDS.cotizacion_anticipo_mxn] || 0,\n  had_information: boolVal(cfMap[FIELD_IDS.had_information]),\n  had_image: boolVal(cfMap[FIELD_IDS.had_image]),\n  had_quote: boolVal(cfMap[FIELD_IDS.had_quote]),\n  imagen_input: boolVal(cfMap[FIELD_IDS.imagen_input]),\n  payment_proof_detectado: boolVal(cfMap[FIELD_IDS.payment_proof_detectado]),\n  last_inbound_at: cfMap[FIELD_IDS.last_inbound_at] || '',\n  last_outbound_at: cfMap[FIELD_IDS.last_outbound_at] || '',\n};\n\nreturn {\n  ...prev,\n  custom_fields,\n  customer_status: prev.customer_status || 'prospect',\n};"
+      },
+      "id": "6a9dfc33-a4f7-4c22-b3c0-2c645f8cba6c",
+      "name": "Mapear Custom Fields",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4976,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "h1a2b3c4-0001-4000-8000-000000000090",
+              "leftValue": "={{ $json.doc_url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "30044a1d-fc10-447a-af2e-8ce6312deacb",
+      "name": "¿Parte con documento?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1024,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "sendDocument",
+        "chatId": "={{ $('Auth + Normalize').first().json.contact_id }}",
+        "file": "={{ $json.doc_url }}",
+        "additionalFields": {
+          "caption": "={{ $json.message_part }}"
+        }
+      },
+      "id": "491febfb-899d-415f-8ae6-07df4bdc97ef",
+      "name": "Send Document (Telegram)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -784,
+        656
+      ],
+      "webhookId": "b98cf520-bad9-4e55-acc1-c100ee9bca59",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "h1a2b3c4-0004-4000-8000-000000000094",
+              "leftValue": "={{ $json.video_url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e6c1984a-5850-4866-8b42-640f252dba59",
+      "name": "¿Parte con video?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -832,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "sendVideo",
+        "chatId": "={{ $('Auth + Normalize').first().json.contact_id }}",
+        "file": "={{ $json.video_url }}",
+        "additionalFields": {
+          "caption": "={{ $json.message_part }}"
+        }
+      },
+      "id": "96a8390e-d936-4d50-8b88-f208c5161be6",
+      "name": "Send Video (Telegram)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -672,
+        400
+      ],
+      "webhookId": "b26a8e7f-5004-447d-af8f-e3d02d076478",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Es Origen Telegram?": {
+      "main": [
+        [
+          {
+            "node": "¿Parte con foto?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Message via GHL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es Origen Telegram? (Pago)": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Inbound": {
+      "main": [
+        [
+          {
+            "node": "Auth + Normalize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auth + Normalize": {
+      "main": [
+        [
+          {
+            "node": "Buscar Opportunity Real",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch by Message Type": {
+      "main": [
+        [
+          {
+            "node": "¿Audio de Telegram?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Vision Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Text Passthrough",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Text Passthrough",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vision Classifier": {
+      "main": [
+        [
+          {
+            "node": "Parse Vision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Passthrough": {
+      "main": [
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Vision": {
+      "main": [
+        [
+          {
+            "node": "Es Pago Detectado?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Set imagen_input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es Pago Detectado?": {
+      "main": [
+        [
+          {
+            "node": "Update payment_proof_detectado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Stage Pausado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update payment_proof_detectado": {
+      "main": [
+        [
+          {
+            "node": "Decidir Stage Pago",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Audio": {
+      "main": [
+        [
+          {
+            "node": "Whisper Transcribe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Whisper Transcribe": {
+      "main": [
+        [
+          {
+            "node": "Audio a Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audio a Text": {
+      "main": [
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decidir Stage Pago": {
+      "main": [
+        [
+          {
+            "node": "Move Stage Pago",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move Stage Pago": {
+      "main": [
+        [
+          {
+            "node": "Es Origen Telegram? (Pago)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vendedor (LLM Agent)": {
+      "main": [
+        [
+          {
+            "node": "¿Es test?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message1": {
+      "main": [
+        [
+          {
+            "node": "Wait 1.5s Between Parts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update last_outbound_at": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Message ID": {
+      "main": [
+        [
+          {
+            "node": "Debounce - Insert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Debounce - Insert": {
+      "main": [
+        [
+          {
+            "node": "Wait 50s (Debounce)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Debounce - Check Latest": {
+      "main": [
+        [
+          {
+            "node": "Es El Ultimo Mensaje?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es El Ultimo Mensaje?": {
+      "main": [
+        [
+          {
+            "node": "Combine Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Messages": {
+      "main": [
+        [
+          {
+            "node": "Debounce - Reset Buffer",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "¿Media de Telegram?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sanitize + Split Output": {
+      "main": [
+        [
+          {
+            "node": "Loop Message Parts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message via GHL": {
+      "main": [
+        [
+          {
+            "node": "Wait 1.5s Between Parts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Current Opportunity": {
+      "main": [
+        [
+          {
+            "node": "Check Evento Just Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Evento Just Set": {
+      "main": [
+        [
+          {
+            "node": "Evento Recien Identificado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evento Recien Identificado?": {
+      "main": [
+        [
+          {
+            "node": "Send Imagen Principal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Imagen Principal": {
+      "main": [
+        [
+          {
+            "node": "Wait 2s (Imagen)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 2s (Imagen)": {
+      "main": [
+        [
+          {
+            "node": "Send Promo Evento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Stage Pausado": {
+      "main": [
+        [
+          {
+            "node": "Es Stage Pausado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es Stage Pausado?": {
+      "main": [
+        [
+          {
+            "node": "Send Ack Stage Pausado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Message Parts": {
+      "main": [
+        [
+          {
+            "node": "Es Origen Telegram? (Post)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Es Origen Telegram?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 1.5s Between Parts": {
+      "main": [
+        [
+          {
+            "node": "Loop Message Parts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Auth + Normalize",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "borrar memoria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "borrar memoria": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es Origen Telegram? (Post)": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Update last_outbound_at",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Current Opportunity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es test?": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sanitize + Split Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Media de Telegram?": {
+      "main": [
+        [
+          {
+            "node": "Telegram Get File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch by Message Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Get File": {
+      "main": [
+        [
+          {
+            "node": "Resolve Media URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolve Media URL": {
+      "main": [
+        [
+          {
+            "node": "Switch by Message Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Audio de Telegram?": {
+      "main": [
+        [
+          {
+            "node": "Whisper Transcribe",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Parte con foto?": {
+      "main": [
+        [
+          {
+            "node": "Send Photo (Telegram)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "¿Parte con documento?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Photo (Telegram)": {
+      "main": [
+        [
+          {
+            "node": "Wait 1.5s Between Parts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ATENCION_PERSONALIZADA": {
+      "ai_tool": [
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "COTIZADOR": {
+      "ai_tool": [
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MOSTRAR_PRODUCTOS": {
+      "ai_tool": [
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IDENTIFICAR_EVENTO": {
+      "ai_tool": [
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CALCULAR_ENVIO": {
+      "ai_tool": [
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Opportunity Real": {
+      "main": [
+        [
+          {
+            "node": "Elegir Opportunity Activa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Elegir Opportunity Activa": {
+      "main": [
+        [
+          {
+            "node": "Mapear Custom Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mapear Custom Fields": {
+      "main": [
+        [
+          {
+            "node": "Generate Message ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Parte con documento?": {
+      "main": [
+        [
+          {
+            "node": "Send Document (Telegram)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "¿Parte con video?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Document (Telegram)": {
+      "main": [
+        [
+          {
+            "node": "Wait 1.5s Between Parts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Parte con video?": {
+      "main": [
+        [
+          {
+            "node": "Send Video (Telegram)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Video (Telegram)": {
+      "main": [
+        [
+          {
+            "node": "Wait 1.5s Between Parts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 50s (Debounce)": {
+      "main": [
+        [
+          {
+            "node": "Debounce - Check Latest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "errorWorkflow": "ug3m3dSDijXgWZIR",
+    "timezone": "America/Mexico_City"
+  },
+  "staticData": {
+    "global": {
+      "hpf": {
+        "900000001": {
+          "evento": "",
+          "grupos": [],
+          "header": false
+        },
+        "900000002": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "900000005": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "900000006": {
+          "evento": "",
+          "grupos": [],
+          "header": false
+        },
+        "900000007": {
+          "evento": "XV",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": true
+        },
+        "900000008": {
+          "evento": "BODA",
+          "grupos": [
+            "cilindro"
+          ],
+          "header": true
+        },
+        "900000009": {
+          "evento": "BODA",
+          "grupos": [
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": true
+        },
+        "900000010": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia",
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": true
+        },
+        "900000011": {
+          "evento": "OTROS",
+          "grupos": [
+            "vaso"
+          ],
+          "header": true
+        },
+        "900000012": {
+          "evento": "XV",
+          "grupos": [],
+          "header": true
+        },
+        "900000014": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia",
+            "cilindro",
+            "mandil"
+          ],
+          "header": true
+        },
+        "900000015": {
+          "evento": "BODA",
+          "grupos": [
+            "pantufla"
+          ],
+          "header": true
+        },
+        "900000016": {
+          "evento": "XV",
+          "grupos": [],
+          "header": true
+        },
+        "900000017": {
+          "evento": "BODA",
+          "grupos": [
+            "mandil"
+          ],
+          "header": true
+        },
+        "900000018": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "900000019": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "900000020": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "900000021": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "900000022": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": true
+        },
+        "900000023": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "900000024": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": true
+        },
+        "910000004": {
+          "evento": "",
+          "grupos": [],
+          "header": false
+        },
+        "910000005": {
+          "evento": "XV",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": true
+        },
+        "910000007": {
+          "evento": "BODA",
+          "grupos": [
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": true
+        },
+        "911111111": {
+          "evento": "OTROS",
+          "grupos": [
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "920000007": {
+          "evento": "XV",
+          "grupos": [],
+          "header": true
+        },
+        "920000012": {
+          "evento": "XV",
+          "grupos": [],
+          "header": true
+        },
+        "920000024": {
+          "evento": "OTROS",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": false
+        },
+        "930000004": {
+          "evento": "",
+          "grupos": [],
+          "header": false
+        },
+        "930000005": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "930000012": {
+          "evento": "XV",
+          "grupos": [],
+          "header": true
+        },
+        "940000009": {
+          "evento": "OTROS",
+          "grupos": [
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "940000012": {
+          "evento": "XV",
+          "grupos": [],
+          "header": true
+        },
+        "940000015": {
+          "evento": "BODA",
+          "grupos": [
+            "pantufla"
+          ],
+          "header": true
+        },
+        "940000024": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": true
+        },
+        "950000002": {
+          "evento": "XV",
+          "grupos": [],
+          "header": true
+        },
+        "960000009": {
+          "evento": "OTROS",
+          "grupos": [
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "960000012": {
+          "evento": "XV",
+          "grupos": [],
+          "header": true
+        },
+        "960000013": {
+          "evento": "OTROS",
+          "grupos": [
+            "sandalia",
+            "cilindro",
+            "mandil",
+            "kit",
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "960000023": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "960000024": {
+          "evento": "",
+          "grupos": [],
+          "header": false
+        },
+        "970000009": {
+          "evento": "BODA",
+          "grupos": [
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "970000012": {
+          "evento": "XV",
+          "grupos": [],
+          "header": true
+        },
+        "970000013": {
+          "evento": "OTROS",
+          "grupos": [
+            "sandalia",
+            "cilindro",
+            "mandil",
+            "kit",
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "970000023": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "970000024": {
+          "evento": "",
+          "grupos": [],
+          "header": false
+        },
+        "980000009": {
+          "evento": "BODA",
+          "grupos": [
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "980000012": {
+          "evento": "XV",
+          "grupos": [],
+          "header": true
+        },
+        "980000013": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia",
+            "cilindro",
+            "mandil",
+            "kit",
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": true
+        },
+        "980000022": {
+          "evento": "",
+          "grupos": [],
+          "header": false
+        },
+        "980000024": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "990000009": {
+          "evento": "OTROS",
+          "grupos": [
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "990000012": {
+          "evento": "XV",
+          "grupos": [],
+          "header": true
+        },
+        "990000013": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia",
+            "cilindro",
+            "mandil",
+            "kit",
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "990000024": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "999000001": {
+          "evento": "",
+          "grupos": [],
+          "header": false
+        },
+        "999999999": {
+          "evento": "",
+          "grupos": [],
+          "header": false
+        },
+        "1010000009": {
+          "evento": "OTROS",
+          "grupos": [
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "1010000012": {
+          "evento": "XV",
+          "grupos": [],
+          "header": true
+        },
+        "1010000013": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia",
+            "cilindro",
+            "mandil",
+            "kit",
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "1010000023": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "1010000024": {
+          "evento": "",
+          "grupos": [],
+          "header": false
+        },
+        "1020000009": {
+          "evento": "OTROS",
+          "grupos": [
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "1020000012": {
+          "evento": "XV",
+          "grupos": [],
+          "header": true
+        },
+        "1020000013": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia",
+            "cilindro",
+            "mandil",
+            "kit",
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "1020000023": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "1020000024": {
+          "evento": "",
+          "grupos": [],
+          "header": false
+        },
+        "1030000009": {
+          "evento": "BODA",
+          "grupos": [
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "1030000012": {
+          "evento": "XV",
+          "grupos": [],
+          "header": true
+        },
+        "1030000013": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia",
+            "pantufla",
+            "cilindro",
+            "mandil",
+            "kit",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "1030000023": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "1030000024": {
+          "evento": "",
+          "grupos": [],
+          "header": false
+        },
+        "1040000009": {
+          "evento": "BODA",
+          "grupos": [
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "1040000012": {
+          "evento": "XV",
+          "grupos": [],
+          "header": true
+        },
+        "1040000013": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia",
+            "pantufla",
+            "cilindro",
+            "mandil",
+            "kit",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "1040000023": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "1040000024": {
+          "evento": "",
+          "grupos": [],
+          "header": false
+        },
+        "1050000009": {
+          "evento": "BODA",
+          "grupos": [
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "1050000012": {
+          "evento": "XV",
+          "grupos": [],
+          "header": true
+        },
+        "1050000013": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia",
+            "pantufla",
+            "cilindro",
+            "mandil",
+            "kit",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": true
+        },
+        "1050000022": {
+          "evento": "",
+          "grupos": [],
+          "header": false
+        },
+        "1050000024": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "1060000002": {
+          "evento": "OTROS",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": false
+        },
+        "1070000009": {
+          "evento": "BODA",
+          "grupos": [
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "1070000012": {
+          "evento": "XV",
+          "grupos": [],
+          "header": true
+        },
+        "1070000013": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "1070000014": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia",
+            "cilindro",
+            "mandil"
+          ],
+          "header": false
+        },
+        "1070000022": {
+          "evento": "",
+          "grupos": [],
+          "header": false
+        },
+        "1070000024": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": true
+        },
+        "1070000026": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": false
+        },
+        "1070000027": {
+          "evento": "OTROS",
+          "grupos": [],
+          "header": false
+        },
+        "1080000012": {
+          "evento": "XV",
+          "grupos": [
+            "sandalia",
+            "pantufla",
+            "cilindro",
+            "kit",
+            "vaso",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": true
+        },
+        "1080000024": {
+          "evento": "OTROS",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": true
+        },
+        "1080000026": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": false
+        },
+        "1080000027": {
+          "evento": "OTROS",
+          "grupos": [],
+          "header": true
+        },
+        "1090000012": {
+          "evento": "XV",
+          "grupos": [
+            "sandalia",
+            "pantufla",
+            "cilindro",
+            "kit",
+            "vaso",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": true
+        },
+        "1090000013": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia",
+            "pantufla",
+            "cilindro",
+            "mandil",
+            "kit",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "1090000022": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "1090000026": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": false
+        },
+        "1090000027": {
+          "evento": "OTROS",
+          "grupos": [],
+          "header": true
+        },
+        "1100000012": {
+          "evento": "XV",
+          "grupos": [
+            "sandalia",
+            "pantufla",
+            "cilindro",
+            "kit",
+            "vaso",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": true
+        },
+        "1100000024": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": true
+        },
+        "1100000026": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": false
+        },
+        "1100000027": {
+          "evento": "OTROS",
+          "grupos": [],
+          "header": false
+        },
+        "1110000009": {
+          "evento": "BODA",
+          "grupos": [
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "1110000012": {
+          "evento": "XV",
+          "grupos": [],
+          "header": true
+        },
+        "1110000013": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "1110000022": {
+          "evento": "",
+          "grupos": [],
+          "header": false
+        },
+        "1110000024": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": true
+        },
+        "1110000026": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": false
+        },
+        "1110000027": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": false
+        },
+        "1120000012": {
+          "evento": "XV",
+          "grupos": [
+            "sandalia",
+            "pantufla",
+            "cilindro",
+            "kit",
+            "vaso",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": true
+        },
+        "1120000015": {
+          "evento": "BODA",
+          "grupos": [
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "1120000024": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": true
+        },
+        "1120000026": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": false
+        },
+        "1120000027": {
+          "evento": "OTROS",
+          "grupos": [],
+          "header": false
+        },
+        "1130000009": {
+          "evento": "BODA",
+          "grupos": [
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": false
+        },
+        "1130000012": {
+          "evento": "XV",
+          "grupos": [],
+          "header": true
+        },
+        "1130000013": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": true
+        },
+        "1130000014": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia",
+            "cilindro",
+            "mandil"
+          ],
+          "header": false
+        },
+        "1130000022": {
+          "evento": "",
+          "grupos": [],
+          "header": false
+        },
+        "1130000024": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": true
+        },
+        "1130000026": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia"
+          ],
+          "header": false
+        },
+        "1130000027": {
+          "evento": "OTROS",
+          "grupos": [],
+          "header": true
+        },
+        "8976567756": {
+          "evento": "OTROS",
+          "grupos": [
+            "cuentas"
+          ],
+          "header": true,
+          "siete": true
+        },
+        "7546791587": {
+          "evento": "XV",
+          "grupos": [
+            "sandalia",
+            "pantufla",
+            "cilindro",
+            "pantufla_mono",
+            "pantufla_peluche",
+            "tinta",
+            "correa9",
+            "correa15",
+            "cuentas"
+          ],
+          "header": true,
+          "siete": true
+        },
+        "lv9WkmJPNLR3pN5gmeMv": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": false
+        },
+        "8149907353": {
+          "evento": "BODA",
+          "grupos": [
+            "sandalia",
+            "pantufla",
+            "cilindro",
+            "mandil",
+            "kit",
+            "vaso",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": true
+        },
+        "6390727286": {
+          "evento": "XV",
+          "grupos": [
+            "mandil",
+            "sandalia",
+            "pantufla",
+            "pantufla_mono",
+            "pantufla_peluche"
+          ],
+          "header": true
+        },
+        "KSLMGxHkYbEUEwfkFjdk": {
+          "evento": "BODA",
+          "grupos": [],
+          "header": false
+        }
+      }
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 408989909,
+          "message": {
+            "message_id": 65,
+            "from": {
+              "id": 6390727286,
+              "is_bot": false,
+              "first_name": "la agencia",
+              "last_name": "Prueba",
+              "language_code": "en"
+            },
+            "chat": {
+              "id": 6390727286,
+              "first_name": "la agencia",
+              "last_name": "Prueba",
+              "type": "private"
+            },
+            "date": 1784861061,
+            "text": "/b",
+            "entities": [
+              {
+                "offset": 0,
+                "length": 2,
+                "type": "bot_command"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "951d3642-3f7d-49e4-8519-4abf3f105fc3",
+  "activeVersionId": null,
+  "versionCounter": 2574,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-07-10T20:23:48.943Z",
+      "createdAt": "2026-07-10T20:23:48.943Z",
+      "role": "workflow:owner",
+      "workflowId": "IPO1c36NLzkXrBh9",
+      "projectId": "g2TpxqLMiC0UsUBj",
+      "project": {
+        "updatedAt": "2025-05-10T12:26:37.475Z",
+        "createdAt": "2025-05-10T12:24:10.921Z",
+        "id": "g2TpxqLMiC0UsUBj",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-05-10T12:24:10.921Z",
+            "createdAt": "2025-05-10T12:24:10.921Z",
+            "userId": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+            "projectId": "g2TpxqLMiC0UsUBj",
+            "user": {
+              "updatedAt": "2026-08-24T21:50:45.371Z",
+              "createdAt": "2025-05-10T12:24:07.518Z",
+              "id": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "lastName": "AI",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-05-10T12:26:59.729Z",
+                "personalization_survey_n8n_version": "1.91.3",
+                "companySize": "<20",
+                "companyType": "systems-integrator",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "6fpcC3iGwfEYO3Eu",
+                "userActivatedAt": 1757033385622,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1773184568459
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "aiAgentStarterCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-08-24",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

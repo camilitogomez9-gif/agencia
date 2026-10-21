@@ -1,0 +1,15 @@
+{
+  "_doc": "Spec de los 8 calendarios (04 §4.1). NO se crean en Fase 1: un calendario funcional exige team member (usuario, B-03) + el modelo de disponibilidad compartida (C1) puede reducir 8→1-por-asesor si falla. Se crean en Fase 5 con los usuarios + C1 resueltos. Un shell name-only sí es creable (201) pero requiere reconfig total después.",
+  "modelo_disponibilidad": "8 calendarios independientes con disponibilidad compartida por asesor (C1). Fallback 🔶 si C1 falla: 1 calendario por asesor con event-types por programa (requiere OK cliente, contradice P2).",
+  "calendarios": [
+    {"slug": "cal-internados", "programa": "Internados", "asesor": "Rodrigo", "asesor_email": "rgarcia@venttur.com", "slotDuration": 30, "link_viejo": "agendar-ema"},
+    {"slug": "cal-intercambio", "programa": "Intercambio académico con familias", "asesor": "Rodrigo", "asesor_email": "rgarcia@venttur.com", "slotDuration": 30, "link_viejo": "AAFamilia-Agendar"},
+    {"slug": "cal-campamentos", "programa": "Campamentos de verano", "asesor": "Rodrigo", "asesor_email": "rgarcia@venttur.com", "slotDuration": 30, "link_viejo": "SummerCamp-Agendar"},
+    {"slug": "cal-viajes-educativos", "programa": "Viajes educativos", "asesor": "Andrés", "asesor_email": "agarcia@venttur.com", "slotDuration": 30, "link_viejo": null, "huerfano": true},
+    {"slug": "cal-educacion-superior", "programa": "Educación superior", "asesor": "Andrés", "asesor_email": "agarcia@venttur.com", "slotDuration": 30, "link_viejo": null, "huerfano": true},
+    {"slug": "cal-cursos-idiomas", "programa": "Cursos de idiomas en el extranjero", "asesor": "Andrés", "asesor_email": "agarcia@venttur.com", "slotDuration": 30, "link_viejo": null, "huerfano": true},
+    {"slug": "cal-pathway-alemania", "programa": "Pathway Alemania", "asesor": "Andrés", "asesor_email": "agarcia@venttur.com", "slotDuration": 30, "link_viejo": "PW_Alemania_Agendar"},
+    {"slug": "cal-gap-year", "programa": "Gap Year / Estudia y Trabaja", "asesor": "Andrés", "asesor_email": "agarcia@venttur.com", "slotDuration": 30, "link_viejo": "Estudiar-y-Trabajar-en-Australia"}
+  ],
+  "pools_disponibilidad_compartida": {"Rodrigo": ["cal-internados", "cal-intercambio", "cal-campamentos"], "Andrés": ["cal-viajes-educativos", "cal-educacion-superior", "cal-cursos-idiomas", "cal-pathway-alemania", "cal-gap-year"]}
+}

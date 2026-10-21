@@ -1,0 +1,16 @@
+{
+  "wf": "W1",
+  "descripcion": "`primer_contacto` vuelve a salir de la memoria y no de la etapa del pipeline. Paridad con el bot de Kommo, que decidía el saludo con `GET_PREVIOUS_INTERACTION` (una consulta a n8n_chat_histories por session_id) y nunca con el estado del lead.",
+  "causa": "`Evaluar estado` ya calcula el valor correcto — `primer_contacto: turnosPrevios === 0`, con el comentario 'Sale de la memoria, no del CRM' — y lo deja en el item. Pero el nodo `W6 · conversación` lo descarta y manda `$json.etapa === 'Lead Nuevo'`. El propio comentario de `Elegir ruta` en W6 dice que ese valor 'ya NO sale de la etapa del pipeline (que nadie movía, así que el bot re-saludaba para siempre — medido el 2026-08-07: 3 turnos seguidos, 3 saludos)'. O sea: W6 ya fue arreglado y W1 nunca acompañó.",
+  "por_que_no_muerde_hoy": "Porque `Decidir etapa` mueve la etapa fuera de 'Lead Nuevo' en el primer turno, así que el valor por etapa coincide con el de memoria en el caso normal. Diverge cuando la etapa no avanza (W6 sin `etapa_destino`, o el PATCH a GHL falla) y cuando alguien reabre una oportunidad en 'Lead Nuevo': ahí el bot vuelve a saludar de cero.",
+  "tipos": "Los dos lados son boolean. El schema del nodo declara `primer_contacto` como `type: \"boolean\"`, así que `convertFieldsToString: true` no cambia nada respecto de lo que ya pasaba con la expresión anterior.",
+  "propagacion_verificada": "`primer_contacto` viaja por las dos ramas que llegan a este nodo: `¿Soy el último?` hace `{...ctx}` desde `Evaluar estado`, y `Texto del audio` (rama de audio) hace `{...ctx}` desde `¿Soy el último?`.",
+  "ediciones": [
+    {
+      "nodo": "W6 · conversación",
+      "campo": "parameters.workflowInputs.value.primer_contacto",
+      "anchor": "={{ $json.etapa === 'Lead Nuevo' }}",
+      "reemplazo": "={{ $json.primer_contacto }}"
+    }
+  ]
+}

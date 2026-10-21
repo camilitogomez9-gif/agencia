@@ -1,0 +1,24 @@
+{
+  "caso": "I-02",
+  "titulo": "idempotencia por messageId",
+  "resultado": "CORROBORADO",
+  "detalle": "1ª aceptado=True · 2ª aceptado=False motivo=duplicado → GHL puede reintentar sin duplicar turnos",
+  "aristas": [
+    "duplicado"
+  ],
+  "pasos": [
+    {
+      "1": {
+        "ok": true,
+        "aceptado": true,
+        "messageId": "47282bbf-11ad-4792-8e65-3bd3ae497368"
+      },
+      "2": {
+        "ok": true,
+        "aceptado": false,
+        "motivo": "duplicado",
+        "messageId": "47282bbf-11ad-4792-8e65-3bd3ae497368"
+      }
+    }
+  ]
+}

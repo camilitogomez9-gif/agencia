@@ -1,0 +1,72 @@
+{
+  "M0sEgp7mp27d8uIM": {
+    "id": "M0sEgp7mp27d8uIM",
+    "name": "[Happy Flops]",
+    "nodes": 250,
+    "active": true,
+    "versionId": "5e85a999-56f3-4324-a5b2-9791d8157878",
+    "updatedAt": "2026-02-26T18:29:44.000Z",
+    "sha256": "6e9beb19514c41109e174bf342db6f2cd4727261398c10fb7b653516e0498d70",
+    "archivo": "main-happy-flops.json"
+  },
+  "ZDJGftMdj63i0MZT": {
+    "id": "ZDJGftMdj63i0MZT",
+    "name": "HappyFlops - Seg. Rebeca",
+    "nodes": 34,
+    "active": false,
+    "versionId": "bf8785d3-8a80-4204-9cf3-b5f0dfa62cfc",
+    "updatedAt": "2026-04-20T18:12:54.000Z",
+    "sha256": "25e09af60d90d63edecd2fdc27d64cd147cbd4dfc73071d0eb874dbe01cd7c85",
+    "archivo": "seg-rebeca.json"
+  },
+  "QHmfLP4JmZOFT3KZ": {
+    "id": "QHmfLP4JmZOFT3KZ",
+    "name": "Happy Flops - Seg. Imagen",
+    "nodes": 38,
+    "active": false,
+    "versionId": "ca51d02a-4844-46a3-98b6-fab65cbf1184",
+    "updatedAt": "2025-10-03T18:27:00.000Z",
+    "sha256": "70bdc3de8536df2b2f193700f2a34575c267e3f89278f8ae2cd1c9c201bb67c9",
+    "archivo": "seg-imagen.json"
+  },
+  "JcjKsXNnnjaC3IoV": {
+    "id": "JcjKsXNnnjaC3IoV",
+    "name": "Happy Flops - Seg. Cotización",
+    "nodes": 45,
+    "active": false,
+    "versionId": "bb7763bf-3b3f-47ed-8fb5-545ef73632e3",
+    "updatedAt": "2025-11-27T13:42:44.000Z",
+    "sha256": "0ee94817a493c8745558a9657e6c8bb9fea53d15e84298c5e6548a3e59a21dfe",
+    "archivo": "seg-cotizacion.json"
+  },
+  "nkRBXbc4G0Cn67gY": {
+    "id": "nkRBXbc4G0Cn67gY",
+    "name": "Happpy Flops - Seg. 7 pasos",
+    "nodes": 20,
+    "active": false,
+    "versionId": "a3c027ea-f7a3-427d-adf4-00cc2e18aa2d",
+    "updatedAt": "2026-02-09T19:40:12.000Z",
+    "sha256": "030c67883cf37f8da4c493c868b3b1a516c91dea8d59e361ada84ba96c2e1302",
+    "archivo": "seg-7pasos.json"
+  },
+  "Fhp5ErGAegOAYrJX": {
+    "id": "Fhp5ErGAegOAYrJX",
+    "name": "ATENCION_PERSONALIZADA",
+    "nodes": 3,
+    "active": false,
+    "versionId": "30c92bc5-5b75-4c7e-adc6-e9970fabc1fc",
+    "updatedAt": "2025-09-07T22:13:34.000Z",
+    "sha256": "d661ba073a69e0ecb876598d31aa423df800db97051f65808abb3d6ef52e1196",
+    "archivo": "atencion-personalizada.json"
+  },
+  "kJVHc3WjpIPwRED7": {
+    "id": "kJVHc3WjpIPwRED7",
+    "name": "Tool | Entorno pruebas HF",
+    "nodes": 5,
+    "active": false,
+    "versionId": "8a9e451f-042b-49ae-b283-9ee057e2c8b2",
+    "updatedAt": "2026-04-24T16:19:42.000Z",
+    "sha256": "078be2e9cc4bfe014899b39f8d6304ef937ddc9d860bbcff0f285b04bd271ac1",
+    "archivo": "tool-calculadora.json"
+  }
+}

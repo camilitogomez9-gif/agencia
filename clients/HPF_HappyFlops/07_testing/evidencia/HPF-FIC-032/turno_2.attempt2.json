@@ -1,0 +1,168 @@
+{
+  "probe_id": "sess_hpf_fic_032_1785954106#aacf5dc821de",
+  "session_id": "sess_hpf_fic_032_1785954106",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "quiero las pantuflas de moño de satín",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 8.3,
+  "version_antes": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "version_despues": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "capturado_utc": "2026-08-05T18:22:20.036746+00:00",
+  "execution_id": "989558",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T18:22:07.105Z",
+  "stoppedAt": "2026-08-05T18:22:14.572Z",
+  "n_esperadas": 7,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Perfecto! Las pantuflas moño de satín son súper cómodas y quedan padrísimas como recuerdo para boda",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "✨ Pantuflas de satín personalizadas\n💖 Un detalle elegante y cómodo para tu evento\n🥿 Suela y esponja más gruesa\n🎨 Personalizadas con nombre y fecha\n\n📏 Unitalla (les queda del 23 al 26)\n💰 Precio promo: $30 el par\n📦 Pedido mínimo de 50 pares\n\n🎁 Opción de bolsa:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 2,
+      "message_part": "Mira este video para que veas cómo se ve 🎥",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+    },
+    {
+      "idx": 3,
+      "message_part": "Aquí tienes el catálogo completo 📋",
+      "photo_url": null,
+      "doc_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a70185632db2dd1572c1f9d.pdf",
+      "video_url": null
+    },
+    {
+      "idx": 4,
+      "message_part": "✨ Pantufla de moño de satín para boda\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada, rosa, cielo y beige\n\n💰 Precio promo: $30 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 5,
+      "message_part": "Aquí tienes el catálogo completo 📋",
+      "photo_url": null,
+      "doc_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701855188345b27e310918.pdf",
+      "video_url": null
+    },
+    {
+      "idx": 6,
+      "message_part": "¿Le interesa sumarlas a la cotización?\nDígame:\n- Cantidad\n- Código postal\n\n¡Gracias!",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 0,
+      "ms": 203,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1890,
+      "chat_id": 6390727286,
+      "texto_entregado": "✨ Pantuflas de satín personalizadas\n💖 Un detalle elegante y cómodo para tu evento\n🥿 Suela y esponja más gruesa\n🎨 Personalizadas con nombre y fecha\n\n📏 Unitalla (les queda del 23 al 26)\n💰 Precio promo: $30 el par\n📦 Pedido mínimo de 50 pares\n\n🎁 Opción de bolsa:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "error": null
+    },
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 1,
+      "ms": 238,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1893,
+      "chat_id": 6390727286,
+      "texto_entregado": "✨ Pantufla de moño de satín para boda\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada, rosa, cielo y beige\n\n💰 Precio promo: $30 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "error": null
+    },
+    {
+      "emisor": "Send Document (Telegram)",
+      "run": 0,
+      "ms": 209,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1892,
+      "chat_id": 6390727286,
+      "texto_entregado": "Aquí tienes el catálogo completo 📋",
+      "error": null
+    },
+    {
+      "emisor": "Send Document (Telegram)",
+      "run": 1,
+      "ms": 189,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1894,
+      "chat_id": 6390727286,
+      "texto_entregado": "Aquí tienes el catálogo completo 📋",
+      "error": null
+    },
+    {
+      "emisor": "Send Video (Telegram)",
+      "run": 0,
+      "ms": 195,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1891,
+      "chat_id": 6390727286,
+      "texto_entregado": "Mira este video para que veas cómo se ve 🎥",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 202,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1889,
+      "chat_id": 6390727286,
+      "texto_entregado": "Perfecto! Las pantuflas moño de satín son súper cómodas y quedan padrísimas como recuerdo para boda",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 193,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1895,
+      "chat_id": 6390727286,
+      "texto_entregado": "¿Le interesa sumarlas a la cotización?\nDígame:\n- Cantidad\n- Código postal\n\n¡Gracias!",
+      "error": null
+    }
+  ],
+  "n_entregadas": 7,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Perfecto! Las pantuflas moño de satín son súper cómodas y quedan padrísimas como recuerdo para boda. ¿Cuántos pares le gustaría pedir y a qué código postal sería el envío?",
+    "tools": [
+      "IDENTIFICAR_EVENTO",
+      "MOSTRAR_PRODUCTOS"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-FIC-032"
+}

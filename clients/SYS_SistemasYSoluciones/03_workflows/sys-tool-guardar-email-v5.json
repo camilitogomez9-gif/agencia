@@ -1,0 +1,578 @@
+{
+  "name": "sys-tool-guardar-email-v5",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"email\": \"\",\n  \"nombre\": \"\",\n  \"telefono\": \"\",\n  \"aplicacion_interes\": \"\",\n  \"origen\": \"otro\",\n  \"canal\": \"\",\n  \"subscriber_id\": \"\",\n  \"session_id\": \"\"\n}"
+      },
+      "id": "bdbed854-e3e7-4277-9e4c-b5e8a634c8d6",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1872,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const args = $input.first().json;\nconst email = String(args.email || '').trim().toLowerCase();\n\n// Validación email\nif (!email) {\n  return [{ json: { status: 'ERROR', _skip: true, message_to_agent: 'Faltó el email. Pedile al cliente que lo escriba.' } }];\n}\nconst emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\nif (!emailRegex.test(email)) {\n  return [{ json: { status: 'ERROR', _skip: true, message_to_agent: `El email \"${email}\" no tiene formato válido. Pedile al cliente que lo confirme.` } }];\n}\n\n// Normalizar origen\nconst origenesValidos = ['newsletter', 'derivacion', 'descuento_insumos', 'otro'];\nconst origen = origenesValidos.includes(String(args.origen || '').toLowerCase())\n  ? String(args.origen).toLowerCase()\n  : 'otro';\n\n// Normalizar canal\nconst canal = String(args.canal || '').trim() || 'desconocido';\n\nreturn [{\n  json: {\n    timestamp: new Date().toISOString(),\n    email,\n    nombre: String(args.nombre || '').trim(),\n    telefono: String(args.telefono || '').trim(),\n    canal,\n    subscriber_id: String(args.subscriber_id || '').trim(),\n    aplicacion_interes: String(args.aplicacion_interes || '').trim(),\n    origen,\n    session_id: String(args.session_id || '').trim() || 'unknown'\n  }\n}];"
+      },
+      "id": "f3162520-1a25-408d-b343-cabec8849ae2",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1648,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "skip-check",
+              "leftValue": "={{ $json._skip }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "21ee71a7-c3e3-40aa-8a86-dec41aef3a63",
+      "name": "IF skip?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1424,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ ({ status: 'ERROR', data: null, message_to_agent: $('Validate Input').first().json.message_to_agent, trace_id: $execution.id }) }}",
+        "options": {}
+      },
+      "id": "65cf9834-b0ee-49db-8df0-7900cd9d1630",
+      "name": "Return ERROR (email inválido)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -528,
+        368
+      ],
+      "notes": "v3 — Fix C: devuelve el shape estándar {status, data, message_to_agent, trace_id} en lugar de los datos crudos del Validate Input."
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "15OrQ-uI_x5rAorjkMpz_V_TvFxVf31nsDfTjm9oUqsc",
+          "mode": "list",
+          "cachedResultName": "SYS - Leads (Captura Emails)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15OrQ-uI_x5rAorjkMpz_V_TvFxVf31nsDfTjm9oUqsc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Emails",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15OrQ-uI_x5rAorjkMpz_V_TvFxVf31nsDfTjm9oUqsc/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "email",
+              "lookupValue": "={{ $json.email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a499a1e6-9d43-4eb6-ac4d-9ca1b229064d",
+      "name": "Lookup email existente",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -1200,
+        656
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "2a5f0S7mTtvH5XH2",
+          "name": "la agencia"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "Lookup por columna 'email'. Si encuentra → ya está guardado. Si no → append. continueOnFail=true para que un fallo de credencial no rompa el agente."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "exists-check",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5d80ca49-73cc-4a6e-a2ea-4c55afbbd915",
+      "name": "IF email existe?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -976,
+        656
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "15OrQ-uI_x5rAorjkMpz_V_TvFxVf31nsDfTjm9oUqsc",
+          "mode": "list",
+          "cachedResultName": "SYS - Leads (Captura Emails)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15OrQ-uI_x5rAorjkMpz_V_TvFxVf31nsDfTjm9oUqsc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Emails",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $('Validate Input').first().json.timestamp }}",
+            "email": "={{ $('Validate Input').first().json.email }}",
+            "nombre": "={{ $('Validate Input').first().json.nombre }}",
+            "telefono": "={{ $('Validate Input').first().json.telefono }}",
+            "canal": "={{ $('Validate Input').first().json.canal }}",
+            "subscriber_id": "={{ $('Validate Input').first().json.subscriber_id }}",
+            "aplicacion_interes": "={{ $('Validate Input').first().json.aplicacion_interes }}",
+            "origen": "={{ $('Validate Input').first().json.origen }}",
+            "session_id": "={{ $('Validate Input').first().json.session_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "telefono",
+              "displayName": "telefono",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subscriber_id",
+              "displayName": "subscriber_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "canal",
+              "displayName": "canal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "aplicacion_interes",
+              "displayName": "aplicacion_interes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "origen",
+              "displayName": "origen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "id": "932f9445-0960-49c7-b46f-d850bc521fd1",
+      "name": "Append a Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -752,
+        752
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "2a5f0S7mTtvH5XH2",
+          "name": "la agencia"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "Append a la pestaña 'Emails'. La fila se agrega siempre que el email NO existiera en el lookup previo."
+    },
+    {
+      "parameters": {
+        "sendTo": "emarti@sistemasysoluciones.com, marketing@sistemasysoluciones.com",
+        "subject": "={{ '📨 Nuevo lead dejó datos — ' + ($('Validate Input').first().json.nombre || $('Validate Input').first().json.email) }}",
+        "message": "=<!DOCTYPE html><html><body style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; max-width: 640px; margin: 0 auto; padding: 24px; color: #1a1a1a; background-color: #ffffff;\"><div style=\"background: #0d0a1f; color: #ffffff; padding: 20px 24px; border-radius: 8px 8px 0 0;\"><h2 style=\"margin: 0; font-size: 20px; font-weight: 600;\">📨 Nuevo lead dejó datos</h2><p style=\"margin: 4px 0 0 0; font-size: 14px; color: #a78bfa;\">Canal {{ $('Validate Input').first().json.canal }} · Origen {{ $('Validate Input').first().json.origen }}</p></div><div style=\"background: #ffffff; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;\"><p style=\"margin: 0 0 16px 0; font-size: 14px; color: #374151;\">Un contacto dejó sus datos en la planilla de captura. Todavía no completó toda la cualificación — usen estos datos para hacer seguimiento manual si corresponde.</p><table style=\"width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 14px;\"><tr><td style=\"padding: 8px 0; color: #6b7280; width: 150px; border-bottom: 1px solid #f3f4f6;\">Email</td><td style=\"padding: 8px 0; border-bottom: 1px solid #f3f4f6;\"><a href=\"mailto:{{ $('Validate Input').first().json.email }}\" style=\"color: #7c3aed; text-decoration: none;\"><strong>{{ $('Validate Input').first().json.email }}</strong></a></td></tr><tr><td style=\"padding: 8px 0; color: #6b7280; border-bottom: 1px solid #f3f4f6;\">Nombre</td><td style=\"padding: 8px 0; border-bottom: 1px solid #f3f4f6;\">{{ $('Validate Input').first().json.nombre || '<span style=\"color: #9ca3af;\">no provisto</span>' }}</td></tr><tr><td style=\"padding: 8px 0; color: #6b7280; border-bottom: 1px solid #f3f4f6;\">Teléfono</td><td style=\"padding: 8px 0; border-bottom: 1px solid #f3f4f6;\">{{ $('Validate Input').first().json.telefono || '<span style=\"color: #9ca3af;\">no provisto</span>' }}</td></tr><tr><td style=\"padding: 8px 0; color: #6b7280; border-bottom: 1px solid #f3f4f6;\">Aplicación de interés</td><td style=\"padding: 8px 0; border-bottom: 1px solid #f3f4f6;\">{{ $('Validate Input').first().json.aplicacion_interes || '<span style=\"color: #9ca3af;\">—</span>' }}</td></tr><tr><td style=\"padding: 8px 0; color: #6b7280;\">session_id</td><td style=\"padding: 8px 0;\"><code style=\"background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;\">{{ $('Validate Input').first().json.session_id }}</code></td></tr></table></div><div style=\"margin-top: 20px; padding: 12px 24px; background: #f9fafb; border-radius: 8px; font-size: 12px; color: #6b7280;\"><p style=\"margin: 0;\">Captura registrada en planilla \"SYS - Leads (Captura Emails)\". Notificación generada automáticamente · la agencia</p></div></body></html>",
+        "options": {}
+      },
+      "id": "g5-notif-mail-001",
+      "name": "Gmail Send notif (emarti + marketing)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [-640, 752],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "5R0ScEVqcfjKYanp",
+          "name": "Gmail | la agencia®"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "v5 (2026-06-23): notifica a emarti@ + marketing@ cada vez que un lead NUEVO deja su email en la planilla. Solo dispara post-Append (no en rama already_exists, evita ruido). continueOnFail=true para no romper la tool."
+    },
+    {
+      "parameters": {
+        "jsCode": "const v = $('Validate Input').first().json;\nreturn [{ json: {\n  status: 'RESOLVED',\n  data: {\n    email: v.email,\n    already_exists: false,\n    timestamp_saved: v.timestamp,\n    origen: v.origen\n  },\n  message_to_agent: 'Email guardado correctamente. Confirmale brevemente al cliente que recibirá novedades por mail (sin sonar robótico) y seguí con la conversación.',\n  trace_id: $execution.id\n} }];"
+      },
+      "id": "64c360ce-ebd1-415a-984c-4216d613f99d",
+      "name": "Format Output (saved)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -528,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const v = $('Validate Input').first().json;\nreturn [{ json: {\n  status: 'RESOLVED',\n  data: {\n    email: v.email,\n    already_exists: true,\n    timestamp_saved: null,\n    origen: v.origen\n  },\n  message_to_agent: 'El email ya estaba registrado en la base. No se duplicó. Seguí con la conversación natural sin volver a confirmar el guardado.',\n  trace_id: $execution.id\n} }];"
+      },
+      "id": "0ed1c572-5ff1-40be-b70e-b8a7007b6b38",
+      "name": "Format Output (already exists)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -528,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sys_tool_calls (session_id, tool_name, input_payload, output_payload, status, duration_ms)\nVALUES ($1, 'guardar-email', $2::jsonb, $3::jsonb, $4, $5)",
+        "options": {
+          "queryReplacement": "={{ [$('Execute Workflow Trigger').first().json.session_id || 'unknown', JSON.stringify($('Execute Workflow Trigger').first().json), JSON.stringify($json), $json.status || 'success', $json.duration_ms || 0] }}"
+        }
+      },
+      "id": "2f508fe3-36c3-4783-8c99-85ab0465bd3a",
+      "name": "Log to sys_tool_calls",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -304,
+        560
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "Log a sys_tool_calls. continueOnFail=true para no romper la tool si Postgres falla."
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $('Return ERROR (email inválido)').isExecuted ? $('Return ERROR (email inválido)').first().json : $('Format Output (saved)').isExecuted ? $('Format Output (saved)').first().json : $('Format Output (already exists)').first().json }}",
+        "options": {}
+      },
+      "id": "01484f07-767d-4d45-95e9-8ffd54064ac2",
+      "name": "Return Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -80,
+        560
+      ],
+      "notes": "v4 — F3: cubre las 3 ramas (Return ERROR + Format saved + Format already exists). Antes crasheaba con 'Format Output (already exists) hasn't been executed' cuando vino por rama de validación fallida (1.10.D/E)."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- v2 — Capa 2 del fix. Escribe el email capturado al sys_session_state.\n-- Permite que el main lo lea en el turno siguiente y NO vuelva a ofrecer el descuento.\n-- NO pisa etapa. Si la fila no existe, crea con etapa default ('bienvenida') por schema.\nINSERT INTO sys_session_state (session_id, datos_capturados, ultima_actividad)\nVALUES ($1, $2::jsonb, NOW())\nON CONFLICT (session_id) DO UPDATE SET\n  datos_capturados = sys_session_state.datos_capturados || EXCLUDED.datos_capturados,\n  ultima_actividad = NOW();",
+        "options": {
+          "queryReplacement": "={{ [$('Validate Input').first().json.session_id, JSON.stringify({ mail: $('Validate Input').first().json.email }) ] }}"
+        }
+      },
+      "id": "f4a08c11-d263-4b7a-9e2c-66e0d4b3517c",
+      "name": "Update datos_capturados",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -1200,
+        488
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "v4 — F4: alwaysOutputData=true. Resuelve 1.10.A (flujo se detenía porque el INSERT no devuelve filas y n8n para sin output).",
+      "alwaysOutputData": true
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "email": "test@[TU-DOMINIO]",
+          "nombre": "Test la agencia",
+          "subscriber_id": "test_001",
+          "session_id": "smoke_001"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "IF skip?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF skip?": {
+      "main": [
+        [
+          {
+            "node": "Return ERROR (email inválido)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update datos_capturados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Return ERROR (email inválido)": {
+      "main": [
+        [
+          {
+            "node": "Log to sys_tool_calls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup email existente": {
+      "main": [
+        [
+          {
+            "node": "IF email existe?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF email existe?": {
+      "main": [
+        [
+          {
+            "node": "Format Output (already exists)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append a Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Output (already exists)": {
+      "main": [
+        [
+          {
+            "node": "Log to sys_tool_calls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append a Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Gmail Send notif (emarti + marketing)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Send notif (emarti + marketing)": {
+      "main": [
+        [
+          {
+            "node": "Format Output (saved)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Output (saved)": {
+      "main": [
+        [
+          {
+            "node": "Log to sys_tool_calls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to sys_tool_calls": {
+      "main": [
+        [
+          {
+            "node": "Return Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update datos_capturados": {
+      "main": [
+        [
+          {
+            "node": "Lookup email existente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "f0aa4908-4f03-4807-a8db-2fa3dc1d1c95",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  },
+  "id": "v9HD7P2uroG4Ni3A",
+  "tags": []
+}

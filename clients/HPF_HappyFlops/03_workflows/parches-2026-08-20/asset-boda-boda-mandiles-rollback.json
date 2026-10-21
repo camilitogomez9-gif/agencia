@@ -1,0 +1,8 @@
+{
+  "ficha_id": "Boda::Boda::Mandiles",
+  "record": "6a750725364ab028d71b7ac8",
+  "campo": "media_url",
+  "valor_anterior": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3eb86ae4203405cbc1.png",
+  "valor_nuevo": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/437fccf5-3eee-41c8-8dc4-ae8c04b20af5.jpg",
+  "nota": "Para revertir: PUT con valor_anterior + refrescar la caché de W3 con ttl_seg 0 + sincronizar catalogo-airtable.json."
+}

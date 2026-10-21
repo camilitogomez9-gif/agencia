@@ -1,0 +1,50 @@
+{
+  "caso": "I-01",
+  "titulo": "camino feliz hasta el router",
+  "resultado": "CORROBORADO",
+  "detalle": "ack=True llegó_al_router=True etapa=Lead Nuevo sessionId=+52133000001992131 opp=vzYAb3P86uJ08CI9jKyV",
+  "aristas": [
+    "gana_ultimo",
+    "nuevo",
+    "seguir"
+  ],
+  "pasos": [
+    {
+      "resp": {
+        "ok": true,
+        "aceptado": true,
+        "messageId": "f47e7b99-56e6-4906-aa18-74eca0ce15ce"
+      },
+      "router": {
+        "contactId": "3tzzBVjsKlOF2RJjKNOL",
+        "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+        "messageId": "f47e7b99-56e6-4906-aa18-74eca0ce15ce",
+        "messageId_derivado": false,
+        "phone": "+5213300000199",
+        "canal": "WhatsApp",
+        "texto": "Hola, quiero sandalias para una boda",
+        "adjuntos": [],
+        "tipo": "texto",
+        "debounce_seg": 0,
+        "recibido_at": "2026-08-24T18:59:36.375-03:00",
+        "_forzar_fuera_horario": false,
+        "sessionId": "+52133000001992131",
+        "opportunityId": "vzYAb3P86uJ08CI9jKyV",
+        "etapa_id": "cf8fc770-81b1-422c-8394-d00bfb97a3f0",
+        "etapa": "Lead Nuevo",
+        "via_oportunidad": "existente",
+        "ruta": "seguir",
+        "motivo_bloqueo": null,
+        "primer_contacto": false,
+        "turnos_previos": 107,
+        "gates": {
+          "etapa": "Lead Nuevo",
+          "bloqueo": null,
+          "via": "existente",
+          "cliente_vuelve": false,
+          "primer_contacto": false
+        }
+      }
+    }
+  ]
+}

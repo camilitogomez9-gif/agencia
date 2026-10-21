@@ -1,0 +1,149 @@
+{
+  "probe_id": "sess_hpf_cot_015_1785963589#68cf8a1a8445",
+  "session_id": "sess_hpf_cot_015_1785963589",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "quiero sandalias",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 70.2,
+  "version_antes": "a72f401d-885a-4d6b-b4c6-d2a11077a189",
+  "version_despues": "a72f401d-885a-4d6b-b4c6-d2a11077a189",
+  "capturado_utc": "2026-08-05T21:02:21.316461+00:00",
+  "execution_id": "990573",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T21:01:06.086Z",
+  "stoppedAt": "2026-08-05T21:02:15.377Z",
+  "n_esperadas": 6,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Perfecto! Las sandalias personalizadas son un detalle que todos van a agradecer en tu boda",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "✨ Sandalias personalizadas\n💕 Un detalle que todos van a agradecer en tu evento\n👡 Súper cómodas y personalizadas\n\n💡 Disponibles en \n💰 suela delgada $25\n💰 suela gruesa $30\nsegún la comodidad que estés buscando.\n\n📦 Pedido mínimo de 50 pares.\n\n🎁 Opción de bolsa:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf41b86ae4203405cbf9.jpeg",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 2,
+      "message_part": "Mira este video para que veas cómo se ve 🎥",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701852cf81b06f05808192.mp4"
+    },
+    {
+      "idx": 3,
+      "message_part": "Aquí tienes el catálogo completo 📋",
+      "photo_url": null,
+      "doc_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a70185732db2dd1572c26e2.pdf",
+      "video_url": null
+    },
+    {
+      "idx": 4,
+      "message_part": "Me podrías decir cuántos pares Así puedo cotizarle el total con envío incluido. También dime si prefieres la suela delgada o gruesa, por favor",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 5,
+      "message_part": "¿Le interesa sumarlas a la cotización?\nDígame:\n- Cantidad\n- Código postal\n\n¡Gracias!",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 0,
+      "ms": 199,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2313,
+      "chat_id": 6390727286,
+      "texto_entregado": "✨ Sandalias personalizadas\n💕 Un detalle que todos van a agradecer en tu evento\n👡 Súper cómodas y personalizadas\n\n💡 Disponibles en \n💰 suela delgada $25\n💰 suela gruesa $30\nsegún la comodidad que estés buscando.\n\n📦 Pedido mínimo de 50 pares.\n\n🎁 Opción de bolsa:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "error": null
+    },
+    {
+      "emisor": "Send Document (Telegram)",
+      "run": 0,
+      "ms": 466,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2315,
+      "chat_id": 6390727286,
+      "texto_entregado": "Aquí tienes el catálogo completo 📋",
+      "error": null
+    },
+    {
+      "emisor": "Send Video (Telegram)",
+      "run": 0,
+      "ms": 304,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2314,
+      "chat_id": 6390727286,
+      "texto_entregado": "Mira este video para que veas cómo se ve 🎥",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 253,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2312,
+      "chat_id": 6390727286,
+      "texto_entregado": "Perfecto! Las sandalias personalizadas son un detalle que todos van a agradecer en tu boda",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 246,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2316,
+      "chat_id": 6390727286,
+      "texto_entregado": "Me podrías decir cuántos pares Así puedo cotizarle el total con envío incluido. También dime si prefieres la suela delgada o gruesa, por favor",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 2,
+      "ms": 248,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2317,
+      "chat_id": 6390727286,
+      "texto_entregado": "¿Le interesa sumarlas a la cotización?\nDígame:\n- Cantidad\n- Código postal\n\n¡Gracias!",
+      "error": null
+    }
+  ],
+  "n_entregadas": 6,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Perfecto! Las sandalias personalizadas son un detalle que todos van a agradecer en tu boda. \n¿Me podrías decir cuántos pares necesitas y a qué código postal sería el envío? Así puedo cotizarle el total con envío incluido. \nTambién dime si prefieres la suela delgada o gruesa, por favor.",
+    "tools": [
+      "IDENTIFICAR_EVENTO",
+      "MOSTRAR_PRODUCTOS"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-COT-015"
+}

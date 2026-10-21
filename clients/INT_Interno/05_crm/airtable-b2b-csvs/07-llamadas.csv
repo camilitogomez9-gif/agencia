@@ -1,0 +1,21 @@
+ID,Tipo,Cliente,Proyecto,Fecha,Duracion min,Fathom URL,Area,Closer,Developer,PM,Resumen,Action items
+LLA_001,Venta,CLI_IMP,,2026-03-25 15:00,30,,Comercial,CLO_JANO,,,Primera llamada con Diego — perfil + objetivos,Mandar propuesta diagnóstico
+LLA_002,Diagnóstico,CLI_IMP,PRO_IMP_DIAG,2026-04-03 14:00,60,,Comercial,CLO_JANO,DEV_JANO,PM_JP,Discovery proceso ventas DM IG — pain points + objeciones recurrentes,Mapear avatar + brand bible
+LLA_003,Diagnóstico,CLI_IMP,PRO_IMP_DIAG,2026-04-10 16:00,45,,Técnica,,DEV_JANO,PM_JP,Walkthrough ManyChat + Airtable existente,Definir scope agente v1
+LLA_004,Desarrollo,CLI_IMP,PRO_IMP_DEV,2026-05-05 11:00,30,,Alineación,,DEV_JANO,PM_JP,Review demo agente v1.5 — feedback Diego sobre tono,Iterar prompt a v1.7
+LLA_005,Venta,CLI_SYS,,2026-04-12 10:00,45,,Comercial,CLO_JANO,,,Llamada inicial Edgardo SyS,Propuesta integral Etapa 1+2
+LLA_006,Diagnóstico,CLI_SYS,PRO_SYS_DIAG,2026-04-20 15:00,60,,Comercial,CLO_JANO,DEV_JANO,PM_JP,Discovery casos uso + catálogo,Pedir Excel productos
+LLA_007,Diagnóstico,CLI_SYS,PRO_SYS_DIAG,2026-04-25 15:00,90,,Técnica,,DEV_JANO,PM_JP,Análisis xlsx productos + alineación schema Airtable,Re-alinear prompt y tools post-Excel
+LLA_008,Desarrollo,CLI_SYS,PRO_SYS_DEV,2026-05-29 14:00,60,,Técnica,,DEV_JANO,PM_JP,Setup F2 Supabase + F3 memoria persistente,Avanzar F4 tools
+LLA_009,Desarrollo,CLI_SYS,PRO_SYS_DEV,2026-06-03 16:00,45,,Técnica,,DEV_JANO,PM_JP,Postmortem bug Zod LangChain — refactor nuclear consultar_catalogo,Smoke tests post-nuclear
+LLA_010,Soporte,CLI_SYS,PRO_SYS_DEV,2026-06-05 17:00,30,,Técnica,,DEV_JANO,PM_JP,Episodio 2 bug Zod — fix guardar_email + prompt v2.1,Aplicar guía paso a paso
+LLA_011,Venta,CLI_TFO,,2026-03-18 11:00,30,,Comercial,CLO_JANO,,,Primera llamada Mauricio TOFO,Mandar propuesta
+LLA_012,Diagnóstico,CLI_TFO,PRO_TFO_DIAG,2026-03-25 14:00,60,,Comercial,CLO_JANO,DEV_JANO,PM_JP,Discovery 4 verticales — derivación necesaria,Definir 4 subagentes
+LLA_013,Desarrollo,CLI_TFO,PRO_TFO_DEV,2026-04-15 15:00,45,,Alineación,,DEV_JANO,PM_JP,Auditoría datos fijos — 13 preguntas para Mauricio,Compartir lista WhatsApp-friendly
+LLA_014,Desarrollo,CLI_TFO,PRO_TFO_DEV,2026-06-05 11:00,30,,Alineación,,DEV_JANO,PM_JP,Respuestas Mauricio integradas — pricing + naming oficial,Bump prompts a v1.4
+LLA_015,Soporte,CLI_TFO,PRO_TFO_DEV,2026-06-08 17:00,45,,Comercial,CLO_JANO,DEV_JANO,PM_JP,Incidente cita fantasma + info inventada — postmortem,Bump B2B v1.5→v1.6 + testing v4
+LLA_016,Diagnóstico,CLI_PAP,PRO_PAP_DIAG,2026-04-25 10:00,60,,Comercial,CLO_JANO,DEV_JANO,PM_JP,Discovery clínica psicopedagógica con Noelle y Majo,Mandar agenda detallada
+LLA_017,Diagnóstico,CLI_PAP,PRO_PAP_DIAG,2026-05-28 16:00,78,,Alineación,,DEV_JANO,PM_JP,Reunión Andrea cuestionario cierre — 39/46 respondidas,Recalibrar blueprint v2
+LLA_018,Desarrollo,CLI_PAP,PRO_PAP_DEV,2026-06-02 11:00,45,,Técnica,,DEV_JANO,PM_JP,Setup base Airtable v1 + vistas + interfaces,Mandar mensaje Andrea validación
+LLA_019,Venta,CLI_HBV,,2026-02-18 14:00,30,,Comercial,CLO_JANO,,,Primera llamada Eloísa,Propuesta agente + métricas
+LLA_020,Desarrollo,CLI_HBV,PRO_HBV_UPS1,2026-06-13 11:00,45,,Comercial,CLO_JANO,DEV_JANO,PM_JANO,Propuesta marca personal — paquete USD 1000,Mandar propuesta externa

@@ -1,0 +1,789 @@
+{
+ "updatedAt": "2026-09-22T03:58:46.426Z",
+ "createdAt": "2026-09-10T19:05:22.998Z",
+ "id": "YB0UxwEVwzISdd54",
+ "name": "Rescate Post-Link GHL - Venttur",
+ "description": null,
+ "active": false,
+ "isArchived": false,
+ "nodes": [
+  {
+   "parameters": {
+    "httpMethod": "POST",
+    "path": "vtr-rescate-link",
+    "options": {}
+   },
+   "id": "2de7edcb-2629-493e-88f7-c9bebe24ac41",
+   "name": "Webhook: link entregado",
+   "type": "n8n-nodes-base.webhook",
+   "typeVersion": 2,
+   "position": [
+    -3280,
+    16
+   ],
+   "webhookId": "vtr-rescate-link-hook"
+  },
+  {
+   "parameters": {
+    "amount": 45,
+    "unit": "minutes"
+   },
+   "id": "158a8cdb-aa66-4497-a301-a04417da1722",
+   "name": "Wait: 45 min",
+   "type": "n8n-nodes-base.wait",
+   "typeVersion": 1.1,
+   "position": [
+    -3056,
+    16
+   ],
+   "webhookId": "wait-45-hook"
+  },
+  {
+   "parameters": {
+    "url": "=https://services.leadconnectorhq.com/contacts/{{ $('Webhook: link entregado').first().json.body.contactId }}",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Version",
+       "value": "2021-07-28"
+      }
+     ]
+    },
+    "options": {}
+   },
+   "id": "c47850a9-bcc2-4448-9893-8fc62966bdb1",
+   "name": "GHL: Get Contact (1)",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    -2832,
+    16
+   ],
+   "credentials": {
+    "httpHeaderAuth": {
+     "id": "iVwUlPpQHp1SArJY",
+     "name": "GHL Venttur Header Auth"
+    }
+   }
+  },
+  {
+   "parameters": {
+    "jsCode": "const hook = $('Webhook: link entregado').first().json.body || $('Webhook: link entregado').first().json; const contact = ($('GHL: Get Contact (1)').first().json.contact) || $('GHL: Get Contact (1)').first().json || {}; const first_name = hook.first_name || ''; const programa = (hook.programa_interes || '').toString(); const phone = (hook.phone || '').toString(); const contactId = hook.contactId || contact.id || ''; const opportunityId = hook.opportunityId || ''; const AGENDAN_CITA_FIELD_ID = 'LwXu8AxMLhVGCbNmgzm2'; const cfs = contact.customFields || []; const cf = Array.isArray(cfs) ? cfs.find(f => f.id === AGENDAN_CITA_FIELD_ID) : null; const cv = cf ? cf.value : null; const agendo = !!cv && cv !== 'false' && cv !== false && !(Array.isArray(cv) && cv.length === 0); function nsk(x){ x=(x||'').toString().replace(/[^0-9]/g,''); if(x.length===12 && x.startsWith('52')) x='521'+x.slice(2); return x; } const session_key = '+' + nsk(phone); const F1 = { boarding: `Hola ${first_name}. Noté que solicitaste el enlace para platicar sobre Boarding School, pero el registro quedó pendiente. Si no encontraste un horario que se ajuste a tu agenda, avísame y reviso disponibilidad manual. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/agendar-ema`, aa: `Hola ${first_name}. Vi que pediste el enlace para la asesoría de Año Académico, pero la cita quedó en pausa. Si tuviste problemas con la plataforma o los horarios no te cuadran, escríbeme y lo resolvemos. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/AAFamilia-Agendar`, summer: `Hola ${first_name}. Solicitaste el acceso a la agenda para Summer Camp hace un momento. Si el calendario no te mostró horarios convenientes, dímelo y buscamos un espacio que te funcione. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/SummerCamp-Agendar`, pathway: `Hola ${first_name}. Noté que pediste el enlace para la sesión de Pathway en Alemania. Si la plataforma te dio error o no encontraste disponibilidad, avísame por aquí para coordinarlo directo. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/PW_Alemania_Agendar`, estudio: `Hola ${first_name}. Vi que solicitaste el calendario para Estudio y Trabajo. Si tuviste algún inconveniente técnico al intentar agendar o no te acomodan las horas, dime y lo reviso. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/EstudiaryTrabajar_Agendar`, gap: `Hola ${first_name}. Solicitaste el enlace de asesoría para tu Gap Year en Australia. Si no encontraste un hueco en la agenda o se cerró el enlace, escríbeme y te ayudo a reservarlo. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/Estudiar-y-Trabajar-en-Australia` }; const pp = programa.toLowerCase(); let message = null; if (pp.includes('internado') || pp.includes('boarding')) message = F1.boarding; else if (pp.includes('intercambio') || pp.includes('familia') || pp.includes('académico') || pp.includes('academico')) message = F1.aa; else if (pp.includes('campamento') || pp.includes('summer')) message = F1.summer; else if (pp.includes('pathway')) message = F1.pathway; else if (pp.includes('gap year')) message = F1.gap; else if (pp.includes('idioma') || pp.includes('estudio y trabajo') || pp.includes('estudia y trabaja')) message = F1.estudio; return [{ json: { agendo, matched: !!message, message, contactId, opportunityId, phone, first_name, programa, session_key } }];"
+   },
+   "id": "29aa557d-4c6d-4c47-b24d-1f4209ff6afc",
+   "name": "Code: Fase 1 (GHL)",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    -2624,
+    16
+   ]
+  },
+  {
+   "parameters": {
+    "conditions": {
+     "options": {
+      "caseSensitive": true,
+      "leftValue": "",
+      "typeValidation": "loose",
+      "version": 2
+     },
+     "conditions": [
+      {
+       "id": "c-f1-agendo",
+       "leftValue": "={{ $json.agendo }}",
+       "rightValue": true,
+       "operator": {
+        "type": "boolean",
+        "operation": "true",
+        "singleValue": true
+       }
+      }
+     ],
+     "combinator": "and"
+    },
+    "options": {}
+   },
+   "id": "9f4a393c-0547-4ba4-b5b3-de1730e5c64d",
+   "name": "IF: ¿ya agendó? (Fase 1)",
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 2.2,
+   "position": [
+    -2400,
+    16
+   ]
+  },
+  {
+   "parameters": {
+    "conditions": {
+     "options": {
+      "caseSensitive": true,
+      "leftValue": "",
+      "typeValidation": "loose",
+      "version": 2
+     },
+     "conditions": [
+      {
+       "id": "c-f1-matched",
+       "leftValue": "={{ $json.matched }}",
+       "rightValue": true,
+       "operator": {
+        "type": "boolean",
+        "operation": "true",
+        "singleValue": true
+       }
+      }
+     ],
+     "combinator": "and"
+    },
+    "options": {}
+   },
+   "id": "a4c62d64-f4da-4e6c-9308-56ade762c9bd",
+   "name": "IF: ¿programa mapeado?",
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 2.2,
+   "position": [
+    -2176,
+    112
+   ]
+  },
+  {
+   "parameters": {
+    "method": "POST",
+    "url": "https://services.leadconnectorhq.com/conversations/messages",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Version",
+       "value": "2021-07-28"
+      }
+     ]
+    },
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify({ type: 'WhatsApp', contactId: $('Code: Fase 1 (GHL)').item.json.contactId, message: $('Code: Fase 1 (GHL)').item.json.message }) }}",
+    "options": {}
+   },
+   "id": "68ac58ac-662d-4154-b607-894ff06a1ba7",
+   "name": "GHL: Send WhatsApp Fase 1",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    -1952,
+    16
+   ],
+   "credentials": {
+    "httpHeaderAuth": {
+     "id": "iVwUlPpQHp1SArJY",
+     "name": "GHL Venttur Header Auth"
+    }
+   }
+  },
+  {
+   "parameters": {
+    "method": "POST",
+    "url": "=https://services.leadconnectorhq.com/contacts/{{ $('Code: Fase 1 (GHL)').item.json.contactId }}/tags",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Version",
+       "value": "2021-07-28"
+      }
+     ]
+    },
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify({ tags: ['rescate_programa_no_mapeado'] }) }}",
+    "options": {}
+   },
+   "id": "99a6eb09-95d8-4fdb-97a0-a726168921ff",
+   "name": "GHL: addTag no_mapeado",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    -1952,
+    208
+   ],
+   "credentials": {
+    "httpHeaderAuth": {
+     "id": "iVwUlPpQHp1SArJY",
+     "name": "GHL Venttur Header Auth"
+    }
+   }
+  },
+  {
+   "parameters": {
+    "jsCode": "const c = $('Code: Fase 1 (GHL)').first().json; const first_name = c.first_name || ''; const programa = c.programa || ''; const system = { type: 'system', content: `El lead ${first_name || '(sin nombre)'} mostró interés en ${programa || 'uno de nuestros programas'} y solicitó el enlace de agendamiento, pero no agendó.` }; const ai = { type: 'ai', content: c.message || '' }; return [{ json: { session_key: c.session_key, system_message: system, ai_message: ai } }];"
+   },
+   "id": "9df7d106-8797-4f89-8af6-fbfc890ac685",
+   "name": "Build Rescate Memory (Fase 1)",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    -1744,
+    208
+   ]
+  },
+  {
+   "parameters": {
+    "operation": "executeQuery",
+    "query": "INSERT INTO n8n_chat_histories (session_id, message) SELECT $1, $2::jsonb WHERE NOT EXISTS (SELECT 1 FROM n8n_chat_histories WHERE session_id = $1 AND message->>'type' = 'system') RETURNING id;",
+    "options": {
+     "queryReplacement": "={{ [$json.session_key, JSON.stringify($json.system_message)] }}"
+    }
+   },
+   "id": "00d2c0da-bc81-4e4f-b881-f4a8b8fb1eef",
+   "name": "Insert system FORM (idempotent)",
+   "type": "n8n-nodes-base.postgres",
+   "typeVersion": 2.6,
+   "position": [
+    -1520,
+    208
+   ],
+   "credentials": {
+    "postgres": {
+     "id": "ihpvM7nYMdLCwWDP",
+     "name": "Venttur"
+    }
+   },
+   "onError": "continueRegularOutput"
+  },
+  {
+   "parameters": {
+    "operation": "executeQuery",
+    "query": "INSERT INTO n8n_chat_histories (session_id, message) VALUES ($1, $2::jsonb) RETURNING id;",
+    "options": {
+     "queryReplacement": "={{ [$('Build Rescate Memory (Fase 1)').item.json.session_key, JSON.stringify($('Build Rescate Memory (Fase 1)').item.json.ai_message)] }}"
+    }
+   },
+   "id": "d1d7ecfe-560f-41ce-a899-d2a7938f4a80",
+   "name": "Insert ai Rescate Fase 1",
+   "type": "n8n-nodes-base.postgres",
+   "typeVersion": 2.6,
+   "position": [
+    -1296,
+    208
+   ],
+   "credentials": {
+    "postgres": {
+     "id": "ihpvM7nYMdLCwWDP",
+     "name": "Venttur"
+    }
+   },
+   "onError": "continueRegularOutput"
+  },
+  {
+   "parameters": {
+    "amount": 24,
+    "unit": "hours"
+   },
+   "id": "f00b6525-8f0b-4436-859a-0bc3e7d79d01",
+   "name": "Wait: 24 hrs",
+   "type": "n8n-nodes-base.wait",
+   "typeVersion": 1.1,
+   "position": [
+    -1744,
+    16
+   ],
+   "webhookId": "wait-24-hook"
+  },
+  {
+   "parameters": {
+    "url": "=https://services.leadconnectorhq.com/contacts/{{ $('Webhook: link entregado').first().json.body.contactId }}",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Version",
+       "value": "2021-07-28"
+      }
+     ]
+    },
+    "options": {}
+   },
+   "id": "50d7461b-2191-4a4b-8cd6-ce17ac775027",
+   "name": "GHL: Get Contact (2)",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    -1520,
+    16
+   ],
+   "credentials": {
+    "httpHeaderAuth": {
+     "id": "iVwUlPpQHp1SArJY",
+     "name": "GHL Venttur Header Auth"
+    }
+   }
+  },
+  {
+   "parameters": {
+    "jsCode": "const hook = $('Webhook: link entregado').first().json.body || $('Webhook: link entregado').first().json; const contact = ($('GHL: Get Contact (2)').first().json.contact) || $('GHL: Get Contact (2)').first().json || {}; const first_name = hook.first_name || ''; const programa = (hook.programa_interes || '').toString(); const phone = (hook.phone || '').toString(); const contactId = hook.contactId || contact.id || ''; const opportunityId = hook.opportunityId || ''; const AGENDAN_CITA_FIELD_ID = 'LwXu8AxMLhVGCbNmgzm2'; const cfs = contact.customFields || []; const cf = Array.isArray(cfs) ? cfs.find(f => f.id === AGENDAN_CITA_FIELD_ID) : null; const cv = cf ? cf.value : null; const agendo = !!cv && cv !== 'false' && cv !== false && !(Array.isArray(cv) && cv.length === 0); function nsk(x){ x=(x||'').toString().replace(/[^0-9]/g,''); if(x.length===12 && x.startsWith('52')) x='521'+x.slice(2); return x; } const session_key = '+' + nsk(phone); const F2 = { boarding: `Hola ${first_name} 👋. Noté que tu registro quedó en pausa ayer. Mandar a un hijo a un internado es un gran paso y es súper normal dudar si 'ya está listo'. En la sesión validamos su perfil y vemos los pocos cupos que quedan para la temporada. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/agendar-ema`, aa: `Hola ${first_name} 👋. Seguro entre tantas cosas ayer se te pasó agendar. La mayor preocupación de los papás siempre es: '¿Se adaptará bien si no domina el idioma?'. En la llamada armamos un plan de inmersión seguro para evitar frustraciones. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/AAFamilia-Agendar`, summer: `Hola ${first_name} 👋. Vi que tu registro quedó a medias ayer. Es súper común dudar si un Summer Camp será seguro y realmente formativo, o solo un paseo. En 45 min aterrizamos la opción ideal antes de que cierren los grupos de temporada. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/SummerCamp-Agendar`, pathway: `Hola ${first_name} 👋. Noté que pausaste el registro ayer. Muchos creen que necesitan alemán perfecto para empezar, pero el secreto es armar la ruta ya mismo para no perder la admisión en las universidades públicas. En 45 min les damos el mapa completo. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/PW_Alemania_Agendar`, estudio: `Hola ${first_name} 👋. Seguro el día a día te ganó y se te pasó agendar. ¿Dudas si vale la pena irse teniendo nivel básico? Justo la inmersión total hace que se pierda el miedo en semanas. En la sesión aterrizamos el destino ideal según fechas de inicio. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/EstudiaryTrabajar_Agendar`, gap: `Hola ${first_name} 👋. Vi que dejaste el registro a medias. Irse a Australia es un gran paso y la mayor duda siempre es: '¿Encontrará trabajo rápido?'. El secreto está en irse con una ruta clara y no improvisar. Nos quedan pocos espacios esta semana. ¿Listo para ver si es la mejor opción para tu hijo o hija? Reserva tu espacio aquí: promo.venttur.com/Estudiar-y-Trabajar-en-Australia` }; const pp = programa.toLowerCase(); let message = null; if (pp.includes('internado') || pp.includes('boarding')) message = F2.boarding; else if (pp.includes('intercambio') || pp.includes('familia') || pp.includes('académico') || pp.includes('academico')) message = F2.aa; else if (pp.includes('campamento') || pp.includes('summer')) message = F2.summer; else if (pp.includes('pathway')) message = F2.pathway; else if (pp.includes('gap year')) message = F2.gap; else if (pp.includes('idioma') || pp.includes('estudio y trabajo') || pp.includes('estudia y trabaja')) message = F2.estudio; return [{ json: { agendo, matched: !!message, message, contactId, opportunityId, phone, first_name, programa, session_key } }];"
+   },
+   "id": "30117972-6b34-49a1-a21f-a30389316676",
+   "name": "Code: Fase 2 (GHL)",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    -1296,
+    16
+   ]
+  },
+  {
+   "parameters": {
+    "conditions": {
+     "options": {
+      "caseSensitive": true,
+      "leftValue": "",
+      "typeValidation": "loose",
+      "version": 2
+     },
+     "conditions": [
+      {
+       "id": "c-f2-agendo",
+       "leftValue": "={{ $json.agendo }}",
+       "rightValue": true,
+       "operator": {
+        "type": "boolean",
+        "operation": "true",
+        "singleValue": true
+       }
+      }
+     ],
+     "combinator": "and"
+    },
+    "options": {}
+   },
+   "id": "bcba76cf-6885-4556-a538-86e066e664e2",
+   "name": "IF: ¿ya agendó? (Fase 2)",
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 2.2,
+   "position": [
+    -1072,
+    16
+   ]
+  },
+  {
+   "parameters": {
+    "method": "POST",
+    "url": "https://services.leadconnectorhq.com/conversations/messages",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Version",
+       "value": "2021-07-28"
+      }
+     ]
+    },
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify({ type: 'WhatsApp', contactId: $('Code: Fase 2 (GHL)').item.json.contactId, message: $('Code: Fase 2 (GHL)').item.json.message }) }}",
+    "options": {}
+   },
+   "id": "909a38af-bad0-4fde-811f-3ba167715b48",
+   "name": "GHL: Send WhatsApp Fase 2",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    -864,
+    16
+   ],
+   "credentials": {
+    "httpHeaderAuth": {
+     "id": "iVwUlPpQHp1SArJY",
+     "name": "GHL Venttur Header Auth"
+    }
+   }
+  },
+  {
+   "parameters": {
+    "method": "POST",
+    "url": "=https://services.leadconnectorhq.com/contacts/{{ $('Code: Fase 2 (GHL)').item.json.contactId }}/tags",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Version",
+       "value": "2021-07-28"
+      }
+     ]
+    },
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify({ tags: ['link_abandonado_frio'] }) }}",
+    "options": {}
+   },
+   "id": "7b22309c-4e30-46ca-9208-190338201231",
+   "name": "GHL: addTag link_abandonado_frio",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    -640,
+    112
+   ],
+   "credentials": {
+    "httpHeaderAuth": {
+     "id": "iVwUlPpQHp1SArJY",
+     "name": "GHL Venttur Header Auth"
+    }
+   }
+  },
+  {
+   "parameters": {
+    "method": "PUT",
+    "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Code: Fase 2 (GHL)').item.json.opportunityId }}",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Version",
+       "value": "2021-07-28"
+      }
+     ]
+    },
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify({ pipelineStageId: '868e89f8-941b-4e77-bf98-eeef23c6b759' }) }}",
+    "options": {}
+   },
+   "id": "408c3af3-3f43-4fd9-ab22-f8097b326255",
+   "name": "GHL: Move stage Abandonado frío",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    -416,
+    112
+   ],
+   "credentials": {
+    "httpHeaderAuth": {
+     "id": "iVwUlPpQHp1SArJY",
+     "name": "GHL Venttur Header Auth"
+    }
+   }
+  },
+  {
+   "parameters": {
+    "jsCode": "const c = $('Code: Fase 2 (GHL)').first().json; return [{ json: { session_key: c.session_key, ai_message: { type: 'ai', content: c.message || '' } } }];"
+   },
+   "id": "79755464-8301-4043-94ed-a7d036a78fd3",
+   "name": "Build Rescate Memory (Fase 2)",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    -640,
+    -80
+   ]
+  },
+  {
+   "parameters": {
+    "operation": "executeQuery",
+    "query": "INSERT INTO n8n_chat_histories (session_id, message) VALUES ($1, $2::jsonb) RETURNING id;",
+    "options": {
+     "queryReplacement": "={{ [$('Build Rescate Memory (Fase 2)').item.json.session_key, JSON.stringify($('Build Rescate Memory (Fase 2)').item.json.ai_message)] }}"
+    }
+   },
+   "id": "4f22a4a4-0c6e-43f9-9dcf-f9a059ae1135",
+   "name": "Insert ai Rescate Fase 2",
+   "type": "n8n-nodes-base.postgres",
+   "typeVersion": 2.6,
+   "position": [
+    -416,
+    -80
+   ],
+   "credentials": {
+    "postgres": {
+     "id": "ihpvM7nYMdLCwWDP",
+     "name": "Venttur"
+    }
+   },
+   "onError": "continueRegularOutput"
+  }
+ ],
+ "connections": {
+  "Webhook: link entregado": {
+   "main": [
+    [
+     {
+      "node": "Wait: 45 min",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Wait: 45 min": {
+   "main": [
+    [
+     {
+      "node": "GHL: Get Contact (1)",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "GHL: Get Contact (1)": {
+   "main": [
+    [
+     {
+      "node": "Code: Fase 1 (GHL)",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Code: Fase 1 (GHL)": {
+   "main": [
+    [
+     {
+      "node": "IF: ¿ya agendó? (Fase 1)",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "IF: ¿ya agendó? (Fase 1)": {
+   "main": [
+    [],
+    [
+     {
+      "node": "IF: ¿programa mapeado?",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "IF: ¿programa mapeado?": {
+   "main": [
+    [
+     {
+      "node": "GHL: Send WhatsApp Fase 1",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    [
+     {
+      "node": "GHL: addTag no_mapeado",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "GHL: Send WhatsApp Fase 1": {
+   "main": [
+    [
+     {
+      "node": "Wait: 24 hrs",
+      "type": "main",
+      "index": 0
+     },
+     {
+      "node": "Build Rescate Memory (Fase 1)",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Build Rescate Memory (Fase 1)": {
+   "main": [
+    [
+     {
+      "node": "Insert system FORM (idempotent)",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Insert system FORM (idempotent)": {
+   "main": [
+    [
+     {
+      "node": "Insert ai Rescate Fase 1",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Wait: 24 hrs": {
+   "main": [
+    [
+     {
+      "node": "GHL: Get Contact (2)",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "GHL: Get Contact (2)": {
+   "main": [
+    [
+     {
+      "node": "Code: Fase 2 (GHL)",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Code: Fase 2 (GHL)": {
+   "main": [
+    [
+     {
+      "node": "IF: ¿ya agendó? (Fase 2)",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "IF: ¿ya agendó? (Fase 2)": {
+   "main": [
+    [],
+    [
+     {
+      "node": "GHL: Send WhatsApp Fase 2",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "GHL: Send WhatsApp Fase 2": {
+   "main": [
+    [
+     {
+      "node": "GHL: addTag link_abandonado_frio",
+      "type": "main",
+      "index": 0
+     },
+     {
+      "node": "Build Rescate Memory (Fase 2)",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "GHL: addTag link_abandonado_frio": {
+   "main": [
+    [
+     {
+      "node": "GHL: Move stage Abandonado frío",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Build Rescate Memory (Fase 2)": {
+   "main": [
+    [
+     {
+      "node": "Insert ai Rescate Fase 2",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  }
+ },
+ "settings": {
+  "executionOrder": "v1",
+  "callerPolicy": "workflowsFromSameOwner",
+  "availableInMCP": false
+ },
+ "staticData": null,
+ "meta": null,
+ "pinData": {},
+ "versionId": "a928328d-472d-430b-93ac-f8514495a816",
+ "activeVersionId": null,
+ "versionCounter": 4,
+ "triggerCount": 0,
+ "shared": [
+  {
+   "updatedAt": "2026-09-10T19:05:23.129Z",
+   "createdAt": "2026-09-10T19:05:23.129Z",
+   "role": "workflow:owner",
+   "workflowId": "YB0UxwEVwzISdd54",
+   "projectId": "OZub3m3DGqbZefcZ",
+   "project": {
+    "updatedAt": "2025-02-10T13:18:00.403Z",
+    "createdAt": "2025-02-10T13:17:23.832Z",
+    "id": "OZub3m3DGqbZefcZ",
+    "name": "la agencia <[EMAIL-AGENCIA]>",
+    "type": "personal",
+    "icon": null,
+    "description": null,
+    "projectRelations": [
+     {
+      "updatedAt": "2025-02-10T13:17:23.833Z",
+      "createdAt": "2025-02-10T13:17:23.833Z",
+      "userId": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+      "projectId": "OZub3m3DGqbZefcZ",
+      "user": {
+       "updatedAt": "2026-09-22T22:03:32.000Z",
+       "createdAt": "2025-02-10T13:17:22.713Z",
+       "id": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+       "email": "[EMAIL-AGENCIA]",
+       "firstName": "la agencia",
+       "lastName": "AI",
+       "personalizationAnswers": {
+        "version": "v4",
+        "personalization_survey_submitted_at": "2025-02-10T13:18:23.044Z",
+        "personalization_survey_n8n_version": "1.77.3",
+        "companySize": "<20",
+        "companyType": "digital-agency",
+        "role": "business-owner",
+        "reportedSource": "youtube"
+       },
+       "settings": {
+        "userActivated": true,
+        "easyAIWorkflowOnboarded": true,
+        "firstSuccessfulWorkflowId": "KFHNPOd9iRMDKpBc",
+        "userActivatedAt": 1739194255698,
+        "npsSurvey": {
+         "waitingForResponse": true,
+         "ignoredCount": 2,
+         "lastShownAt": 1789467400717
+        }
+       },
+       "disabled": false,
+       "mfaEnabled": false,
+       "lastActiveAt": "2026-09-22",
+       "isPending": false
+      }
+     }
+    ]
+   }
+  }
+ ],
+ "tags": [],
+ "activeVersion": null
+}

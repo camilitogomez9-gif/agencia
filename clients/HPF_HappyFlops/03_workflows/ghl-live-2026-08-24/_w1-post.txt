@@ -1,0 +1,22 @@
+HPF · L6 — gate de W1 (cobertura topológica)
+
+  ✅ I-01 camino feliz hasta el router
+       ack=True llegó_al_router=True etapa=Lead Nuevo sessionId=+52133000001992131 opp=vzYAb3P86uJ08CI9jKyV
+  ✅ I-02 idempotencia por messageId
+       1ª aceptado=True · 2ª aceptado=False motivo=duplicado → GHL puede reintentar sin duplicar turnos
+  ✅ I-03 etapa bloqueante → agente en silencio
+       ruta=bloqueado motivo=atencion_humana llegó_al_router=False (debe ser False)
+  ✅ I-04 cliente que vuelve (Ganado) → el bot no responde y avisa al equipo
+       ruta=cliente_vuelve via=existente etapa=Ganado llegó_al_cerebro=False (debe ser False) · avisó_por_telegram=True
+  ✅ I-05 debounce: gana el último de la ráfaga
+       1º murió_en_debounce=True · 2º llegó_al_router=True
+  ✅ I-06 relay sin contactId → rompe
+       http=500 · {"message": "Workflow execution failed"}
+  ✅ I-07 ruteo por tipo (imagen / audio / pdf)
+       detectado={'imagen': 'imagen', 'audio': 'audio', 'pdf': 'pdf'}
+  ✅ I-08 sessionKey compatible con la memoria de Kommo
+       obtenido='+52133000001992131' esperado='+52133000001992131' → los leads en curso no pierden el historial en el cutover
+
+====================================================================
+L6·W1: 8/8 corroborados
+aristas cubiertas: 7/7 → ['bloqueado', 'cliente_vuelve', 'duplicado', 'gana_ultimo', 'nuevo', 'pierde_debounce', 'seguir']

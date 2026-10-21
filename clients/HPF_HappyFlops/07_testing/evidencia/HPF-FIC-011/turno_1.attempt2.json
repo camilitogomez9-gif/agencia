@@ -1,0 +1,89 @@
+{
+  "probe_id": "sess_hpf_fic_011_1785955687#4a6ae6f001be",
+  "session_id": "sess_hpf_fic_011_1785955687",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "hola",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 6.5,
+  "version_antes": "f787487c-8332-405d-8053-16b9b8eb1189",
+  "version_despues": "f787487c-8332-405d-8053-16b9b8eb1189",
+  "capturado_utc": "2026-08-05T18:48:22.902538+00:00",
+  "execution_id": "989702",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T18:48:11.926Z",
+  "stoppedAt": "2026-08-05T18:48:17.529Z",
+  "n_esperadas": 3,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "Me podría decir de que es su evento? ",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 2,
+      "message_part": "🤵👰 - Boda\n🎂🥳 - XV Años\n👼🏢 - Otros",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 488,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1935,
+      "chat_id": 6390727286,
+      "texto_entregado": "Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 426,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1936,
+      "chat_id": 6390727286,
+      "texto_entregado": "Me podría decir de que es su evento?",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 2,
+      "ms": 367,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1937,
+      "chat_id": 6390727286,
+      "texto_entregado": "🤵👰 - Boda\n🎂🥳 - XV Años\n👼🏢 - Otros",
+      "error": null
+    }
+  ],
+  "n_entregadas": 3,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\nMe podría decir de que es su evento?\n🤵👰 - Boda\n🎂🥳 - XV Años\n👼🏢 - Otros",
+    "tools": []
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-FIC-011"
+}

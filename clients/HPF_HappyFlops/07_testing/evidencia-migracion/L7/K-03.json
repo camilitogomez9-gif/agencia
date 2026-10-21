@@ -1,0 +1,57 @@
+{
+  "caso": "K-03",
+  "titulo": "pedido grande → varias cajas",
+  "resultado": "CORROBORADO",
+  "detalle": "cajas=3 costo=1200 resumen=['Caja 1: $400', 'Caja 2: $400', 'Caja 3: $400']",
+  "pasos": [
+    {
+      "resp": {
+        "ok": true,
+        "costo_total_envio": 1200,
+        "costo_total_envio_str": "$1200",
+        "cantidad_cajas": 3,
+        "resumen_cajas": [
+          "Caja 1: $400",
+          "Caja 2: $400",
+          "Caja 3: $400"
+        ],
+        "cajas": [
+          {
+            "indice": 1,
+            "peso_total_kg": 30,
+            "costo_envio": 400,
+            "costo_envio_str": "$400",
+            "contenido": {
+              "Sandalias Delgadas": 200
+            }
+          },
+          {
+            "indice": 2,
+            "peso_total_kg": 29,
+            "costo_envio": 400,
+            "costo_envio_str": "$400",
+            "contenido": {
+              "Sandalias Delgadas": 100,
+              "Cilindros": 100
+            }
+          },
+          {
+            "indice": 3,
+            "peso_total_kg": 28,
+            "costo_envio": 400,
+            "costo_envio_str": "$400",
+            "contenido": {
+              "Cilindros": 200
+            }
+          }
+        ],
+        "advertencia_minimos": null,
+        "Cantidad de cajas necesarias y costo de envio": [
+          "Caja 1: $400",
+          "Caja 2: $400",
+          "Caja 3: $400"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "probe_id": "sess_hpf_fic_012_1785955737#3dd5cb90a95c",
+  "session_id": "sess_hpf_fic_012_1785955737",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "qué colores de tapas hay",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 7.2,
+  "version_antes": "f787487c-8332-405d-8053-16b9b8eb1189",
+  "version_despues": "f787487c-8332-405d-8053-16b9b8eb1189",
+  "capturado_utc": "2026-08-05T18:49:43.311282+00:00",
+  "execution_id": "989710",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T18:49:31.686Z",
+  "stoppedAt": "2026-08-05T18:49:37.985Z",
+  "n_esperadas": 2,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Las tapas de los cilindros se entregan surtidas, no se puede elegir color. Si tienes alguna otra duda o quieres ver los modelos de cilindros, dime y te los muestro",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "Colores de *tapas* disponibles, puede ir surtido en los *colores* que gustes",
+      "photo_url": "https://i.ibb.co/5xBmhSdK/684359acdcdba.jpg",
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 0,
+      "ms": 266,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1952,
+      "chat_id": 6390727286,
+      "texto_entregado": "Colores de *tapas* disponibles, puede ir surtido en los *colores* que gustes",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 337,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1951,
+      "chat_id": 6390727286,
+      "texto_entregado": "Las tapas de los cilindros se entregan surtidas, no se puede elegir color. Si tienes alguna otra duda o quieres ver los modelos de cilindros, dime y te los muestro",
+      "error": null
+    }
+  ],
+  "n_entregadas": 2,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Las tapas de los cilindros se entregan surtidas, no se puede elegir color. Si tienes alguna otra duda o quieres ver los modelos de cilindros, dime y te los muestro 😊",
+    "tools": [
+      "MOSTRAR_PRODUCTOS"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-FIC-012"
+}

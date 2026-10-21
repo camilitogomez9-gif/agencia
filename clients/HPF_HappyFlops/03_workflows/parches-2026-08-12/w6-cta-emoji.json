@@ -1,0 +1,13 @@
+{
+  "wf": "W6",
+  "descripcion": "items 1 y 2: el texto de cierre del step_3 está hardcodeado en el nodo (no lo genera ningún LLM), así que las negritas y el emoji que pidió Oscar van acá. Es el mensaje que él señaló textualmente ('te gustaría que te detalle algún otro producto, le puede poner una carita de feliz').",
+  "cita_oscar": "aquí, por ejemplo, te gustaría que te detalle algún otro producto, le puede poner, no sé, una carita de feliz, una cosa así como para que empatice más porque las mamás y las novias son mucho de empatizar con sentimientos",
+  "ediciones": [
+    {
+      "nodo": "Cards a partes",
+      "campo": "parameters.jsCode",
+      "anchor": "const CTA_STEP_3 = '¿Le interesa sumarlos a la cotización?\\n' +\n  'Dígame:\\n- Cantidad\\n- Código postal\\n\\n¡Gracias!';",
+      "reemplazo": "// Negritas y emoji pedidos por Oscar en la reunión del 2026-08-11: en México el texto\n// pelado se lee mal y él lo señaló sobre este mensaje en particular. El formato es el de\n// WhatsApp (*asterisco simple*), igual que la promo del Main Image. El texto en sí no\n// cambia — sigue siendo el fijo que el origen tenía hardcodeado en `actualizar23`.\nconst CTA_STEP_3 = '¿Le interesa sumarlos a la cotización? 😊\\n' +\n  'Dígame:\\n- *Cantidad*\\n- *Código postal*\\n\\n¡Gracias!';"
+    }
+  ]
+}

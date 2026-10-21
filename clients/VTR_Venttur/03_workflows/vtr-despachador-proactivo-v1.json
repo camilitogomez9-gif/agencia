@@ -1,0 +1,669 @@
+{
+  "name": "VTR - Despachador proactivo",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 30
+            }
+          ]
+        }
+      },
+      "id": "cron-cada-30-min",
+      "name": "Cron cada 30 min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "dry_run",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "a2",
+              "name": "max_por_corrida",
+              "value": 40,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "config",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]"
+        },
+        "table": {
+          "__rl": true,
+          "value": "[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]/[AIRTABLE_TABLE_ID]"
+        },
+        "filterByFormula": "=AND(\n  {ID Manychat} != BLANK(),\n  NOT({Agendan cita}),\n  {Toques enviados} < 2,\n  {Última actividad} = BLANK(),\n  {Estado conversación} != 'Cita confirmada',\n  {Estado conversación} != 'Contestó',\n  {Estado conversación} != 'Cerrada',\n  {Estado conversación} != 'Perdida',\n  {Estado conversación} != 'Conversación interrumpida',\n  IS_AFTER({Creada}, DATEADD(NOW(), -30, 'days')),\n  IS_AFTER(NOW(), DATEADD({Creada}, 1, 'hours')),\n  OR(\n    {Ultimo toque at} = BLANK(),\n    IS_AFTER(NOW(), DATEADD({Ultimo toque at}, 48, 'hours'))\n  )\n)",
+        "limit": 40,
+        "options": {
+          "fields": [
+            "Nombre",
+            "Telefono",
+            "ID Manychat",
+            "Programa interés",
+            "Link asesoría enviado",
+            "Agendan cita",
+            "Toques enviados",
+            "Ultimo toque at",
+            "Estado conversación",
+            "Última actividad",
+            "Origen",
+            "Fuente lead"
+          ]
+        },
+        "returnAll": false
+      },
+      "id": "buscar-elegibles",
+      "name": "Buscar elegibles",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -20,
+        300
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "split-in-batches",
+      "name": "Split In Batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Corre una sola vez, al terminar el loop.\nconst s = $getWorkflowStaticData('global');\nconst r = s.resumen || { enviados: 0, saltados: 0, errores: 0, detalle: [] };\ns.resumen = null;\nreturn [{ json: {\n  enviados: r.enviados, saltados: r.saltados, errores: r.errores,\n  detalle: (r.detalle || []).slice(0, 100),\n}}];\n"
+      },
+      "id": "resumen-final",
+      "name": "Resumen final",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        420,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Despachador proactivo — decide UN mensaje por lead, con tope global.\n// Prioridad: recordatorio de link pendiente > nurturing por programa.\nconst lead = $('Split In Batches').item.json;\nconst cfg  = $('Config').first().json;\n\nconst idmc   = String(lead['ID Manychat'] || '').trim();\nconst toques = Number(lead['Toques enviados'] || 0);\nconst nombre = String(lead['Nombre'] || '').trim().split(' ')[0] || '';\nconst prog   = String(lead['Programa interés'] || 'No definido').trim();\nconst linkEnviado = lead['Link asesoría enviado'] === true;\n\n// Guarda dura: el tope global se re-verifica acá, no sólo en la fórmula de Airtable.\nif (!idmc)        return [{ json: { skip: true, motivo: 'sin ID Manychat', record_id: lead.id } }];\nif (toques >= 2)  return [{ json: { skip: true, motivo: 'tope global alcanzado', record_id: lead.id } }];\nif (lead['Agendan cita'] === true) return [{ json: { skip: true, motivo: 'ya agendó', record_id: lead.id } }];\n\n// Normalización de programa: colapsa la doble grafía \"Boarding School\" / \"Boarding IA\"\n// y todo lo que no mapea cae en 'general' (hoy 1.315 leads con \"No definido\" reciben silencio).\nconst P = prog.toLowerCase();\nlet key = 'general';\nif (P.includes('boarding')) key = 'boarding';\nelse if (P.includes('aa familiar') || P.includes('académico') || P.includes('academico')) key = 'aa_familia';\nelse if (P.includes('summer') || P.includes('campamento')) key = 'summer';\nelse if (P.includes('pathway')) key = 'pathway';\nelse if (P.includes('gap') || P.includes('trabaj')) key = 'gap';\n\nconst LINKS = {\n  boarding:   'promo.venttur.com/agendar-ema',\n  aa_familia: 'promo.venttur.com/AAFamilia-Agendar',\n  summer:     'promo.venttur.com/SummerCamp-Agendar',\n  pathway:    'promo.venttur.com/PW_Alemania_Agendar',\n  gap:        'promo.venttur.com/Estudiar-y-Trabajar-en-Australia',\n  general:    'promo.venttur.com/agendar-ema',\n};\nconst TXT = {\n  boarding:'Boarding School', aa_familia:'Año Académico', summer:'Summer Camp',\n  pathway:'Pathway en Alemania', gap:'Gap Year', general:'los programas',\n};\nconst saludo = nombre ? `Hola ${nombre}` : 'Hola';\nlet motivo, p1, p2, p3;\n\nif (linkEnviado) {\n  // PRIORIDAD 1 — el reporte pide que esto sea la respuesta ESTÁNDAR para todo link pendiente.\n  motivo = 'link_pendiente';\n  p1 = `${saludo}, hace unos días te compartí el enlace para agendar tu asesoría y vi que aún no elegiste horario`;\n  p2 = `Si no encontraste un horario que se ajuste a tu agenda, avísame y reviso disponibilidad manual`;\n  p3 = `Cuando gustes, aquí lo tienes: ${LINKS[key]}`;\n} else {\n  motivo = 'nurturing';\n  p1 = `${saludo}, me quedé con ganas de ayudarte a aterrizar lo de ${TXT[key]}`;\n  p2 = `La duda más común de las familias es por dónde empezar y cuánto tiempo lleva el proceso`;\n  p3 = `Si gustas lo revisamos juntos en una videollamada, sin compromiso: ${LINKS[key]}`;\n}\n\n// Una sola pregunta por mensaje (H6): estos textos no llevan ninguna.\nconst partes = [p1, p2, p3];\nconst preguntas = partes.join(' ').split('?').length - 1;\nif (preguntas > 1) throw new Error(`Mensaje con ${preguntas} preguntas — viola la regla de una sola pregunta`);\n\nreturn [{ json: {\n  skip: false,\n  motivo,\n  key,\n  record_id: lead.id,\n  id_manychat: idmc,\n  session_key: String(lead['Telefono'] || '').replace(/\\D/g, ''),\n  nombre,\n  toques_nuevos: toques + 1,\n  // Regla de Max (2026-08-18): al agotar el tope de 2 toques sin respuesta, el lead se cierra\n  // como 'Perdida'. Si no llego al tope, se reescribe el estado que ya tenia (nunca se borra).\n  estado_final: (toques + 1 >= 2)\n    ? 'Perdida'\n    : (String(lead['Estado conversación'] || '').trim() || 'Activa'),\n  dry_run: cfg.dry_run === true || cfg.dry_run === 'true',\n  texto: partes.filter(Boolean).join('\\n\\n'),\n  mcBody: { subscriber_id: idmc, fields: [\n    { field_name: 'parte1', field_value: p1 },\n    { field_name: 'parte2', field_value: p2 },\n    { field_name: 'parte3', field_value: p3 },\n  ]},\n}}];\n"
+      },
+      "id": "decidir-mensaje",
+      "name": "Decidir mensaje",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        420,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.skip }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "c2",
+              "leftValue": "={{ $json.dry_run }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "enviar",
+      "name": "¿Enviar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/subscriber/setCustomFields",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($('Decidir mensaje').item.json.mcBody) }}",
+        "options": {}
+      },
+      "id": "set-custom-fields",
+      "name": "Set Custom Fields",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        860,
+        360
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9OZtsIsmuVEG9l6R",
+          "name": "Venttur Header Auth account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "success",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "custom-fields-ok",
+      "name": "¿Custom fields OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1080,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $('Decidir mensaje').item.json.id_manychat }}\",\n  \"flow_ns\": \"content20250617172539_850988\"\n}",
+        "options": {}
+      },
+      "id": "sendflow",
+      "name": "sendFlow",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1300,
+        300
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9OZtsIsmuVEG9l6R",
+          "name": "Venttur Header Auth account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]"
+        },
+        "table": {
+          "__rl": true,
+          "value": "[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]/[AIRTABLE_TABLE_ID]"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "id"
+          ],
+          "value": {
+            "id": "={{ $('Decidir mensaje').item.json.record_id }}",
+            "Toques enviados": "={{ $('Decidir mensaje').item.json.toques_nuevos }}",
+            "Ultimo toque at": "={{ $now.toISO() }}",
+            "Estado conversación": "={{ $('Decidir mensaje').item.json.estado_final }}"
+          },
+          "schema": []
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "id": "marcar-toque",
+      "name": "Marcar toque",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1520,
+        300
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Memoria sintética: el agente tiene que saber qué le mandamos proactivamente,\n// o cuando el lead responda va a contestar a ciegas (H4).\nconst d = $('Decidir mensaje').item.json;\nreturn [{ json: {\n  session_key: d.session_key,\n  ai_message: { type: 'ai', content: d.texto },\n}}];\n"
+      },
+      "id": "build-memoria",
+      "name": "Build memoria",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1740,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO n8n_chat_histories (session_id, message)\nVALUES ($1, $2::jsonb)\nRETURNING id;",
+        "options": {
+          "queryReplacement": "={{ [$('Build memoria').item.json.session_key, JSON.stringify($('Build memoria').item.json.ai_message)] }}"
+        }
+      },
+      "id": "insert-ai-memoria-sintética",
+      "name": "Insert ai (memoria sintética)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1960,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "ihpvM7nYMdLCwWDP",
+          "name": "Venttur"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Contador para el resumen final.\nconst s = $getWorkflowStaticData('global');\ns.resumen = s.resumen || { enviados: 0, saltados: 0, errores: 0, detalle: [] };\nconst d = $('Decidir mensaje').item.json;\nif (d.skip) { s.resumen.saltados++; }\nelse if (d.dry_run) { s.resumen.saltados++; s.resumen.detalle.push(`DRY-RUN ${d.record_id} ${d.motivo}`); }\nelse { s.resumen.enviados++; s.resumen.detalle.push(`${d.record_id} ${d.motivo}`); }\nreturn $input.all();\n"
+      },
+      "id": "contar",
+      "name": "Contar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2180,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1.5,
+        "unit": "seconds"
+      },
+      "id": "wait-1.5s",
+      "name": "Wait 1.5s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2400,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OBkUyb8fuo30DzA9",
+          "mode": "list",
+          "cachedResultName": "webapp_errors"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "workflow_id": "={{ $workflow.id }}",
+            "workflow_name": "={{ $workflow.name }}",
+            "execution_id": "={{ $execution.id }}",
+            "execution_url": "={{ $execution.resumeUrl || '' }}",
+            "error_message": "={{ JSON.stringify($json.error || $json) }}",
+            "error_stack": ""
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "id": "registrar-error",
+      "name": "Registrar Error",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1300,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🚦 Despachador proactivo único — Venttur\n\nReemplaza la **cadencia** de los 5 drips de ManyChat y del tri-toque.\nManyChat queda como **capa de envío** (flow genérico `content20250617172539_850988`,\nel mismo que usa el rescate: n8n escribe parte1/2/3 y ManyChat las manda).\n\n### Reglas\n- **Tope GLOBAL de 2** toques proactivos por contacto, contando **todas** las secuencias\n  (usa el campo `Toques enviados` que ya existe y que el outreach también incrementa).\n- **Un solo mensaje por lead por corrida.** Prioridad:\n  `link pendiente` **>** `nurturing por programa`.\n- Se detiene si el lead respondió (`Última actividad`), si agendó (`Agendan cita`)\n  o si el estado es `Contestó` / `Cita confirmada`.\n- Deja **memoria sintética** en `n8n_chat_histories` para que el agente sepa\n  qué se le mandó (si no, responde a ciegas — H4).\n\n### ⚠️ Antes de la primera corrida\n1. `Config.dry_run = true` (viene así). Correr, leer `Resumen final`, **revisar a mano**\n   la lista de leads que saldrían.\n2. La fórmula limita a leads creados en los **últimos 30 días** y a **40 por corrida**.\n   Sin ese límite, la primera corrida le escribiría a miles de leads viejos de una\n   sola vez y se lleva puesta la cuenta de WhatsApp.\n3. Recién con el dry-run revisado, poner `dry_run = false`.\n\n### Campos Airtable\nNo requiere campos nuevos: `Toques enviados`, `Ultimo toque at`, `Agendan cita`,\n`Link asesoría enviado`, `Última actividad`, `Estado conversación`, `ID Manychat`.\n",
+        "height": 700,
+        "width": 520
+      },
+      "id": "sticky-doc",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -460,
+        -420
+      ]
+    }
+  ],
+  "connections": {
+    "Cron cada 30 min": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Buscar elegibles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar elegibles": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split In Batches": {
+      "main": [
+        [
+          {
+            "node": "Resumen final",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Decidir mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decidir mensaje": {
+      "main": [
+        [
+          {
+            "node": "¿Enviar?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Enviar?": {
+      "main": [
+        [
+          {
+            "node": "Set Custom Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Contar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Custom Fields": {
+      "main": [
+        [
+          {
+            "node": "¿Custom fields OK?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Registrar Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Custom fields OK?": {
+      "main": [
+        [
+          {
+            "node": "sendFlow",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Registrar Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sendFlow": {
+      "main": [
+        [
+          {
+            "node": "Marcar toque",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Registrar Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marcar toque": {
+      "main": [
+        [
+          {
+            "node": "Build memoria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build memoria": {
+      "main": [
+        [
+          {
+            "node": "Insert ai (memoria sintética)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert ai (memoria sintética)": {
+      "main": [
+        [
+          {
+            "node": "Contar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contar": {
+      "main": [
+        [
+          {
+            "node": "Wait 1.5s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 1.5s": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar Error": {
+      "main": [
+        [
+          {
+            "node": "Contar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "OBkUyb8fuo30DzA9"
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "venttur"
+  },
+  "tags": []
+}

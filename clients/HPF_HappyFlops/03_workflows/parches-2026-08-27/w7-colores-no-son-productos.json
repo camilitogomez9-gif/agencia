@@ -1,0 +1,20 @@
+{
+  "wf": "W7",
+  "descripcion": "Espejo del parche w6-colores-no-son-productos.json sobre el Recolector1 de W7 (rama de imagen). Recolector (W6) y Recolector1 (W7) tienen systemMessage distintos que comparten trozos textuales — todo cambio léxico o de regla tiene que replicarse en los dos para evitar drift. Mismo patrón que el fix 'mandiles se eligen' del 17/08 (w6-mandiles-se-eligen.json + w7-mandiles-se-eligen.json).",
+  "ediciones": [
+    {
+      "nodo": "Recolector1",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "### Personalización\n\n1. Colores de tinta:",
+      "reemplazo": "### Personalización\n\n⚠️ **REGLA CRÍTICA — Colores e insumos de personalización NO son productos.**\nLos colores de tinta, colores de correa, colores de suela, colores de tapa de cilindro y colores de vaso son **datos informativos** de personalización que el cliente elige DENTRO del pedido del producto real (sandalias, pantuflas, cilindros, etc.). **JAMÁS los agregues como línea al `items` de CALCULADORA ni los cotices como productos separados.** No existe un SKU \"correa\", \"tinta\" ni \"color X\": la correa viene con la sandalia, la tinta se aplica sobre bolsas/kits, la tapa viene con el cilindro.\n\n1. Colores de tinta:",
+      "motivo": "Idem w6-colores-no-son-productos.json."
+    },
+    {
+      "nodo": "Recolector1",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "### Nombres canónicos que la tool reconoce (`producto` en `items`)",
+      "reemplazo": "5) ⚠️ **NUNCA** cargues al `items` colores, correas, tintas, suelas ni insumos de personalización como línea propia (ej: `\"correa negra\"`, `\"tinta roja\"`, `\"color X\"`, `\"suela negra\"`, `\"tapa fiusha\"`). Sólo van los SKU reales del catálogo (los nombres canónicos listados abajo). Cargar un color como producto produce falsos \"mínimo no cumplido\" y cotizaciones inválidas.\n\n### Nombres canónicos que la tool reconoce (`producto` en `items`)",
+      "motivo": "Idem w6-colores-no-son-productos.json."
+    }
+  ]
+}

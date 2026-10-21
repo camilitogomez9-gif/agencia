@@ -1,0 +1,43 @@
+{
+  "_comment": "Configuración propuesta del nodo `registrar` (tool airtableTool) — TFO 2026-06-21. Reemplaza el bloque parameters del nodo. NO incluir el schema (lo arrastra n8n al cargar). Pegar solo los Fields to Send en la UI uno por uno, o reemplazar el bloque `parameters` directo si editás el JSON crudo del workflow.",
+  "operation": "upsert",
+  "base": {
+    "__rl": true,
+    "value": "appNSuKCNtwn0Na6P",
+    "mode": "list",
+    "cachedResultName": "Panel de Control de Leads TOFO",
+    "cachedResultUrl": "https://airtable.com/appNSuKCNtwn0Na6P"
+  },
+  "table": {
+    "__rl": true,
+    "value": "tbl7xE8w94gpKmIOg",
+    "mode": "list",
+    "cachedResultName": "Leads",
+    "cachedResultUrl": "https://airtable.com/appNSuKCNtwn0Na6P/tbl7xE8w94gpKmIOg"
+  },
+  "columns": {
+    "mappingMode": "defineBelow",
+    "value": {
+      "ID Manychat": "={{ $('Webhook').first().json.body.id }}",
+      "Canal": "={{ $('Code in JavaScript').first().json.canal }}",
+      "Nombre / Usuario": "={{ $('Webhook').first().json.body.name }}",
+      "Whatsapp": "={{ $('Code in JavaScript').first().json.canal === 'WhatsApp' ? ($('Webhook').first().json.body.whatsapp_phone || '') : '' }}",
+      "Fecha captado": "={{ $now }}",
+      "Ultimo contacto": "={{ $now }}",
+      "Nombre completo": "={{ $fromAI('Nombre_completo', 'Nombre del lead tal como lo escribio en el chat', 'string') }}",
+      "Ubicación Mencionada": "={{ $fromAI('Ubicacion', 'Ciudad zona o pais que el lead menciono en el chat', 'string') }}",
+      "Intento / Tipo de Lead": "={{ $fromAI('Intento', 'Uno de: Curioso solo informacion / Evaluando opciones / Listo para operar', 'string') }}",
+      "Mensaje Original": "={{ $fromAI('Mensaje_Original', 'Primer mensaje textual del lead', 'string') }}",
+      "Resumen del Mensaje": "={{ $fromAI('Resumen', 'Una o dos oraciones de que quiere el lead', 'string') }}",
+      "Emoción / Tono Detectado": "={{ $fromAI('Emocion', 'Uno de: Entusiasta / Dudoso / Interesado pero cauteloso / Urgente / Frio', 'string') }}",
+      "Respuesta Enviada": "={{ $fromAI('Respuesta', 'Resumen breve de la ultima respuesta del agente', 'string') }}",
+      "Estado": "={{ $fromAI('Estado', 'Estado del lead segun lista de opciones del single select', 'string') }}"
+    },
+    "matchingColumns": ["ID Manychat"],
+    "attemptToConvertTypes": false,
+    "convertFieldsToString": false
+  },
+  "options": {
+    "typecast": true
+  }
+}

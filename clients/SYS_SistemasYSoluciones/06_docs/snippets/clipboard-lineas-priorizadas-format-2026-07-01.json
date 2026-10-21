@@ -1,0 +1,20 @@
+{
+  "nodes": [
+    {
+      "id": "7847b48d-00f3-5ef1-98a6-493cf72af3f5",
+      "name": "Format Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "const matches = $input.all();\nif (matches.length === 0) {\n  return [{ json: {\n    status: 'RESOLVED',\n    data: { mes: null, lineas_priorizadas: [], notas_para_agente: '' },\n    message_to_agent: 'No hay configuración mensual activa. Procedé sin priorización específica.',\n    trace_id: $execution.id\n  } }];\n}\nconst cfg = matches[0].json;\n\n// FIX SD-11 (auditoria-2026-07-01.md): 'Líneas priorizadas' es multilineText\n// en Airtable (no Link a Líneas de Producto, como asumía este código antes)\n// -> llega como STRING, no array. Antes `.join(', ')` sobre un string\n// crasheaba el nodo (TypeError) apenas alguien completara el campo — hoy\n// está dormido solo porque el único record de Config Mensual lo tiene vacío.\n// Fix defensivo: normaliza a array sea cual sea la forma real del dato, sin\n// requerir cambiar el tipo del field en Airtable.\nconst rawLineas = cfg['Líneas priorizadas'];\nconst lineasPriorizadas = Array.isArray(rawLineas)\n  ? rawLineas\n  : (typeof rawLineas === 'string' && rawLineas.trim()\n      ? rawLineas.split(',').map(s => s.trim()).filter(Boolean)\n      : []);\n\nreturn [{ json: {\n  status: 'RESOLVED',\n  data: {\n    mes: cfg.Mes || '',\n    lineas_priorizadas: lineasPriorizadas,\n    notas_para_agente: cfg['Notas para agente'] || ''\n  },\n  message_to_agent: cfg['Notas para agente']\n    ? `Líneas priorizadas este mes: ${lineasPriorizadas.join(', ')}. Nota: ${cfg['Notas para agente']}`\n    : 'Sin priorización particular este mes.',\n  trace_id: $execution.id\n} }];\n"
+      },
+      "notes": "Fix SD-11 (auditoria-2026-07-01.md) — normaliza 'Líneas priorizadas' string->array, evita TypeError de .join() sobre string."
+    }
+  ],
+  "connections": {}
+}

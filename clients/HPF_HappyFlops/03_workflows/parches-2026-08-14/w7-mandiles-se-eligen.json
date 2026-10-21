@@ -1,0 +1,22 @@
+{
+  "wf": "W7",
+  "descripcion": "Mismo cambio que `w6-mandiles-se-eligen.json`, aplicado al `Recolector1` de la rama de imagen: los mandiles se ELIGEN entre los 5 modelos del catálogo, no se personalizan.",
+  "cita_oscar": "Los mandiles si los eligen de los 5 modelos que hay disponibles. NO se personalizan, tiene que escoger de las 5 frases que hay. […] Puede escoger como guste, todos de 1 diseño o surtido de los que quiera de los 5 modelos que hay. […] Mínimo en total 12.",
+  "por_que_tambien_aca": "`Recolector1` es el agente de la rama de imagen (W7): atiende al lead que manda una foto de producto. Es una versión más corta del Recolector y no tiene la REGLA CRÍTICA de mandiles, pero sí repite las dos afirmaciones que quedaron falsas. Si se corrige sólo W6, un lead que llega por foto sigue escuchando que van surtidos.",
+  "ediciones": [
+    {
+      "nodo": "Recolector1",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "- `Mandiles` (⚠️ vienen pre-hechos con 5 frases fijas — NO se personalizan, ver REGLA CRÍTICA al final)",
+      "reemplazo": "- `Mandiles` (⚠️ el cliente ELIGE entre los 5 modelos del catálogo — todos del mismo o surtido — pero NO se personalizan)",
+      "motivo": "Lista de nombres canónicos de la CALCULADORA. Se saca además el 'ver REGLA CRÍTICA al final', que en este prompt apunta a una sección que no existe: la regla completa vive sólo en el Recolector de W6."
+    },
+    {
+      "nodo": "Recolector1",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "- Mandiles: Surtidos según modelos disponibles.",
+      "reemplazo": "- Mandiles: 5 modelos fijos con frases pre-establecidas. El cliente elige cuáles quiere (todos del mismo modelo o surtido); no se personalizan. Si pregunta cuáles son, mandale el catálogo de mandiles — nunca enumeres las frases por texto, no las tenés listadas.",
+      "motivo": "Está en la sección de surtido de colores. Era la afirmación directamente falsa: el cliente no recibe surtido, elige."
+    }
+  ]
+}

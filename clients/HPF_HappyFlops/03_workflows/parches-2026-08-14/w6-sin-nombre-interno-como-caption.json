@@ -1,0 +1,13 @@
+{
+  "wf": "W6",
+  "descripcion": "Deja de usar el nombre interno de la ficha como texto cuando no tiene descripción. Reportado el 14/08: el video de cilindros llegaba con el texto 'Cilindros video' debajo.",
+  "alcance": "No es sólo el video: 24 de las 65 fichas no tienen descripción, así que hoy TODAS muestran su nombre de registro al lead — 'Cilindros catálogo', 'Catalogo pantuflas', 'Métodos de Pago', 'vaca'. La descripción es el texto de cara al cliente; el nombre es la etiqueta interna del catálogo y nunca debería salir.",
+  "ediciones": [
+    {
+      "nodo": "Cards a partes",
+      "campo": "parameters.jsCode",
+      "anchor": "const partes = cards.map(c => ({\n  texto: c.texto || c.nombre,\n  adjuntos: c.media_url ? [c.media_url] : [],\n}));",
+      "reemplazo": "// El texto de la burbuja es la DESCRIPCIÓN de la ficha, nunca su nombre. El nombre\n// ('Cilindros video', 'Catalogo pantuflas', 'vaca') es la etiqueta interna del catálogo\n// y no es copy de cara al cliente: 24 de las 65 fichas no tienen descripción, así que\n// el fallback al nombre se las mostraba a todas. Reportado el 14/08 sobre el video de\n// cilindros, que llegaba con 'Cilindros video' escrito debajo.\n//\n// Sin descripción el asset viaja solo, que es exactamente lo que se quiere en los videos.\n// El filtro final descarta una ficha que no tenga NI texto NI asset, para no mandar una\n// burbuja vacía.\nconst partes = cards.map(c => ({\n  texto: c.texto || '',\n  adjuntos: c.media_url ? [c.media_url] : [],\n})).filter(p => p.texto || p.adjuntos.length);"
+    }
+  ]
+}

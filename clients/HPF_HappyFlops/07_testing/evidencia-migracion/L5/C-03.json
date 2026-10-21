@@ -1,0 +1,17 @@
+{
+  "caso": "C-03",
+  "titulo": "filtro evento + subcategoría",
+  "resultado": "CORROBORADO",
+  "detalle": "cards=5 esperadas=5 iguales",
+  "pasos": [
+    {
+      "cards": [
+        "Bolsa tipo shein de regalo",
+        "Colores de tintas 2025",
+        "Correas 15MM",
+        "Correas 9MM",
+        "Tapas termos"
+      ]
+    }
+  ]
+}

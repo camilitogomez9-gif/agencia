@@ -1,0 +1,21 @@
+{
+  "wf": "W6",
+  "descripcion": "REVERSION del parche del CTA por sesion: sobre-corregia. Deja R2 intacto.",
+  "motivo": "Medido 2/2 en el caso B5 (cotiza sandalias -> 'tambien quiero ver las pantuflas'): el bot mostraba 5 burbujas de fichas de pantuflas SIN CTA y sin que nadie pidiera cantidad ni CP. El lead recibia material y silencio. La condicion 'la sesion ya cotizo' es demasiado ancha: no implica 'no necesito cantidad y CP', porque el turno puede estar mostrando un producto NUEVO que todavia no se cotizo.",
+  "y_ademas": "El caso que este parche venia a arreglar (T4 «cuanto cuestan?» ruteado a step_3) resulto NO ser deterministico: se midio 6/6 step_3 y despues 2/2 step_4 con un cambio que demostrablemente no toca el ruteo (el Router usa referencia absoluta y su systemMessage no tiene interpolaciones). O sea que se estaba pagando una regresion real por un caso variable.",
+  "camino_correcto": "R4b del plan: que en esa rama corra el Recolector (condicion OR en `¿Requiere cotizar?`) para que la pregunta reciba RESPUESTA, en vez de sacar el CTA.",
+  "ediciones": [
+    {
+      "nodo": "Leer evento",
+      "campo": "parameters.query",
+      "anchor": "         LIMIT 1) AS pdf_pago,\n       -- ¿esta SESIÓN ya recibió una cotización? No es del turno: es del historial.\n       -- Lo usa `Cards a partes` para NO volver a pedir cantidad y código postal a un lead\n       -- que ya los dio. Apareció el 2026-08-20 al arreglar R2: al hacer que el Recolector\n       -- cotice de verdad en step_3, el Router empezó a rutear el «¿cuánto cuestan?»\n       -- siguiente a step_3 (memoria compartida entre los 5 agentes), y ahí salía el CTA\n       -- pidiendo datos que el lead acababa de dar. Medido 6/6.\n       --\n       -- Se deriva del historial y no de una columna nueva porque la señal ya existe ahí y\n       -- así no hay que escribir estado desde ningún nodo. `7 DIAS DE PROMO` es el\n       -- encabezado fijo de toda cotización (la misma marca que usa la regex INDIVISIBLE\n       -- de `Partir en burbujas` y la condición If4 del origen).\n       -- El guard `to_regclass` replica el de `¿Hay historial?` de W1: sin él, una sesión\n       -- anterior a la creación de la tabla tira error en vez de devolver false.\n       (SELECT CASE\n          WHEN to_regclass('public.n8n_chat_histories') IS NULL THEN false\n          ELSE EXISTS (SELECT 1 FROM n8n_chat_histories\n                        WHERE session_id = $1\n                          AND message->>'type' = 'ai'\n                          AND message::text ILIKE '%7 DIAS DE PROMO%')\n        END) AS ya_cotizo;",
+      "reemplazo": "         LIMIT 1) AS pdf_pago;"
+    },
+    {
+      "nodo": "Cards a partes",
+      "campo": "parameters.jsCode",
+      "anchor": "// El CTA de cantidad+CP NO va si la sesión ya cotizó. El lead ya dio esos dos datos y\n// volvérselos a pedir es justo lo que reporta el test de paridad.\n//\n// Por qué mirar la SESIÓN y no el turno: el filtro `yaCotizo` de `Partir en burbujas` ya\n// tapa el caso del mismo turno, pero no llega acá. Cuando el Recolector no corre (el\n// clasificador `¿Consulta especial?` responde `no` para un «¿cuánto cuestan?» suelto), el\n// flujo sale por `Recuperar cards` y SALTEA `Partir en burbujas` por completo, así que ese\n// filtro no se ejecuta nunca en esa rama.\n//\n// `ya_cotizo` lo resuelve `Leer evento` contra el historial. isExecuted por la misma razón\n// que el resto de este nodo: referenciar un nodo que no corrió tira ExpressionError.\nconst _le3 = $('Leer evento');\nconst yaCotizoSesion = _le3.isExecuted ? !!(_le3.first().json || {}).ya_cotizo : false;\n\nif (step === 'step_2' && dinamico) {\n  partes.unshift({ texto: dinamico, adjuntos: [] });\n} else if (step === 'step_3' && !yaCotizoSesion) {\n  partes.push({ texto: CTA_STEP_3, adjuntos: [] });\n}",
+      "reemplazo": "if (step === 'step_2' && dinamico) {\n  partes.unshift({ texto: dinamico, adjuntos: [] });\n} else if (step === 'step_3') {\n  partes.push({ texto: CTA_STEP_3, adjuntos: [] });\n}"
+    }
+  ]
+}

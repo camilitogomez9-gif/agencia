@@ -1,0 +1,45 @@
+{
+  "caso": "S-01",
+  "titulo": "3 burbujas separadas, en orden, byte-exactas",
+  "resultado": "CORROBORADO",
+  "detalle": "http=200 partes_enviadas=3 índices=[3, 2, 0] orden_ok=True conv=44tBzIqK9ODLJ7Jr9Lco",
+  "pasos": [
+    {
+      "req": [
+        "S01-p1-1786059327 Hola! gracias por escribir a Happy Flops",
+        "S01-p2-1786059327 Me podría decir de que es su evento?",
+        "S01-p3-1786059327 🤵👰 - Boda | 🎂🥳 - XV Años | 👼🏢 - Otros"
+      ],
+      "resp": {
+        "ok": true,
+        "partes_enviadas": 3,
+        "enviados": [
+          {
+            "seq": 1,
+            "body": "S01-p1-1786059327 Hola! gracias por escribir a Happy Flops",
+            "attachments": [],
+            "ghl_message_id": "wqNvw4iv33k6lr9YpYRA",
+            "ghl_conversation_id": "44tBzIqK9ODLJ7Jr9Lco",
+            "http_status": 201
+          },
+          {
+            "seq": 2,
+            "body": "S01-p2-1786059327 Me podría decir de que es su evento?",
+            "attachments": [],
+            "ghl_message_id": "1EbzibHTrFDuumKjZyZF",
+            "ghl_conversation_id": "44tBzIqK9ODLJ7Jr9Lco",
+            "http_status": 201
+          },
+          {
+            "seq": 3,
+            "body": "S01-p3-1786059327 🤵👰 - Boda | 🎂🥳 - XV Años | 👼🏢 - Otros",
+            "attachments": [],
+            "ghl_message_id": "v3XsiTq1fHCndZTUQ4B7",
+            "ghl_conversation_id": "44tBzIqK9ODLJ7Jr9Lco",
+            "http_status": 201
+          }
+        ]
+      }
+    }
+  ]
+}

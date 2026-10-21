@@ -1,0 +1,839 @@
+{
+  "name": "HPF·GHL · W1 Inbound",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hpf-w1-inbound",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "74be929e-5888-48d2-abdd-9742d1a7c5cf",
+      "name": "Webhook inbound",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1180,
+        0
+      ],
+      "webhookId": "147735b1-7329-4d75-8e77-7e76b82a105f",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jUb7ZjztncX5ACpc",
+          "name": "HPF GHL Webhook Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Contrato de entrada — lo define NUESTRO workflow WF-01 de GHL, no GHL: el paso\n// \"Webhook\" de un GHL Workflow deja mapear campos a mano. Está documentado en la guía\n// de provisión; si cambia allá, cambia acá.\n//   { contactId, conversationId, messageId, body, attachments[], phone, canal }\nconst j0 = $input.first().json || {};\nconst src = (j0.body && j0.body.contactId !== undefined) ? j0.body : j0;\n\nconst faltan = ['contactId', 'messageId'].filter(k => !src[k]);\nif (faltan.length) {\n  throw new Error(`W1: el relay no mandó ${faltan.join(', ')}. ` +\n    `Revisar el mapeo del paso Webhook en WF-01.`);\n}\n\nlet adj = src.attachments ?? [];\nif (typeof adj === 'string') {\n  const t = adj.trim();\n  adj = t.startsWith('[') ? JSON.parse(t) : (t ? [t] : []);\n}\nif (!Array.isArray(adj)) adj = adj ? [adj] : [];\n\nconst texto = String(src.body ?? '').trim();\n\n// Ruteo por tipo, réplica de `checkType` del origen (text / voice / Image).\nlet tipo = 'texto';\nconst url0 = String(adj[0] || '').toLowerCase();\nif (adj.length) {\n  if (/\\.(ogg|oga|mp3|m4a|wav|amr)(\\?|$)/.test(url0)) tipo = 'audio';\n  else if (/\\.pdf(\\?|$)/.test(url0)) tipo = 'pdf';\n  else tipo = 'imagen';\n}\n\nreturn [{ json: {\n  contactId: String(src.contactId),\n  conversationId: src.conversationId ? String(src.conversationId) : null,\n  messageId: String(src.messageId),\n  phone: src.phone ? String(src.phone) : null,\n  canal: src.canal || 'WhatsApp',\n  texto,\n  adjuntos: adj,\n  tipo,\n  // el test manda debounce_seg: 0; producción usa los del origen (50 texto / 15 imagen)\n  debounce_seg: src.debounce_seg !== undefined\n    ? Number(src.debounce_seg)\n    : (tipo === 'imagen' ? 15 : 50),\n  recibido_at: $now.toISO(),\n} }];"
+      },
+      "id": "3ae8a988-ef08-4b5d-a740-a07a677e92e6",
+      "name": "Normalizar entrada",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -960,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "CREATE TABLE IF NOT EXISTS hpf_mensajes_vistos (\n  message_id text PRIMARY KEY,\n  visto_at   timestamptz NOT NULL DEFAULT now()\n);\nDELETE FROM hpf_mensajes_vistos WHERE visto_at < now() - interval '24 hours';\nINSERT INTO hpf_mensajes_vistos (message_id) VALUES ($1)\nON CONFLICT (message_id) DO NOTHING\nRETURNING message_id;",
+        "options": {
+          "queryReplacement": "={{ [ $json.messageId ] }}"
+        }
+      },
+      "id": "dd118085-8bad-48fd-b32b-0623d4fe04f5",
+      "name": "Idempotencia",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        -740,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "fc4c1b98-b8ab-4ffb-a2c1-05a649c7ba18",
+              "leftValue": "={{ $json.message_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3900132a-6501-4eb0-b01e-fce1927838d1",
+      "name": "¿Mensaje nuevo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -520,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ok: true, aceptado: true, messageId: $('Normalizar entrada').first().json.messageId}) }}",
+        "options": {}
+      },
+      "id": "4952fc3e-661a-4cb9-949f-e5f244dd3b05",
+      "name": "Responder ack",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -300,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ok: true, aceptado: false, motivo: \"duplicado\", messageId: $('Normalizar entrada').first().json.messageId}) }}",
+        "options": {}
+      },
+      "id": "bc3b6b03-10f1-47a4-8f5b-0830cb455982",
+      "name": "Responder duplicado",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -300,
+        160
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "2f0558b9-bd55-4114-8419-194655d284f3",
+      "name": "Fin · duplicado",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "CREATE TABLE IF NOT EXISTS hpf_identity (\n  ghl_contact_id   text PRIMARY KEY,\n  phone_raw        text,\n  phone_e164       text,\n  session_id       text NOT NULL,\n  kommo_entity_id  text,\n  kommo_contact_id text,\n  created_at       timestamptz NOT NULL DEFAULT now()\n);\nCREATE INDEX IF NOT EXISTS hpf_identity_session_idx ON hpf_identity (session_id);\nINSERT INTO hpf_identity (ghl_contact_id, phone_e164, session_id)\nVALUES ($1, $2, regexp_replace($2, '\\D', '', 'g') || '2131')\nON CONFLICT (ghl_contact_id) DO UPDATE SET phone_e164 = COALESCE(EXCLUDED.phone_e164,\n                                                                 hpf_identity.phone_e164)\nRETURNING session_id, ghl_contact_id;",
+        "options": {
+          "queryReplacement": "={{ [ $('Normalizar entrada').first().json.contactId, $('Normalizar entrada').first().json.phone || '' ] }}"
+        }
+      },
+      "id": "d528dcc8-9999-4cc1-8f80-a2e9a0127404",
+      "name": "Resolver identidad",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        -80,
+        -140
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VK4M7VQm8CMefbty",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W0 Client"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "op": "find_or_create_opportunity",
+            "args": "={{ JSON.stringify({contactId: $('Normalizar entrada').first().json.contactId, name: 'WhatsApp ' + ($('Normalizar entrada').first().json.phone || $('Normalizar entrada').first().json.contactId)}) }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "1f385c6e-631c-4802-80c2-3e93525714e0",
+      "name": "W0 · find or create",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        140,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VK4M7VQm8CMefbty",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W0 Client"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "op": "get_opportunity",
+            "args": "={{ JSON.stringify({opportunityId: $json.data.opportunity.id}) }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "2d5db1c5-dd64-4755-a608-8696b5d99b2c",
+      "name": "W0 · leer oportunidad",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        360,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Traducción de los gates de etapa del origen. En Kommo se hacía con `contains` sobre\n// el JSON del lead serializado — de ahí el bug del \"143\" que matcheaba cualquier\n// timestamp. Acá es igualdad de UUID.\nconst ETAPAS = {\n  \"Lead Nuevo\": \"cf8fc770-81b1-422c-8394-d00bfb97a3f0\",\n  \"Saludo Enviado\": \"f9709293-d03c-47f1-949f-0c03ab077a45\",\n  \"Evento Identificado\": \"fec50c94-fba0-444b-8c75-7a97da9e0daa\",\n  \"Productos Mostrados\": \"49c7401f-8af1-4d8f-a1b4-e989b6d0a5e2\",\n  \"Cotizado\": \"96fa0ade-c853-4db3-97f4-56d58d69af8c\",\n  \"Esperando Pago\": \"843a06f1-1214-4baa-a3a0-f197cb240b5d\",\n  \"Pago Confirmado\": \"96d760e5-f290-456c-a117-57e61ce6c27d\",\n  \"Diseño en Proceso\": \"d35bb30d-97d5-48c4-81f8-5ecabf32e57d\",\n  \"En Producción\": \"008689c6-80d8-4712-981b-1d800e1e6137\",\n  \"Enviado\": \"218b9b41-4007-4b1c-bbe4-4e775ddf00b5\",\n  \"En Espera\": \"48de80e9-31a9-472a-b030-5b9fe9174810\",\n  \"Ganado\": \"909a816d-997e-4d90-8dc1-dc4b0dcd16d7\",\n  \"Ventas Perdidas\": \"6abfe419-adf2-4df5-87c5-ef4f62e01464\"\n};\nconst nombreDe = Object.fromEntries(Object.entries(ETAPAS).map(([k, v]) => [v, k]));\n\n// El agente se calla en estas etapas (equivale a If7/If9/If12/If20 + \"Si está en perdidos\")\nconst BLOQUEO = {\n  'En Espera':        'atencion_humana',   // Kommo 91266100 atención personalizada\n  'Pago Confirmado':  'pago_confirmado',   // Kommo 91450360\n  'En Producción':    'en_produccion',     // Kommo 100395519\n  'Ventas Perdidas':  'perdido',           // Kommo 143\n  'Ganado':           'ganado',            // Kommo 142\n};\n\nconst ctx  = $('Normalizar entrada').first().json;\nconst ses  = $('Resolver identidad').first().json;\nconst opp  = ($input.first().json.data || {}).opportunity || {};\nconst via  = $('W0 · find or create').first().json.via || null;\n\nconst etapaId     = opp.pipelineStageId || null;\nconst etapaNombre = nombreDe[etapaId] || null;\nconst motivo      = BLOQUEO[etapaNombre] || null;\n\n// Cliente que vuelve: la oportunidad ya existía y está cerrada. En Kommo esto era un\n// lead nuevo; acá hay que reciclar la misma (ver PM-IDN-03-decision.md).\nconst vuelve = via === 'existente' && ['Ganado', 'Ventas Perdidas'].includes(etapaNombre);\n\nlet ruta = 'seguir';\nif (vuelve) ruta = 'cliente_vuelve';\nelse if (motivo) ruta = 'bloqueado';\n\nreturn [{ json: {\n  ...ctx,\n  sessionId: ses.session_id,\n  opportunityId: opp.id || null,\n  etapa_id: etapaId,\n  etapa: etapaNombre,\n  via_oportunidad: via,\n  ruta,\n  motivo_bloqueo: motivo,\n  gates: { etapa: etapaNombre, bloqueo: motivo, via, cliente_vuelve: vuelve },\n} }];"
+      },
+      "id": "e5cc70cc-4367-4041-b9a8-c098d3e0d958",
+      "name": "Evaluar estado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        580,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "28450fc1-fb43-4760-b67e-efa03459f119",
+                    "leftValue": "={{ $json.ruta }}",
+                    "rightValue": "bloqueado",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "bloqueado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "1701c656-ca47-4409-9697-98dcc130cf59",
+                    "leftValue": "={{ $json.ruta }}",
+                    "rightValue": "cliente_vuelve",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "cliente_vuelve"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "f1267655-4d9f-4892-a073-1c492cc8edfc",
+                    "leftValue": "={{ $json.ruta }}",
+                    "rightValue": "seguir",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "seguir"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5276aa5e-5429-4b30-aa85-2f0188e51da6",
+      "name": "Ruteo por estado",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        800,
+        -140
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "4ef5b37d-87b8-4c8c-a877-539ff0f56b03",
+      "name": "Fin · agente en silencio",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        -320
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "79350994-d26b-40bf-8d13-a04e765d4d00",
+      "name": "Reciclar oportunidad (stub)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ 'hpf:' + $json.contactId }}",
+        "messageData": "={{ $json.messageId }}",
+        "tail": true
+      },
+      "id": "671de02c-769c-40bf-bc5b-e9ab78e0d0f9",
+      "name": "Debounce · push",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        40
+      ],
+      "credentials": {
+        "redis": {
+          "id": "o8I3YHY4b5xY8Ipo",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": "={{ $('Evaluar estado').first().json.debounce_seg }}",
+        "unit": "seconds"
+      },
+      "id": "bb581e91-d5a1-4791-8a74-8464899d624e",
+      "name": "Debounce · esperar",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1240,
+        40
+      ],
+      "webhookId": "9805ef48-ece9-4c99-b87f-20752675c82b"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "Mensajes",
+        "key": "={{ $('Evaluar estado').first().json.contactId ? 'hpf:' + $('Evaluar estado').first().json.contactId : '' }}",
+        "options": {}
+      },
+      "id": "f19e2732-f7fd-46e0-b7e8-57effb9f3253",
+      "name": "Debounce · leer",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1460,
+        40
+      ],
+      "credentials": {
+        "redis": {
+          "id": "o8I3YHY4b5xY8Ipo",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Debounce \"gana el último\", igual que el origen: cada mensaje empuja a una lista de\n// Redis y duerme; al despertar sólo sigue la ejecución cuyo texto sigue siendo el\n// último de la lista. Las demás mueren acá.\n//\n// Ojo: el origen tenía este mismo mecanismo ROTO en la rama de imagen — `Guardar1`\n// empujaba `$workflow.id`, que es constante, así que la comparación daba siempre true\n// y no deduplicaba nada. Acá se empuja el messageId, que sí es único.\nconst ctx  = $('Evaluar estado').first().json;\nconst raw  = $input.first().json;\nconst lista = raw.Mensajes ?? raw.propertyName ?? raw ?? [];\nconst arr = Array.isArray(lista) ? lista : [lista];\nconst ultimo = arr.length ? String(arr[arr.length - 1]) : null;\nconst soyElUltimo = ultimo === ctx.messageId;\n\nreturn [{ json: {\n  ...ctx,\n  debounce: { acumulados: arr.length, ultimo, soy_el_ultimo: soyElUltimo,\n              mensajes: arr },\n  soy_el_ultimo: soyElUltimo,\n} }];"
+      },
+      "id": "079ed377-1fda-49d6-87ff-950690ef6667",
+      "name": "¿Soy el último?",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        40
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c65b1a32-2bb2-44e3-9c15-7f6be1ed7d72",
+              "leftValue": "={{ $json.soy_el_ultimo }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "df0f83a5-be79-4dda-b0b0-c138dbf41d30",
+      "name": "Gana el último",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1900,
+        40
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "={{ 'hpf:' + $json.contactId }}"
+      },
+      "id": "95c6cd8c-38c7-4d7f-9c99-3ff6821c14de",
+      "name": "Debounce · limpiar",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        2120,
+        -60
+      ],
+      "credentials": {
+        "redis": {
+          "id": "o8I3YHY4b5xY8Ipo",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "ad3d0b1f-a7af-41ea-9112-500c2dfddcf5",
+      "name": "Fin · superado por otro mensaje",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2120,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "cNmJCP2qVhdtfCH0",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W6 Conversación"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "sessionId": "={{ $json.sessionId }}",
+            "contactId": "={{ $json.contactId }}",
+            "opportunityId": "={{ $json.opportunityId }}",
+            "texto": "={{ $json.texto }}",
+            "primer_contacto": "={{ $json.etapa === 'Lead Nuevo' }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "5f9ff081-f533-4fbd-9736-eedcf974e665",
+      "name": "W6 · conversación",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2340,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "MdbOREN56lfQTYlM",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W2 Salida"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "contactId": "={{ $('Evaluar estado').first().json.contactId }}",
+            "partes": "={{ JSON.stringify($json.partes) }}",
+            "pausa_seg": "={{ $('Normalizar entrada').first().json.debounce_seg > 0 ? 2 : 0 }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "fbb863c5-cb53-4b8d-9cd3-8ae82a5b73f1",
+      "name": "W2 · enviar",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2560,
+        -60
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Objeto de evidencia del turno completo. Es lo que el runner de paridad lee del\n// runData: qué entró, por dónde ruteó, qué tools usó y qué salió a GHL.\nconst ctx = $('Evaluar estado').first().json;\nconst cerebro = $('W6 · conversación').first().json;\nconst envio = $input.first().json;\nreturn [{ json: {\n  ok: true,\n  sessionId: ctx.sessionId, contactId: ctx.contactId, opportunityId: ctx.opportunityId,\n  entrada: { texto: ctx.texto, tipo: ctx.tipo, adjuntos: ctx.adjuntos },\n  etapa: ctx.etapa, gates: ctx.gates,\n  step: cerebro.step,\n  tools_usadas: cerebro.tools_usadas || [],\n  partes_enviadas: envio.partes_enviadas ?? null,\n  enviados: envio.enviados || [],\n} }];"
+      },
+      "id": "13d80e7e-ca77-44fc-a1f5-eece4a49fbd8",
+      "name": "Evidencia del turno",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2780,
+        -60
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "5fd81622-f791-4aa6-96cc-605ede868ae6",
+      "name": "Fin · procesado",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3000,
+        -60
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook inbound": {
+      "main": [
+        [
+          {
+            "node": "Normalizar entrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar entrada": {
+      "main": [
+        [
+          {
+            "node": "Idempotencia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Idempotencia": {
+      "main": [
+        [
+          {
+            "node": "¿Mensaje nuevo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Mensaje nuevo?": {
+      "main": [
+        [
+          {
+            "node": "Responder ack",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder duplicado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder duplicado": {
+      "main": [
+        [
+          {
+            "node": "Fin · duplicado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder ack": {
+      "main": [
+        [
+          {
+            "node": "Resolver identidad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolver identidad": {
+      "main": [
+        [
+          {
+            "node": "W0 · find or create",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "W0 · find or create": {
+      "main": [
+        [
+          {
+            "node": "W0 · leer oportunidad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "W0 · leer oportunidad": {
+      "main": [
+        [
+          {
+            "node": "Evaluar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluar estado": {
+      "main": [
+        [
+          {
+            "node": "Ruteo por estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ruteo por estado": {
+      "main": [
+        [
+          {
+            "node": "Fin · agente en silencio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reciclar oportunidad (stub)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Debounce · push",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reciclar oportunidad (stub)": {
+      "main": [
+        [
+          {
+            "node": "Debounce · push",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Debounce · push": {
+      "main": [
+        [
+          {
+            "node": "Debounce · esperar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Debounce · esperar": {
+      "main": [
+        [
+          {
+            "node": "Debounce · leer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Debounce · leer": {
+      "main": [
+        [
+          {
+            "node": "¿Soy el último?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Soy el último?": {
+      "main": [
+        [
+          {
+            "node": "Gana el último",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gana el último": {
+      "main": [
+        [
+          {
+            "node": "Debounce · limpiar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fin · superado por otro mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Debounce · limpiar": {
+      "main": [
+        [
+          {
+            "node": "W6 · conversación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "W6 · conversación": {
+      "main": [
+        [
+          {
+            "node": "W2 · enviar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "W2 · enviar": {
+      "main": [
+        [
+          {
+            "node": "Evidencia del turno",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evidencia del turno": {
+      "main": [
+        [
+          {
+            "node": "Fin · procesado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "wf": "W1",
+  "descripcion": "R6 · sanear _media_error en TG · adjuntar media (sin HTTP body ni body JSON crudo de GHL filtrándose al lead). El closure fallar() pasa a aceptar (msg, debug), y las 2 llamadas que hoy meten HTTP status + body van con mensaje humano + debug técnico separado en _media_error_debug (para logging, no lo lee nadie hoy pero queda disponible). Las otras 2 llamadas (reforward de nom._media_error y 'URL no termino en .ext') se ajustan a la nueva firma pero sin cambiar el mensaje que ven al lead (ya eran lead-safe).",
+  "medicion": "smoke pre-fix: audio malformado → lead recibe 'GHL rechazo la subida (HTTP 500). {\"error\":...}' literal. post-fix: lead recibe 'No pude procesar tu archivo. Escribime lo que necesitás en texto y seguimos.'",
+  "por_que_nodo": "los otros 3 writers de _media_error (TG → payload GHL, TG · armar payload, TG · nombrar archivo) ya escriben mensajes lead-safe; sólo TG · adjuntar media mezcla contenido técnico con el que va al lead.",
+  "segunda_parte_del_fix": "la conexión ¿media ok? main[1] → Normalizar entrada (para que el bot avise Y siga hablando) NO se puede editar por parche porque hpf-deploy-workflow.py sólo edita campos de nodos, no connections. Se aplica aparte con scripts/utilities/hpf-r6-bifurcar-conexion.py (script one-shot en scratchpad).",
+  "no_toca_memoria": "n8n_chat_histories no se toca.",
+  "ediciones": [
+    {
+      "nodo": "TG · adjuntar media",
+      "campo": "parameters.jsCode",
+      "anchor": "const fallar = (m) => [{ json: { ...base,\n  _media_error: String(m).replace(/[*_`\\[\\]]/g, ' ').slice(0, 300) } }];",
+      "reemplazo": "const fallar = (m, debug) => [{ json: { ...base,\n  _media_error: String(m).replace(/[*_`\\[\\]]/g, ' ').slice(0, 300),\n  _media_error_debug: debug ? String(debug).slice(0, 500) : '' } }];"
+    },
+    {
+      "nodo": "TG · adjuntar media",
+      "campo": "parameters.jsCode",
+      "anchor": "if (st < 200 || st >= 300) {\n  // 401/403 = el PIT de la credencial no tiene scope medias.write, o Cloudflare.\n  return fallar('GHL rechazo la subida (HTTP ' + st + '). ' + txt.slice(0, 140));\n}",
+      "reemplazo": "if (st < 200 || st >= 300) {\n  // 401/403 = el PIT de la credencial no tiene scope medias.write, o Cloudflare.\n  // Debug técnico va aparte; al lead solo un mensaje amable.\n  return fallar('No pude procesar tu archivo. Escribime lo que necesitás en texto y seguimos.', 'GHL rechazo HTTP ' + st + '. ' + txt.slice(0, 140));\n}"
+    },
+    {
+      "nodo": "TG · adjuntar media",
+      "campo": "parameters.jsCode",
+      "anchor": "if (!url) return fallar('GHL acepto el archivo pero no devolvio URL. ' + txt.slice(0, 140));",
+      "reemplazo": "if (!url) return fallar('No pude procesar tu archivo. Escribime lo que necesitás en texto y seguimos.', 'GHL acepto pero no devolvio URL. ' + txt.slice(0, 140));"
+    }
+  ]
+}

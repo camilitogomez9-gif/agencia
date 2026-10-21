@@ -1,0 +1,73 @@
+{
+  "wf": "W6",
+  "descripcion": "Los mandiles SÍ se eligen: el cliente escoge entre los 5 modelos del catálogo, todos del mismo o surtido. Lo que no existe es personalización. Hasta ahora el prompt decía que iban surtidos, que no se elegían, y derivaba a ATENCION_PERSONALIZADA a quien preguntara por los modelos.",
+  "cita_oscar": "Los mandiles si los eligen de los 5 modelos que hay disponibles. NO se personalizan, tiene que escoger de las 5 frases que hay. […] Puede escoger como guste, todos de 1 diseño o surtido de los que quiera de los 5 modelos que hay. […] Mínimo en total 12.",
+  "distincion_central": "ELEGIR ≠ PERSONALIZAR. Elegir: sí, entre los 5 del catálogo. Personalizar: no, ningún logo/texto/diseño propio. El prompt no hacía esa distinción y colapsaba las dos cosas en la misma prohibición.",
+  "anti_alucinacion": "El bot NO tiene las 5 frases en texto en ninguna parte: viven sólo en la imagen del catálogo. Por eso las ediciones dicen explícitamente 'mandá el catálogo, NO enumeres las frases'. Sin esa instrucción el modelo las inventaría, que es peor que la derivación que había antes.",
+  "por_que_parche_y_no_delta": "El delta gemelo es 04_agents/deltas-oscar-2026-08-11/08-recolector-mandiles-eleccion.json y queda en disco como registro, pero NO se puede deployar con --deltas 08: ese comando compone desde la base congelada, y el Recolector vivo divergió de base+deltas. Medido el 17/08: el vivo tiene 61.995 chars, la base 55.600, y base+los-7-deltas 64.578. Los deltas 02 (negritas) y 06 (ubicación) SÍ están aplicados en el vivo, los 03 y 04 no. Un --deploy los pisaría todos.",
+  "ediciones": [
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "- `Mandiles` (⚠️ vienen pre-hechos con 5 frases fijas — NO se personalizan, ver REGLA CRÍTICA al final)",
+      "reemplazo": "- `Mandiles` (⚠️ el cliente ELIGE entre los 5 modelos del catálogo — todos del mismo o surtido — pero NO se personalizan, ver REGLA CRÍTICA al final)",
+      "motivo": "Es la lista de nombres canónicos de la CALCULADORA, el primer lugar donde el modelo lee qué es un mandil. Si acá dice sólo 'no se personalizan', arrastra esa lectura a todo lo demás."
+    },
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "**Mandiles: NO se personalizan. Vienen pre-hechos con 5 frases pre-establecidas (stock fijo). No se acepta ningún diseño, logo, texto custom ni modificación. Está PROHIBIDO ofrecer personalización de mandiles bajo cualquier circunstancia, ni siquiera \"sin costo adicional\". Si el cliente pregunta por las frases disponibles, quiere ver opciones de modelos, o pide enviar un logo/diseño propio para mandiles → activar ATENCION_PERSONALIZADA para que el equipo le comparta el catálogo (no tenemos las frases listadas internamente).**",
+      "reemplazo": "**Mandiles: se ELIGEN, no se personalizan. Hay 5 modelos con frases pre-establecidas y el cliente escoge cuáles quiere: todos del mismo modelo o surtido, como prefiera. Lo que NO existe es personalización — ningún diseño, logo, texto custom ni modificación. Está PROHIBIDO ofrecer personalización de mandiles bajo cualquier circunstancia, ni siquiera \"sin costo adicional\". Si el cliente pregunta cuáles son los modelos o quiere verlos → mandale el catálogo de mandiles y NO enumeres las frases por texto (no las tenés listadas, las inventarías). Activá ATENCION_PERSONALIZADA sólo si insiste con un diseño propio.**",
+      "motivo": "Era la instrucción más dañina: mandaba derivar a un humano a quien sólo quería ver los modelos, justo lo contrario de lo que Oscar quiere. Y su paréntesis final ('no tenemos las frases listadas internamente') dejó de ser cierto en el sentido operativo: no las tenemos en texto, pero sí en el catálogo, que el bot ya manda."
+    },
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "- Mandiles: stock fijo con 5 frases pre-establecidas (NO se personalizan; el cliente recibe del stock disponible).",
+      "reemplazo": "- Mandiles: 5 modelos fijos con frases pre-establecidas. El cliente elige cuáles quiere (todos del mismo modelo o surtido); lo que no se hace es personalizarlos.",
+      "motivo": "Está en la sección de colores/variantes, que es donde el modelo mira cuando arma la cotización. 'el cliente recibe del stock disponible' es literalmente falso y contradice la regla crítica: con dos afirmaciones opuestas el LLM elige cualquiera."
+    },
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "3. **OBLIGATORIO**: si el cliente pidió enviar un logo/diseño para mandiles, también invocá `ATENCION_PERSONALIZADA` para que el equipo le comparta el catálogo de frases disponibles.",
+      "reemplazo": "3. **OBLIGATORIO**: si el cliente pidió enviar un logo o diseño PROPIO para mandiles, invocá `ATENCION_PERSONALIZADA`. Si lo único que quiere es ver los modelos para elegir, NO derives: mandale el catálogo de mandiles.",
+      "motivo": "El PRE-CHECK previo a cotizar. Mantiene la derivación para el diseño propio, que sigue siendo correcta, y saca la que sobraba."
+    },
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "Si la cotización final incluye mandiles (solo o combinados con otros productos), DESPUÉS del mensaje de los 7 pasos (o reemplazándolo cuando ya se mandó antes), agregá literalmente esta línea de aclaración:\n\n\"⚠️ Aclaración: los mandiles vienen con 5 frases pre-establecidas y no requieren elegir diseño — los pasos de diseño y muestra digital aplican solo al resto de los productos.\"",
+      "reemplazo": "Si la cotización final incluye mandiles (solo o combinados con otros productos), DESPUÉS del mensaje de los 7 pasos (o reemplazándolo cuando ya se mandó antes), agregá literalmente esta línea de aclaración:\n\n\"⚠️ Aclaración: en los mandiles se elige entre los 5 modelos del catálogo y no se personalizan — los pasos de diseño propio y muestra digital aplican solo al resto de los productos.\"",
+      "motivo": "Es la línea que el cliente LEE, así que decía en la cara del lead lo contrario de lo que pasa. El anchor incluye el párrafo previo porque la línea sola aparece dos veces en el documento."
+    },
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "\"⚠️ Aclaración: los mandiles vienen con 5 frases pre-establecidas y no requieren elegir diseño — los pasos de diseño y muestra digital aplican solo al resto de los productos.\"\n\nEsto evita que el cliente interprete que los puntos 3-4 del mensaje de los 7 pasos (\"Elige tu DISEÑO favorito... proporciona los DATOS\", \"Mandamos la MUESTRA DIGITAL\") aplican a mandiles.",
+      "reemplazo": "\"⚠️ Aclaración: en los mandiles se elige entre los 5 modelos del catálogo y no se personalizan — los pasos de diseño propio y muestra digital aplican solo al resto de los productos.\"\n\nEsto evita que el cliente interprete que los puntos 3-4 del mensaje de los 7 pasos (\"Elige tu DISEÑO favorito... proporciona los DATOS\", \"Mandamos la MUESTRA DIGITAL\") aplican a mandiles: en mandiles elige un modelo de catálogo, no manda datos ni recibe muestra digital.",
+      "motivo": "La segunda ocurrencia, dentro de la REGLA CRÍTICA. Se distingue de la primera por el párrafo que la sigue."
+    },
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "# REGLA CRÍTICA — Mandiles NO se personalizan\n\nLos mandiles son un producto de **stock fijo**: vienen pre-hechos con **5 frases pre-establecidas** y no se aceptan modificaciones de ningún tipo.",
+      "reemplazo": "# REGLA CRÍTICA — Mandiles: se ELIGEN de 5 modelos, NO se personalizan\n\nLos mandiles vienen pre-hechos en **5 modelos con frases pre-establecidas**. El cliente **SÍ elige** cuáles quiere: puede pedir todos del mismo modelo o surtido de los que prefiera. Lo que no se acepta es **modificarlos**: ninguna frase nueva, logo, texto propio ni diseño del cliente.\n\nEl mínimo de 12 piezas es **total**, no por modelo: puede pedir 12 repartidos entre varios modelos.",
+      "motivo": "El título ('NO se personalizan') sesgaba la sección entera hacia la prohibición y borraba la mitad correcta. La aclaración del mínimo va acá porque es la duda que aparece sola apenas se puede elegir surtido — Oscar la respondió sin que se la preguntaran dos veces."
+    },
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "**Qué responder si el cliente pide personalizar mandiles, ver las frases disponibles, o enviar un diseño propio:**",
+      "reemplazo": "**Qué responder si el cliente quiere ver los modelos, o pide personalizar / enviar un diseño propio:**\n\nSi sólo quiere VER los modelos para elegir: mandale el catálogo de mandiles y listo, no derives a nadie. Nunca enumeres las 5 frases por texto — no las tenés listadas y las inventarías; la fuente es la imagen del catálogo.\n\nSi pide PERSONALIZAR (frase nueva, logo, texto propio, diseño suyo):",
+      "motivo": "Separa los dos casos que el bloque mezclaba en uno. Todo lo que sigue (la ACCIÓN OBLIGATORIA de invocar la tool sin pedir permiso) queda aplicando sólo al caso de personalización, que es donde corresponde."
+    },
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "   - Cliente pregunta cuáles son las 5 frases disponibles → invocar\n",
+      "reemplazo": "",
+      "motivo": "Este trigger es el que hacía derivar a humano a quien sólo quería elegir. Los otros tres (diseño propio, logo, modificación) se conservan tal cual."
+    }
+  ]
+}

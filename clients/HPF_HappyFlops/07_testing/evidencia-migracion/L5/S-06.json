@@ -1,0 +1,24 @@
+{
+  "caso": "S-06",
+  "titulo": "parte única pasada como string suelto",
+  "resultado": "CORROBORADO",
+  "detalle": "http=200 message_id=yt0g7oNgLi7Vguq8a3rS",
+  "pasos": [
+    {
+      "resp": {
+        "ok": true,
+        "partes_enviadas": 1,
+        "enviados": [
+          {
+            "seq": 1,
+            "body": "S06-unica-1786059359",
+            "attachments": [],
+            "ghl_message_id": "yt0g7oNgLi7Vguq8a3rS",
+            "ghl_conversation_id": "44tBzIqK9ODLJ7Jr9Lco",
+            "http_status": 201
+          }
+        ]
+      }
+    }
+  ]
+}

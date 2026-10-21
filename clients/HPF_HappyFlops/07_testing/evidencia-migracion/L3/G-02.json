@@ -1,0 +1,63 @@
+{
+  "caso": "G-02",
+  "titulo": "upsert_contact (dedup por teléfono)",
+  "resultado": "CORROBORADO",
+  "detalle": "http=200 id=3tzzBVjsKlOF2RJjKNOL",
+  "pasos": [
+    {
+      "req": {
+        "op": "upsert_contact",
+        "args": {
+          "phone": "+5213300000199",
+          "name": "ZZ Test Migracion GHL",
+          "tags": [
+            "lead_prueba"
+          ]
+        }
+      },
+      "resp": [
+        {
+          "ok": true,
+          "op": "upsert_contact",
+          "http_status": 201,
+          "via": null,
+          "data": {
+            "new": false,
+            "succeded": true,
+            "succeeded": true,
+            "contact": {
+              "id": "3tzzBVjsKlOF2RJjKNOL",
+              "dateAdded": "2026-08-06T19:14:43.333Z",
+              "type": "lead",
+              "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+              "firstName": "ZZ",
+              "firstNameLowerCase": "zz",
+              "fullNameLowerCase": "zz test migracion ghl",
+              "lastName": "Test Migracion GHL",
+              "lastNameLowerCase": "test migracion ghl",
+              "phone": "+5213300000199",
+              "country": "MX",
+              "createdBy": {
+                "source": "INTEGRATION",
+                "channel": "OAUTH",
+                "sourceId": "6a355d3fd70f7bc6633d2172",
+                "timestamp": "2026-08-06T19:14:43.333Z"
+              },
+              "additionalPhones": [],
+              "source": "hpf-n8n",
+              "dateUpdated": "2026-08-06T23:31:55.378Z",
+              "tags": [
+                "lead_prueba"
+              ],
+              "followers": [],
+              "customFields": [],
+              "additionalEmails": []
+            },
+            "traceId": "649dac44-9841-40db-a1ec-f7c649902d8f"
+          },
+          "error": null
+        }
+      ]
+    }
+  ]
+}

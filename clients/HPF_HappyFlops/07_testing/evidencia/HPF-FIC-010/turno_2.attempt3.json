@@ -1,0 +1,70 @@
+{
+  "probe_id": "sess_hpf_fic_010_1785958372#11d14b9fc4c0",
+  "session_id": "sess_hpf_fic_010_1785958372",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "quiero mandiles",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 59.0,
+  "version_antes": "cff6a505-9b93-437e-8535-df2be25e399f",
+  "version_despues": "cff6a505-9b93-437e-8535-df2be25e399f",
+  "capturado_utc": "2026-08-05T19:35:11.753656+00:00",
+  "execution_id": "990010",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T19:34:08.175Z",
+  "stoppedAt": "2026-08-05T19:35:06.220Z",
+  "n_esperadas": 2,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Así es, los mandiles solo los manejamos para bodas. Para tus XV te puedo ofrecer sandalias, pantuflas, cilindros, kit anticruda y vasos popote, que son un hit en este tipo de eventos",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "Te gustaría ver alguno de estos productos?",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 228,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2152,
+      "chat_id": 6390727286,
+      "texto_entregado": "Así es, los mandiles solo los manejamos para bodas. Para tus XV te puedo ofrecer sandalias, pantuflas, cilindros, kit anticruda y vasos popote, que son un hit en este tipo de eventos",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 204,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2153,
+      "chat_id": 6390727286,
+      "texto_entregado": "Te gustaría ver alguno de estos productos?",
+      "error": null
+    }
+  ],
+  "n_entregadas": 2,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Así es, los mandiles solo los manejamos para bodas. Para tus XV te puedo ofrecer sandalias, pantuflas, cilindros, kit anticruda y vasos popote, que son un hit en este tipo de eventos. ¿Te gustaría ver alguno de estos productos?",
+    "tools": []
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-FIC-010"
+}

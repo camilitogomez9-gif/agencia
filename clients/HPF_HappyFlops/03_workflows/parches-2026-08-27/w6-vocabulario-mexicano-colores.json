@@ -1,0 +1,20 @@
+{
+  "wf": "W6",
+  "descripcion": "Delta 09 (vocabulario mexicano en nombres de colores) aplicado por API — sesión 2026-08-27. Norma: 'lila' → 'morado', 'fucsia' → 'fiusha', 'rosado' → 'rosa'. Camilo ya había aplicado los 3 reemplazos en la línea 'Correa de Sandalia' del W6 vivo, así que esa edición del delta 09 NO va acá (sería 0 ocurrencias del anchor y el script abortaría). Este parche aplica las 2 ediciones restantes que sí quedaron pendientes en W6: la sede física ('Fachada Fucsia' → 'Fachada Fiusha') y el listado de tapas de cilindros (saca 'O FUCSIA' de FIUSHA/FUCSIA y saca 'LILA' — MORADO ya estaba listado, tenerlos ambos induce al modelo a tratarlos como colores distintos). Hallazgo colateral no incluido en este parche: hay una SEGUNDA ocurrencia de la sede en minúscula ('Fachada fucsia, portones negros') que no estaba en la base congelada y no cubre el delta 09 — queda para decisión aparte.",
+  "ediciones": [
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "Fachada Fucsia, Portones Negros",
+      "reemplazo": "Fachada Fiusha, Portones Negros",
+      "motivo": "Descripción de la sede física en la sección Ubicación (primera ocurrencia, capitalizada). La fachada del local es el mismo color en cualquier idioma; sólo cambia cómo se nombra."
+    },
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "COLORES DE TAPAS DE CILINDROS: FIUSHA O FUCSIA, NARANJA O ANARANJADO, NEGRO, MORADO, VERDE, ORO O DORADO, AMARILLO, ROJO, AZUL CIELO, AZUL MARINO, BLANCA, LILA, PLATA O PLATEADO.",
+      "reemplazo": "COLORES DE TAPAS DE CILINDROS: FIUSHA, NARANJA O ANARANJADO, NEGRO, MORADO, VERDE, ORO O DORADO, AMARILLO, ROJO, AZUL CIELO, AZUL MARINO, BLANCA, PLATA O PLATEADO.",
+      "motivo": "Dos cambios en un solo anchor: (1) 'FIUSHA O FUCSIA' → 'FIUSHA' — la lista ya reconocía ambas grafías con OR, ahora se queda con la mexicana; (2) 'LILA' sale — la norma nueva es MORADO y MORADO ya estaba listado, dejar ambos hace que el modelo los trate como colores distintos."
+    }
+  ]
+}

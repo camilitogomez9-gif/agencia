@@ -1,0 +1,7 @@
+{
+  "caso": "S04",
+  "titulo": "La pausa va ENTRE burbujas, no después de la última.\n\nSe mide sobre los `dateAdded` que GHL le puso a los mensajes, no sobre la duración\ndel HTTP: esa incluye 2 sub-workflows + 2 llamadas a GHL, y con un margen chico el\ntest falla por carga de la instancia sin que W2 tenga nada malo (pasó: 8.5 s).",
+  "resultado": "FALLA",
+  "detalle": "EXCEPCIÓN NameError: name '_leer_msgs' is not defined",
+  "pasos": []
+}

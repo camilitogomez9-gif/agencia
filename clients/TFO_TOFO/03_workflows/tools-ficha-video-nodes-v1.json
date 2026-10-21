@@ -1,0 +1,71 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "toolDescription": "Enviá al lead la ficha técnica oficial (PDF) de la máquina TOFO Pizza. Invocá esta tool SIEMPRE que el lead haya pedido el precio (ruta reactiva) o haya dicho SÍ a la consent question de precio (ruta proactiva). También cuando el lead pida explícitamente 'ficha técnica' / 'specs' / 'características' / 'datos técnicos'. NO la invoques si el lead no preguntó por precio ni por ficha. NO la repitas en turnos posteriores: el lead ya la tiene.",
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Accept",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "valueProvider": "fieldValue",
+              "value": "Bearer 3882072:b1c5f61336dcf3b9f2a0f0642648b7ab"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $('Webhook').first().json.body.id }}\",\n  \"flow_ns\": \"REEMPLAZAR_CON_FLOW_NS_FICHA_TECNICA\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1400,
+        600
+      ],
+      "id": "f1c4a2b8-1234-4abc-9def-0123456789ab",
+      "name": "enviar_ficha_tecnica"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Enviá al lead el video oficial de cómo funciona la máquina TOFO Pizza. Invocá esta tool SIEMPRE que el lead pregunte cómo funciona la máquina, cómo opera, cómo prepara las pizzas, cómo es el proceso, o variantes ('demo', 'ejemplo', 'tienes un video', 'cómo es la magia'). NO la invoques si el lead pregunta por precio (eso es ficha técnica), instalación, refacciones, garantía o aspectos comerciales. NO la repitas en turnos posteriores: el lead ya lo tiene.",
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Accept",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "valueProvider": "fieldValue",
+              "value": "Bearer 3882072:b1c5f61336dcf3b9f2a0f0642648b7ab"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $('Webhook').first().json.body.id }}\",\n  \"flow_ns\": \"REEMPLAZAR_CON_FLOW_NS_VIDEO\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1600,
+        600
+      ],
+      "id": "d4e5f6a7-b8c9-4012-9def-3456789012cd",
+      "name": "enviar_video_funcionamiento"
+    }
+  ],
+  "connections": {}
+}

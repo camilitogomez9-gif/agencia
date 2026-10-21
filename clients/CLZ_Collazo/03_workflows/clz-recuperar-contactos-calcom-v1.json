@@ -1,0 +1,145 @@
+{
+  "name": "CLZ - Recuperar contactos cal.com (bookings historicos)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b2c1d0e0-0001-4a1a-8a1a-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b1b1b1b1-0000-0000-0000-000000000001",
+              "name": "cal_api_key",
+              "type": "string",
+              "value": "PEGAR_ACA_LA_API_KEY_DE_CAL.COM"
+            },
+            {
+              "id": "b1b1b1b1-0000-0000-0000-000000000002",
+              "name": "dias_atras",
+              "type": "number",
+              "value": 400
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2c1d0e0-0002-4a1a-8a1a-000000000002",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Paginación manual por FECHA en vez de por página/cursor -- confirmamos que\n// esta cuenta de cal.com no respeta `page`, `skip` ni `cursor` (currentPage\n// se quedaba clavado en 1). El único filtro confirmado funcionando es\n// `afterStart` (totalItems bajaba correctamente al aplicarlo).\n// Estrategia: pedir 100 ordenados por fecha (sortStart=asc), y para la\n// siguiente vuelta usar como \"cursor\" el start más reciente visto + 1ms.\n// Se toma el máximo de TODO el batch (no solo el último item) para ser\n// robusto por si sortStart no se respeta al 100%.\nconst apiKey = $('Config').item.json.cal_api_key;\nconst diasAtras = Number($('Config').item.json.dias_atras) || 400;\n\nlet afterStart = new Date(Date.now() - diasAtras * 24 * 60 * 60 * 1000).toISOString();\n\nconst allBookings = [];\nconst limit = 100;\nconst maxIterations = 100; // tope de seguridad -- se esperan ~22 iteraciones (2158 items / 100)\nlet iterations = 0;\n\nwhile (iterations < maxIterations) {\n  iterations += 1;\n\n  const response = await this.helpers.httpRequest({\n    method: 'GET',\n    url: 'https://api.cal.com/v2/bookings',\n    qs: { limit, afterStart, sortStart: 'asc' },\n    headers: {\n      Authorization: `Bearer ${apiKey}`,\n      'cal-api-version': '2024-08-13'\n    },\n    json: true\n  });\n\n  const data = response.data || [];\n  const pag = response.pagination || {};\n\n  allBookings.push(...data);\n\n  if (data.length === 0) break; // no queda nada más\n\n  // ¿esta respuesta ya cubrió TODO lo que matcheaba el afterStart actual?\n  if (pag.totalItems !== undefined && pag.totalItems <= data.length) break;\n\n  let maxStartMs = -Infinity;\n  for (const b of data) {\n    const t = b.start ? new Date(b.start).getTime() : NaN;\n    if (!isNaN(t) && t > maxStartMs) maxStartMs = t;\n  }\n\n  if (!isFinite(maxStartMs)) break; // ningún booking con start parseable en este batch\n\n  const nextAfterStart = new Date(maxStartMs + 1).toISOString();\n  if (nextAfterStart === afterStart) {\n    // salvavidas anti-loop-infinito: el cursor de fecha no avanzó\n    return [{\n      json: {\n        _error: 'PAGINACION_POR_FECHA_NO_AVANZA',\n        _detalle: 'El afterStart no avanzó entre iteraciones -- revisar manualmente los bookings devueltos.',\n        _bookings_recuperados_hasta_el_corte: allBookings.length\n      }\n    }];\n  }\n  afterStart = nextAfterStart;\n}\n\n// dedupe por id como red de seguridad ante algún overlap en los bordes\nconst seen = new Set();\nconst deduped = [];\nfor (const b of allBookings) {\n  if (b.id !== undefined) {\n    if (seen.has(b.id)) continue;\n    seen.add(b.id);\n  }\n  deduped.push(b);\n}\n\nreturn deduped.map(b => ({ json: b }));"
+      },
+      "id": "b2c1d0e0-0004-4a1a-8a1a-000000000004",
+      "name": "Traer todos los bookings (loop manual)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normaliza cada booking probando varios paths de campo posibles,\n// y descarta los que quedan antes del corte de fecha.\n// El corte se calcula ACA (no en el nodo Config) para evitar depender de\n// que un Set node pueda leer un campo hermano recien calculado en el mismo\n// nodo -- eso fue justamente el bug que dejaba cutoff_iso = hoy y descartaba todo.\nconst diasAtras = Number($('Config').item.json.dias_atras) || 400;\nconst cutoff = new Date(Date.now() - diasAtras * 24 * 60 * 60 * 1000);\n\nconst out = [];\n\nfor (const item of $input.all()) {\n  const b = item.json || {};\n\n  if (b._error) {\n    out.push({ json: b }); // diagnóstico del loop de paginación -- pasa sin tocar\n    continue;\n  }\n\n  const attendee = Array.isArray(b.attendees) ? b.attendees[0] : (b.attendee || {});\n  const bfr = b.bookingFieldsResponses || {};\n\n  const fecha = b.start || b.startTime || b.createdAt || null;\n  if (fecha && !isNaN(new Date(fecha)) && new Date(fecha) < cutoff) {\n    continue; // fuera de la ventana de recuperación\n  }\n\n  const nombre = attendee.name || attendee.fullName || bfr.name || b.title || null;\n  const email = attendee.email || bfr.email || b.email || null;\n\n  const telefono = attendee.phoneNumber\n    || bfr.attendeePhoneNumber\n    || attendee.phone\n    || (b.responses && b.responses.phone)\n    || b.smsReminderNumber\n    || (b.metadata && b.metadata.phone)\n    || null;\n\n  out.push({\n    json: {\n      uid: b.uid || b.id || null,\n      nombre,\n      email,\n      telefono,\n      telefono_encontrado: Boolean(telefono),\n      fecha,\n      estado: b.status || null,\n      tipo_servicio: (b.eventType && b.eventType.slug) || (b.eventType && b.eventType.title) || b.title || null,\n      raw_keys: Object.keys(b),\n      attendee_raw_keys: Object.keys(attendee || {})\n    }\n  });\n}\n\nreturn out;"
+      },
+      "id": "b2c1d0e0-0005-4a1a-8a1a-000000000005",
+      "name": "Normalizar y filtrar por fecha",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Dedup por teléfono (o email si no hay teléfono), quedándose con el\n// booking más reciente de cada cliente — el objetivo es notificar 1 vez\n// por persona, no 1 vez por reserva.\nconst seen = new Map();\n\nfor (const item of $input.all()) {\n  const c = item.json;\n  const key = c.telefono || c.email || c.nombre;\n  if (!key) continue;\n\n  const existing = seen.get(key);\n  const fechaActual = c.fecha ? new Date(c.fecha).getTime() : 0;\n  const fechaExistente = existing && existing.fecha ? new Date(existing.fecha).getTime() : -1;\n\n  if (!existing || fechaActual > fechaExistente) {\n    seen.set(key, c);\n  }\n}\n\nreturn Array.from(seen.values()).map(c => ({ json: c }));"
+      },
+      "id": "b2c1d0e0-0006-4a1a-8a1a-000000000006",
+      "name": "Deduplicar por contacto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "contactos",
+        "options": {}
+      },
+      "id": "b2c1d0e0-0007-4a1a-8a1a-000000000007",
+      "name": "Agrupar todo",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [1560, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Traer todos los bookings (loop manual)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traer todos los bookings (loop manual)": {
+      "main": [
+        [
+          {
+            "node": "Normalizar y filtrar por fecha",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar y filtrar por fecha": {
+      "main": [
+        [
+          {
+            "node": "Deduplicar por contacto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deduplicar por contacto": {
+      "main": [
+        [
+          {
+            "node": "Agrupar todo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

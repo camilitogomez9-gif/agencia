@@ -1,0 +1,33 @@
+{
+  "status": 200,
+  "params": null,
+  "data": {
+    "tags": [
+      {
+        "id": "WQPY5GEV0tlHf7ryN41h",
+        "name": "follow-up",
+        "locationId": "7aXb4JCKsWV5nUyBXeSF",
+        "categoryId": null,
+        "description": null,
+        "color": null
+      },
+      {
+        "id": "fJt3iYc45n1EHhRpgPXh",
+        "name": "high priority",
+        "locationId": "7aXb4JCKsWV5nUyBXeSF",
+        "categoryId": null,
+        "description": null,
+        "color": null
+      },
+      {
+        "id": "kLeFJ9k8FNs35Ls7vFfL",
+        "name": "warm lead",
+        "locationId": "7aXb4JCKsWV5nUyBXeSF",
+        "categoryId": null,
+        "description": null,
+        "color": null
+      }
+    ],
+    "traceId": "7a3665bf-5e7a-483b-a293-ce1f0c81e029"
+  }
+}

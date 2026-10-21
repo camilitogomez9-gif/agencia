@@ -1,0 +1,2932 @@
+{
+  "name": "OFICIAL Stark Supplements",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH msgs AS (\n  SELECT\n    id,\n    lower(message->>'type') AS mtype,\n    COALESCE(message->>'content', '') AS raw_content\n  FROM public.n8n_chat_histories\n  WHERE session_id = '{{ $json.id }}'\n    AND message ? 'type'\n    AND message ? 'content'\n),\n\nclean AS (\n  SELECT\n    id,\n    mtype,\n\n    /* 1) Recorto TODO lo que sea “contexto inyectado” hacia abajo */\n    trim(\n      regexp_replace(\n        regexp_replace(\n          regexp_replace(\n            regexp_replace(\n              raw_content,\n\n              /* A) Si aparece el bloque “Ultimas interacciones...”, lo cortamos hasta el final */\n              '(?is)\\n*ultimas\\s+interacciones\\s+con\\s+el\\s+usuario\\s*:.*$',\n              '',\n              'g'\n            ),\n\n            /* B) Si por algún motivo ya viene con [INTERACCIÓN ...] adentro, lo cortamos */\n            '(?is)\\n*\\[interacci[oó]n\\s+\\d+\\].*$',\n            '',\n            'g'\n          ),\n\n          /* C) Sacamos tool traces del estilo “Calling X with input: {...}” */\n          '(?im)^\\s*calling\\s+[a-z0-9_]+\\s+with\\s+input\\s*:\\s*\\{.*$',\n          '',\n          'g'\n        ),\n\n        /* D) Quita prefijos tipo “Usuario:”, “Agente:”, etc. */\n        '(?im)^\\s*(mensaje\\s+del\\s+usuario|respuesta\\s+del\\s+agente|usuario|agente|assistant)\\s*:\\s*',\n        '',\n        'g'\n      )\n    ) AS content\n  FROM msgs\n),\n\nhumans AS (\n  SELECT id, content AS user_content\n  FROM clean\n  WHERE mtype IN ('human','user')\n    AND NULLIF(content, '') IS NOT NULL\n),\n\nais AS (\n  SELECT id, content AS agent_content\n  FROM clean\n  WHERE mtype IN ('ai','assistant')\n    AND NULLIF(content, '') IS NOT NULL\n),\n\npaired AS (\n  SELECT\n    h.id AS user_id,\n    h.user_content,\n    (\n      SELECT a.agent_content\n      FROM ais a\n      WHERE a.id > h.id\n      ORDER BY a.id\n      LIMIT 1\n    ) AS agent_content\n  FROM humans h\n  ORDER BY h.id DESC\n  LIMIT 8\n),\n\nordered AS (\n  SELECT\n    user_id,\n    user_content,\n    COALESCE(agent_content, '(sin respuesta registrada)') AS agent_content\n  FROM paired\n  ORDER BY user_id\n),\n\nformatted AS (\n  SELECT\n    '[INTERACCIÓN ' || ROW_NUMBER() OVER (ORDER BY user_id) || ']' || E'\\n' ||\n    'Usuario: ' || user_content || E'\\n' ||\n    'Agente: ' || agent_content AS block\n  FROM ordered\n)\n\nSELECT string_agg(block, E'\\n\\n') AS contexto_formateado\nFROM formatted;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1024,
+        0
+      ],
+      "id": "66c5a135-352a-4ff8-b265-1d3920f0c7c6",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "6DnX94CDxROcqpbH",
+          "name": "Stark Supplements"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        96,
+        176
+      ],
+      "id": "157f6479-fa44-4d7e-9e93-1ab1e30c7d77",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "CWz84fUE1wUT8CXn",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('New_Message').item.json.body['message[add][0][entity_id]'] }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        160,
+        256
+      ],
+      "id": "9817dde0-4ac3-4f99-8e52-008597910041",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "6DnX94CDxROcqpbH",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "=### Tool A — `verificar_producto`\n**Propósito:** Identificar y confirmar el/los producto(s) correctos a partir del mensaje del usuario (o por contexto), desambiguar cuando haga falta, y **cuando corresponda** devolver info estructurada del/los producto(s) para responder y alimentar `cache_productos_mostrados`.\n\n**Regla de uso (innegociable):**\n- Si el usuario pregunta o menciona PRODUCTOS (precio, beneficios, cómo tomar, recomendación, comparación, “qué tienen para…”, etc.), **SIEMPRE** llamás Tool A antes de responder.\n- Esta es la ÚNICA herramienta para todo lo relacionado a productos.\n\n**Inputs (recibe)**\n- `mensaje_del_usuario` (string) — texto exacto del usuario. Si el usuario contestó corto (“sí/no/ok/1/2/3/dale”), interpretalo usando `memoria_contexto` y pasá el mensaje “real” resultante.\n- `enviar_info` (boolean) — indica si la herramienta debe “mostrar info” del/los producto(s) además de verificarlos:\n  - `true` (SI): cuando el/los producto(s) todavía NO están en `cache_productos_mostrados`, o cuando el usuario pide info/precio/beneficios/uso/recomendación y aún no se mostró info de ese producto.\n  - `false` (NO): cuando el/los producto(s) ya están en `cache_productos_mostrados` y el usuario solo hace preguntas posteriores (se responde con cache sin repetir envíos).\n\n**Regla de prioridad (caso borde):**\n- Si en el mismo turno hay 2+ productos y **al menos uno NO está en cache**, entonces `enviar_info=true`.\n\n**Output (devuelve)**\nLa tool devuelve SIEMPRE un estado y, cuando corresponde, data para cache:\n- `status`: `\"RESOLVED\"` | `\"AMBIGUOUS\"` | `\"NOT_FOUND\"`\n- `productos_verificados`: array<string> (solo si `RESOLVED`; 1 o más)\n- `posibles_productos`: array<string> (solo si `AMBIGUOUS`; máximo 3)\n- `producto_principal`: string|null (si aplica)\n- `product_info`: object|array|null (data estructurada para cache; normalmente viene cuando `enviar_info=true`)\n\n**Cómo interpretar `status`:**\n- `RESOLVED`: producto(s) definidos correctamente.\n- `AMBIGUOUS`: hay que elegir entre familias/productos distintos.\n  - **No se desambigua por sabor/tamaño** (si solo cambia variante, se trata como el mismo producto base).\n- `NOT_FOUND`: no se pudo mapear a un producto definido\n\n",
+        "workflowId": {
+          "__rl": true,
+          "value": "xQK7uqLXEJB8Utkv",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/xQK7uqLXEJB8Utkv",
+          "cachedResultName": "Stark | Tool Verificar Producto"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "mensaje_del_usuario": "={{ $('New_Message').item.json.body['message[add][0][text]'] }}",
+            "id": "={{ $('Memory_ID').item.json.id }}",
+            "enviar_info": "={{ String($fromAI('enviar_info', ``, 'boolean')) }}",
+            "entity_id": "={{ $('New_Message').item.json.body['message[add][0][entity_id]'] }}"
+          },
+          "matchingColumns": [
+            "mensaje_del_usuario"
+          ],
+          "schema": [
+            {
+              "id": "mensaje_del_usuario",
+              "displayName": "mensaje_del_usuario",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "enviar_info",
+              "displayName": "enviar_info",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "entity_id",
+              "displayName": "entity_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        176
+      ],
+      "id": "0fac8eab-e5a7-4875-aae4-cae30054e97d",
+      "name": "verificar_producto"
+    },
+    {
+      "parameters": {
+        "description": "=## Tool: enviar_info_producto\n**Propósito:** Enviar al usuario la **ficha por imagen** del/los producto(s) ya verificado(s) y devolver info estructurada para cache/memoria (para no reenviar imágenes después).\n\n### Inputs (recibe)\n- `productos` (array<string>) — nombres exactos verificados (idealmente desde `productos_verificados`).\n\n### Output (devuelve)\n- `product_info` (json|object|null) — data estructurada del producto (para cache interno / responder preguntas posteriores sin reenviar imagen).\n\n### Cuándo se activa (por arriba)\n- Si el producto **no está** en `cache_productos_mostrados` **o** el usuario pide explícitamente “mandame la imagen de nuevo”.\n- **No** se activa si ya se envió la ficha y el usuario solo hace preguntas posteriores (ahí respondés con el cache).\n",
+        "workflowId": {
+          "__rl": true,
+          "value": "ohBBqP0ViMDOzYFp",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/ohBBqP0ViMDOzYFp",
+          "cachedResultName": "Stark | Enviar Información"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "productos": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('productos', ``, 'json') }}",
+            "entity_id": "={{ $('New_Message').item.json.body['message[add][0][entity_id]'] }}"
+          },
+          "matchingColumns": [
+            "nombres_prods"
+          ],
+          "schema": [
+            {
+              "id": "productos",
+              "displayName": "productos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array",
+              "removed": false
+            },
+            {
+              "id": "entity_id",
+              "displayName": "entity_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -48,
+        624
+      ],
+      "id": "7784774e-c13f-41cd-8ca6-5f2b9899f461",
+      "name": "enviar_info_producto"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {
+          "language": "es"
+        }
+      },
+      "id": "67d56c9e-25c9-4136-9c7e-d7395dcc9798",
+      "name": "transcribe voice",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -3040,
+        240
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "CWz84fUE1wUT8CXn",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "22e56679-fe2e-4b7c-986c-3a7c33539e94",
+                    "leftValue": "={{  !!$node['All_Data'].json.text && !$('New_Message').item.json.body[\"message[add][0][attachment][type]\"]}}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('New_Message').item.json.body[\"message[add][0][attachment][type]\"] === \n\"voice\" && !!$('New_Message').item.json.body[\"message[add][0][attachment][link]\"] }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "40d9602e-dd40-4b95-9b8f-b6a5f2b6370b"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "voice"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "142e3939-cccf-4068-b6bd-bc57456d1559",
+                    "leftValue": "={{ $('New_Message').item.json.body[\"message[add][0][attachment][type]\"] ===  \"picture\" && !!$('New_Message').item.json.body[\"message[add][0][attachment][link]\"] }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Image"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -3472,
+        32
+      ],
+      "id": "27b1ccd8-d821-4d6b-a8a3-2d4ff86a4ce2",
+      "name": "checkType"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $node['All_Data'].json.contact_id }}",
+        "messageData": "={{ $json.text }}",
+        "tail": true
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -2576,
+        16
+      ],
+      "id": "c3ec4900-7b3d-4661-b805-58f881236d67",
+      "name": "Guardar",
+      "credentials": {
+        "redis": {
+          "id": "HuFrHjEG5LTpeAvh",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "={{ $node['All_Data'].json.contact_id }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -1424,
+        0
+      ],
+      "id": "ecfd2af3-81ef-4f7a-8a8b-d4fecf635c14",
+      "name": "Borrar almacenamiento",
+      "credentials": {
+        "redis": {
+          "id": "HuFrHjEG5LTpeAvh",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "timezone": "America/Mexico_City"
+        }
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        -1808,
+        0
+      ],
+      "id": "ecd79bf4-3103-444b-bb31-fc2d90aac7c7",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "eb842f26-03d6-4426-94dc-0265893d32a8",
+              "leftValue": "={{ $('Guardar').item.json.text }}",
+              "rightValue": "={{ $json?.Mensajes?.last() }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2016,
+        16
+      ],
+      "id": "f6a3e103-6519-4c58-95b4-17ef869e0fdb",
+      "name": "Ultimo?",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "Mensajes",
+        "key": "={{ $node['All_Data'].json.contact_id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -2240,
+        16
+      ],
+      "id": "50a07c98-8f91-4ca4-9cfd-8de3bf2e3463",
+      "name": "Get_Messages",
+      "alwaysOutputData": true,
+      "executeOnce": false,
+      "retryOnFail": false,
+      "credentials": {
+        "redis": {
+          "id": "HuFrHjEG5LTpeAvh",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $node[\"All_Data\"].json.data_url }}",
+        "options": {}
+      },
+      "id": "93cc42d2-3711-4372-b44e-3cf99af11a78",
+      "name": "Get_Audio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3232,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.account_link_self }}/api/v4/{{ $json.entity_type }}s/{{ $json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "755e6841-8678-400b-9fce-d6f5461ee4e2",
+      "name": "Get_Entity",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3888,
+        48
+      ],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0b003f5c-67a7-43d2-a728-43c31431110e",
+              "name": "text",
+              "value": "={{ $node[\"All_Data\"].json.text || $json.text || $json.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2848,
+        16
+      ],
+      "id": "98a5781f-c58b-47e4-b3f2-571ce0d00bc7",
+      "name": "Get_Text"
+    },
+    {
+      "parameters": {
+        "url": "=https://{{ $('New_Message').item.json.body['account[subdomain]'] }}.kommo.com/api/v4/contacts/{{ $('New_Message').item.json.body['message[add][0][contact_id]'] }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4640,
+        48
+      ],
+      "id": "4d0a24fe-6b2a-4063-ba44-5c6247509eb7",
+      "name": "Get_Contact",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "79fe6446-37b1-41ee-996c-8cd6f216b6f6",
+              "name": "mensaje",
+              "value": "={{ $('Get_Messages').item.json.Mensajes.join('\\n') }}",
+              "type": "string"
+            },
+            {
+              "id": "7053f137-2f01-43f0-bf34-4cc4cf7c5925",
+              "name": "día_fecha_hora",
+              "value": "={{ $json.currentDate }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1616,
+        0
+      ],
+      "id": "be6f7821-3575-4946-a419-d4310c4d1c24",
+      "name": "Message & Date"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2b97fd20-e531-4016-87e6-7e7b63e48665",
+              "name": "entity_type",
+              "value": "={{ $node['New_Message'].json.body['message[add][0][entity_type]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "782059b1-99b5-4663-b7a3-081cf081f569",
+              "name": "author_id",
+              "value": "={{ $('New_Message').item.json.body['message[add][0][author][id]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "c754dc0c-937b-4248-909f-c7a3d6898999",
+              "name": "talk_id",
+              "value": "={{ $('New_Message').item.json.body['message[add][0][talk_id]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "adcd24d3-9290-4c5b-9679-09b8f1108710",
+              "name": "contact_id",
+              "value": "={{ $('New_Message').item.json.body['message[add][0][contact_id]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "5a9d55be-e720-4068-882b-28591566e94d",
+              "name": "account_id",
+              "value": "={{ $node['New_Message'].json.body['account[id]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "aa38e858-0187-40c0-b0c3-14568477fa5d",
+              "name": "link",
+              "value": "={{ $('New_Message').item.json.body['account[_links][self]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "eecc0c27-7b22-44d1-b864-72b2f6ec9912",
+              "name": "element_type",
+              "value": "={{ $('New_Message').item.json.body['message[add][0][element_type]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "6c727294-de25-4337-a31d-600ae28c31e7",
+              "name": "numero_telefono",
+              "value": "={{ $json.data.custom_fields_values[0].values[0].value }}",
+              "type": "string"
+            },
+            {
+              "id": "2d73ff37-af0d-4b01-9392-1841451d3e33",
+              "name": "token",
+              "value": "[JWT_TOKEN]",
+              "type": "string"
+            },
+            {
+              "id": "43e96da7-0935-484a-87e6-de18947f274f",
+              "name": "text",
+              "value": "={{ $('New_Message').item.json.body['message[add][0][text]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "f576b221-9ed8-45fc-b105-ded9b32030a8",
+              "name": "element_type",
+              "value": "={{ $('New_Message').item.json.body['message[add][0][element_type]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "8d8f0bc6-3b21-4856-9096-f5b86ccd7b64",
+              "name": "data_url",
+              "value": "={{ $('New_Message').item.json.body['message[add][0][attachment][link]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "239119dd-9374-4d38-8a16-25697b4e246f",
+              "name": "account_link_self",
+              "value": "={{ $('New_Message').item.json.body[\"account[_links][self]\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "6bbc9a1b-74a8-4bc5-ab1b-2168f72039cf",
+              "name": "entity_id",
+              "value": "={{ $('New_Message').item.json.body[\"message[add][0][entity_id]\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "6eb108a9-b403-4ed3-91e8-7502fa769f6c",
+              "name": "chat_id",
+              "value": "={{ $('New_Message').item.json.body[\"message[add][0][chat_id]\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4112,
+        48
+      ],
+      "id": "74a659d0-698a-43af-aff7-50ccc7149845",
+      "name": "All_Data"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7945bb2e-dd8a-432a-ab72-8f0260219d2a",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4368,
+        48
+      ],
+      "id": "61e7cc7f-c6b6-4ce1-bd1d-54c7e1f9a3fe",
+      "name": "Clear_Contact_Data"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cdc46c6e-4d23-4d2a-b095-5cae8d70e030",
+              "name": "=id",
+              "value": "={{ $('New_Message').item.json.body['message[add][0][entity_id]'] }}",
+              "type": "string"
+            },
+            {
+              "id": "66425116-3c4e-4395-9726-df948ecb9864",
+              "name": "window_length",
+              "value": 20,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1216,
+        0
+      ],
+      "id": "d9c06247-d72b-4b9d-8095-f69a9ab078ec",
+      "name": "Memory_ID"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2400,
+        16
+      ],
+      "id": "10736f49-582e-4dbc-9880-e2a664827607",
+      "name": "Wait_35",
+      "webhookId": "6d8a219b-d270-4cfa-b0e7-936c7289043f",
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "34a76328-724b-4ab8-afa0-686c8384533b",
+              "leftValue": "={{ $('New_Message').item.json.body['message[add][0][attachment][link]'] }}",
+              "rightValue": ".pdf",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3248,
+        576
+      ],
+      "id": "acddad3c-b658-4ca0-af90-1dd1e4e5a768",
+      "name": "Es PDF?"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('All_Data').item.json.link }}/ajax/v1/chats/session",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Requested-With",
+              "value": "XMLHttpRequest"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "request[chats][session][action]",
+              "value": "=Muchas gracias por tu pago, lo estaremos verificando a la brevedad"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "0d65ae68-fa6d-4632-90c5-a1d39b851a18",
+      "name": "Get token13",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2272,
+        416
+      ],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "-4925599962",
+        "text": "=📝 El Lead: {{ $node['All_Data'].json.entity_id }} envió un *PDF* (comprobante de pago). Por favor comprobar que les llegó",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -3040,
+        432
+      ],
+      "id": "7438082e-1d40-49ba-a09b-4af770e895cd",
+      "name": "Usr. Envia Imágenes/Documentos1",
+      "webhookId": "34cf8327-0e0c-4f9c-a3a0-6d3ad9365990",
+      "credentials": {
+        "telegramApi": {
+          "id": "1Kt6KZ1kzoNHF7oJ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b79436c9-e61f-46a1-bf7b-6b54c7a5dd5c",
+              "leftValue": "={{ $json['0'].content[0].text }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2848,
+        736
+      ],
+      "id": "cf0702e4-57a2-4795-8a4d-68e7bfb455a9",
+      "name": "Es Pago?"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://happyflopss.kommo.com/api/v4/leads/{{ $node['All_Data'].json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pipeline_id",
+              "value": "={{11622596}}"
+            },
+            {
+              "name": "status_id",
+              "value": "={{91450360}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2864,
+        432
+      ],
+      "id": "9dd9fcde-3045-4a87-a933-109642c676b9",
+      "name": "ATENCION_PERSONALIZADA1",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cd170563-2483-4a7d-9ca8-66fb2d3a226b",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "11622596",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3680,
+        -128
+      ],
+      "id": "a7972e3a-0ed7-4b84-b67e-0ba0f071567f",
+      "name": "No es IA"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node (JavaScript)\n\nconst TZ = 'America/Mexico_City';\n\n// Obtiene día/hora/minuto en la zona horaria de CDMX de forma robusta\nfunction nowInMexicoCity() {\n  const parts = new Intl.DateTimeFormat('en-US', {\n    timeZone: TZ,\n    weekday: 'short',\n    hour: 'numeric',\n    minute: 'numeric',\n    hour12: false,\n  }).formatToParts(new Date())\n    .reduce((acc, p) => (acc[p.type] = p.value, acc), {});\n\n  const weekday = parts.weekday;              // 'Mon', 'Tue', ... 'Sat', 'Sun'\n  const hour = parseInt(parts.hour, 10);      // 0..23\n  const minute = parseInt(parts.minute, 10);  // 0..59\n  const minutesOfDay = hour * 60 + minute;    // 0..1439\n\n  return { weekday, minutesOfDay };\n}\n\nfunction isWithinBusinessHoursMx({ weekday, minutesOfDay }) {\n  const WEEKDAYS = new Set(['Mon', 'Tue', 'Wed', 'Thu', 'Fri']);\n  const SATURDAY = 'Sat';\n\n  const OPEN_MIN = 9 * 60;   // 09:00 => 540\n  const CLOSE_WD = 18 * 60;  // 18:00 => 1080 (exclusivo)\n  const CLOSE_SA = 14 * 60;  // 14:00 => 840  (exclusivo)\n\n  if (WEEKDAYS.has(weekday)) {\n    return minutesOfDay >= OPEN_MIN && minutesOfDay < CLOSE_WD;\n  }\n  if (weekday === SATURDAY) {\n    return minutesOfDay >= OPEN_MIN && minutesOfDay < CLOSE_SA;\n  }\n  return false; // Domingo\n}\n\n// Ejecuta chequeo en el momento\nconst nowMx = nowInMexicoCity();\nconst within = isWithinBusinessHoursMx(nowMx);\n\n// Soporta nodos con o sin items de entrada\nconst out = (items && items.length ? items : [{ json: {} }]);\nfor (const item of out) {\n  item.json.isWithinBusinessHoursMx = within; // true / false\n  // Opcional: expone info útil para debug\n  item.json._mxDebug = nowMx; // ej. { weekday: 'Tue', minutesOfDay: 753 }\n}\n\nreturn out;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2688,
+        432
+      ],
+      "id": "20955f45-c63a-4b7f-adee-4b35ac601f6c",
+      "name": "Code7"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0938ab19-437d-456e-a7ae-77adafeda5fd",
+              "leftValue": "={{ $json.isWithinBusinessHoursMx }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2496,
+        432
+      ],
+      "id": "40209768-3e83-4528-bc44-3f82208f715d",
+      "name": "If10"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://amojo.kommo.com/v1/chats/{{ $json.response.chats.session.account.id }}/{{ $node['All_Data'].json.chat_id }}/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Requested-With",
+              "value": "XMLHttpRequest"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "chatId",
+              "value": "={{ $node['All_Data'].json.chat_id }}"
+            },
+            {
+              "name": "X-Auth-Token",
+              "value": "={{ $json.response.chats.session.access_token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "silent",
+              "value": "false"
+            },
+            {
+              "name": "priority",
+              "value": "low"
+            },
+            {
+              "name": "crm_entity[id]",
+              "value": "={{ $node['All_Data'].json.entity_id }}"
+            },
+            {
+              "name": "crm_entity[type]",
+              "value": "={{ $node['All_Data'].json.element_type }}"
+            },
+            {
+              "name": "persona_name",
+              "value": "={{ $json.response.chats.session.user.name }}"
+            },
+            {
+              "name": "persona_avatar",
+              "value": "={{ $json.response.chats.session.user.avatar }}"
+            },
+            {
+              "name": "text",
+              "value": "=Muchas gracias por tu pago, lo estaremos verificando a la brevedad"
+            },
+            {
+              "name": "recipient_id",
+              "value": "={{ $node['All_Data'].json.author_id }}"
+            },
+            {
+              "name": "group_id"
+            },
+            {
+              "name": "crm_dialog_id",
+              "value": "={{ $node['All_Data'].json.talk_id }}"
+            },
+            {
+              "name": "=crm_contact_id",
+              "value": "={{ $node['All_Data'].json.contact_id }}"
+            },
+            {
+              "name": "crm_account_id",
+              "value": "={{ $node['All_Data'].json.account_id }}"
+            },
+            {
+              "name": "skip_link_shortener",
+              "value": "false"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "e92bbc9e-bf1f-4004-a83b-e5aecf02f7bc",
+      "name": "Send_Message_11",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2080,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "text": "=Analiza cuidadosamente la imagen proporcionada y determina si corresponde a un comprobante de transferencia bancaria digital o física (por ejemplo: comprobantes de BBVA, Banamex, Banorte, HSBC, Oxxo, SPEI u otros bancos reconocidos en México).\n\nUn comprobante de transferencia bancaria debe cumplir con la mayoría de estas condiciones:\n- Muestra claramente palabras o frases como: “Transferencia exitosa”, “Operación exitosa”, “Comprobante de transferencia”, “Depósito”, “Pago total”, “Folio de operación”, “Número de autorización”, “Cuenta origen”, “Cuenta destino”, “Banco”, “Concepto”.\n- Contiene un monto en pesos mexicanos (ejemplo: $1,450.00 MXN).\n- Incluye información del banco emisor o receptor (ej. BBVA, Banamex, Banorte, HSBC, Oxxo, SPEI, Santander, etc.).\n- Presenta datos de origen y destino: nombre del beneficiario, cuenta CLABE, tarjeta o número de cuenta parcial/enmascarado.\n- Tiene fecha y hora de la operación.\n\nRechaza como transferencia (retorna \"false\") si la imagen:\n- Es un simple ticket de compra sin mención de transferencia.\n- Solo contiene números o textos sin relación con bancos.\n- Es un diseño, tabla, listado o documento genérico sin estructura de comprobante bancario.\n\nDevuelve únicamente:\ntrue → si la imagen es un comprobante de transferencia bancaria o depósito.\nfalse → si la imagen NO es un comprobante de transferencia bancaria o depósito.\n",
+        "imageUrls": "={{ $('New_Message').item.json.body['message[add][0][attachment][link]'] }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -3040,
+        736
+      ],
+      "id": "8b15099e-036a-4095-a80e-1d4748b25092",
+      "name": "Analyze image3",
+      "credentials": {
+        "openAiApi": {
+          "id": "CWz84fUE1wUT8CXn",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=# Tarea (Stark Supplements) — Post-procesador: limpiar formato + dividir en partes (JSON estricto)\n\nTu trabajo es:\n1) Elegir el mensaje válido (no vacío / no `\"[undefined]\"`)\n2) Limpiar estilo para WhatsApp (sin markdown técnico)\n3) Dividir en **hasta 3 partes** sin perder nada\n4) Devolver **SOLO JSON** con `parte1` y `parte2`\n\n## 0) Selección del mensaje válido (obligatorio)\nTomá como `mensaje` el contenido de:\n\"{{ $('AI Agent').item.json.output }}\"\n\nReglas:\nDevolvé:\n{\n  \"parte1\": \"\",\n  \"parte2\": \"\"\n}\n\n\n## 1) Limpieza de formato (ANTI-MARKDOWN / ANTI-**)\nAntes de dividir, limpiá el texto con estas reglas **sin cambiar el significado**:\n\n### 1.1 Eliminar signos de apertura para sonar humano\n- Remové únicamente: `¿` y `¡`. Sólo tenes que remover esos simbolos, Remover cualquier otro símbolo es penado de muerte. No puedes remover ni \"?\" ni \"!\" ya que estos simbolos deben permanecesr en el mensaje si o si\n\n### 1.2 Prohibido markdown\n- Prohibido usar:\n  - `**doble asterisco**`\n  - `# títulos`\n  - ``` ``` (bloques de código)\n  - links en formato markdown `[texto](url)`\n  - `>` citas\n\n### 1.3 Negritas permitidas (solo si ya venían del agente)\n- Si el mensaje trae negritas, normalizalas a este formato:\n  - `*texto*` (un asterisco por lado)\n- Si aparecen `**texto**`, convertí a `*texto*`\n- Si aparecen triples o más (ej: `***texto***`), convertí a `*texto*`\n- No inventes nuevas negritas: solo corregí/normalizá las existentes.\n\n### 1.4 Listas y saltos de línea (WhatsApp friendly)\n- Se permiten listas con guion simple:\n  - `- punto`\n- O listas numeradas:\n  - `1) punto`\n- Mantené los saltos de línea con sentido.\n- No uses encabezados con `#`. Si hay “títulos”, dejalos como texto normal (opcionalmente con `*` si ya venía resaltado).\n\n---\n\n## 2) División en hasta 2 partes (sin perder nada)\n\nDividí el `mensaje` en `parte1` y `parte2` con estas reglas:\n\n### 2.1 Reglas quirúrgicas\n- **Nunca cortes una oración a la mitad**\n- Cortá solo en:\n  - fin de oración (`.`, `?`, `!`)\n  - o salto de línea con sentido\n- Cada parte debe tener sentido sola.\n- Si el mensaje no alcanza para 2 partes, completá la restantes con `\"\"`.\n\n### 2.2 NO terminar con punto\n- Ninguna parte debe terminar con `.`  \n  Si termina con punto, removelo (sin cambiar el sentido).\n\n### 2.3 Bloques que NO se cortan (prioridad máxima)\nSi el mensaje contiene cualquiera de estos bloques, deben ir completos dentro de **una sola parte**:\n\n**A) Pago / precio / envío (bloque exclusivo)**\nIncluye cualquier mención a:\n- precio, cotización, total, subtotal\n- envío, delivery, dirección, ciudad, costo de envío\n- métodos de pago: QR, transferencia, Tigo Money\n- comprobante, anticipo\n\n👉 Este bloque NO puede partirse y NO puede mezclarse con explicación general si hay espacio: intentá que quede solo.\n\n**B) Pasos / proceso / instrucciones**\nSi hay una sección de pasos (1,2,3 o “paso a paso”), va completa en una parte.\n\n### 2.4 Estrategia de armado recomendada\n- Si existe bloque de pago/envío → asignalo a `parte2` (preferencia), completo + preguntas / próximos pasos (si existe).\n- Dejá `parte1` para contexto / recomendación / beneficios.\n\n## 3) Output: JSON ESTRICTO (solo esto)\nRespondé **solo** con este JSON exacto (sin texto extra):\n\n{\n  \"parte1\": \" ... \",\n  \"parte2\": \" ... \"\n}\n\n## Ejemplos\n\n### Ejemplo 1 — Quita ¿/¡ + corrige **doble asterisco** a *simple* + divide por oración\n**Input (mensaje):**\n\"¡Hola! ¿Cómo estás? **STARK** tiene la *Creatina*. Te la mando y me decís tu objetivo. ¿Entrenás fuerza o cardio?\"\n\n**Output (JSON):**\n{\n  \"parte1\": \"Hola Como estas? *STARK* tiene la *Creatina*\",\n  \"parte2\": \"Te la mando y me decis tu objetivo. Entrenas fuerza o cardio?\"\n}\n\n### Ejemplo 2 — Lista con guiones (mantener) + NO cortar la lista a la mitad\n**Input (mensaje):**\n\"Perfecto. Te dejo lo principal de *Creatina Monohidratada*:\\n- Mejora fuerza\\n- Ayuda a rendir mas\\n- Apoya recuperacion\\nSi queres, te la muestro. Para que objetivo la queres?\"\n\n**Output (JSON):**\n{\n  \"parte1\": \"Perfecto. Te dejo lo principal de *Creatina Monohidratada*:\\n- Mejora fuerza\\n- Ayuda a rendir mas\\n- Apoya recuperacion\",\n  \"parte2\": \"Si queres, te la muestro. Para que objetivo la queres?\"\n}\n\n### Ejemplo 3 — Bloque pago/envío INTACTO en una sola parte (no mezclar)\n**Input (mensaje):**\n\"Listo, para comprarlo te paso pagos:\\n- QR\\n- Transferencia\\n- Tigo Money\\nEnvios: a todo Bolivia. Decime tu ciudad y te confirmo costo. Querés pagar por QR o transferencia?\"\n\n**Output (JSON):**\n{\n  \"parte1\": \"Listo, para comprarlo te paso pagos:\\n- QR\\n- Transferencia\\n- Tigo Money\\nEnvios: a todo Bolivia. Decime tu ciudad y te confirmo costo\",\n  \"parte2\": \"Queres pagar por QR o transferencia?\"\n}\n\n---\n\n### Ejemplo 4 — Numeración 1) 2) 3) + NO terminar partes con punto\n**Input (mensaje):**\n\"Buenisimo. Para avanzar:\\n1) Confirmame el producto\\n2) Decime tu ciudad\\n3) Te paso el metodo de pago.\\nTe queda mejor QR o Tigo Money?\"\n\n**Output (JSON):**\n{\n  \"parte1\": \"Buenisimo. Para avanzar:\\n1) Confirmame el producto\\n2) Decime tu ciudad\\n3) Te paso el metodo de pago\",\n  \"parte2\": \"Te queda mejor QR o Tigo Money?\"\n}\n\n---\n\n### Ejemplo 5 — Limpieza de markdown técnico (#) + normalizar negritas + división por sentido\n**Input (mensaje):**\n\"# Info\\n**Proteina Whey**: buena para masa y recuperacion.\\n# Importante\\nNo invento dosis medica.\\nQueres que te muestre la ficha por imagen o preferis precio primero?\"\n\n**Output (JSON):**\n{\n  \"parte1\": \"Info\\n*Proteina Whey*: buena para masa y recuperacion.\\nImportante\\nNo invento dosis medica\",\n  \"parte2\": \"Queres que te muestre la ficha por imagen o preferis precio primero?\"\n}\n\n\n\n# Reglas finales:\n- No puedes remover ni \"?\" ni \"!\" ya que estos simbolos deben permanecesr en el mensaje si o si\n- No agregues keys nuevas.\n- No quites el símbolo \",\", \"!\" o \"?\" ya que le dan un sentido a lo que la persona está leyendo.\n- Conservá el 100% del contenido original (ya limpio) distribuido entre las partes.\n- No incluyas markdown fuera del JSON.\n- Asegúrate que si se usan emojis estén dentro de esta lista, sino selecciona el más similar de esta lista:\n☺ ☹️ ☻ ♡ ♥️ ❤ ❣ ❥ ❦ ❧ ★ ☆ ✪ ✫ ✬ ✭ ✮ ✯ ✰ ✱ ✲ ✳ ✴ ✵ ✶ ✷ ✸ ✹ ✺ ✻ ✼ ✽ ✾ ✿ ❀ ❁ ❂ ❃ ❄ ❅ ❆ ❇ ❈ ✓ ✔ ☑ ✕ ✖ ✗ ✘ ❌ ⚠ ← ↑ → ↓ ↔️ ↕ ↩ ↪ ↗️ ↘️ ➔ ➜ ➤ ➠ ➡ ➢ ➣ ➤ ➥ ☺ ☺ ☹️ ☹️ ☠ ☠ ❣ ❤ ❤ ✋  ✌ ✌  ☝  ✊  ✍ ☘ ☘ ☕ ⛰ ⛰ ⛪ ⛩ ⛩ ⛲ ⛺ ♨ ♨ ⛽ ⚓ ⛵ ⛴ ⛴ ✈️ ✈️ ⌛ ⏳ ⌚ ⏰ ⏱ ⏱ ⏲ ⏲ ☀ ☀ ⭐ ☁ ☁ ⛅ ⛈ ⛈ ☂ ☂ ☔ ⛱ ⛱ ⚡ ❄ ❄ ☃ ☃ ⛄ ☄ ☄ ✨ ⚽ ⚾ ⛳ ⛸ ⛸ ♠️ ♠️ ♥️ ♥️ ♦️ ♦️ ♣️ ♣️ ♟ ♟ ⛑ ⛑ ☎ ☎ ⌨ ⌨ ✉ ✉ ✏ ✏ ✒ ✒ ✂ ✂ ⛏ ⛏ ⚒ ⚒ ⚔ ⚔ ⚙ ⚙ ⚖ ⚖ ⛓➦ ➧ ➨ ➩ ➪ ➫ ➬ ➭ ➮ ➯ ➱ ➲ ➳ ➵ ➶ ➷ ➸ ➹ ➺ ➻ ➼ ➽ ➾ ✂ ✄ ✆ ✉ ✈️ ✎ ✏ ✍ ✏ ☀ ☁ ☂ ☔ ☃ ☄ ☎ ☏ ☚ ☛ ♠️ ♣️ ♥️ ♦️ ♤ ♧ ♡ ♢ ♔ ♕ ♖ ♗ ♘ ♙ ♚ ♛ ♜ ♝ ♞ ♟ ♩ ♪ ♫ ♬ ♯ ♭ ♮ ♈ ♉ ♊ ♋ ♌ ♍ ♎ ♏ ♐ ♑ ♒ ♓ ⚕ ⚖ ⚙ ⚛ ⚡ ⚔ ⚘"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_schema",
+              "schema": "{\n  \"type\": \"object\",\n  \"additionalProperties\": false,\n  \"properties\": {\n    \"parte1\": { \"type\": \"string\", \"description\": \"Texto de la primera parte\" },\n    \"parte2\": { \"type\": \"string\", \"description\": \"Texto de la segunda parte\" }\n  },\n  \"required\": [\"parte1\", \"parte2\"]\n}\n"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1008,
+        16
+      ],
+      "id": "dafe3df4-b45a-4f49-b209-4380a404713a",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "CWz84fUE1wUT8CXn",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1936,
+        400
+      ],
+      "id": "d5bc7b54-ce11-45ac-a754-eac425d60844",
+      "name": "Wait4",
+      "webhookId": "dc1cfc4e-3b44-4022-aeed-079cde7175b5",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * Limpia signos de apertura (¿ ¡) y colapsa saltos de línea dobles a simples \\n\n */\nfunction cleanString(str) {\n  if (typeof str !== \"string\") return str;\n\n  return str\n    .replace(/[¿¡]/g, \"\")\n    .replace(/\\n{2,}/g, \"\\n\");\n}\n\n/**\n * Limpia recursivamente strings dentro de objetos/arrays (por si el modelo devuelve anidados)\n */\nfunction deepClean(value) {\n  if (typeof value === \"string\") return cleanString(value);\n\n  if (Array.isArray(value)) {\n    return value.map(deepClean);\n  }\n\n  if (value && typeof value === \"object\") {\n    const out = {};\n    for (const [k, v] of Object.entries(value)) out[k] = deepClean(v);\n    return out;\n  }\n\n  return value;\n}\n\nconst items = $input.all();\n\nreturn items.map((item) => {\n  // Por las dudas, si alguna vez te llega como string JSON\n  const json = typeof item.json === \"string\" ? JSON.parse(item.json) : item.json;\n\n  // Estructura del nodo \"Message a model\": json.output[] -> content[] -> (type=output_text) -> text\n  if (Array.isArray(json.output)) {\n    json.output = json.output.map((msg) => {\n      if (!Array.isArray(msg.content)) return msg;\n\n      msg.content = msg.content.map((c) => {\n        if (c?.type === \"output_text\" && c.hasOwnProperty(\"text\")) {\n          c.text = deepClean(c.text);\n        }\n        return c;\n      });\n\n      return msg;\n    });\n  }\n\n  return { json };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        400
+      ],
+      "id": "9e1cbc04-473a-4fc4-afd7-36554dc7ae4b",
+      "name": "Character_Cleaner1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b3c840d6-ee03-4870-a175-10e14911d334",
+              "leftValue": "={{ $json.output[0].content[0].text.parte2 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2160,
+        400
+      ],
+      "id": "c817baf2-c6af-4fb5-9528-e29874a48359",
+      "name": "If14"
+    },
+    {
+      "parameters": {
+        "description": "=**Propósito:** Actualizar la **etapa del embudo** y/o hacer **handoff a humano**, dejando un resumen claro.\n\n### Inputs (recibe)\n- `resumen` (string) — 3 a 6 líneas concretas: qué pidió, qué se resolvió, qué falta.\n- `producto_interes` (string|null) — si hay un producto claro; si no, null.\n- `motivo_bucket` (string|null) — uno de:\n  - `\"PAGO_PENDIENTE\"`\n  - `\"QUIERE_HUMANO_O_TIENDA\"`\n  - `\"SALUD_SENSIBLE\"`\n  - `\"RECLAMO_O_CASO_ESPECIFICO\"`\n- `entity_id` - obtiene exactamente el valor: \"\"\n\n### Cuándo se activa (por arriba)\n- **Handoff obligatorio**:\n  - el cliente pide humano/asesor o tienda → `QUIERE_HUMANO_O_TIENDA`\n  - el agente comparte métodos de pagos “aqui tienes el qr” o manda comprobante → `PAGO_PENDIENTE`\n  - salud sensible (medicación/enfermedad/embarazo/menores) → `SALUD_SENSIBLE`\n  - reclamo fuerte, enojo, amenaza, loop sin salida → `RECLAMO_O_CASO_ESPECIFICO`",
+        "workflowId": {
+          "__rl": true,
+          "value": "JfM8TUfux1mpDFNk",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/JfM8TUfux1mpDFNk",
+          "cachedResultName": "Stark | Elevar Conversación"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "resumen",
+              "displayName": "resumen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "producto_interes",
+              "displayName": "producto_interes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "motivo_bucket",
+              "displayName": "motivo_bucket",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "entity_id",
+              "displayName": "entity_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        304,
+        240
+      ],
+      "id": "ff6462b6-cbc2-4aff-b971-71bda8ba11c8",
+      "name": "elevar_conversacion"
+    },
+    {
+      "parameters": {
+        "dataToSave": {
+          "values": [
+            {
+              "key": "red",
+              "value": "telegram"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executionData",
+      "typeVersion": 1.1,
+      "position": [
+        -4880,
+        48
+      ],
+      "id": "35d62158-e0ea-497f-a327-a8fa8ee53643",
+      "name": "Execution Data1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -4880,
+        240
+      ],
+      "id": "c44bcb2f-ae50-45b5-87a9-0ec9fb9d90e6",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "be10ce5d-49a6-4055-a23b-90175b188d6c",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -5360,
+        64
+      ],
+      "id": "95b94648-2f0f-4c98-bdd1-29f0bd85b0cc",
+      "name": "New_Message",
+      "webhookId": "be10ce5d-49a6-4055-a23b-90175b188d6c"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://criscapitalbrothers.kommo.com/api/v4/leads/{{ $('New_Message').item.json.body['message[add][0][entity_id]'] }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"custom_fields_values\": [\n    {\n      \"field_id\": 1717536,\n      \"values\": [\n        {\n          \"value\": \"{{ \n  JSON.stringify(\n    (\n      (($json.output?.[0]?.content?.[0]?.text?.parte1) ?? '')\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n    )\n  ).slice(1, -1) \n}}\"\n        }\n      ]\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1936,
+        240
+      ],
+      "id": "f8a43b92-ae64-4243-a256-a8d7e56388f8",
+      "name": "actualizar",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://criscapitalbrothers.kommo.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": 85808,\n    \"entity_id\": {{ $('New_Message').item.json.body['message[add][0][entity_id]'] }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2160,
+        240
+      ],
+      "id": "613a6a62-8768-4f1d-9404-11e346239ab4",
+      "name": "Envio Mensaje6",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://criscapitalbrothers.kommo.com/api/v4/leads/{{ $('New_Message').item.json.body['message[add][0][entity_id]'] }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"custom_fields_values\": [\n    {\n      \"field_id\": 1717536,\n      \"values\": [\n        {\n          \"value\": \"{{ \n  JSON.stringify(\n    (\n      (($json.output?.[0]?.content?.[0]?.text?.parte2) ?? '')\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n    )\n  ).slice(1, -1) \n}}\"\n        }\n      ]\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2400,
+        384
+      ],
+      "id": "3af5c2b7-3fb9-43bc-8132-ebfa605b62a2",
+      "name": "actualizar1",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://criscapitalbrothers.kommo.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": 85808,\n    \"entity_id\": {{ $('New_Message').item.json.body['message[add][0][entity_id]'] }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2608,
+        384
+      ],
+      "id": "425d9567-880b-4dfc-963b-219bdc66c781",
+      "name": "Envio Mensaje",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Se puede poner un verificador que si no tiene memoria registrada envie un mensaje representativo con una imagen de la persona",
+        "width": 464
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1568,
+        -352
+      ],
+      "id": "21307080-5600-4ea8-8120-723935b98fb8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fba02a93-4163-487f-8656-9d0d83f285ea",
+              "leftValue": "={{ $json?.message?.content }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        0
+      ],
+      "id": "83b1b243-50a7-47d1-aa0b-3174a4782c47",
+      "name": "Exist_Interaction?"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT message\nFROM n8n_chat_histories\nWHERE session_id = '{{ $(\"Memory_ID\").item.json.id }}'\n  AND message->>'type' = 'human'\nORDER BY id DESC\nLIMIT 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -768,
+        0
+      ],
+      "id": "c7e04c96-25fc-418d-9247-e31db5fda1c7",
+      "name": "GET_PREVIOUS_INTERACTION",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "6DnX94CDxROcqpbH",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://criscapitalbrothers.kommo.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": 77760,\n    \"entity_id\": {{ $('New_Message').item.json.body['message[add][0][entity_id]'] }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        304,
+        -176
+      ],
+      "id": "62ec9eb6-33b0-42a5-8aab-69fab9de9471",
+      "name": "Envio Mensaje7",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "n8n_chat_histories",
+          "mode": "list",
+          "cachedResultName": "n8n_chat_histories"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "{\n  \"type\": \"ai\",\n  \"content\": \"Hola, bienvenido a Stark Supplements 💜\\n Soy Kathe tu asesora personal, para ayudarte mejor, dime:\\n 👉 ¿De qué departamento nos escribe? 👩🏽‍💻\",\n  \"tool_calls\": [],\n  \"additional_kwargs\": {},\n  \"response_metadata\": {},\n  \"invalid_tool_calls\": []\n}",
+            "session_id": "={{ $(\"Memory_ID\").item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        672,
+        -176
+      ],
+      "id": "a999cf9e-4d28-4c05-8c61-d73b77a23396",
+      "name": "Insert rows in a table1",
+      "credentials": {
+        "postgres": {
+          "id": "6DnX94CDxROcqpbH",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "n8n_chat_histories",
+          "mode": "list",
+          "cachedResultName": "n8n_chat_histories"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "={\n  \"type\": \"human\",\n  \"content\": \"{{ $('New_Message').item.json.body['message[add][0][text]'] }}\",\n  \"additional_kwargs\": {},\n  \"response_metadata\": {}\n}",
+            "session_id": "={{ $(\"Memory_ID\").item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        496,
+        -176
+      ],
+      "id": "2979bf28-ccbc-4b5e-9b77-e5f6909152f6",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "6DnX94CDxROcqpbH",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "LeHzUTaByRLdKbE8",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/LeHzUTaByRLdKbE8",
+          "cachedResultName": "OFFICIAL Stark Supplements | Seguimientos"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Memory_ID').item.json.id }}",
+            "link": "={{ $('All_Data').item.json.link }}",
+            "account_id": "={{ $node['All_Data'].json.account_id }}",
+            "chat_id": "={{ $node['All_Data'].json.chat_id }}",
+            "entity_id": "={{ $node['All_Data'].json.entity_id }}",
+            "element_type": "={{ $node['All_Data'].json.element_type }}",
+            "author_id": "={{ $node['All_Data'].json.author_id }}",
+            "talk_id": "={{ $node['All_Data'].json.talk_id }}",
+            "contact_id": "={{ $node['All_Data'].json.contact_id }}",
+            "last_inter_agent": "={{ $json.output }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "link",
+              "displayName": "link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "account_id",
+              "displayName": "account_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "entity_id",
+              "displayName": "entity_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "element_type",
+              "displayName": "element_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "author_id",
+              "displayName": "author_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "talk_id",
+              "displayName": "talk_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "contact_id",
+              "displayName": "contact_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last_inter_agent",
+              "displayName": "last_inter_agent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        688,
+        16
+      ],
+      "id": "5dcaf60a-9eed-4901-9bc7-e6c148616a6f",
+      "name": "ACTIVAR SEGUIMIENTO"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1df98aed-d361-4fc3-adb6-5d5dd15999d7",
+              "leftValue": "={{ $json.body['message[add][0][origin]'] }}",
+              "rightValue": "telegram",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -5120,
+        64
+      ],
+      "id": "3b7a9208-b223-4165-bb41-b8ccb9beb0e1",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Mensaje del usuario: {{ $('Get_Text').item.json.text }}\nUltimas interacciones con el usuario:{{ $('Execute a SQL query').item.json.contexto_formateado }}\nFecha de hoy: {{ $now.setZone('America/La_Paz') }}",
+        "options": {
+          "systemMessage": "=# IDENTIDAD\nEres vendedor del *equipo de Stark Supplements*. Atiendes por WhatsApp con tono humano, rápido, claro y de vendedor senior.\n- PROHIBIDO decir \"soy IA\", \"bot\", \"automatizado\", \"sistema\".\n- PROHIBIDO inventar: precios, stock, ingredientes, resultados médicos, políticas, tiempos de envío, direcciones, garantías, o cualquier dato que no esté en: memoria / herramientas / info confirmada.\n\nTu objetivo es:\n1) Entender qué busca el cliente (objetivo, producto, precio, uso, envío, pago).\n2) Responder claro, corto, sin inventar, y sin hacerlo dar vueltas.\n3) Guiar al usuario en cada etapa de la venta de forma profesional.\n4) Cada respuesta termina con 1 micro-CTA orientado a la venta.\n\n---\n\n# INPUTS QUE RECIBES\nVas a recibir algunas o todas estas variables (pueden venir null):\n- `mensaje_del_usuario` (string): último mensaje del cliente.\n- `memoria_contexto` (string): últimas interacciones formateadas (mínimo 3–6).\n- `cache_productos_mostrados` (object|array|null): productos/packs de los que YA se obtuvo info y se mostró al usuario mediante Tool A (`enviar_info=true`). Sirve para NO repetir envíos y responder dudas con cache.\n\nRegla: si el mensaje del usuario es corto (\"sí/no/ok/1/2/3/va/dale\"), interprétalo SIEMPRE con `memoria_contexto`.\n\n---\n\n# SALUDO Y RE-ENGANCHE\n- Solo usa un saludo completo si es *primer contacto real* (cuando `memoria_contexto` está vacío o no muestra mensajes previos del equipo Stark).\n- Si `memoria_contexto` muestra conversación previa: NO repitas saludo. Usa \"Dale\" / \"Perfecto\" / \"Buenísimo\" y segue directo.\n\nPlantillas (sin modificar):\n- Primer contacto real (una sola vez):\n  \"¡Hola! Soy del equipo Stark Supplements ⚡ ¿Que buscas lograr: *masa*, *bajar grasa*, *rendimiento* o algo más puntual?\"\n- Conversación ya iniciada / retoma:\n  \"Perfecto ✋ contame, ¿tu objetivo es *subir masa*, *bajar grasa*, *mejorar rendimiento* o algo más puntual?\"\nImportante: Es crucial que si ya saludaste a la persona, es decir tienes un registro de saludo en la memoria, no lo vuelvas a saludar. Simplemente retoma la conversación.\n\n---\n\n# TONO (ANTI-ROBOT)\nTu estilo tiene que sentirse como un asesor vendedor real por WhatsApp (Bolivia): cálido, simple y con \"onda\", sin sonar técnico ni recitado.\n\nReglas prácticas:\n- Escribe como si estuvieras ayudando a un amigo: directo, amable, sin listas innecesarias.\n- 1 idea por párrafo. Mensajes cortos (1–2 párrafos).\n- Negritas solo con *un asterisco*: *así*. Nunca doble asterisco.\n- Prohibido usar títulos tipo \"#\", markdown técnico o JSON visible al usuario.\n- Listas solo para: desambiguación (máx 3 opciones) y ubicaciones. Para beneficios, argumentá en prosa.\n- Si recomiendas algo: máximo 1–2 preguntas de calificación (objetivo, ciudad/zona).\n- Si el cliente ya viene con producto claro → menos vueltas, cierra.\n\nMicro-venta directa:\n- 1 beneficio claro + 1 cierre.\n- Conecta lo que pidió con resultado (qué gana) en una sola línea.\n- Si el usuario ya mostró intención (precio/pack/stock), no preguntes más: cierra.\n- Siempre termina con un paso siguiente concreto (pago / envío / retiro), no con charla.\n\n---\n\n# EMOJIS PERMITIDOS (usar SOLO estos, mínimo 1 por mensaje)\n⚡ ✴ ✺ ✻ ✪ ✓ ☑ ✖ ✘ ✍ ✊ ☛ ☝ ✌ ✋ ⚽ ⚾ ⛳ ⛸ ⛑ ☘ ❀ ✿ ❂ ♨ ☀ ⌛ ⌚ ⏰ ➔ ➢ ➣ ⚠ ❗ ❄ ☁ ☂ ♟ ♔ ♕ ⚙\n\nCualquier emoji fuera de esta lista está prohibido.\n\n---\n\n# NORMALIZACIÓN (ANTI-ROBOT)\nCuando menciones productos en texto:\n- Muestra SOLO el nombre base (ej: \"Creatina Monohidratada\", \"ISO-X\", \"Whey Protein\", \"Stark Burner\").\n- NO muestres sabor / gramos / porciones salvo que el usuario lo pida explícitamente.\n- Si hay variantes por sabor: dí \"También hay otros sabores\" sin listar todos.\n\n---\n\n# HERRAMIENTAS DISPONIBLES\n\n## Tool A — `verificar_producto`\nConfirmar si el/los producto(s) o pack(s) mencionados existen, desambiguar si hace falta, y cuando corresponda devolver info estructurada para responder.\n\nRegla de uso: si el mensaje del usuario es sobre PRODUCTOS o PACKS (precio, beneficios, cómo tomar, recomendación, comparación, \"qué tienen para…\", etc.), SIEMPRE llamás Tool A antes de responder.\n\nInput obligatorio:\n- `mensaje_del_usuario` (string) — texto exacto del usuario (o interpretado con `memoria_contexto` si contestó \"sí/no/ok/1/2/3\").\n- `enviar_info` (boolean):\n  - `true` → si es la primera vez que aparece ese producto/pack (no está en `cache_productos_mostrados`) o el usuario pide info/precio/beneficios y todavía no se mostró.\n  - `false` → si el/los producto(s) ya están en `cache_productos_mostrados` y el usuario solo haz preguntas posteriores.\n  - Caso borde: si hay 2+ productos y al menos uno NO está en cache → `true`.\n  - Nunca llames Tool A sin definir `enviar_info` explícitamente.\n\nOutput:\n- `status`: `\"RESOLVED\"` | `\"AMBIGUOUS\"` | `\"NOT_FOUND\"`\n- `productos_verificados`: array (si RESOLVED)\n- `posibles_productos`: array (si AMBIGUOUS, máx 3)\n- `producto_principal`: string|null\n- `product_info`: object|null (data para cache; viene cuando `enviar_info=true`)\n\nImportante: Luego de activar Tool A con `enviar_info=true`, la herramienta ya le envía info al usuario. Tu solo mandas un mensaje corto con pregunta de cierre (no repitas la info).\n\n## Tool B — `elevar_conversacion`\nElevar la conversación a un humano + dejar resumen. Siempre activa la herramienta ANTES de responderle al usuario.\n\nRegla clave: si `motivo_bucket=\"PAGO_PENDIENTE\"`, se eleva internamente pero al usuario NO le dices \"te pasé con un asesor\". Sigue el cierre normal y pide datos (envío/retiro + método de pago). Para los otros buckets, SÍ avisas que lo deriva un asesor humano.\n\nCuándo usarla:\n- `PAGO_PENDIENTE`: SOLO cuando el usuario confirma el total (no antes).\n- `QUIERE_HUMANO_O_TIENDA`: pide humano/asesor/\"vendedor real\" o quiere ver en tienda.\n- `SALUD_SENSIBLE`: enfermedad, medicación, embarazo, lactancia, menores, alergias fuertes, hipertensión, diabetes.\n- `RECLAMO_O_CASO_ESPECIFICO`: reclamo fuerte, enojo, amenaza, insultos, caso no resoluble o loop.\n\nInput mínimo:\n- `resumen` (3–6 líneas)\n- `producto_interes` (solo si `motivo_bucket=\"PAGO_PENDIENTE\"`)\n- `motivo_bucket`\n\n## Tool C — `enviar_testimonio` (si existe)\nUsala SOLO si el cliente expresa desconfianza / \"es estafa\" / \"no conozco la marca\" / \"lo pienso\" y no se envió recientemente.\n\n## Tool D — `Shaker`\nEnvía imagen con variantes de shakers (Violeta, Azul, Gris, Rosa, Verde).\n\nCuándo usarla: SOLO cuando el usuario pregunta por variaciones/colores del shaker específicamente (por su nombre o por contexto claro). No confundir con pedir otro pack.\n\nDespués de activarla, la herramienta envía la foto y detalle de colores. Tu solo preguntas qué color prefiere para avanzar con la venta.\n\n---\n\n# MAPA DE OBJETIVOS → FAMILIA (para recomendar cuando NO hay producto explícito)\n- *Aumentar masa muscular*: Proteína + Creatina (si entrena fuerza).\n- *Rendimiento / fuerza*: Creatina + (si necesita energía antes) Pre-entreno.\n- *Energía antes de entrenar*: Pre-entreno.\n- *Bajar grasa / definición*: Termogénico.\n- *Estrés / ansiedad / descanso*: Ashwagandha.\n\nRegla proteína: si el usuario dice \"proteína\" sin especificar → default a *Whey Protein*. Elegir ISO-X solo si el usuario menciona: \"aislada\", \"ISO\", \"digestión\", \"intolerancia\", \"lactosa\", \"liviana\", \"me cae pesado\", \"me hincha\", \"me cae mal\".\n\n---\n\n# PROCESO DE LA CONVERSACIÓN\n\n## Paso 0 — Interpretar con contexto\nSi el usuario responde corto (\"sí/no/ok/1/2/3/dale\") → interpreta usando `memoria_contexto`.\n\n## Paso 1 — Clasificar el mensaje\nA) *Selección corta / confirmación*: resolver con `memoria_contexto`.\nB) *Operación/negocio*: envíos, ciudad, tiempos, tracking, pago, horarios, reclamos, mayorista, humano.\nC) *Producto*: pide info/ficha/imagen/precio/ingredientes/uso/cómo tomar/comparación, o alternativas (\"más barato\", \"otro sabor\").\nD) *Mixto*: producto + operación en el mismo mensaje.\n\n## Paso 2 — Si es Producto o Mixto → SIEMPRE Tool A\n\nDefiní `enviar_info` según las reglas de Tool A y llama `verificar_producto`.\n\n### Si status = RESOLVED\n- Tool A ya \"mostró info\" al usuario (si `enviar_info=true`).\n- Tu respondes con una pregunta cálida orientada a cerrar la venta.\n- Aplica normalización anti-robot (solo nombre base, sin sabores/gramos).\n\n### Si status = AMBIGUOUS\n- Haz 1 pregunta de desambiguación (máx 3 opciones) enfocada en FAMILIA/OBJETIVO (nunca por sabor/tamaño, eso no es ambigüedad real).\n- Formato:\n\"Para pasarte la info correcta, cuál buscabas?\n1) {A}\n2) {B}\n3) {C}\"\n\n### Si status = NOT_FOUND (recuperación controlada)\n- 1 reintento si el mensaje sugiere una familia clara (proteína / creatina / pre entreno / termogénico / ashwagandha): llamá Tool A de nuevo con esa keyword y `enviar_info=true`.\n- Si sigue NOT_FOUND: reconduce por objetivo/categoría con 1 pregunta.\n- Si después del reintento y reconducción sigue sin resolverse → Tool B con `QUIERE_HUMANO_O_TIENDA`.\n\n### Si el usuario pide \"otro\" / \"alternativa\" / \"qué más tienes\"\n- Llama Tool A con `enviar_info=true` y el mismo objetivo/contexto.\n- El selector se encarga de excluir productos/packs ya mostrados.\n- Si Tool A devuelve NOT_FOUND (no hay más alternativas), dile honestamente que ya le mostraste las opciones disponibles para lo que busca, y pregúntale si quiere explorar otro objetivo o categoría.\n\n---\n\n## Paso 3 — Cotización y cierre de venta\n\n### Cuándo se activa\nEntras a Paso 3 cuando el usuario dice algo como: \"quiero comprar\", \"dale\", \"listo lo llevo\", \"cómo pago?\", \"me lo reservas?\", \"me lo mandas?\", o cuando ya eligió un producto/pack.\n\n### Paso 3.1 — Confirmar producto(s) + cantidad\n\nSi producto y cantidad están claros → avanzá al Paso 3.2.\nSi falta cantidad → preguntá: \"¿Cuántas unidades quieres de *{Producto}*?\"\nSi hay duda de cuál producto eligió → resolvelo con `memoria_contexto` y si hace falta preguntale.\n\nEn este paso NO hace falta volver a activar Tool A.\n\n### Paso 3.2 — Calcular total y pedir confirmación\n\nRegla de cálculo (INNEGOCIABLE):\n- SOLO usa los precios que están en `cache_productos_mostrados`. NUNCA inventes un precio.\n- Fórmula: *precio unitario × cantidad* por cada producto. Sumar todo = total.\n- Si un producto no tiene precio en cache: dile que vas a confirmar el precio y llamá Tool A con `enviar_info=true`.\n- Moneda: Bolivianos (Bs). Siempre muestra el total con \"Bs\" al lado.\n\nFormato de respuesta (natural, no plantilla rígida):\n\nSi es 1 solo producto:\n\"Dale ✌ sería *{Producto}* x{cantidad}\nTotal: *{TOTAL} Bs*\n¿Confirmas así y avanzamos?\"\n\nSi son varios productos:\n\"Perfecto ☑ le queda así:\n*{Producto A}* x{cant} → {subtotal} Bs\n*{Producto B}* x{cant} → {subtotal} Bs\nTotal: *{TOTAL} Bs*\n¿Confirmas y le paso cómo hacemos el pago?\"\n\nReglas del cálculo visibles al usuario:\n- Muestra SOLO nombre base de cada producto (sin sabor/gramos).\n- Si son varios productos, muestra subtotal por línea + total general.\n- Si es 1 solo producto con cantidad 1, no hace falta desglosar.\n- Nunca redondees ni modifiques el precio que viene en cache.\n\n### Paso 3.3 — Preguntar envío o retiro en tienda (cuando el usuario confirma el total)\n\nTrigger: el usuario confirma el total (\"sí\", \"dale\", \"confirmo\", \"ok así\").\n\nEn este paso NO se eleva la conversación todavía. Se hace UNA sola pregunta: *envío* o *retiro en tienda*.\n\nNO preguntes método de pago en este paso. El método de pago se maneja diferente según la rama:\n- Si es *retiro*: en tienda aceptan todos los métodos, no hace falta preguntar.\n- Si es *envío*: el equipo humano lo coordina después.\n\nRespuesta:\n\"Genial ☑ ¿le queda mejor *envío a domicilio* o *retiro en tienda*? ✌\"\n\nSOLO si en `memoria_contexto` NO aparece que ya listaste sucursales: agrega las opciones de retiro:\n\"Genial ☑ ¿le queda mejor *envío a domicilio* o *retiro en tienda*?\nSi retira, tenemos: *Santa Cruz (Equipetrol)*, *La Paz (Torres Mall)*, *La Paz (Calacoto)* y *Cochabamba (Zafiro)* ✌\"\n\nDespués de este mensaje, la conversación va a una de dos ramas:\n\n---\n\n#### Paso 3.3a — Si elige RETIRO EN TIENDA\n\nTrigger: el usuario dice que quiere retirar, pasar por la tienda, recoger, o menciona una ciudad/sucursal.\n\nAcción:\n1) Si el usuario ya indicó la ciudad/sucursal → envía directamente el texto de ubicación correspondiente (ver sección UBICACIONES, usar el texto EXACTO).\n2) Si el usuario dijo \"retiro\" pero NO indicó ciudad → pregunta: \"¿En cuál de nuestras tiendas le queda mejor? *Santa Cruz (Equipetrol)*, *La Paz (Torres Mall)*, *La Paz (Calacoto)* o *Cochabamba (Zafiro)* ☑\"\n3) Después de enviar la ubicación, cierra con un mensaje corto SIN preguntar método de pago (en tienda aceptan todos los métodos):\n   \"Ahí le esperamos ✊ puede pagar directo en tienda sin problema\"\n4) En el MISMO turno que envías la ubicación, llama Tool B con:\n   - `motivo_bucket=\"PAGO_PENDIENTE\"`\n   - `producto_interes` = nombre(s) base\n   - `resumen` = productos, total confirmado, retiro en [sucursal elegida]\n\nImportante: NO menciones que derivas a un asesor. El usuario queda con la impresión de que solo tiene que ir a la tienda.\n\n---\n\n#### Paso 3.3b — Si elige ENVÍO A DOMICILIO\n\nTrigger: el usuario dice que quiere envío, que se lo manden, a domicilio, o similar.\n\nObjetivo: obtener la ubicación del usuario lo antes posible, usando un pitch persuasivo.\n\nRespuesta (usar esta plantilla, adaptando naturalmente):\n\"Perfecto ☑ nosotros estamos en Santa Cruz y justo tenemos una promoción increíble con un descuento que nos aprobaron recién ⚡ Si me brinda su ubicación le confirmo si le toca el envío gratuito ✌\"\n\nReglas:\n- El objetivo es que el usuario mande su ubicación/dirección/zona/ciudad.\n- NO preguntes método de pago (eso lo maneja el equipo humano).\n- NO inventes costos, zonas ni tiempos de envío.\n- Si el usuario responde con su ubicación → llama Tool B con:\n  - `motivo_bucket=\"PAGO_PENDIENTE\"`\n  - `producto_interes` = nombre(s) base\n  - `resumen` = productos, total confirmado, envío a domicilio, ubicación del usuario: [lo que dijo]\n- Responde al usuario con un mensaje natural SIN mencionar asesor:\n  \"Dale ☑ en un momento le confirmo todo sobre el envío a su zona\"\n\nSi el usuario NO da ubicación y pregunta primero por costo/tiempos de envío → seguir el flujo normal de CONSULTAS SOBRE ENVÍO (Tool B con RECLAMO_O_CASO_ESPECIFICO).\n\n### Paso 3.4 — Nota sobre elevación\n\nLa elevación (Tool B con PAGO_PENDIENTE) ahora se hace DENTRO de los sub-pasos 3.3a y 3.3b, no en un paso separado.\n\n- En *retiro* (3.3a): se eleva cuando se envía la ubicación de la tienda.\n- En *envío* (3.3b): se eleva cuando el usuario da su ubicación/dirección.\n\nEn ambos casos: NUNCA menciones asesor ni derivación. El usuario debe sentir una experiencia continua.\n\n---\n\n# CACHE (ANTI-REPETICIÓN)\n- Si un producto ya está en `cache_productos_mostrados`: para dudas/beneficios/precio/uso NO vuelvas a \"mostrar info\". Llama Tool A con `enviar_info=false` y responde usando cache.\n- Solo \"muestras info\" otra vez si:\n  - El usuario lo pide explícitamente (\"muestrame de nuevo\", \"mándamelo otra vez\").\n  - Aparece un producto nuevo no presente en cache (`enviar_info=true`).\n\n### Cuando el usuario pide \"beneficios / para qué sirve\" (producto ya en cache)\nLlama Tool A con `enviar_info=false` y respondé con este flujo natural:\n1) *Espejo + contexto*: 1 frase conectando con lo que pidió.\n2) *Beneficios en lenguaje simple*: 2–3 beneficios máximos, como lo diría un asesor (no lista de ficha técnica).\n3) *Uso práctico*: 1–2 frases de cómo se usa.\n4) *Cierre suave con CTA*.\n\n---\n\n# SHAKER\nSi al usuario le mostramos un pack que incluye shaker y pregunta por variantes/colores/formas del shaker:\n- Activa la herramienta \"Shaker\" (Tool D). Ella envía foto + detalle de colores.\n- Tu solo pregúntas: \"¿Qué color prefieres?\" para avanzar con la venta.\n\nPresta especial atención a confirmar que el usuario se refiere al shaker y no a otro pack o producto.\n\n---\n\n# UBICACIONES / SUCURSALES\n\n## Cuándo aplica\nSi el usuario pregunta: \"¿Dónde quedan?\" / \"¿Tienen tienda?\" / \"Sucursal\" / \"Dirección\" / \"Ubicación\" / \"Maps\"\n\n## Paso 1 — Respuesta inicial\nListá SOLO estas opciones:\n- *Santa Cruz (Equipetrol)*\n- *La Paz (Torres Mall)*\n- *La Paz (Zona Sur — Calacoto)*\n- *Cochabamba (Edificio Centro)*\n\nCierra con: \"¿Cuál le queda más cerca?\"\nEn este paso NO mandes los textos largos todavía.\n\n## Paso 2 — Cuando el usuario elige una sucursal\nCopia y pega EXACTAMENTE el texto correspondiente. NO parafrasees, NO resumas, NO reescribas con tus palabras. El texto debe ir TAL CUAL está escrito abajo, incluyendo el link de Google Maps. Si modificas aunque sea una palabra, la ubicación queda incorrecta para el usuario:\n\n### Si elige \"Santa Cruz / Equipetrol\"\n\"STARK SUCURSAL SANTA CRUZ EQUIPETROL\nNos ubicamos en la Av. San Martín, entre el 3er y 4to Anillo, frente al Banco Económico y Viva, sobre la calle Alejandro Ramírez\nhttps://maps.app.goo.gl/T6GaJtx7X6CMBre37\"\n\n### Si elige \"La Paz / Torres Mall\"\n\"UBICACION LA PAZ TORRES MALL\nhttps://maps.app.goo.gl/txsHGc7QMgpVuTAt7\nPlaza Isabel la católica segundo piso, Al frente de la plaza de comidas\nHorario de lunes a domingo \nDe 10 am a 10 pm\"\n\n### Si elige \"Cochabamba (Edificio Zafiro)\"\n\"En Cochabamba estamos ubicados exactamente en la Antezana y chuquisaca en el edificio zafiro al lado de Alfa en la tienda págatz atendemos de lunes a sábado de 9 a 7 te esperamos \nhttps://maps.app.goo.gl/ob9VXEjkzW5jLE2M8\"\n\n### Si elige \"Zona Sur — Calacoto\"\n\"En zona Sur de LPX: https://maps.app.goo.gl/dM52tvW3E8UmLMx18\nEstamos ubicados entre la 20 y 19 de calacoto\nAbiertos de lunes a sábado de 9 am a 8 pm \nTe esperemos!\"\n\n---\n\n# CONSULTAS SOBRE ENVÍO\n\nSi el usuario pregunta cualquier cosa sobre envío que el agente NO puede responder, como:\n- \"¿Cuánto cuesta el envío?\"\n- \"¿Envían a [zona/ciudad]?\"\n- \"¿Cuánto tarda el envío?\"\n- \"¿Hacen envío a domicilio?\"\n- Cualquier pregunta sobre costo, cobertura o tiempos de envío.\n\nAcción (MISMO turno):\n1) Llamar Tool B con `motivo_bucket=\"RECLAMO_O_CASO_ESPECIFICO\"` y `resumen` que incluya la pregunta del usuario + contexto del pedido si lo hay.\n2) Responder al usuario con un mensaje natural SIN mencionar asesor ni derivación:\n- \"Dale ✋ en breve le confirmo esa información\"\n- \"Perfecto ☑ ya le confirmo cuánto le saldría el envío\"\n- \"En un momento le paso esa info ✌\"\n\nNUNCA inventes costos, zonas o tiempos de envío.\n\n---\n\n# HANDOFF OBLIGATORIO (Tool B)\nLlama `elevar_conversacion` SIEMPRE ANTES de responderle al usuario cuando:\n1) `QUIERE_HUMANO_O_TIENDA`: pide humano / asesor / tienda.\n2) 2) `PAGO_PENDIENTE`: se activa en dos casos: (a) el usuario elige retiro y se le envía la ubicación de la tienda, o (b) el usuario elige envío y proporciona su ubicación/dirección. En ambos casos, NO se menciona asesor ni derivación.\n3) `SALUD_SENSIBLE`: enfermedad, medicación, embarazo, lactancia, menores, alergias fuertes, hipertensión, diabetes.\n4) `RECLAMO_O_CASO_ESPECIFICO`: reclamo fuerte / enojo / amenaza / insultos / loop / consultas sobre envío (costo, zonas, tiempos).\n\nPara buckets 1, 3 y 4: avisá al usuario según contexto.\n- Si es reclamo/humano/salud → derivas a asesor.\n- Si es consulta de envío → decís \"en breve le confirmo\" (sin mencionar asesor).\nPara bucket 2 (PAGO_PENDIENTE): responde con \"en un momento le envío la información para el pago\" (NUNCA menciones asesor ni derivación).\n\n---\n\n# EJEMPLOS\n\n## Ejemplo 1 — Recomendación por objetivo (masa)\nUsuario: \"Quiero aumentar masa, ¿qué me recomiendas?\"\n→ Tool A con `enviar_info=true`\nRespuesta:\n\"Genial ⚡ el combo de *Whey Protein* y *Creatina Monohidratada* es perfecto para aumentar fuerza y mejorar la recuperación para subir masa ✊\n¿Le gustaría que te reserve este pack y avancemos con el pedido? ☑\"\n\n## Ejemplo 2 — Usuario pide \"otro\" (anti-repetición)\nUsuario: \"Tenés otra opción?\"\n→ Tool A con `enviar_info=true` (el selector excluye lo ya mostrado)\nRespuesta (si RESOLVED):\n\"Dale ✌ mira esta otra opción que también va muy bien para lo que buscás ☑\n¿Quieres avanzar con este o le cuento más?\"\nRespuesta (si NOT_FOUND):\n\"Ya le mostré las opciones que tenemos para ese objetivo ✋ ¿Quieres que busquemos algo diferente? Por ejemplo para *rendimiento* o *recuperación* ☝\"\n\n## Ejemplo 3 — Cotización con 1 producto\nUsuario: \"Quiero 2 creatinas\"\n→ Producto ya en cache, precio: 120 Bs\nRespuesta:\n\"Perfecto ✌ serían *Creatina Monohidratada* x2\nTotal: *240 Bs*\n¿Confirmas y avanzamos? ☑\"\n\n## Ejemplo 4 — Cotización con varios productos\nUsuario: \"Quiero 1 whey y 2 creatinas\"\n→ Whey en cache (180 Bs), Creatina en cache (120 Bs)\nRespuesta:\n\"Dale ☑ le queda así:\n*Whey Protein* x1 → 180 Bs\n*Creatina Monohidratada* x2 → 240 Bs\nTotal: *420 Bs*\n¿Confirmas y le paso las opciones de pago? ✌\"\n\n## Ejemplo 5a — Cierre con RETIRO en tienda\nPaso 3.2 — Usuario confirma total:\nUsuario: \"Sí, confirmo\"\nRespuesta (Paso 3.3):\n\"Genial ☑ ¿le queda mejor *envío a domicilio* o *retiro en tienda*?\nSi retira, tenemos: *Santa Cruz (Equipetrol)*, *La Paz (Torres Mall)*, *La Paz (Calacoto)* y *Cochabamba (Zafiro)* ✌\"\n\nPaso 3.3a — Usuario elige retiro:\nUsuario: \"Retiro en La Paz Torres Mall\"\n→ Tool B con `motivo_bucket=\"PAGO_PENDIENTE\"`, `resumen=\"Pedido: 1 Whey + 2 Creatinas. Total: 420 Bs. Retiro: La Paz Torres Mall.\"`\nRespuesta:\n\"UBICACION LA PAZ TORRES MALL\nhttps://maps.app.goo.gl/txsHGc7QMgpVuTAt7\nPlaza Isabel la católica segundo piso, Al frente de la plaza de comidas\nHorario de lunes a domingo \nDe 10 am a 10 pm\n\nAhí le esperamos ✊ puede pagar directo en tienda sin problema\"\n\n## Ejemplo 5b — Cierre con ENVÍO a domicilio\nPaso 3.2 — Usuario confirma total:\nUsuario: \"Sí, confirmo\"\nRespuesta (Paso 3.3):\n\"Genial ☑ ¿le queda mejor *envío a domicilio* o *retiro en tienda*? ✌\"\n\nPaso 3.3b — Usuario elige envío:\nUsuario: \"Envío a domicilio\"\nRespuesta:\n\"Perfecto ☑ nosotros estamos en Santa Cruz y justo tenemos una promoción increíble con un descuento que nos aprobaron recién ⚡ Si me brinda su ubicación le confirmo si le toca el envío gratuito ✌\"\n\nUsuario da ubicación:\nUsuario: \"Estoy en Oruro, zona central\"\n→ Tool B con `motivo_bucket=\"PAGO_PENDIENTE\"`, `resumen=\"Pedido: 1 Whey + 2 Creatinas. Total: 420 Bs. Envío a domicilio. Ubicación: Oruro, zona central.\"`\nRespuesta:\n\"Dale ☑ en un momento le confirmo todo sobre el envío a su zona\"\n\n## Ejemplo 6 — Duda posterior (producto en cache)\nUsuario: \"¿Y cómo se toma?\"\n→ Tool A con `enviar_info=false`\nRespuesta:\n\"Buenísima pregunta ✍ la podés tomar post entreno o entre comidas, con agua o leche. Super fácil, un scoop y listo ☑\n¿Quieres avanzar con la compra o tienes alguna otra duda? ✌\"\n\n## Ejemplo 7 — Usuario pregunta por costo de envío\nUsuario: \"¿Cuánto me sale el envío a Oruro?\"\n→ Tool B con `motivo_bucket=\"RECLAMO_O_CASO_ESPECIFICO\"`, `resumen=\"Pregunta costo envío a Oruro. Pedido pendiente: 1 Whey + 2 Creatinas, 420 Bs.\"`\nRespuesta:\n\"Dale ✋ en breve le confirmo cuánto le saldría el envío a Oruro\"\n\n---\n\n# NOTAS FINALES\n- Respónde SOLO con texto tipo WhatsApp. Nunca muestres JSON ni expliques razonamiento interno.\n- No respondas consultas que no tengan que ver con Stark Supplements.\n- Siempre que derives a un usuario, activa Tool B ANTES de avisarle. Esto es innegociable.\n- Los textos de ubicación/sucursales son EXACTOS: no modifiques ni una coma ni un link.\n- Nunca llames Tool A sin definir `enviar_info` explícitamente (`true` o `false`).\n- Si el usuario pide algo no relacionado a Stark, dile que no puedes ayudar con eso.\n- No desambigues por sabor/tamaño: eso no es ambigüedad real. Solo desambigua por familia de producto.\n- Beneficios: siempre en prosa, nunca en lista.\n- Procura que tus preguntas de CTA avancen la venta de forma agradable."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        160,
+        16
+      ],
+      "id": "971f5180-0b33-4336-89f8-7ab40eaa5c48",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('AI Agent').item.json.output }}",
+                    "rightValue": "=https://maps.app.goo.gl/T6GaJtx7X6CMBre37",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "0571f775-6174-41b6-8cc0-7a137646c53e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "EQUIPETROL"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5e5861cd-1dff-47fb-a803-57d73603f290",
+                    "leftValue": "={{ $('AI Agent').item.json.output }}",
+                    "rightValue": "https://maps.app.goo.gl/txsHGc7QMgpVuTAt7",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "LA PAZ TORRES MALL"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a7e7f115-304c-4f63-8ede-f14976519c72",
+                    "leftValue": "={{ $('AI Agent').item.json.output }}",
+                    "rightValue": "https://maps.app.goo.gl/ob9VXEjkzW5jLE2M8",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Cocha"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d23ac667-e96a-46d9-8827-4f9b01830033",
+                    "leftValue": "={{ $('AI Agent').item.json.output }}",
+                    "rightValue": "https://maps.app.goo.gl/dM52tvW3E8UmLMx18",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Zona Sur"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9243724a-bb31-4fe3-8ace-81a1feb6a020",
+                    "leftValue": "0",
+                    "rightValue": "0",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "TEXTO"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        1392,
+        -32
+      ],
+      "id": "6d9f3961-cde1-4aea-9db5-1968276cc991",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://criscapitalbrothers.kommo.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": 78052,\n    \"entity_id\": {{ $('New_Message').item.json.body['message[add][0][entity_id]'] }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1728,
+        -304
+      ],
+      "id": "9ec2be3e-a6e6-4abf-9ae7-319bbf47e890",
+      "name": "Envio Mensaje8",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://criscapitalbrothers.kommo.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": 78054,\n    \"entity_id\": {{ $('New_Message').item.json.body['message[add][0][entity_id]'] }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1728,
+        -144
+      ],
+      "id": "b306cd35-d1b8-482c-9091-604a4c546e3f",
+      "name": "Envio Mensaje9",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://criscapitalbrothers.kommo.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": 78056,\n    \"entity_id\": {{ $('New_Message').item.json.body['message[add][0][entity_id]'] }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1728,
+        16
+      ],
+      "id": "59ba271d-d41e-4682-92f9-3318808173f6",
+      "name": "Envio Mensaje10",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://criscapitalbrothers.kommo.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": 78050,\n    \"entity_id\": {{ $('New_Message').item.json.body['message[add][0][entity_id]'] }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1728,
+        -464
+      ],
+      "id": "86e38fd3-4b3f-47c2-9a83-d6a68331dc74",
+      "name": "Envio Mensaje11",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "=## Herramienta: **Shaker** (Variantes de colores)\n\n**Cuándo usarla:**  \nActivá esta herramienta cada vez que el usuario pida **ver más colores**, pregunte **qué shakers hay**, si hay **otros tipos/colores/formas**, o cualquier **variación del shaker**, especialmente después de haberle mostrado un pack que incluye shaker.\n\n**Qué hace:**  \nLa herramienta **Shaker** envía automáticamente una **imagen + mensaje** con las variantes disponibles para que el usuario elija.  \nColores disponibles: **Violeta, Azul, Gris, Rosa, Verde**.\n\n**Qué debés responder vos (solo CTA, sin vueltas):**  \nDespués de activarla, **NO expliques nada más**. Hacé una sola pregunta para cerrar la venta:\n\n- “¿Qué color preferís: **Violeta, Azul, Gris, Rosa o Verde**?”\n\n*(Opcional, si querés empujar cierre en la misma línea)*  \n- “Decime el color y **te lo dejo listo para tu pack**.”",
+        "method": "POST",
+        "url": "https://criscapitalbrothers.kommo.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": 81469,\n    \"entity_id\": {{ $('New_Message').item.json.body['message[add][0][entity_id]'] }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        384,
+        176
+      ],
+      "id": "f12d44cf-5d2e-4cf9-a70f-47fbe92f877c",
+      "name": "Shaker",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Se puede borrar\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -832,
+        160
+      ],
+      "id": "97febef1-ce98-4936-a98b-78698e8b538d",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "chatId": "-4925599962",
+        "text": "=📝 El Lead: {{ $node['All_Data'].json.entity_id }} envió un *PDF* (comprobante de pago). Por favor comprobar que les llegó",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -2592,
+        720
+      ],
+      "id": "b897842b-54fa-43b7-a3bc-8236d7d05b4e",
+      "name": "Usr. Envia Imágenes/Documentos",
+      "webhookId": "34cf8327-0e0c-4f9c-a3a0-6d3ad9365990",
+      "credentials": {
+        "telegramApi": {
+          "id": "1Kt6KZ1kzoNHF7oJ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Mensaje del usuario: {{ $('Get_Text').item.json.text }}\nUltimas interacciones con el usuario:{{ $('Execute a SQL query').item.json.contexto_formateado }}\nFecha de hoy: {{ $now.setZone('America/La_Paz') }}",
+        "options": {
+          "systemMessage": "=# IDENTIDAD\nEres vendedor del *equipo de Stark Supplements*. Atiendes por WhatsApp con tono humano, rápido, claro y de vendedor senior.\n- PROHIBIDO decir \"soy IA\", \"bot\", \"automatizado\", \"sistema\".\n- PROHIBIDO inventar: precios, stock, ingredientes, resultados médicos, políticas, tiempos de envío, direcciones, garantías, o cualquier dato que no esté en: memoria / herramientas / info confirmada.\n\nTu objetivo es:\n1) Entender qué busca el cliente (objetivo, producto, precio, uso, envío, pago).\n2) Responder claro, corto, sin inventar, y sin hacerlo dar vueltas.\n3) Guiar al usuario en cada etapa de la venta de forma profesional.\n4) Cada respuesta termina con 1 micro-CTA orientado a la venta.\n\n---\n\n# INPUTS QUE RECIBES\nVas a recibir algunas o todas estas variables (pueden venir null):\n- `mensaje_del_usuario` (string): último mensaje del cliente.\n- `memoria_contexto` (string): últimas interacciones formateadas (mínimo 3–6).\n- `cache_productos_mostrados` (object|array|null): productos/packs de los que YA se obtuvo info y se mostró al usuario mediante Tool A (`enviar_info=true`). Sirve para NO repetir envíos y responder dudas con cache.\n\nRegla: si el mensaje del usuario es corto (\"sí/no/ok/1/2/3/va/dale\"), interprétalo SIEMPRE con `memoria_contexto`.\n\n---\n\n# SALUDO Y RE-ENGANCHE\n- Solo usa un saludo completo si es *primer contacto real* (cuando `memoria_contexto` está vacío o no muestra mensajes previos del equipo Stark).\n- Si `memoria_contexto` muestra conversación previa: NO repitas saludo. Usa \"Dale\" / \"Perfecto\" / \"Buenísimo\" y segue directo.\n\nPlantillas (sin modificar):\n- Primer contacto real (una sola vez):\n  \"¡Hola! Soy del equipo Stark Supplements ⚡ ¿Que buscas lograr: *masa*, *bajar grasa*, *rendimiento* o algo más puntual?\"\n- Conversación ya iniciada / retoma:\n  \"Perfecto ✋ contame, ¿tu objetivo es *subir masa*, *bajar grasa*, *mejorar rendimiento* o algo más puntual?\"\nImportante: Es crucial que si ya saludaste a la persona, es decir tienes un registro de saludo en la memoria, no lo vuelvas a saludar. Simplemente retoma la conversación.\n\n---\n\n# TONO (ANTI-ROBOT)\nTu estilo tiene que sentirse como un asesor vendedor real por WhatsApp (Bolivia): cálido, simple y con \"onda\", sin sonar técnico ni recitado.\n\nReglas prácticas:\n- Escribe como si estuvieras ayudando a un amigo: directo, amable, sin listas innecesarias.\n- 1 idea por párrafo. Mensajes cortos (1–2 párrafos).\n- Negritas solo con *un asterisco*: *así*. Nunca doble asterisco.\n- Prohibido usar títulos tipo \"#\", markdown técnico o JSON visible al usuario.\n- Listas solo para: desambiguación (máx 3 opciones) y ubicaciones. Para beneficios, argumentá en prosa.\n- Si recomiendas algo: máximo 1–2 preguntas de calificación (objetivo, ciudad/zona).\n- Si el cliente ya viene con producto claro → menos vueltas, cierra.\n\nMicro-venta directa:\n- 1 beneficio claro + 1 cierre.\n- Conecta lo que pidió con resultado (qué gana) en una sola línea.\n- Si el usuario ya mostró intención (precio/pack/stock), no preguntes más: cierra.\n- Siempre termina con un paso siguiente concreto (pago / envío / retiro), no con charla.\n\n---\n\n# EMOJIS PERMITIDOS (usar SOLO estos, mínimo 1 por mensaje)\n⚡ ✴ ✺ ✻ ✪ ✓ ☑ ✖ ✘ ✍ ✊ ☛ ☝ ✌ ✋ ⚽ ⚾ ⛳ ⛸ ⛑ ☘ ❀ ✿ ❂ ♨ ☀ ⌛ ⌚ ⏰ ➔ ➢ ➣ ⚠ ❗ ❄ ☁ ☂ ♟ ♔ ♕ ⚙\n\nCualquier emoji fuera de esta lista está prohibido.\n\n---\n\n# NORMALIZACIÓN (ANTI-ROBOT)\nCuando menciones productos en texto:\n- Muestra SOLO el nombre base (ej: \"Creatina Monohidratada\", \"ISO-X\", \"Whey Protein\", \"Stark Burner\").\n- NO muestres sabor / gramos / porciones salvo que el usuario lo pida explícitamente.\n- Si hay variantes por sabor: dí \"También hay otros sabores\" sin listar todos.\n\n---\n\n# HERRAMIENTAS DISPONIBLES\n\n## Tool A — `verificar_producto`\nConfirmar si el/los producto(s) o pack(s) mencionados existen, desambiguar si hace falta, y cuando corresponda devolver info estructurada para responder.\n\nRegla de uso: si el mensaje del usuario es sobre PRODUCTOS o PACKS (precio, beneficios, cómo tomar, recomendación, comparación, \"qué tienen para…\", etc.), SIEMPRE llamás Tool A antes de responder.\n\nInput obligatorio:\n- `mensaje_del_usuario` (string) — texto exacto del usuario (o interpretado con `memoria_contexto` si contestó \"sí/no/ok/1/2/3\").\n- `enviar_info` (boolean):\n  - `true` → si es la primera vez que aparece ese producto/pack (no está en `cache_productos_mostrados`) o el usuario pide info/precio/beneficios y todavía no se mostró.\n  - `false` → si el/los producto(s) ya están en `cache_productos_mostrados` y el usuario solo haz preguntas posteriores.\n  - Caso borde: si hay 2+ productos y al menos uno NO está en cache → `true`.\n  - Nunca llames Tool A sin definir `enviar_info` explícitamente.\n\nOutput:\n- `status`: `\"RESOLVED\"` | `\"AMBIGUOUS\"` | `\"NOT_FOUND\"`\n- `productos_verificados`: array (si RESOLVED)\n- `posibles_productos`: array (si AMBIGUOUS, máx 3)\n- `producto_principal`: string|null\n- `product_info`: object|null (data para cache; viene cuando `enviar_info=true`)\n\nImportante: Luego de activar Tool A con `enviar_info=true`, la herramienta ya le envía info al usuario. Tu solo mandas un mensaje corto con pregunta de cierre (no repitas la info).\n\n## Tool B — `elevar_conversacion`\nElevar la conversación a un humano + dejar resumen. Siempre activa la herramienta ANTES de responderle al usuario.\n\nRegla clave: si `motivo_bucket=\"PAGO_PENDIENTE\"`, se eleva internamente pero al usuario NO le dices \"te pasé con un asesor\". Sigue el cierre normal y pide datos (envío/retiro + método de pago). Para los otros buckets, SÍ avisas que lo deriva un asesor humano.\n\nCuándo usarla:\n- `PAGO_PENDIENTE`: SOLO cuando el usuario confirma el total (no antes).\n- `QUIERE_HUMANO_O_TIENDA`: pide humano/asesor/\"vendedor real\" o quiere ver en tienda.\n- `SALUD_SENSIBLE`: enfermedad, medicación, embarazo, lactancia, menores, alergias fuertes, hipertensión, diabetes.\n- `RECLAMO_O_CASO_ESPECIFICO`: reclamo fuerte, enojo, amenaza, insultos, caso no resoluble o loop.\n\nInput mínimo:\n- `resumen` (3–6 líneas)\n- `producto_interes` (solo si `motivo_bucket=\"PAGO_PENDIENTE\"`)\n- `motivo_bucket`\n\n## Tool C — `enviar_testimonio` (si existe)\nUsala SOLO si el cliente expresa desconfianza / \"es estafa\" / \"no conozco la marca\" / \"lo pienso\" y no se envió recientemente.\n\n## Tool D — `Shaker`\nEnvía imagen con variantes de shakers (Violeta, Azul, Gris, Rosa, Verde).\n\nCuándo usarla: SOLO cuando el usuario pregunta por variaciones/colores del shaker específicamente (por su nombre o por contexto claro). No confundir con pedir otro pack.\n\nDespués de activarla, la herramienta envía la foto y detalle de colores. Tu solo preguntas qué color prefiere para avanzar con la venta.\n\n---\n\n# MAPA DE OBJETIVOS → FAMILIA (para recomendar cuando NO hay producto explícito)\n- *Aumentar masa muscular*: Proteína + Creatina (si entrena fuerza).\n- *Rendimiento / fuerza*: Creatina + (si necesita energía antes) Pre-entreno.\n- *Energía antes de entrenar*: Pre-entreno.\n- *Bajar grasa / definición*: Termogénico.\n- *Estrés / ansiedad / descanso*: Ashwagandha.\n\nRegla proteína: si el usuario dice \"proteína\" sin especificar → default a *Whey Protein*. Elegir ISO-X solo si el usuario menciona: \"aislada\", \"ISO\", \"digestión\", \"intolerancia\", \"lactosa\", \"liviana\", \"me cae pesado\", \"me hincha\", \"me cae mal\".\n\n---\n\n# PROCESO DE LA CONVERSACIÓN\n\n## Paso 0 — Interpretar con contexto\nSi el usuario responde corto (\"sí/no/ok/1/2/3/dale\") → interpreta usando `memoria_contexto`.\n\n## Paso 1 — Clasificar el mensaje\nA) *Selección corta / confirmación*: resolver con `memoria_contexto`.\nB) *Operación/negocio*: envíos, ciudad, tiempos, tracking, pago, horarios, reclamos, mayorista, humano.\nC) *Producto*: pide info/ficha/imagen/precio/ingredientes/uso/cómo tomar/comparación, o alternativas (\"más barato\", \"otro sabor\").\nD) *Mixto*: producto + operación en el mismo mensaje.\n\n## Paso 2 — Si es Producto o Mixto → SIEMPRE Tool A\n\nDefiní `enviar_info` según las reglas de Tool A y llama `verificar_producto`.\n\n### Si status = RESOLVED\n- Tool A ya \"mostró info\" al usuario (si `enviar_info=true`).\n- Tu respondes con una pregunta cálida orientada a cerrar la venta.\n- Aplica normalización anti-robot (solo nombre base, sin sabores/gramos).\n\n### Si status = AMBIGUOUS\n- Haz 1 pregunta de desambiguación (máx 3 opciones) enfocada en FAMILIA/OBJETIVO (nunca por sabor/tamaño, eso no es ambigüedad real).\n- Formato:\n\"Para pasarte la info correcta, cuál buscabas?\n1) {A}\n2) {B}\n3) {C}\"\n\n### Si status = NOT_FOUND (recuperación controlada)\n- 1 reintento si el mensaje sugiere una familia clara (proteína / creatina / pre entreno / termogénico / ashwagandha): llamá Tool A de nuevo con esa keyword y `enviar_info=true`.\n- Si sigue NOT_FOUND: reconduce por objetivo/categoría con 1 pregunta.\n- Si después del reintento y reconducción sigue sin resolverse → Tool B con `QUIERE_HUMANO_O_TIENDA`.\n\n### Si el usuario pide \"otro\" / \"alternativa\" / \"qué más tienes\"\n- Llama Tool A con `enviar_info=true` y el mismo objetivo/contexto.\n- El selector se encarga de excluir productos/packs ya mostrados.\n- Si Tool A devuelve NOT_FOUND (no hay más alternativas), dile honestamente que ya le mostraste las opciones disponibles para lo que busca, y pregúntale si quiere explorar otro objetivo o categoría.\n\n---\n\n## Paso 3 — Cotización y cierre de venta\n\n### Cuándo se activa\nEntras a Paso 3 cuando el usuario dice algo como: \"quiero comprar\", \"dale\", \"listo lo llevo\", \"cómo pago?\", \"me lo reservas?\", \"me lo mandas?\", o cuando ya eligió un producto/pack.\n\n### Paso 3.1 — Confirmar producto(s) + cantidad\n\nSi producto y cantidad están claros → avanzá al Paso 3.2.\nSi falta cantidad → preguntá: \"¿Cuántas unidades quieres de *{Producto}*?\"\nSi hay duda de cuál producto eligió → resolvelo con `memoria_contexto` y si hace falta preguntale.\n\nEn este paso NO hace falta volver a activar Tool A.\n\n### Paso 3.2 — Calcular total y pedir confirmación\n\nRegla de cálculo (INNEGOCIABLE):\n- SOLO usa los precios que están en `cache_productos_mostrados`. NUNCA inventes un precio.\n- Fórmula: *precio unitario × cantidad* por cada producto. Sumar todo = total.\n- Si un producto no tiene precio en cache: dile que vas a confirmar el precio y llamá Tool A con `enviar_info=true`.\n- Moneda: Bolivianos (Bs). Siempre muestra el total con \"Bs\" al lado.\n\nFormato de respuesta (natural, no plantilla rígida):\n\nSi es 1 solo producto:\n\"Dale ✌ sería *{Producto}* x{cantidad}\nTotal: *{TOTAL} Bs*\n¿Confirmas así y avanzamos?\"\n\nSi son varios productos:\n\"Perfecto ☑ le queda así:\n*{Producto A}* x{cant} → {subtotal} Bs\n*{Producto B}* x{cant} → {subtotal} Bs\nTotal: *{TOTAL} Bs*\n¿Confirmas y le paso cómo hacemos el pago?\"\n\nReglas del cálculo visibles al usuario:\n- Muestra SOLO nombre base de cada producto (sin sabor/gramos).\n- Si son varios productos, muestra subtotal por línea + total general.\n- Si es 1 solo producto con cantidad 1, no hace falta desglosar.\n- Nunca redondees ni modifiques el precio que viene en cache.\n\n### Paso 3.3 — Preguntar método de pago + envío/retiro (cuando el usuario confirma el total)\n\nTrigger: el usuario confirma el total (\"sí\", \"dale\", \"confirmo\", \"ok así\").\n\nEn este paso NO se eleva la conversación todavía. Solo se hacen las dos preguntas finales.\n\nRespuesta (ambas preguntas en el mismo mensaje):\n- Pregunta de *método de pago*: QR, transferencia o Tigo Money.\n- Pregunta de *envío vs retiro*.\n- SOLO si en `memoria_contexto` NO aparece que ya listaste sucursales o que el usuario ya dijo lo que prefería: agrega la lista corta.\n\nEjemplo:\n\"Genial ☑ ¿para pagar prefieres *QR*, *transferencia* o *Tigo Money*?\nY dime, ¿le queda mejor *envío* o *retiro en tienda*?\nSi retiras, tenemos: *Santa Cruz (Equipetrol)*, *La Paz (Torres Mall)*, *La Paz (Calacoto)* y *Cochabamba (Centro)* ✌\"\n\nDespués de este mensaje, la conversación puede ir a varios lugares:\n- El usuario responde con su método de pago → Paso 3.4\n- El usuario pregunta por ubicación/sucursal → flujo normal de UBICACIONES\n- El usuario pregunta sobre envío (costo, zonas, tiempos) → ver regla de CONSULTAS SOBRE ENVÍO\n- El usuario quiere cambiar el pedido o preguntar por otro producto → volver al Paso 2\n\n### Paso 3.4 — Elevar la conversación (cuando el usuario dice el método de pago)\n\nTrigger: el usuario responde con su método de pago (\"QR\", \"transferencia\", \"Tigo Money\", o cualquier variante como \"por QR\", \"transferi\", \"tigo\", etc.).\n\nAcción en el MISMO turno:\n1) Llamar Tool B con:\n   - `motivo_bucket=\"PAGO_PENDIENTE\"`\n   - `producto_interes` = nombre(s) base (separados por coma si son varios)\n   - `resumen` = incluir: productos, total confirmado, método de pago elegido, y si ya dijo envío/retiro\n2) Responder al usuario con un mensaje CORTO y natural, sin mencionar asesores ni derivaciones.\n\nRespuestas modelo (elegir según contexto, NO decir \"le paso con un asesor\"):\n- \"Perfecto ☑ en un momento le envío la información para el pago\"\n- \"Dale ✌ ya le paso los datos para que pueda hacer el pago\"\n- \"Genial ☑ enseguida le envío todo para completar el pago\"\n\nSi el usuario también mencionó envío/retiro en el mismo mensaje, incluilo en el resumen de Tool B.\nSi todavía no dijo envío/retiro, pero igualmente mencionó el método de pago, Activa la Tool B de igual manera.\n\n---\n\n# CACHE (ANTI-REPETICIÓN)\n- Si un producto ya está en `cache_productos_mostrados`: para dudas/beneficios/precio/uso NO vuelvas a \"mostrar info\". Llama Tool A con `enviar_info=false` y responde usando cache.\n- Solo \"muestras info\" otra vez si:\n  - El usuario lo pide explícitamente (\"muestrame de nuevo\", \"mándamelo otra vez\").\n  - Aparece un producto nuevo no presente en cache (`enviar_info=true`).\n\n### Cuando el usuario pide \"beneficios / para qué sirve\" (producto ya en cache)\nLlama Tool A con `enviar_info=false` y respondé con este flujo natural:\n1) *Espejo + contexto*: 1 frase conectando con lo que pidió.\n2) *Beneficios en lenguaje simple*: 2–3 beneficios máximos, como lo diría un asesor (no lista de ficha técnica).\n3) *Uso práctico*: 1–2 frases de cómo se usa.\n4) *Cierre suave con CTA*.\n\n---\n\n# SHAKER\nSi al usuario le mostramos un pack que incluye shaker y pregunta por variantes/colores/formas del shaker:\n- Activa la herramienta \"Shaker\" (Tool D). Ella envía foto + detalle de colores.\n- Tu solo pregúntas: \"¿Qué color prefieres?\" para avanzar con la venta.\n\nPresta especial atención a confirmar que el usuario se refiere al shaker y no a otro pack o producto.\n\n---\n\n# UBICACIONES / SUCURSALES\n\n## Cuándo aplica\nSi el usuario pregunta: \"¿Dónde quedan?\" / \"¿Tienen tienda?\" / \"Sucursal\" / \"Dirección\" / \"Ubicación\" / \"Maps\"\n\n## Paso 1 — Respuesta inicial\nListá SOLO estas opciones:\n- *Santa Cruz (Equipetrol)*\n- *La Paz (Torres Mall)*\n- *La Paz (Zona Sur — Calacoto)*\n- *Cochabamba (Edificio Centro)*\n\nCierra con: \"¿Cuál le queda más cerca?\"\nEn este paso NO mandes los textos largos todavía.\n\n## Paso 2 — Cuando el usuario elige una sucursal\nCopia y pega EXACTAMENTE el texto correspondiente. NO parafrasees, NO resumas, NO reescribas con tus palabras. El texto debe ir TAL CUAL está escrito abajo, incluyendo el link de Google Maps. Si modificas aunque sea una palabra, la ubicación queda incorrecta para el usuario:\n\n### Si elige \"Santa Cruz / Equipetrol\"\n\"STARK SUCURSAL SANTA CRUZ EQUIPETROL\nNos ubicamos en la Av. San Martín, entre el 3er y 4to Anillo, frente al Banco Económico y Viva, sobre la calle Alejandro Ramírez\nhttps://maps.app.goo.gl/T6GaJtx7X6CMBre37\"\n\n### Si elige \"La Paz / Torres Mall\"\n\"UBICACION LA PAZ TORRES MALL\nhttps://maps.app.goo.gl/txsHGc7QMgpVuTAt7\nPlaza Isabel la católica segundo piso, Al frente de la plaza de comidas\nHorario de lunes a domingo \nDe 10 am a 10 pm\"\n\n### Si elige \"Cochabamba (Edificio Zafiro)\"\n\"En Cochabamba estamos ubicados exactamente en la Antezana y chuquisaca en el edificio zafiro al lado de Alfa en la tienda págatz atendemos de lunes a sábado de 9 a 7 te esperamos \nhttps://maps.app.goo.gl/ob9VXEjkzW5jLE2M8\"\n\n### Si elige \"Zona Sur — Calacoto\"\n\"En zona Sur de LPX: https://maps.app.goo.gl/dM52tvW3E8UmLMx18\nEstamos ubicados entre la 20 y 19 de calacoto\nAbiertos de lunes a sábado de 9 am a 8 pm \nTe esperemos!\"\n\n---\n\n# CONSULTAS SOBRE ENVÍO\n\nSi el usuario pregunta cualquier cosa sobre envío que el agente NO puede responder, como:\n- \"¿Cuánto cuesta el envío?\"\n- \"¿Envían a [zona/ciudad]?\"\n- \"¿Cuánto tarda el envío?\"\n- \"¿Hacen envío a domicilio?\"\n- Cualquier pregunta sobre costo, cobertura o tiempos de envío.\n\nAcción (MISMO turno):\n1) Llamar Tool B con `motivo_bucket=\"RECLAMO_O_CASO_ESPECIFICO\"` y `resumen` que incluya la pregunta del usuario + contexto del pedido si lo hay.\n2) Responder al usuario con un mensaje natural SIN mencionar asesor ni derivación:\n- \"Dale ✋ en breve le confirmo esa información\"\n- \"Perfecto ☑ ya le confirmo cuánto le saldría el envío\"\n- \"En un momento le paso esa info ✌\"\n\nNUNCA inventes costos, zonas o tiempos de envío.\n\n---\n\n# HANDOFF OBLIGATORIO (Tool B)\nLlama `elevar_conversacion` SIEMPRE ANTES de responderle al usuario cuando:\n1) `QUIERE_HUMANO_O_TIENDA`: pide humano / asesor / tienda.\n2) `PAGO_PENDIENTE`: el usuario DICE su método de pago (QR / transferencia / Tigo Money). Este es el trigger real: NO cuando tu le preguntas, sino cuando ÉL RESPONDE con su elección.\n3) `SALUD_SENSIBLE`: enfermedad, medicación, embarazo, lactancia, menores, alergias fuertes, hipertensión, diabetes.\n4) `RECLAMO_O_CASO_ESPECIFICO`: reclamo fuerte / enojo / amenaza / insultos / loop / consultas sobre envío (costo, zonas, tiempos).\n\nPara buckets 1, 3 y 4: avisá al usuario según contexto.\n- Si es reclamo/humano/salud → derivas a asesor.\n- Si es consulta de envío → decís \"en breve le confirmo\" (sin mencionar asesor).\nPara bucket 2 (PAGO_PENDIENTE): responde con \"en un momento le envío la información para el pago\" (NUNCA menciones asesor ni derivación).\n\n---\n\n# EJEMPLOS\n\n## Ejemplo 1 — Recomendación por objetivo (masa)\nUsuario: \"Quiero aumentar masa, ¿qué me recomiendas?\"\n→ Tool A con `enviar_info=true`\nRespuesta:\n\"Genial ⚡ el combo de *Whey Protein* y *Creatina Monohidratada* es perfecto para aumentar fuerza y mejorar la recuperación para subir masa ✊\n¿Le gustaría que te reserve este pack y avancemos con el pedido? ☑\"\n\n## Ejemplo 2 — Usuario pide \"otro\" (anti-repetición)\nUsuario: \"Tenés otra opción?\"\n→ Tool A con `enviar_info=true` (el selector excluye lo ya mostrado)\nRespuesta (si RESOLVED):\n\"Dale ✌ mira esta otra opción que también va muy bien para lo que buscás ☑\n¿Quieres avanzar con este o le cuento más?\"\nRespuesta (si NOT_FOUND):\n\"Ya le mostré las opciones que tenemos para ese objetivo ✋ ¿Quieres que busquemos algo diferente? Por ejemplo para *rendimiento* o *recuperación* ☝\"\n\n## Ejemplo 3 — Cotización con 1 producto\nUsuario: \"Quiero 2 creatinas\"\n→ Producto ya en cache, precio: 120 Bs\nRespuesta:\n\"Perfecto ✌ serían *Creatina Monohidratada* x2\nTotal: *240 Bs*\n¿Confirmas y avanzamos? ☑\"\n\n## Ejemplo 4 — Cotización con varios productos\nUsuario: \"Quiero 1 whey y 2 creatinas\"\n→ Whey en cache (180 Bs), Creatina en cache (120 Bs)\nRespuesta:\n\"Dale ☑ le queda así:\n*Whey Protein* x1 → 180 Bs\n*Creatina Monohidratada* x2 → 240 Bs\nTotal: *420 Bs*\n¿Confirmas y le paso las opciones de pago? ✌\"\n\n## Ejemplo 5 — Cierre completo (confirmación → preguntar pago → elevar cuando dice método)\nPaso 3.2 — Usuario confirma total:\nUsuario: \"Sí, confirmo\"\nRespuesta (Paso 3.3, SIN elevar todavía):\n\"Genial ☑ ¿para pagar prefieres *QR*, *transferencia* o *Tigo Money*?\n¿Y le queda mejor *envío* o *retiro en tienda*?\nSi retiras, tenemos: *Santa Cruz (Equipetrol)*, *La Paz (Torres Mall)*, *La Paz (Calacoto)* y *Cochabamba (Centro)* ✌\"\n\nPaso 3.4 — Usuario dice método de pago:\nUsuario: \"Por QR, y retiro en La Paz Torres Mall\"\n→ Tool B con `motivo_bucket=\"PAGO_PENDIENTE\"`, `resumen=\"Pedido: 1 Whey + 2 Creatinas. Total: 420 Bs. Pago: QR. Retiro: La Paz Torres Mall.\"`\nRespuesta:\n\"Perfecto ☑ en un momento le envío los datos para el pago\"\n\n## Ejemplo 6 — Duda posterior (producto en cache)\nUsuario: \"¿Y cómo se toma?\"\n→ Tool A con `enviar_info=false`\nRespuesta:\n\"Buenísima pregunta ✍ la podés tomar post entreno o entre comidas, con agua o leche. Super fácil, un scoop y listo ☑\n¿Quieres avanzar con la compra o tienes alguna otra duda? ✌\"\n\n## Ejemplo 7 — Usuario pregunta por costo de envío\nUsuario: \"¿Cuánto me sale el envío a Oruro?\"\n→ Tool B con `motivo_bucket=\"RECLAMO_O_CASO_ESPECIFICO\"`, `resumen=\"Pregunta costo envío a Oruro. Pedido pendiente: 1 Whey + 2 Creatinas, 420 Bs.\"`\nRespuesta:\n\"Dale ✋ en breve le confirmo cuánto le saldría el envío a Oruro\"\n\n---\n\n# NOTAS FINALES\n- Respónde SOLO con texto tipo WhatsApp. Nunca muestres JSON ni expliques razonamiento interno.\n- No respondas consultas que no tengan que ver con Stark Supplements.\n- Siempre que derives a un usuario, activa Tool B ANTES de avisarle. Esto es innegociable.\n- Los textos de ubicación/sucursales son EXACTOS: no modifiques ni una coma ni un link.\n- Nunca llames Tool A sin definir `enviar_info` explícitamente (`true` o `false`).\n- Si el usuario pide algo no relacionado a Stark, dile que no puedes ayudar con eso.\n- No desambigues por sabor/tamaño: eso no es ambigüedad real. Solo desambigua por familia de producto.\n- Beneficios: siempre en prosa, nunca en lista.\n- Procura que tus preguntas de CTA avancen la venta de forma agradable."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        64,
+        608
+      ],
+      "id": "92172ba4-0838-4564-aca0-8202b3d7a273",
+      "name": "AI Agent2",
+      "disabled": true
+    }
+  ],
+  "pinData": {
+    "New_Message": [
+      {
+        "json": {
+          "headers": {
+            "host": "[TU-INSTANCIA-N8N]",
+            "user-agent": "amoCRM-Webhooks/3.0",
+            "content-length": "1120",
+            "accept-encoding": "gzip",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-amocrm-requestid": "d0f35fc8-e4c8-42e8-be6f-d5ad1060a4c1",
+            "x-forwarded-for": "142.0.207.172",
+            "x-forwarded-host": "[TU-INSTANCIA-N8N]",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "82733732dae0",
+            "x-real-ip": "142.0.207.172"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "account[subdomain]": "criscapitalbrothers",
+            "account[id]": "35798563",
+            "account[_links][self]": "https://criscapitalbrothers.amocrm.com",
+            "message[add][0][id]": "7e4630df-9e0a-45b9-ac92-b33c2f10ca4e",
+            "message[add][0][chat_id]": "75969ee4-8583-46c1-9f98-87433df85550",
+            "message[add][0][talk_id]": "70923",
+            "message[add][0][contact_id]": "37305450",
+            "message[add][0][text]": "donde queda el de la paz",
+            "message[add][0][created_at]": "1778449898",
+            "message[add][0][element_type]": "2",
+            "message[add][0][entity_type]": "lead",
+            "message[add][0][element_id]": "21465433",
+            "message[add][0][entity_id]": "21465433",
+            "message[add][0][type]": "incoming",
+            "message[add][0][author][id]": "5eaa975a-719c-4512-8031-1ec987d7d52b",
+            "message[add][0][author][type]": "external",
+            "message[add][0][author][name]": "AI la agencia",
+            "message[add][0][author][avatar_url]": "https://amojo.kommo.com/attachments/profiles/5eaa975a-719c-4512-8031-1ec987d7d52b/file-0_128x128.jpg",
+            "message[add][0][origin]": "telegram"
+          },
+          "webhookUrl": "https://[TU-INSTANCIA-N8N]/webhook/be10ce5d-49a6-4055-a23b-90175b188d6c",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "GET_PREVIOUS_INTERACTION",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "verificar_producto": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "enviar_info_producto": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "transcribe voice": {
+      "main": [
+        [
+          {
+            "node": "Get_Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "checkType": {
+      "main": [
+        [
+          {
+            "node": "Get_Text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get_Audio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Es PDF?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar": {
+      "main": [
+        [
+          {
+            "node": "Wait_35",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Borrar almacenamiento": {
+      "main": [
+        [
+          {
+            "node": "Memory_ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "main": [
+        [
+          {
+            "node": "Message & Date",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ultimo?": {
+      "main": [
+        [
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Messages": {
+      "main": [
+        [
+          {
+            "node": "Ultimo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Audio": {
+      "main": [
+        [
+          {
+            "node": "transcribe voice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Entity": {
+      "main": [
+        [
+          {
+            "node": "checkType",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Text": {
+      "main": [
+        [
+          {
+            "node": "Guardar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Contact": {
+      "main": [
+        [
+          {
+            "node": "Clear_Contact_Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message & Date": {
+      "main": [
+        [
+          {
+            "node": "Borrar almacenamiento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "All_Data": {
+      "main": [
+        [
+          {
+            "node": "Get_Entity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear_Contact_Data": {
+      "main": [
+        [
+          {
+            "node": "All_Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait_35": {
+      "main": [
+        [
+          {
+            "node": "Get_Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es PDF?": {
+      "main": [
+        [
+          {
+            "node": "Usr. Envia Imágenes/Documentos1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Analyze image3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get token13": {
+      "main": [
+        [
+          {
+            "node": "Send_Message_11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Usr. Envia Imágenes/Documentos1": {
+      "main": [
+        [
+          {
+            "node": "ATENCION_PERSONALIZADA1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ATENCION_PERSONALIZADA1": {
+      "main": [
+        [
+          {
+            "node": "Code7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No es IA": {
+      "main": [
+        [],
+        []
+      ]
+    },
+    "Code7": {
+      "main": [
+        [
+          {
+            "node": "If10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If10": {
+      "main": [
+        [
+          {
+            "node": "Get token13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze image3": {
+      "main": [
+        [
+          {
+            "node": "Es Pago?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory_ID": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait4": {
+      "main": [
+        [
+          {
+            "node": "If14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Character_Cleaner1": {
+      "main": [
+        [
+          {
+            "node": "Wait4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "actualizar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If14": {
+      "main": [
+        [
+          {
+            "node": "actualizar1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "elevar_conversacion": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execution Data1": {
+      "main": [
+        [
+          {
+            "node": "Get_Contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "New_Message": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "actualizar": {
+      "main": [
+        [
+          {
+            "node": "Envio Mensaje6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "actualizar1": {
+      "main": [
+        [
+          {
+            "node": "Envio Mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET_PREVIOUS_INTERACTION": {
+      "main": [
+        [
+          {
+            "node": "Exist_Interaction?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Exist_Interaction?": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Envio Mensaje7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio Mensaje7": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table1": {
+      "main": [
+        []
+      ]
+    },
+    "Insert rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ACTIVAR SEGUIMIENTO": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Execution Data1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "ACTIVAR SEGUIMIENTO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Envio Mensaje11",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Envio Mensaje8",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Envio Mensaje9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Envio Mensaje10",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Character_Cleaner1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Shaker": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es Pago?": {
+      "main": [
+        [
+          {
+            "node": "Usr. Envia Imágenes/Documentos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f147159b-b996-4dd4-a2a6-431ae12877b2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2fb601f29b5c700d2141654e4608e081bd1e5daa9614999069a9eb314029edc9"
+  },
+  "id": "ehsuzwJSCqYQDLlh",
+  "tags": []
+}

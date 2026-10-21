@@ -1,0 +1,21 @@
+{
+  "caso": "G-12",
+  "titulo": "falta argumento obligatorio",
+  "resultado": "CORROBORADO",
+  "detalle": "http=500 · ejecución=error · error='falta el argumento obligatorio \"etapa\" [line 174]'",
+  "pasos": [
+    {
+      "req": {
+        "op": "update_stage",
+        "args": {
+          "opportunityId": "vzYAb3P86uJ08CI9jKyV"
+        }
+      },
+      "resp_webhook": {
+        "message": "Workflow execution failed"
+      },
+      "estado_ejecucion": "error",
+      "error_ejecucion": "falta el argumento obligatorio \"etapa\" [line 174]"
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "test_id": "T-06",
+  "punto": "PM-IDN-02",
+  "titulo": "find-opportunity por contacto (snake_case)",
+  "resultado": "CORROBORADO",
+  "detalle": "http=200 encontrada=sí lag_indexacion=0s | camelCase rechazado=True (http=422) → el inbound NO puede confirmar un create vía search: cachear el id",
+  "pasos": [
+    {
+      "paso": "search snake_case (t+0s)",
+      "method": "GET",
+      "path": "/opportunities/search?location_id=onRwi0ZF4uYi0Lp6GAbE&contact_id=3tzzBVjsKlOF2RJjKNOL&pipeline_id=RMnhLPqtXoWUBGZ0gvbh&limit=20",
+      "request": null,
+      "status": 200,
+      "response": {
+        "opportunities": [
+          {
+            "id": "vzYAb3P86uJ08CI9jKyV",
+            "name": "ZZ Test Migracion GHL",
+            "monetaryValue": 0,
+            "pipelineId": "RMnhLPqtXoWUBGZ0gvbh",
+            "pipelineStageId": "cf8fc770-81b1-422c-8394-d00bfb97a3f0",
+            "pipelineStageUId": "cf8fc770-81b1-422c-8394-d00bfb97a3f0",
+            "assignedTo": null,
+            "status": "open",
+            "source": null,
+            "lastStatusChangeAt": "2026-08-06T22:47:22.779Z",
+            "lastStageChangeAt": "2026-08-06T23:29:51.624Z",
+            "createdAt": "2026-08-06T19:14:44.490Z",
+            "updatedAt": "2026-08-06T23:29:51.637Z",
+            "forecastProbability": null,
+            "effectiveProbability": 20,
+            "contactId": "3tzzBVjsKlOF2RJjKNOL",
+            "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+            "customFields": [
+              {
+                "fieldValueString": "2026-08-06T18:00:00.000Z",
+                "id": "5KDgrZMK7pha8oO0VmJt",
+                "type": "string"
+              },
+              {
+                "fieldValueString": "L3-1786056484",
+                "id": "IukLzqy6bZCCtuJTPzBu",
+                "type": "string"
+              },
+              {
+                "fieldValueString": "44100",
+                "id": "dwqVZEekKwE3sNSnWvvi",
+                "type": "string"
+              },
+              {
+                "fieldValueArray": [
+                  "Tuvo imagen"
+                ],
+                "id": "4zvcyl95qQpnJOpKx6wy",
+                "type": "array"
+              },
+              {
+                "fieldValueArray": [
+                  "Tuvo cotización"
+                ],
+                "id": "zMaaLTYTREw2InLnbimW",
+                "type": "array"
+              },
+              {
+                "fieldValueArray": [
+                  "Otros"
+                ],
+                "id": "ahVpF5ldsRcuOIn9Mxdk",
+                "type": "array"
+              }
+            ],
+            "lostReasonId": null,
+            "followers": [],
+            "relations": [
+              {
+                "associationId": "OPPORTUNITIES_CONTACTS_ASSOCIATION",
+                "relationId": "vzYAb3P86uJ08CI9jKyV",
+                "primary": true,
+                "objectKey": "contact",
+                "recordId": "3tzzBVjsKlOF2RJjKNOL",
+                "fullName": "ZZ Test Migracion GHL",
+                "contactName": "ZZ Test Migracion GHL",
+                "companyName": null,
+                "email": null,
+                "phone": "+5213300000199",
+                "tags": [
+                  "lead_prueba"
+                ],
+                "attributed": null
+              }
+            ],
+            "contact": {
+              "id": "3tzzBVjsKlOF2RJjKNOL",
+              "name": "ZZ Test Migracion GHL",
+              "companyName": null,
+              "email": null,
+              "phone": "+5213300000199",
+              "tags": [
+                "lead_prueba"
+              ],
+              "score": []
+            },
+            "sort": [
+              1786043684490,
+              "3tzzBVjsKlOF2RJjKNOL"
+            ],
+            "attributions": []
+          }
+        ],
+        "meta": {
+          "total": 1,
+          "nextPageUrl": "https://services.leadconnectorhq.com/opportunities/search?location_id=onRwi0ZF4uYi0Lp6GAbE&contact_id=3tzzBVjsKlOF2RJjKNOL&pipeline_id=RMnhLPqtXoWUBGZ0gvbh&limit=20&startAfter=1786043684490&startAfterId=3tzzBVjsKlOF2RJjKNOL",
+          "startAfterId": "3tzzBVjsKlOF2RJjKNOL",
+          "startAfter": 1786043684490,
+          "currentPage": 1,
+          "nextPage": "",
+          "prevPage": null
+        },
+        "traceId": "90eb6b63-28fa-4739-bb15-5505ccb39709"
+      }
+    },
+    {
+      "paso": "contra-prueba camelCase",
+      "method": "GET",
+      "path": "/opportunities/search?locationId=onRwi0ZF4uYi0Lp6GAbE&contactId=3tzzBVjsKlOF2RJjKNOL",
+      "request": null,
+      "status": 422,
+      "response": {
+        "message": [
+          "property locationId should not exist",
+          "property contactId should not exist",
+          "location_id must be a string",
+          "location_id should not be empty"
+        ],
+        "error": "Unprocessable Entity",
+        "statusCode": 422,
+        "traceId": "244175fa-9bae-474e-8c2b-d89539f59def"
+      }
+    }
+  ]
+}

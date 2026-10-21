@@ -1,0 +1,30 @@
+{
+  "caso": "S-03",
+  "titulo": "descarta partes vacías",
+  "resultado": "CORROBORADO",
+  "detalle": "http=200 mandé 3 (2 vacías) → partes_enviadas=1",
+  "pasos": [
+    {
+      "req": [
+        "S03-unica-1786059346",
+        "",
+        "   ",
+        null
+      ],
+      "resp": {
+        "ok": true,
+        "partes_enviadas": 1,
+        "enviados": [
+          {
+            "seq": 1,
+            "body": "S03-unica-1786059346",
+            "attachments": [],
+            "ghl_message_id": "rCxCcnXnVWNBxO2WZfUa",
+            "ghl_conversation_id": "44tBzIqK9ODLJ7Jr9Lco",
+            "http_status": 201
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "caso": "K-02",
+  "titulo": "35 cilindros (mínimo 40) → rechazo QUE LLEGA al agente",
+  "resultado": "CORROBORADO",
+  "detalle": "rechaza=True explica_el_minimo=True detalle=[{'producto': 'Cilindros', 'cantidad_pedida': 35, 'minimo_requerido': 40}] → msg: No se puede cotizar, no se alcanza el mínimo de compra: Cilindros: pediste 35 (mínimo 40). Avisále al cliente ",
+  "pasos": [
+    {
+      "resp": {
+        "ok": false,
+        "error": "MINIMO_NO_ALCANZADO",
+        "detalle_violaciones": [
+          {
+            "producto": "Cilindros",
+            "cantidad_pedida": 35,
+            "minimo_requerido": 40
+          }
+        ],
+        "message_to_agent": "No se puede cotizar, no se alcanza el mínimo de compra: Cilindros: pediste 35 (mínimo 40). Avisále al cliente el mínimo real de cada producto listado y esperá que ajuste la cantidad antes de volver a cotizar. No inventes ni fuerces un cálculo alternativo."
+      }
+    }
+  ]
+}

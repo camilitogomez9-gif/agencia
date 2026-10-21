@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAG · Muestra de diagramas — estilo liquid glass</title>
+<style>
+:root{
+  --bg:#1a0e0f; --bg-2:#150b0c;
+  --text:#f6efe9; --text-muted:#b6a8a2; --text-dim:#83756f;
+  --sag-1:#ff8a3d; --sag-2:#ffc27a;
+  --warn:#ff8f6b; --warn-tint:rgba(255,143,107,.16);
+  --ok:#4ade9b; --ok-tint:rgba(74,222,155,.15);
+  --font:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-font-smoothing:antialiased;}
+body{
+  margin:0;font-family:var(--font);color:var(--text);
+  background:
+    radial-gradient(1100px 700px at 15% -5%, rgba(255,138,61,.10), transparent 60%),
+    radial-gradient(900px 600px at 100% 12%, rgba(255,138,61,.06), transparent 55%),
+    var(--bg);
+  padding:56px 0 90px;
+}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px;}
+.pagehead{margin-bottom:44px;}
+.pagehead .kick{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--sag-1);}
+.pagehead h1{font-size:clamp(26px,4vw,38px);font-weight:600;letter-spacing:-.02em;margin:14px 0 10px;}
+.pagehead p{color:var(--text-muted);font-size:16px;max-width:60ch;line-height:1.6;margin:0;}
+
+/* ---- bloque de diagrama (SIN rectángulo contenedor) ---- */
+.diagram{margin:46px 0;}
+.diagram .dh{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin:0 0 20px;}
+.diagram .dh .badge{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:5px 11px;border-radius:999px;}
+.diagram .dh .badge.dolor{color:var(--warn);background:var(--warn-tint);border:1px solid rgba(255,143,107,.3);}
+.diagram .dh .badge.sol{color:var(--ok);background:var(--ok-tint);border:1px solid rgba(74,222,155,.3);}
+.diagram .dh h2{font-size:clamp(19px,2.4vw,24px);font-weight:600;letter-spacing:-.01em;margin:0;}
+
+/* la pista scrollea, no está encajada en ningún recuadro */
+.track{display:flex;align-items:stretch;gap:12px;overflow-x:auto;overflow-y:visible;padding:16px 4px 24px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;}
+.track::-webkit-scrollbar{height:7px;}
+.track::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:99px;}
+.track::-webkit-scrollbar-track{background:transparent;}
+
+/* nodo liquid glass */
+.node{
+  scroll-snap-align:center;flex:0 0 auto;width:190px;min-height:120px;
+  display:flex;flex-direction:column;gap:7px;justify-content:center;
+  padding:20px 20px;border-radius:24px;position:relative;
+  background:linear-gradient(150deg, rgba(255,255,255,.13), rgba(255,255,255,.05));
+  border:1px solid rgba(255,255,255,.18);
+  backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.35),
+    inset 0 -14px 22px rgba(0,0,0,.16),
+    0 14px 34px -16px rgba(0,0,0,.6);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.node:hover{transform:translateY(-3px);box-shadow:inset 0 1px 1px rgba(255,255,255,.4),inset 0 -14px 22px rgba(0,0,0,.16),0 22px 44px -18px rgba(0,0,0,.7);}
+.node .ic{font-size:26px;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,.35));}
+.node .nt{font-size:15px;font-weight:600;letter-spacing:-.01em;line-height:1.25;}
+.node .ns{font-size:12.5px;color:var(--text-muted);line-height:1.35;}
+/* chip de horas perdidas */
+.node .time{align-self:flex-start;margin-top:3px;display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:11px;letter-spacing:.02em;padding:3px 9px;border-radius:999px;color:var(--warn);background:var(--warn-tint);border:1px solid rgba(255,143,107,.32);}
+.node .time.ok{color:var(--ok);background:var(--ok-tint);border-color:rgba(74,222,155,.32);}
+
+/* acento dolor / solución con halo suave */
+.node.warn{
+  background:linear-gradient(150deg, rgba(255,143,107,.22), rgba(255,255,255,.05));
+  border-color:rgba(255,143,107,.42);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.32),inset 0 -14px 22px rgba(0,0,0,.14),0 16px 40px -14px rgba(255,120,80,.4);
+}
+.node.ok{
+  background:linear-gradient(150deg, rgba(74,222,155,.2), rgba(255,255,255,.05));
+  border-color:rgba(74,222,155,.42);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.32),inset 0 -14px 22px rgba(0,0,0,.14),0 16px 40px -14px rgba(40,200,130,.36);
+}
+
+/* conector: rail centrado verticalmente con los bloques + flecha con separación */
+.link{flex:0 0 auto;align-self:stretch;display:flex;align-items:center;justify-content:center;width:94px;position:relative;}
+.link .rail{position:relative;width:100%;height:2px;border-radius:2px;background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.26),rgba(255,255,255,.06));}
+.link .rail::after{content:"";position:absolute;right:0;top:50%;width:8px;height:8px;transform:translate(1px,-50%) rotate(45deg);border-top:2px solid rgba(255,255,255,.55);border-right:2px solid rgba(255,255,255,.55);border-radius:1px;}
+.link .lbl{position:absolute;top:calc(50% - 30px);left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--text-muted);white-space:nowrap;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(10px);}
+.link.warn .rail{background:linear-gradient(90deg,rgba(255,143,107,.14),rgba(255,143,107,.5),rgba(255,143,107,.14));}
+.link.warn .rail::after{border-color:rgba(255,143,107,.78);}
+.link.warn .lbl{color:var(--warn);border-color:rgba(255,143,107,.3);background:var(--warn-tint);}
+.link.ok .rail{background:linear-gradient(90deg,rgba(74,222,155,.14),rgba(74,222,155,.5),rgba(74,222,155,.14));}
+.link.ok .rail::after{border-color:rgba(74,222,155,.82);}
+.link.ok .lbl{color:var(--ok);border-color:rgba(74,222,155,.3);background:var(--ok-tint);}
+
+.takeaway{margin-top:16px;font-size:14.5px;color:var(--text-muted);line-height:1.55;max-width:70ch;}
+.takeaway b{color:var(--text);font-weight:600;}
+.takeaway .hi{color:var(--warn);font-weight:600;}
+.takeaway .hio{color:var(--ok);font-weight:600;}
+.scrollhint{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--text-dim);margin-top:8px;}
+
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);margin:8px 0;}
+.note{margin-top:60px;padding:22px 24px;border-radius:20px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);color:var(--text-muted);font-size:14px;line-height:1.6;}
+.note b{color:var(--text);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="pagehead">
+    <div class="kick">SAG × la agencia · Muestra de estilo</div>
+    <h1>Diagramas de flujo — versión liquid glass</h1>
+    <p>Muestra para aprobar la dirección antes de aplicarla a todo el documento. Bloques a alto nivel (solo lo que importa), sin recuadro contenedor, con scroll horizontal y estética tipo Apple.</p>
+  </div>
+
+  <!-- FLUJO 1 · dolor -->
+  <div class="diagram">
+    <div class="dh"><span class="badge dolor">Hoy</span><h2>El pago a los choferes</h2></div>
+    <div class="track">
+      <div class="node"><span class="ic">🧾</span><div class="nt">Boletas de la semana</div><div class="ns">~90 choferes, en papel</div></div>
+      <div class="link warn"><span class="lbl">a mano</span><span class="rail"></span></div>
+      <div class="node warn"><span class="ic">✍️</span><div class="nt">Se arma el pago a mano</div><div class="ns">dictado, fila por fila</div><span class="time">⏱ ~50 min/sem</span></div>
+      <div class="link warn"><span class="lbl">se dicta</span><span class="rail"></span></div>
+      <div class="node"><span class="ic">🏦</span><div class="nt">Se ordena al banco</div><div class="ns">dispersión</div></div>
+      <div class="link"><span class="lbl">deposita</span><span class="rail"></span></div>
+      <div class="node"><span class="ic">💸</span><div class="nt">Los choferes cobran</div></div>
+    </div>
+    <p class="takeaway">Todo el flujo de <b>$773.810 por semana</b> se arma tecleando a mano. <span class="hi">Un error de una fila le paga a otra persona</span> y el total igual cuadra.</p>
+    <div class="scrollhint">← deslizá para ver el flujo completo →</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- FLUJO 2 · solución (mismo flujo, después) -->
+  <div class="diagram">
+    <div class="dh"><span class="badge sol">Con la solución</span><h2>El pago a los choferes</h2></div>
+    <div class="track">
+      <div class="node"><span class="ic">🧾</span><div class="nt">Boletas validadas</div><div class="ns">por chofer</div></div>
+      <div class="link ok"><span class="lbl">automático</span><span class="rail"></span></div>
+      <div class="node ok"><span class="ic">⚙️</span><div class="nt">El pago se arma solo</div><div class="ns">por código único</div><span class="time ok">⏱ 0 min</span></div>
+      <div class="link ok"><span class="lbl">sin dictado</span><span class="rail"></span></div>
+      <div class="node"><span class="ic">🏦</span><div class="nt">Se ordena al banco</div></div>
+      <div class="link"><span class="lbl">deposita</span><span class="rail"></span></div>
+      <div class="node ok"><span class="ic">✅</span><div class="nt">Cobro correcto</div><div class="ns">a la persona correcta</div></div>
+    </div>
+    <p class="takeaway">El mismo flujo, <span class="hio">llaveado por código</span>: se arma solo, sin dictado, y el error de fila <b>desaparece</b>.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- FLUJO 3 · dolor -->
+  <div class="diagram">
+    <div class="dh"><span class="badge dolor">Hoy</span><h2>La captura de un servicio</h2></div>
+    <div class="track">
+      <div class="node"><span class="ic">📱</span><div class="nt">Pedido por WhatsApp</div><div class="ns">del cliente</div></div>
+      <div class="link warn"><span class="lbl">se teclea</span><span class="rail"></span></div>
+      <div class="node warn"><span class="ic">📄</span><div class="nt">Se carga al drive</div><div class="ns">a mano</div></div>
+      <div class="link warn"><span class="lbl">se recarga</span><span class="rail"></span></div>
+      <div class="node warn"><span class="ic">🖥️</span><div class="nt">Se vuelve a cargar</div><div class="ns">en otro sistema</div><span class="time">⏱ ~2 personas full-time</span></div>
+      <div class="link warn"><span class="lbl">1 día</span><span class="rail"></span></div>
+      <div class="node"><span class="ic">⏳</span><div class="nt">Queda 1 día atrás</div></div>
+    </div>
+    <p class="takeaway">El mismo servicio se captura <span class="hi">dos veces</span>, y el segundo sistema va siempre <b>un día atrasado</b>.</p>
+  </div>
+
+  <div class="note">
+    <b>Sobre esta muestra:</b> es solo para validar el estilo (bloques a alto nivel · sin recuadro · scroll horizontal · liquid glass · tonos más claros · horas perdidas donde hay dato). Si te gusta la dirección, la aplico a todos los diagramas del documento. Podemos ajustar: intensidad del glass, tamaño de los bloques, color de acento, densidad de texto, íconos.
+  </div>
+
+</div>
+</body>
+</html>

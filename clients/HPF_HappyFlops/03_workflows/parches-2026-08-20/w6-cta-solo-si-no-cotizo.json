@@ -1,0 +1,21 @@
+{
+  "wf": "W6",
+  "descripcion": "Efecto secundario de R2: el CTA de cantidad+CP le pedia al lead datos que acababa de dar. Se suprime cuando la SESION ya cotizo.",
+  "origen": "Aparecio al desplegar R2 el 2026-08-20. Con el Recolector cotizando de verdad en step_3, el Router (que lee la memoria compartida por los 5 agentes) pasa a rutear el «¿cuanto cuestan?» siguiente de step_4 a step_3. Medido: 2/2 step_4 antes, 6/6 step_3 despues. En esa rama el Recolector no corre y sale el CTA pelado.",
+  "por_que_no_alcanzaba_lo_previsto": "Mover el CTA a `Recuperar cards` no cambia nada: el CTA sale igual por esa rama. Y el filtro `yaCotizo` de `Partir en burbujas` tampoco, porque ese nodo NO se ejecuta cuando el flujo va por `Recuperar cards`.",
+  "efecto_lateral_deseado": "Vuelve ALCANZABLE el fallback `partes.length === 0` de este mismo nodo, que hoy es inalcanzable por construccion en step_3 (R4b del plan).",
+  "ediciones": [
+    {
+      "nodo": "Leer evento",
+      "campo": "parameters.query",
+      "anchor": "         LIMIT 1) AS pdf_pago;",
+      "reemplazo": "         LIMIT 1) AS pdf_pago,\n       -- ¿esta SESIÓN ya recibió una cotización? No es del turno: es del historial.\n       -- Lo usa `Cards a partes` para NO volver a pedir cantidad y código postal a un lead\n       -- que ya los dio. Apareció el 2026-08-20 al arreglar R2: al hacer que el Recolector\n       -- cotice de verdad en step_3, el Router empezó a rutear el «¿cuánto cuestan?»\n       -- siguiente a step_3 (memoria compartida entre los 5 agentes), y ahí salía el CTA\n       -- pidiendo datos que el lead acababa de dar. Medido 6/6.\n       --\n       -- Se deriva del historial y no de una columna nueva porque la señal ya existe ahí y\n       -- así no hay que escribir estado desde ningún nodo. `7 DIAS DE PROMO` es el\n       -- encabezado fijo de toda cotización (la misma marca que usa la regex INDIVISIBLE\n       -- de `Partir en burbujas` y la condición If4 del origen).\n       -- El guard `to_regclass` replica el de `¿Hay historial?` de W1: sin él, una sesión\n       -- anterior a la creación de la tabla tira error en vez de devolver false.\n       (SELECT CASE\n          WHEN to_regclass('public.n8n_chat_histories') IS NULL THEN false\n          ELSE EXISTS (SELECT 1 FROM n8n_chat_histories\n                        WHERE session_id = $1\n                          AND message->>'type' = 'ai'\n                          AND message::text ILIKE '%7 DIAS DE PROMO%')\n        END) AS ya_cotizo;"
+    },
+    {
+      "nodo": "Cards a partes",
+      "campo": "parameters.jsCode",
+      "anchor": "if (step === 'step_2' && dinamico) {\n  partes.unshift({ texto: dinamico, adjuntos: [] });\n} else if (step === 'step_3') {\n  partes.push({ texto: CTA_STEP_3, adjuntos: [] });\n}",
+      "reemplazo": "// El CTA de cantidad+CP NO va si la sesión ya cotizó. El lead ya dio esos dos datos y\n// volvérselos a pedir es justo lo que reporta el test de paridad.\n//\n// Por qué mirar la SESIÓN y no el turno: el filtro `yaCotizo` de `Partir en burbujas` ya\n// tapa el caso del mismo turno, pero no llega acá. Cuando el Recolector no corre (el\n// clasificador `¿Consulta especial?` responde `no` para un «¿cuánto cuestan?» suelto), el\n// flujo sale por `Recuperar cards` y SALTEA `Partir en burbujas` por completo, así que ese\n// filtro no se ejecuta nunca en esa rama.\n//\n// `ya_cotizo` lo resuelve `Leer evento` contra el historial. isExecuted por la misma razón\n// que el resto de este nodo: referenciar un nodo que no corrió tira ExpressionError.\nconst _le3 = $('Leer evento');\nconst yaCotizoSesion = _le3.isExecuted ? !!(_le3.first().json || {}).ya_cotizo : false;\n\nif (step === 'step_2' && dinamico) {\n  partes.unshift({ texto: dinamico, adjuntos: [] });\n} else if (step === 'step_3' && !yaCotizoSesion) {\n  partes.push({ texto: CTA_STEP_3, adjuntos: [] });\n}"
+    }
+  ]
+}

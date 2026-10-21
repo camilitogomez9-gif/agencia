@@ -1,0 +1,276 @@
+{
+  "name": "Stark | Elevar Conversación",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "resumen",
+              "type": "any"
+            },
+            {
+              "name": "producto_interes",
+              "type": "any"
+            },
+            {
+              "name": "motivo_bucket",
+              "type": "any"
+            },
+            {
+              "name": "entity_id",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        96,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://happyflopss.kommo.com/api/v4/leads/{{ $node['All_Data'].json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pipeline_id",
+              "value": "={{11622596}}"
+            },
+            {
+              "name": "status_id",
+              "value": "={{100395523}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1184,
+        688
+      ],
+      "id": "99da25e0-9cdd-4f53-a20b-63db14199cfa",
+      "name": "RECLAMO_O_CASO_ESPECIFICO",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://happyflopss.kommo.com/api/v4/leads/{{ $node['All_Data'].json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pipeline_id",
+              "value": "={{11622596}}"
+            },
+            {
+              "name": "status_id",
+              "value": "={{100395523}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1184,
+        496
+      ],
+      "id": "12926906-23fa-450f-a4a2-c4f106f90708",
+      "name": "SALUD_SENSIBLE",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://happyflopss.kommo.com/api/v4/leads/{{ $node['All_Data'].json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pipeline_id",
+              "value": "={{11622596}}"
+            },
+            {
+              "name": "status_id",
+              "value": "={{100395523}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1184,
+        304
+      ],
+      "id": "31314ac9-add9-44cf-bff6-0004d4dd45bc",
+      "name": "QUIERE_HUMANO_O_TIENDA",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://happyflopss.kommo.com/api/v4/leads/{{ $node['All_Data'].json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pipeline_id",
+              "value": "={{11622596}}"
+            },
+            {
+              "name": "status_id",
+              "value": "={{100395523}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1184,
+        112
+      ],
+      "id": "8d4194fc-3786-43ba-b8c8-2a8a619e13ea",
+      "name": "PAGO_PENDIENTE",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "acadc01a-b60b-4398-9426-a40a948ab591",
+              "name": "respuesta",
+              "value": "Consulta elevada correctamente",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        352
+      ],
+      "id": "90dafbab-a3ce-4655-9676-5113a503c12c",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "motivo_bucket": "PAGO_PENDIENTE",
+          "producto_interes": "xxx",
+          "resumen": "asdadasda"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "a6e3ec2e-dfd8-4c13-b1fd-ea1d26b3d21a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2fb601f29b5c700d2141654e4608e081bd1e5daa9614999069a9eb314029edc9"
+  },
+  "id": "JfM8TUfux1mpDFNk",
+  "tags": []
+}

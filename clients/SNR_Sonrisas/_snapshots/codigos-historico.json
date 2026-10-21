@@ -1,0 +1,6129 @@
+{
+  "version": 2,
+  "last_updated": "2026-06-15",
+  "ventana_meses": 6,
+  "comment": "Snapshot mes-aware de códigos. Cada código guarda sus clasificaciones por mes (YYYY-MM) para que el lookup de Filtro/Categoria/Clase use los códigos vigentes en el mes de recepción del pago. Pruning automático a 6 meses. NO editar a mano salvo conflictos.",
+  "codigos": {
+    "00001": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "A0000": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ALINEADORES",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ALINEADORES",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "A0001": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ALINEADORES",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ALINEADORES",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "A0002": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ALINEADORES",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ALINEADORES",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "A0003": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ALINEADORES",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ALINEADORES",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "A0004": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ALINEADORES",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ALINEADORES",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "A0005": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ALINEADORES",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ALINEADORES",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "A0007": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ALINEADORES",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ALINEADORES",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "A0008": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ALINEADORES",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ALINEADORES",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "A0009": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ALINEADORES",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ALINEADORES",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0000": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0001": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0002": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0003": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0004": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0005": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0006": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0007": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0008": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0009": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0010": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0011": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0012": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0013": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0014": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0015": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0016": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0050": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0051": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0052": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0053": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0054": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0055": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0056": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "C0057": {
+      "meses": {
+        "2026-05": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "CIRUGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "E0001": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "E0002": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "E0003": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "E0004": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "E0005": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "E0006": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "E0007": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "E0008": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "E0050": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "E0051": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "E0052": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ENDODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "HB000": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PRODUCTOS HIGIENE BUCAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PRODUCTOS HIGIENE BUCAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "HB001": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PRODUCTOS HIGIENE BUCAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PRODUCTOS HIGIENE BUCAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "HB002": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PRODUCTOS HIGIENE BUCAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PRODUCTOS HIGIENE BUCAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "HB003": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PRODUCTOS HIGIENE BUCAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PRODUCTOS HIGIENE BUCAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "HB004": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PRODUCTOS HIGIENE BUCAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PRODUCTOS HIGIENE BUCAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "HB005": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PRODUCTOS HIGIENE BUCAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PRODUCTOS HIGIENE BUCAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "HB006": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PRODUCTOS HIGIENE BUCAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PRODUCTOS HIGIENE BUCAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "HB007": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PRODUCTOS HIGIENE BUCAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PRODUCTOS HIGIENE BUCAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA001": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA002": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA003": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA004": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA005": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA006": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA007": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA008": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA009": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA010": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA011": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA012": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA013": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA014": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA015": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA016": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA017": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA018": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA019": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA020": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA021": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA022": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA023": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA024": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA025": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA026": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA027": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA028": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA029": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA030": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA031": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA032": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA033": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA034": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA035": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA036": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA037": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA038": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA039": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA040": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA041": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA042": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA043": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA044": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA045": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA046": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA047": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA048": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA049": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA100": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA101": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA102": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA103": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA104": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA105": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA106": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA107": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA108": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA109": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA110": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA111": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA200": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA201": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA202": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA203": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA204": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA205": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA206": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA207": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA208": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA300": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA301": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA302": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA600": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA601": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA602": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA603": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA604": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA605": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA606": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA607": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA608": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA609": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA700": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA701": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA702": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA703": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA704": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA800": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OA801": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG001": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG002": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG003": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG004": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG005": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG006": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG007": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG020": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG021": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG022": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG023": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG024": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG025": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG026": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG027": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG028": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG040": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG041": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG042": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG043": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG044": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG045": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG046": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG047": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG048": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG049": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG050": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG051": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG052": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG060": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG061": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG062": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG063": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG064": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG065": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG066": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG067": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG068": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG070": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG071": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG072": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG073": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG074": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG075": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG076": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG077": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG080": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG081": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OG082": {
+      "meses": {
+        "2026-05": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "GENERAL",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OO001": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OO002": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OO003": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OO004": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OO005": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OO006": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OO100": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OO101": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OO102": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OO200": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "AJUSTE",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP000": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP001": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP100": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP101": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP102": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP103": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP104": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP105": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP106": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP107": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP108": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP109": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP110": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP111": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP112": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP113": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP114": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP115": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP116": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP117": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP118": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP119": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP200": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP201": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP202": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP203": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP204": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OP205": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTOPEDIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR001": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR002": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR003": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR004": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR005": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR006": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR007": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR008": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR009": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR010": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR011": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR012": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR013": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR014": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR016": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR017": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR018": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR019": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR020": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR021": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR022": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": false
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "RETIRO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR100": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR101": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR102": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR103": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR104": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR105": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR106": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR107": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR108": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR109": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR110": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR111": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR112": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR113": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR114": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR115": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR116": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR117": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR118": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR119": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR120": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR121": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR122": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR123": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR124": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR125": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR126": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR127": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR200": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR201": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "OR202": {
+      "meses": {
+        "2026-05": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "ORTODONCIA",
+          "clase": "COMBO",
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P0000": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P0001": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P0002": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P0003": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P0004": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P0005": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P0006": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P0007": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P0008": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P0009": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P0010": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P0011": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P1000": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P1001": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P1002": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P1003": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P1004": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P2000": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P2001": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P2002": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P2003": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P2004": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P2005": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P2006": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P2007": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P2008": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P2009": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P3000": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P3001": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P3002": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P3003": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P3004": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P3005": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P3006": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P3007": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "P3008": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PROTESIS",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "PE0000": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "PE1000": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "PE1001": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "PE1002": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "PE1003": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "PE1004": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "PE1005": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "PE1006": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "PE1007": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "PE2000": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "PE2001": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "PE2002": {
+      "meses": {
+        "2026-05": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "PERIODONCIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "RD000": {
+      "meses": {
+        "2026-05": {
+          "categoria": "RADIOLOGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "RADIOLOGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "RD001": {
+      "meses": {
+        "2026-05": {
+          "categoria": "RADIOLOGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "RADIOLOGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "RD002": {
+      "meses": {
+        "2026-05": {
+          "categoria": "RADIOLOGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "RADIOLOGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "RD003": {
+      "meses": {
+        "2026-05": {
+          "categoria": "RADIOLOGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "RADIOLOGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "RD004": {
+      "meses": {
+        "2026-05": {
+          "categoria": "RADIOLOGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "RADIOLOGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "RD005": {
+      "meses": {
+        "2026-05": {
+          "categoria": "RADIOLOGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "RADIOLOGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "RD006": {
+      "meses": {
+        "2026-05": {
+          "categoria": "RADIOLOGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "RADIOLOGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "RD007": {
+      "meses": {
+        "2026-05": {
+          "categoria": "RADIOLOGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "RADIOLOGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    },
+    "RD008": {
+      "meses": {
+        "2026-05": {
+          "categoria": "RADIOLOGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        },
+        "2026-06": {
+          "categoria": "RADIOLOGIA",
+          "clase": null,
+          "computaImporte": true,
+          "computaCantidad": true
+        }
+      },
+      "first_seen": "2026-06-06",
+      "last_seen_xlsx": "2026-06-14"
+    }
+  },
+  "changelog": []
+}

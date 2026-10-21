@@ -1,0 +1,201 @@
+{
+  "name": "sys-tool-buscar-equipo-v2",
+  "nodes": [
+    {
+      "id": "6bf4d371-01b2-5d1a-9040-8c5c8b9dbadb",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"query_libre\": \"\",\n  \"tecnologia\": \"\",\n  \"linea\": \"\",\n  \"aplicacion\": \"\",\n  \"marca\": \"\",\n  \"zona_cliente\": \"\",\n  \"session_id\": \"\"\n}"
+      }
+    },
+    {
+      "id": "63aafcd4-d760-5430-b058-d822d4a5d3b3",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "// v2 — F8: agrega filtros ancho_min_mm/ancho_max_mm al buildFilter.\n// Airtable tiene el campo Ancho como string (ej: \"60\", \"320\" — en cm).\n// El agente pasa los anchos en mm, así que dividimos por 10 y usamos VALUE() para\n// que Airtable compare como número.\n\nconst args = $input.first().json;\nconst hasAny = args.query_libre || args.tecnologia || args.linea || args.aplicacion || args.marca || args.zona_cliente || args.ancho_min_mm || args.ancho_max_mm;\nif (!hasAny) {\n  return [{ json: { status: 'NOT_FOUND', _skip: true, message_to_agent: 'No diste criterios. Pedile al cliente más info: tecnología, aplicación, marca, ancho o presupuesto.' } }];\n}\n\nfunction buildFilter(level) {\n  const filters = ['{Status} = \"Activo\"'];\n  if (args.tecnologia) filters.push(`FIND(\"${args.tecnologia}\", ARRAYJOIN({Tecnología}))>0`);\n  if (args.linea && level <= 2) filters.push(`{Línea de Producto} = \"${args.linea}\"`);\n  if (args.marca && level <= 2) filters.push(`{Marca} = \"${args.marca}\"`);\n  if (args.aplicacion && level <= 1) filters.push(`FIND(\"${args.aplicacion}\", ARRAYJOIN({Aplicaciones compatibles}))>0`);\n  if (args.zona_cliente && level <= 2) filters.push(`FIND(\"${args.zona_cliente}\", ARRAYJOIN({Disponibilidad zona}))>0`);\n  // F8: filtros de ancho (Airtable en cm, agente en mm)\n  if (args.ancho_min_mm && level <= 2) filters.push(`VALUE({Ancho}) >= ${Number(args.ancho_min_mm) / 10}`);\n  if (args.ancho_max_mm && level <= 2) filters.push(`VALUE({Ancho}) <= ${Number(args.ancho_max_mm) / 10}`);\n  return `AND(${filters.join(', ')})`;\n}\n\nreturn [{ json: { ...args, _formula: buildFilter(0) } }];"
+      }
+    },
+    {
+      "id": "fd283669-a689-5f72-b18b-c2f60c107e72",
+      "name": "Search Equipos",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        300
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "3zohdTBWzW8UUN6P",
+          "name": "Airtable SYS"
+        }
+      },
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": "appMD3g2HWxzBaZAM"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": "tblHO7kWEbFBVTWQn"
+        },
+        "filterByFormula": "={{ $json._formula }}",
+        "limit": 10,
+        "options": {},
+        "view": {
+          "__rl": true,
+          "mode": "list",
+          "value": "viwCUJCvUbuDFXKqA"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "419d2166-6389-59e7-97d4-68fb9b50beee",
+      "name": "Format Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "// v2 — F1+F8: filtra records vacíos + prioriza impresoras sobre accesorios.\n\nconst matches = $input.all()\n  .map(m => m.json)\n  .filter(r => r && r.id && r['Modelo']);\n\nif (matches.length === 0) {\n  return [{ json: {\n    status: 'NOT_FOUND',\n    data: null,\n    message_to_agent: 'No hay equipos que matcheen esos criterios. Sugerí al cliente ampliar (tecnología/aplicación/marca) o derivá al comercial.',\n    trace_id: $execution.id\n  } }];\n}\n\nfunction summarize(r) {\n  return {\n    modelo: r.Modelo,\n    marca: r.Marca,\n    tecnologia: r['Nombre (from Tecnología)'] || r['Tecnología'] || [],\n    linea: r['Línea de Producto'] || '',\n    formato: r.Formato || '',\n    ancho: r.Ancho || '',\n    cabezales_hasta: r['Cabezales hasta'] || null,\n    cabezales_tipo: r['Cabezales tipo'] || '',\n    datos_extra: r['Datos extra'] || '',\n    tipo_de_uso: r['Tipo de Uso'] || '',\n    descripcion_corta: r['Descripción corta'] || '',\n    disponibilidad_zona: r['Disponibilidad zona'] || []\n  };\n}\n\n// F8: priorizar impresoras sobre accesorios (planchas/hornos/purificadores)\nfunction isAccesorio(r) {\n  const formato = String(r.Formato || '').toLowerCase();\n  const modelo = String(r.Modelo || '').toLowerCase();\n  return /plancha|horno|purificador|heat\\s*press/.test(formato + ' ' + modelo);\n}\n\nconst impresoras = matches.filter(r => !isAccesorio(r));\nconst accesorios = matches.filter(r => isAccesorio(r));\nconst ordered = [...impresoras, ...accesorios];\n\nconst principal = summarize(ordered[0]);\nconst alternativas = ordered.slice(1, 3).map(summarize);\n\nlet status, msg;\nif (ordered.length === 1) {\n  status = 'RESOLVED';\n  msg = `1 equipo encontrado: ${principal.modelo} (${principal.marca}).`;\n} else if (ordered.length <= 3) {\n  status = 'RESOLVED';\n  msg = `Equipo principal: ${principal.modelo}. Alternativas: ${alternativas.map(a => a.modelo).join(', ')}.`;\n} else {\n  status = 'AMBIGUOUS';\n  msg = `Hay ${ordered.length} equipos. Te presento el más relevante (${principal.modelo}) y 2 alternativas. Si el cliente necesita más opciones, pedile criterios adicionales.`;\n}\n\nreturn [{ json: {\n  status,\n  data: {\n    equipo_principal: principal,\n    alternativas,\n    total_matches: ordered.length\n  },\n  message_to_agent: msg,\n  trace_id: $execution.id\n} }];"
+      },
+      "notes": "v2 — F1+F8: filtra records vacíos, prioriza impresoras sobre accesorios (planchas/hornos), usa Lookup 'Nombre (from Tecnología)' para nombres."
+    },
+    {
+      "id": "4261c21c-e784-57e6-af7b-e9147d63d12a",
+      "name": "Log to sys_tool_calls",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        960,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sys_tool_calls (session_id, tool_name, input_payload, output_payload, status, duration_ms)\nVALUES ($1, 'buscar-equipo', $2::jsonb, $3::jsonb, $4, $5)",
+        "options": {
+          "queryReplacement": "={{ [$('Execute Workflow Trigger').first().json.session_id || 'unknown', JSON.stringify($('Execute Workflow Trigger').first().json), JSON.stringify($json), $json.status || 'success', $json.duration_ms || 0] }}"
+        },
+        "continueOnFail": true
+      },
+      "continueOnFail": true,
+      "notes": "Log a sys_tool_calls. continueOnFail=true para no romper la tool si Postgres falla."
+    },
+    {
+      "id": "a69ea459-6060-52d4-b361-098801907d3d",
+      "name": "Return Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        300
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $('Format Output').first().json }}",
+        "options": {}
+      },
+      "notes": "v2 — F2: .first().json"
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Search Equipos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Equipos": {
+      "main": [
+        [
+          {
+            "node": "Format Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Output": {
+      "main": [
+        [
+          {
+            "node": "Log to sys_tool_calls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to sys_tool_calls": {
+      "main": [
+        [
+          {
+            "node": "Return Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "SYS"
+    },
+    {
+      "name": "F4"
+    },
+    {
+      "name": "tool"
+    }
+  ],
+  "versionId": "8239a723-f111-4e2f-9ea9-783a4003edd6"
+}

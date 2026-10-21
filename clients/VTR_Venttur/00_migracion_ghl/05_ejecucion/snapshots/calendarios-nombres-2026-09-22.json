@@ -1,0 +1,55 @@
+{
+ "nota": "Renombre de calendarios que muestran las landings (22/9). 'antes' sirve de rollback: PUT /calendars/{id} {name}.",
+ "cambios": [
+  {
+   "id": "CIxOV100yyRFqPoa6LdK",
+   "antes": "cal-internados",
+   "despues": "Internados"
+  },
+  {
+   "id": "SiAPsk27X5yilff5bSS5",
+   "antes": "cal-intercambio",
+   "despues": "Intercambio académico con familias"
+  },
+  {
+   "id": "981EzNS7jf9HhJNkL41W",
+   "antes": "cal-campamentos",
+   "despues": "Campamentos de verano"
+  },
+  {
+   "id": "oNN7oLWsNhQlWi7q7pDX",
+   "antes": "cal-pathway-alemania",
+   "despues": "Pathway Alemania"
+  },
+  {
+   "id": "Omgde6Ko8TGKYMtiUb1x",
+   "antes": "cal-gap-year",
+   "despues": "Gap Year / Estudia y Trabaja"
+  },
+  {
+   "id": "5PxslDhdQxZeDcKmLYNq",
+   "antes": "cal-cursos-idiomas",
+   "despues": "Cursos de idiomas en el extranjero"
+  },
+  {
+   "id": "RUjWx74NPK77FPUcs5ME",
+   "antes": "cal-educacion-superior",
+   "despues": "Educación superior"
+  },
+  {
+   "id": "j0jcAdaieJXaoPZBempp",
+   "antes": "cal-viajes-educativos",
+   "despues": "Viajes educativos"
+  },
+  {
+   "id": "QJQyabdWhBgYtjeGcEKZ",
+   "antes": "Juan José Alfaro's Personal Calendar",
+   "despues": "Asesoría con Juan José Alfaro"
+  },
+  {
+   "id": "fOsl9U4b40ulCczFwf69",
+   "antes": "Niza Valeriano's Personal Calendar",
+   "despues": "Asesoría con Niza Valeriano"
+  }
+ ]
+}

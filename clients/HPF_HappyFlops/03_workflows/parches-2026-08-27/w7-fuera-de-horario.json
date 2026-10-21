@@ -1,0 +1,13 @@
+{
+  "wf": "W7",
+  "descripcion": "P1 reunión Oscar 2026-08-27: fuera de horario NO debe mandar la imagen de vacaciones. Reemplaza el texto vacío + adjunto de la Foto Vacaciones por el mensaje exacto de Oscar, sin adjunto. La imagen de vacaciones queda para un futuro 'modo vacaciones real' (día calendario dentro del período), fuera de este ciclo. URL preservada en el snapshot de rollback ghl-live-2026-08-27-pre-fixes-oscar/W7.json.",
+  "ediciones": [
+    {
+      "nodo": "Respuesta fuera de horario",
+      "campo": "parameters.jsCode",
+      "anchor": "partes: [{ texto: '', adjuntos: [\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/361760b5-c8ec-4a79-bc9d-ebb02f9aa624.jpeg\"] }],",
+      "reemplazo": "partes: [{ texto: 'Muchas gracias por tu pago 🙌\\nNuestro area de pagos revisa y confirma las transacciones en su horario de atención: lunes a viernes de 9:00 am a 6:00 pm y sábados de 9:00 am a 2:00 pm\\nEn cuanto estemos dentro de ese horario, te enviaremos la confirmación correspondiente ✅', adjuntos: [] }],",
+      "motivo": "Un comprobante recibido fuera de horario en día laboral debe recibir el aviso de horario de atención, no la imagen de vacaciones. La guardia horaria (Mon-Fri 9-18, Sat 9-14) ya está validada por Oscar."
+    }
+  ]
+}

@@ -1,0 +1,175 @@
+{
+  "name": "Fathom → Notion + Groq + Pinecone",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fathom-llamadas",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "node-webhook",
+      "name": "Webhook Fathom",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parsear el payload de Fathom\n// Ajustar rutas según el payload real (verificar con primer webhook)\nconst body = $input.first().json;\nconst data = body.data || body;\n\nconst call_id = data.id || '';\nconst titulo = data.title || 'Llamada sin título';\nconst fecha = data.date || new Date().toISOString();\nconst duracion_seg = data.duration || 0;\nconst duracion_min = Math.round(duracion_seg / 60);\nconst transcripcion = data.transcript || '';\n\nconst attendees = data.attendees || [];\nconst vendedor = attendees[0]?.name || '';\nconst cliente = attendees[1]?.name || '';\n\nreturn [{\n  json: { call_id, titulo, fecha, duracion_min, transcripcion, vendedor, cliente }\n}];"
+      },
+      "id": "node-parse",
+      "name": "Parse Fathom Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "create",
+        "databaseId": {
+          "__rl": true,
+          "value": "={{ $env.NOTION_LLAMADAS_DB_ID }}",
+          "mode": "id"
+        },
+        "title": "={{ $json.titulo }}",
+        "propertiesUi": {
+          "propertyValues": [
+            { "key": "Fecha", "type": "date", "date": "={{ $json.fecha }}" },
+            { "key": "Cliente", "type": "rich_text", "textContent": "={{ $json.cliente }}" },
+            { "key": "Vendedor", "type": "rich_text", "textContent": "={{ $json.vendedor }}" },
+            { "key": "Duración", "type": "number", "numberValue": "={{ $json.duracion_min }}" },
+            { "key": "Call ID Fathom", "type": "rich_text", "textContent": "={{ $json.call_id }}" },
+            { "key": "Transcripción", "type": "rich_text", "textContent": "={{ $json.transcripcion.substring(0, 2000) }}" },
+            { "key": "Analizada", "type": "checkbox", "checkboxValue": false }
+          ]
+        }
+      },
+      "id": "node-notion-create",
+      "name": "Notion — Crear Llamada",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $env.GROQ_API_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "=",
+              "value": "={{ JSON.stringify({ model: 'llama-3.3-70b-versatile', response_format: { type: 'json_object' }, temperature: 0.2, messages: [ { role: 'system', content: 'Sos un analizador de llamadas de ventas para una agencia de IA (la agencia). Tu tarea es extraer objeciones y definiciones de nicho. Respondé SOLO con JSON válido, sin texto adicional ni markdown.' }, { role: 'user', content: `Analizá esta transcripción y extraé:\n1. \"objeciones\": array de strings con las objeciones del prospecto (puede estar vacío).\n2. \"definiciones\": array de objetos con términos específicos del nicho que vale guardar en un diccionario.\n\nCada elemento de \"definiciones\" tiene:\n- \"concepto\": nombre del término\n- \"definicion\": explicación contextual\n\nRespondé SOLO con JSON:\n{\"objeciones\": [...], \"definiciones\": [{\"concepto\": \"...\", \"definicion\": \"...\"}]}\n\nTranscripción:\n${$('Parse Fathom Payload').first().json.transcripcion.substring(0, 8000)}` } ] }) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-groq",
+      "name": "Groq — Analizar Transcripción",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parsear la respuesta de Groq\nconst groqResponse = $input.first().json;\nconst content = groqResponse.choices?.[0]?.message?.content || '{}';\n\nlet analysis = { objeciones: [], definiciones: [] };\ntry {\n  analysis = JSON.parse(content);\n} catch(e) {\n  // Si no parsea, devolver arrays vacíos\n  console.log('Error parseando Groq:', e.message);\n}\n\nconst objeciones = Array.isArray(analysis.objeciones) ? analysis.objeciones : [];\nconst definiciones = Array.isArray(analysis.definiciones) ? analysis.definiciones : [];\n\nreturn [{\n  json: {\n    objeciones,\n    definiciones,\n    objeciones_json: JSON.stringify(objeciones),\n    definiciones_json: JSON.stringify(definiciones),\n    notion_page_id: $('Notion — Crear Llamada').first().json.id,\n    call_id: $('Parse Fathom Payload').first().json.call_id,\n    titulo: $('Parse Fathom Payload').first().json.titulo,\n    fecha: $('Parse Fathom Payload').first().json.fecha,\n    cliente: $('Parse Fathom Payload').first().json.cliente,\n    transcripcion: $('Parse Fathom Payload').first().json.transcripcion\n  }\n}];"
+      },
+      "id": "node-parse-groq",
+      "name": "Parse Groq Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.PINECONE_INDEX_HOST }}/records/namespaces/llamadas/upsert",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Api-Key", "value": "={{ $env.PINECONE_API_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "=",
+              "value": "={{ JSON.stringify({ records: [{ _id: $json.call_id, text: $json.transcripcion.substring(0, 8000), call_id: $json.call_id, nombre: $json.titulo, fecha: $json.fecha, cliente: $json.cliente, notion_page_id: $json.notion_page_id }] }) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-pinecone",
+      "name": "Pinecone — Upsert Vector",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "update",
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $('Parse Groq Response').first().json.notion_page_id }}",
+          "mode": "id"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            { "key": "Objeciones", "type": "rich_text", "textContent": "={{ $('Parse Groq Response').first().json.objeciones_json }}" },
+            { "key": "Definiciones", "type": "rich_text", "textContent": "={{ $('Parse Groq Response').first().json.definiciones_json }}" },
+            { "key": "Analizada", "type": "checkbox", "checkboxValue": true }
+          ]
+        }
+      },
+      "id": "node-notion-update",
+      "name": "Notion — Actualizar con Análisis",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [1560, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, notion_page_id: $('Parse Groq Response').first().json.notion_page_id, objeciones: $('Parse Groq Response').first().json.objeciones.length, definiciones: $('Parse Groq Response').first().json.definiciones.length }) }}"
+      },
+      "id": "node-respond",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1780, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Fathom": { "main": [[{ "node": "Parse Fathom Payload", "type": "main", "index": 0 }]] },
+    "Parse Fathom Payload": { "main": [[{ "node": "Notion — Crear Llamada", "type": "main", "index": 0 }]] },
+    "Notion — Crear Llamada": { "main": [[{ "node": "Groq — Analizar Transcripción", "type": "main", "index": 0 }]] },
+    "Groq — Analizar Transcripción": { "main": [[{ "node": "Parse Groq Response", "type": "main", "index": 0 }]] },
+    "Parse Groq Response": { "main": [[{ "node": "Pinecone — Upsert Vector", "type": "main", "index": 0 }]] },
+    "Pinecone — Upsert Vector": { "main": [[{ "node": "Notion — Actualizar con Análisis", "type": "main", "index": 0 }]] },
+    "Notion — Actualizar con Análisis": { "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]] }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateId": "la agencia-fathom-llamadas-v1"
+  },
+  "notes": "Workflow: Fathom → Notion (crear) → Groq (analizar) → Pinecone (indexar) → Notion (actualizar con análisis).\n\nVariables de entorno n8n necesarias:\n- NOTION_LLAMADAS_DB_ID\n- GROQ_API_KEY\n- PINECONE_API_KEY\n- PINECONE_INDEX_HOST (ej: https://la agencia-llamadas-xxxx.svc.aped-xxxx.pinecone.io)\n\nAjustar el nodo 'Parse Fathom Payload' según el payload real que envía Fathom (verificar con primer webhook)."
+}

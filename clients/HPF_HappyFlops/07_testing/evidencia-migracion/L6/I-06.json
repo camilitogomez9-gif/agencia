@@ -1,0 +1,14 @@
+{
+  "caso": "I-06",
+  "titulo": "relay sin contactId → rompe",
+  "resultado": "CORROBORADO",
+  "detalle": "http=500 · {\"message\": \"Workflow execution failed\"}",
+  "aristas": [],
+  "pasos": [
+    {
+      "resp": {
+        "message": "Workflow execution failed"
+      }
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "status": 200,
+  "params": {
+    "locationId": "7aXb4JCKsWV5nUyBXeSF"
+  },
+  "data": {
+    "success": true,
+    "businesses": [
+      {
+        "name": "(Example) Dunder Mifflin",
+        "id": "6a985992dbfcd27a64d0255e",
+        "locationId": "7aXb4JCKsWV5nUyBXeSF",
+        "city": "Los Angeles",
+        "website": "www.dundermifflin.com",
+        "state": "California",
+        "address": "235 Main St",
+        "postalCode": "92185",
+        "country": "us",
+        "phone": "+14043451435",
+        "email": "dundermifflin@corporate.net",
+        "updatedAt": "2026-09-02T17:14:58.890Z",
+        "createdAt": "2026-09-02T17:14:58.890Z",
+        "createdBy": {
+          "source": "Auto-populated Sample Data",
+          "channel": "ISTIO_MESH",
+          "sourceId": "7aXb4JCKsWV5nUyBXeSF",
+          "createdAt": "2026-09-02T17:14:58.888Z"
+        },
+        "description": null,
+        "customFields": [],
+        "domainname": null,
+        "companylogo": null
+      },
+      {
+        "name": "(Example) Goliath National Bank",
+        "id": "6a9859922de72e210a7c2614",
+        "locationId": "7aXb4JCKsWV5nUyBXeSF",
+        "city": "Los Angeles",
+        "website": "www.goliathnational.com",
+        "state": "California",
+        "address": "173 Main St",
+        "postalCode": "91584",
+        "country": "us",
+        "phone": "+14043451434",
+        "email": "goliathnational@businessmail.com",
+        "updatedAt": "2026-09-02T17:14:58.456Z",
+        "createdAt": "2026-09-02T17:14:58.456Z",
+        "createdBy": {
+          "source": "Auto-populated Sample Data",
+          "channel": "ISTIO_MESH",
+          "sourceId": "7aXb4JCKsWV5nUyBXeSF",
+          "createdAt": "2026-09-02T17:14:58.455Z"
+        },
+        "description": null,
+        "customFields": [],
+        "domainname": null,
+        "companylogo": null
+      },
+      {
+        "name": "(Example) MacLarens Pub",
+        "id": "6a985992474752913917a9d7",
+        "locationId": "7aXb4JCKsWV5nUyBXeSF",
+        "city": "Los Angeles",
+        "website": "www.maclarenspub.com",
+        "state": "California",
+        "address": "628 Main St",
+        "postalCode": "91584",
+        "country": "us",
+        "phone": "+14043451234",
+        "email": "maclarenspub@corporate.net",
+        "updatedAt": "2026-09-02T17:14:58.108Z",
+        "createdAt": "2026-09-02T17:14:58.108Z",
+        "createdBy": {
+          "source": "Auto-populated Sample Data",
+          "channel": "ISTIO_MESH",
+          "sourceId": "7aXb4JCKsWV5nUyBXeSF",
+          "createdAt": "2026-09-02T17:14:58.106Z"
+        },
+        "description": null,
+        "customFields": [],
+        "domainname": null,
+        "companylogo": null
+      }
+    ],
+    "traceId": "98c877bf-8ef6-4e80-85f8-40651d28e06c"
+  }
+}

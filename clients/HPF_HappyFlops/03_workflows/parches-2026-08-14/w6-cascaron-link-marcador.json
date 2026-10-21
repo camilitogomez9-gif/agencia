@@ -1,0 +1,13 @@
+{
+  "wf": "W6",
+  "descripcion": "Elimina el cascarón '[ ]().' que queda cuando el agente envuelve el marcador de pago en un link markdown. Reportado el 14/08: al cliente le llegaba '...para realizar el pago del anticipo: [ ](). 😊'",
+  "causa": "El agente escribe '[ ](url1234.com123)'. La limpieza del marcador saca url1234.com123 de adentro del paréntesis y deja '[ ]()'. El limpiador de links markdown de más abajo no lo agarra porque su regex exige http, así que el cascarón sobrevive hasta el mensaje.",
+  "ediciones": [
+    {
+      "nodo": "Partir en burbujas",
+      "campo": "parameters.jsCode",
+      "anchor": "  txt = txt.replace(MARCADOR, ' ')\n           // el marcador suele venir incrustado en una frase",
+      "reemplazo": "  // El agente a veces envuelve el marcador en un link markdown: \"[ ](url1234.com123)\".\n  // Si sólo se saca el marcador queda el cascarón \"[ ]()\" en el mensaje del cliente\n  // (reportado el 14/08), y el limpiador de links de más abajo no lo agarra porque su\n  // regex exige http. Por eso el link entero se saca ACÁ, antes que el marcador suelto.\n  txt = txt.replace(/\\[[^\\]]*\\]\\([^)]*url1234\\.com123[^)]*\\)/gi, ' ');\n  txt = txt.replace(MARCADOR, ' ')\n           // cualquier otro cascarón de link vacío que haya quedado, venga de donde venga\n           .replace(/\\[[^\\]]*\\]\\(\\s*\\)/g, ' ')\n           // el marcador suele venir incrustado en una frase"
+    }
+  ]
+}

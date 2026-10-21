@@ -1,0 +1,243 @@
+{
+ "updatedAt": "2026-09-21T08:13:17.086Z",
+ "createdAt": "2026-09-21T08:13:17.086Z",
+ "id": "qYgeTc9PCq3TiGDn",
+ "name": "Estado lead Contestó (GHL) - Venttur",
+ "description": null,
+ "active": false,
+ "isArchived": false,
+ "nodes": [
+  {
+   "parameters": {
+    "workflowInputs": {
+     "values": [
+      {
+       "name": "contactId"
+      }
+     ]
+    }
+   },
+   "id": "w11-trigger",
+   "name": "When Executed by Another Workflow",
+   "type": "n8n-nodes-base.executeWorkflowTrigger",
+   "typeVersion": 1.1,
+   "position": [
+    0,
+    0
+   ]
+  },
+  {
+   "parameters": {
+    "method": "GET",
+    "url": "=https://services.leadconnectorhq.com/contacts/{{ $('When Executed by Another Workflow').first().json.contactId }}",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendHeaders": true,
+    "parametersHeaders": {
+     "values": [
+      {
+       "name": "Version",
+       "value": "2021-07-28"
+      },
+      {
+       "name": "Content-Type",
+       "value": "application/json"
+      },
+      {
+       "name": "Accept",
+       "value": "application/json"
+      },
+      {
+       "name": "User-Agent",
+       "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+      }
+     ]
+    },
+    "options": {}
+   },
+   "id": "w11-GETcontact",
+   "name": "GET contact",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    220,
+    0
+   ],
+   "onError": "continueRegularOutput",
+   "credentials": {
+    "httpHeaderAuth": {
+     "id": "YkVmaA4jlRbO1TQD",
+     "name": "GHL VTR (PIT)"
+    }
+   }
+  },
+  {
+   "parameters": {
+    "jsCode": "// Guarda forward-only: nunca degradar un lead con cita confirmada.\n// Si el contacto no existe (GET falló), no-op.\nconst items = $input.all();\nif (!items.length) return [];\nconst resp = items[0].json.contact || items[0].json;\nif (!resp || !resp.id) return [];\nconst cfs = resp.customFields || [];\nconst cfv = (id) => { const f = cfs.find(x => x.id === id); return f ? f.value : null; };\nconst truthy = v => v === true || v === 'true' || (Array.isArray(v) && v.includes('true'));\nconst estadoActual = (cfv('Omg1BvHmpXR0MMGsrpFh') || '').toString().trim();\nconst cita = truthy(cfv('LwXu8AxMLhVGCbNmgzm2'));\nconst terminal = cita || estadoActual === 'Cita confirmada';\nconst contactId = $('When Executed by Another Workflow').first().json.contactId;\nreturn [{ json: { contactId, estado: terminal ? (estadoActual || 'Cita confirmada') : 'Contestó', ultima_actividad: new Date().toISOString() } }];"
+   },
+   "id": "w11-guard",
+   "name": "Aplicar guarda",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    440,
+    0
+   ]
+  },
+  {
+   "parameters": {
+    "method": "PUT",
+    "url": "=https://services.leadconnectorhq.com/contacts/{{ $json.contactId }}",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendHeaders": true,
+    "parametersHeaders": {
+     "values": [
+      {
+       "name": "Version",
+       "value": "2021-07-28"
+      },
+      {
+       "name": "Content-Type",
+       "value": "application/json"
+      },
+      {
+       "name": "Accept",
+       "value": "application/json"
+      },
+      {
+       "name": "User-Agent",
+       "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+      }
+     ]
+    },
+    "options": {},
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={\"customFields\":[{\"id\":\"Omg1BvHmpXR0MMGsrpFh\",\"value\":\"{{ $json.estado }}\"},{\"id\":\"jrdfZCF6VWAA3L7WDVdB\",\"value\":\"{{ $json.ultima_actividad }}\"}]}"
+   },
+   "id": "w11-Actualizaresta",
+   "name": "Actualizar estado (GHL)",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    660,
+    0
+   ],
+   "onError": "continueRegularOutput",
+   "credentials": {
+    "httpHeaderAuth": {
+     "id": "YkVmaA4jlRbO1TQD",
+     "name": "GHL VTR (PIT)"
+    }
+   }
+  }
+ ],
+ "connections": {
+  "When Executed by Another Workflow": {
+   "main": [
+    [
+     {
+      "node": "GET contact",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "GET contact": {
+   "main": [
+    [
+     {
+      "node": "Aplicar guarda",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Aplicar guarda": {
+   "main": [
+    [
+     {
+      "node": "Actualizar estado (GHL)",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  }
+ },
+ "settings": {
+  "executionOrder": "v1",
+  "callerPolicy": "workflowsFromSameOwner",
+  "availableInMCP": false
+ },
+ "staticData": null,
+ "meta": null,
+ "pinData": null,
+ "versionId": "26eda997-6a7d-421b-bb79-945a4175473f",
+ "activeVersionId": null,
+ "versionCounter": 1,
+ "triggerCount": 0,
+ "shared": [
+  {
+   "updatedAt": "2026-09-21T08:13:17.093Z",
+   "createdAt": "2026-09-21T08:13:17.093Z",
+   "role": "workflow:owner",
+   "workflowId": "qYgeTc9PCq3TiGDn",
+   "projectId": "OZub3m3DGqbZefcZ",
+   "project": {
+    "updatedAt": "2025-02-10T13:18:00.403Z",
+    "createdAt": "2025-02-10T13:17:23.832Z",
+    "id": "OZub3m3DGqbZefcZ",
+    "name": "la agencia <[EMAIL-AGENCIA]>",
+    "type": "personal",
+    "icon": null,
+    "description": null,
+    "projectRelations": [
+     {
+      "updatedAt": "2025-02-10T13:17:23.833Z",
+      "createdAt": "2025-02-10T13:17:23.833Z",
+      "userId": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+      "projectId": "OZub3m3DGqbZefcZ",
+      "user": {
+       "updatedAt": "2026-09-21T07:41:34.000Z",
+       "createdAt": "2025-02-10T13:17:22.713Z",
+       "id": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+       "email": "[EMAIL-AGENCIA]",
+       "firstName": "la agencia",
+       "lastName": "AI",
+       "personalizationAnswers": {
+        "version": "v4",
+        "personalization_survey_submitted_at": "2025-02-10T13:18:23.044Z",
+        "personalization_survey_n8n_version": "1.77.3",
+        "companySize": "<20",
+        "companyType": "digital-agency",
+        "role": "business-owner",
+        "reportedSource": "youtube"
+       },
+       "settings": {
+        "userActivated": true,
+        "easyAIWorkflowOnboarded": true,
+        "firstSuccessfulWorkflowId": "KFHNPOd9iRMDKpBc",
+        "userActivatedAt": 1739194255698,
+        "npsSurvey": {
+         "waitingForResponse": true,
+         "ignoredCount": 2,
+         "lastShownAt": 1789467400717
+        }
+       },
+       "disabled": false,
+       "mfaEnabled": false,
+       "lastActiveAt": "2026-09-20",
+       "isPending": false
+      }
+     }
+    ]
+   }
+  }
+ ],
+ "tags": [],
+ "activeVersion": null
+}

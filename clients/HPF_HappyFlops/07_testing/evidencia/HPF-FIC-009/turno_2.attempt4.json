@@ -1,0 +1,434 @@
+{
+  "probe_id": "sess_hpf_fic_009_1785962062#f94e34f4eb48",
+  "session_id": "sess_hpf_fic_009_1785962062",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "Precio de todos",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 95.2,
+  "version_antes": "66e542c8-4375-47c0-83dd-47f56654cb13",
+  "version_despues": "66e542c8-4375-47c0-83dd-47f56654cb13",
+  "capturado_utc": "2026-08-05T20:37:19.044292+00:00",
+  "execution_id": "990397",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T20:35:37.921Z",
+  "stoppedAt": "2026-08-05T20:37:12.168Z",
+  "n_esperadas": 21,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Así es, para tus XV manejamos varios recuerditos: sandalias, pantuflas, cilindros, kit anticruda y vasos popote",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "✨ Sandalias personalizadas\n💕 Un detalle que todos van a agradecer en tu evento\n👡 Súper cómodas y personalizadas\n\n💡 Disponibles en \n💰 suela delgada $25\n💰 suela gruesa $30\nsegún la comodidad que estés buscando.\n\n📦 Pedido mínimo de 50 pares.\n\n🎁 Opción de bolsa:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf41b86ae4203405cbf9.jpeg",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 2,
+      "message_part": "Mira este video para que veas cómo se ve 🎥",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701852cf81b06f05808192.mp4"
+    },
+    {
+      "idx": 3,
+      "message_part": "Aquí tienes el catálogo completo 📋",
+      "photo_url": null,
+      "doc_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701851a4c8a1a2c39ff069.pdf",
+      "video_url": null
+    },
+    {
+      "idx": 4,
+      "message_part": "✨ Pantuflas de satín personalizadas\n💖 Un detalle elegante y cómodo para tu evento\n🥿 Suela y esponja más gruesa\n🎨 Personalizadas con nombre y fecha\n\n📏 Unitalla (les queda del 23 al 26)\n💰 Precio promo: $30 el par\n📦 Pedido mínimo de 50 pares\n\n🎁 Opción de bolsa:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 5,
+      "message_part": "Mira este video para que veas cómo se ve 🎥",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+    },
+    {
+      "idx": 6,
+      "message_part": "Aquí tienes el catálogo completo 📋",
+      "photo_url": null,
+      "doc_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a70184f188345b27e310872.pdf",
+      "video_url": null
+    },
+    {
+      "idx": 7,
+      "message_part": "✨ Cilindros personalizados\n🎉 Ideales para todo tipo de evento\n\n🎨 Por cada 20 piezas se realiza un diseño diferente.\n\n💰 Precio promo: $10 c/u\n📦 Pedido mínimo de 40 piezas",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3df7d31b0eb454cf57.png",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 8,
+      "message_part": "Mira este video para que veas cómo se ve 🎥",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701846a4c8a1a2c39fef44.mp4"
+    },
+    {
+      "idx": 9,
+      "message_part": "Te comparto el *catalogo de diseños* que tenemos para *Cilindros*",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701855188345b27e310907.jpeg",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 10,
+      "message_part": "✨ Kit anticruda personalizado\n🎉 Ideal para cualquier tipo de evento\n🛍️ Costal de tela personalizado a 1 tinta\n📏 Medidas: 16 x 22 cm\n\n💡 Solo incluye el costal, tú lo llenas con los productos que prefieras.\n\n💰 Precio promo: $10 c/u\n📦 Pedido mínimo de 35 piezas.",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3df9c6f6a920d2e198.png",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 11,
+      "message_part": "Mira este video para que veas cómo se ve 🎥",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701849cf81b06f0580540f.mp4"
+    },
+    {
+      "idx": 12,
+      "message_part": "Te dejo el catalogo de frases que tenemos para los *ANTICRUDAS*",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a70185232db2dd1572c0a7a.jpeg",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 13,
+      "message_part": "✨ Vaso con popote 24 oz para XV años\n🖨️ Diseño en serigrafía\n🥤 Vasos personalizados\n🎨 Mismo diseño y tinta para todas las piezas\n🎨 1 diseño cada 50 vasos\n\n🌈 Tenemos varios colores de vasos\n🥤 Puede escoger 1 color de vaso por cada 50 vasos\n\n💰 Precio promo: $35\n📦 Pedido mínimo: 50 piezas\n⏳ Tiempo de fabricación: 15 días",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf42ca81015f1c93cf8d.jpeg",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 14,
+      "message_part": "Te muestro los *colores disponibles* para los *VASOS CON POPOTE*",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701855188345b27e310907.jpeg",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 15,
+      "message_part": "✨ Pantufla de moño de satín para XV años\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada, rosa, cielo y beige\n\n💰 Precio promo: $30 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 16,
+      "message_part": "Aquí tienes el catálogo completo 📋",
+      "photo_url": null,
+      "doc_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a70184ea4c8a1a2c39ff043.pdf",
+      "video_url": null
+    },
+    {
+      "idx": 17,
+      "message_part": "✨ Pantufla de moño de peluche para XV años\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada, rosa\n\n💰 Precio promo: $35 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 18,
+      "message_part": "Mira este video para que veas cómo se ve 🎥",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a70184d32db2dd1572bec04.mp4"
+    },
+    {
+      "idx": 19,
+      "message_part": "Aquí tienes el catálogo completo 📋",
+      "photo_url": null,
+      "doc_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a70184ea4c8a1a2c39ff043.pdf",
+      "video_url": null
+    },
+    {
+      "idx": 20,
+      "message_part": "¿Le interesa sumarlos a la cotización?\nDígame:\n- Cantidad\n- Código postal\n\n¡Gracias!",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 0,
+      "ms": 205,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2220,
+      "chat_id": 6390727286,
+      "texto_entregado": "✨ Sandalias personalizadas\n💕 Un detalle que todos van a agradecer en tu evento\n👡 Súper cómodas y personalizadas\n\n💡 Disponibles en \n💰 suela delgada $25\n💰 suela gruesa $30\nsegún la comodidad que estés buscando.\n\n📦 Pedido mínimo de 50 pares.\n\n🎁 Opción de bolsa:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "error": null
+    },
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 1,
+      "ms": 197,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2223,
+      "chat_id": 6390727286,
+      "texto_entregado": "✨ Pantuflas de satín personalizadas\n💖 Un detalle elegante y cómodo para tu evento\n🥿 Suela y esponja más gruesa\n🎨 Personalizadas con nombre y fecha\n\n📏 Unitalla (les queda del 23 al 26)\n💰 Precio promo: $30 el par\n📦 Pedido mínimo de 50 pares\n\n🎁 Opción de bolsa:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "error": null
+    },
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 2,
+      "ms": 200,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2226,
+      "chat_id": 6390727286,
+      "texto_entregado": "✨ Cilindros personalizados\n🎉 Ideales para todo tipo de evento\n\n🎨 Por cada 20 piezas se realiza un diseño diferente.\n\n💰 Precio promo: $10 c/u\n📦 Pedido mínimo de 40 piezas",
+      "error": null
+    },
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 3,
+      "ms": 268,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2228,
+      "chat_id": 6390727286,
+      "texto_entregado": "Te comparto el *catalogo de diseños* que tenemos para *Cilindros*",
+      "error": null
+    },
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 4,
+      "ms": 194,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2229,
+      "chat_id": 6390727286,
+      "texto_entregado": "✨ Kit anticruda personalizado\n🎉 Ideal para cualquier tipo de evento\n🛍️ Costal de tela personalizado a 1 tinta\n📏 Medidas: 16 x 22 cm\n\n💡 Solo incluye el costal, tú lo llenas con los productos que prefieras.\n\n💰 Precio promo: $10 c/u\n📦 Pedido mínimo de 35 piezas.",
+      "error": null
+    },
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 5,
+      "ms": 236,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2231,
+      "chat_id": 6390727286,
+      "texto_entregado": "Te dejo el catalogo de frases que tenemos para los *ANTICRUDAS*",
+      "error": null
+    },
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 6,
+      "ms": 213,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2232,
+      "chat_id": 6390727286,
+      "texto_entregado": "✨ Vaso con popote 24 oz para XV años\n🖨️ Diseño en serigrafía\n🥤 Vasos personalizados\n🎨 Mismo diseño y tinta para todas las piezas\n🎨 1 diseño cada 50 vasos\n\n🌈 Tenemos varios colores de vasos\n🥤 Puede escoger 1 color de vaso por cada 50 vasos\n\n💰 Precio promo: $35\n📦 Pedido mínimo: 50 piezas\n⏳ Tiempo de fabricación: 15 días",
+      "error": null
+    },
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 7,
+      "ms": 202,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2233,
+      "chat_id": 6390727286,
+      "texto_entregado": "Te muestro los *colores disponibles* para los *VASOS CON POPOTE*",
+      "error": null
+    },
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 8,
+      "ms": 254,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2234,
+      "chat_id": 6390727286,
+      "texto_entregado": "✨ Pantufla de moño de satín para XV años\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada, rosa, cielo y beige\n\n💰 Precio promo: $30 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "error": null
+    },
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 9,
+      "ms": 201,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2236,
+      "chat_id": 6390727286,
+      "texto_entregado": "✨ Pantufla de moño de peluche para XV años\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada, rosa\n\n💰 Precio promo: $35 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN de REGALO\n* Bolsa de tela personalizada (+$7 c/u)",
+      "error": null
+    },
+    {
+      "emisor": "Send Document (Telegram)",
+      "run": 0,
+      "ms": 215,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2222,
+      "chat_id": 6390727286,
+      "texto_entregado": "Aquí tienes el catálogo completo 📋",
+      "error": null
+    },
+    {
+      "emisor": "Send Document (Telegram)",
+      "run": 1,
+      "ms": 206,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2225,
+      "chat_id": 6390727286,
+      "texto_entregado": "Aquí tienes el catálogo completo 📋",
+      "error": null
+    },
+    {
+      "emisor": "Send Document (Telegram)",
+      "run": 2,
+      "ms": 220,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2235,
+      "chat_id": 6390727286,
+      "texto_entregado": "Aquí tienes el catálogo completo 📋",
+      "error": null
+    },
+    {
+      "emisor": "Send Document (Telegram)",
+      "run": 3,
+      "ms": 193,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2238,
+      "chat_id": 6390727286,
+      "texto_entregado": "Aquí tienes el catálogo completo 📋",
+      "error": null
+    },
+    {
+      "emisor": "Send Video (Telegram)",
+      "run": 0,
+      "ms": 246,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2221,
+      "chat_id": 6390727286,
+      "texto_entregado": "Mira este video para que veas cómo se ve 🎥",
+      "error": null
+    },
+    {
+      "emisor": "Send Video (Telegram)",
+      "run": 1,
+      "ms": 273,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2224,
+      "chat_id": 6390727286,
+      "texto_entregado": "Mira este video para que veas cómo se ve 🎥",
+      "error": null
+    },
+    {
+      "emisor": "Send Video (Telegram)",
+      "run": 2,
+      "ms": 207,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2227,
+      "chat_id": 6390727286,
+      "texto_entregado": "Mira este video para que veas cómo se ve 🎥",
+      "error": null
+    },
+    {
+      "emisor": "Send Video (Telegram)",
+      "run": 3,
+      "ms": 250,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2230,
+      "chat_id": 6390727286,
+      "texto_entregado": "Mira este video para que veas cómo se ve 🎥",
+      "error": null
+    },
+    {
+      "emisor": "Send Video (Telegram)",
+      "run": 4,
+      "ms": 190,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2237,
+      "chat_id": 6390727286,
+      "texto_entregado": "Mira este video para que veas cómo se ve 🎥",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 298,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2219,
+      "chat_id": 6390727286,
+      "texto_entregado": "Así es, para tus XV manejamos varios recuerditos: sandalias, pantuflas, cilindros, kit anticruda y vasos popote",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 193,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2239,
+      "chat_id": 6390727286,
+      "texto_entregado": "¿Le interesa sumarlos a la cotización?\nDígame:\n- Cantidad\n- Código postal\n\n¡Gracias!",
+      "error": null
+    }
+  ],
+  "n_entregadas": 21,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Así es, para tus XV manejamos varios recuerditos: sandalias, pantuflas, cilindros, kit anticruda y vasos popote. \n\n¿Te gustaría que te muestre las fotos y precios de cada uno para que elijas tus favoritos?",
+    "tools": [
+      "IDENTIFICAR_EVENTO",
+      "MOSTRAR_PRODUCTOS"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-FIC-009"
+}

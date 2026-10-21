@@ -1,0 +1,194 @@
+{
+  "updatedAt": "2026-04-30T05:45:56.043Z",
+  "createdAt": "2026-02-18T20:47:13.767Z",
+  "id": "SUgT7UPYyQ3NDgRp",
+  "name": "ATENCION_PERSONALIZADA",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "chatId": "-4925599962",
+        "text": "=👋 El Lead: {{ $node[\"Start\"].json.lead }} necesita atención personalizada",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -768,
+        -448
+      ],
+      "id": "57ed35a0-50f5-48ab-be6b-35e17e4c6bad",
+      "name": "Usr. Se encuentra en etapa de cotización",
+      "webhookId": "34cf8327-0e0c-4f9c-a3a0-6d3ad9365990",
+      "credentials": {
+        "telegramApi": {
+          "id": "vgyWhM8OBUJtYOGC",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"lead\": 123\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -992,
+        -448
+      ],
+      "id": "e669793c-733a-4191-9395-67a6666dbcbd",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://happyflopss.kommo.com/api/v4/leads/{{ $node[\"Start\"].json.lead }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pipeline_id",
+              "value": "={{11622596}}"
+            },
+            {
+              "name": "status_id",
+              "value": "={{91266100}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -544,
+        -448
+      ],
+      "id": "0f694379-39d7-46f0-b74c-d102a7d4ed21",
+      "name": "ATENCION_PERSONALIZADA4",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Usr. Se encuentra en etapa de cotización",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Usr. Se encuentra en etapa de cotización": {
+      "main": [
+        [
+          {
+            "node": "ATENCION_PERSONALIZADA4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "49648cd8-d4bc-46cb-b79f-046ca6a53caf",
+  "activeVersionId": null,
+  "versionCounter": 14,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-18T20:47:13.767Z",
+      "createdAt": "2026-02-18T20:47:13.767Z",
+      "role": "workflow:owner",
+      "workflowId": "SUgT7UPYyQ3NDgRp",
+      "projectId": "g2TpxqLMiC0UsUBj",
+      "project": {
+        "updatedAt": "2025-05-10T12:26:37.475Z",
+        "createdAt": "2025-05-10T12:24:10.921Z",
+        "id": "g2TpxqLMiC0UsUBj",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-05-10T12:24:10.921Z",
+            "createdAt": "2025-05-10T12:24:10.921Z",
+            "userId": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+            "projectId": "g2TpxqLMiC0UsUBj",
+            "user": {
+              "updatedAt": "2026-08-06T19:34:35.551Z",
+              "createdAt": "2025-05-10T12:24:07.518Z",
+              "id": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "lastName": "AI",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-05-10T12:26:59.729Z",
+                "personalization_survey_n8n_version": "1.91.3",
+                "companySize": "<20",
+                "companyType": "systems-integrator",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "6fpcC3iGwfEYO3Eu",
+                "userActivatedAt": 1757033385622,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1773184568459
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "aiAgentStarterCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-08-06",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

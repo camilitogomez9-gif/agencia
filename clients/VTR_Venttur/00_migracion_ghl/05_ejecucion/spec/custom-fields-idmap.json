@@ -1,0 +1,296 @@
+{
+  "contact": {
+    "programa_interes": {
+      "id": "xK2NFqtz1DYUw3gYdn8I",
+      "fieldKey": "contact.programa_interes",
+      "dataType": "SINGLE_OPTIONS"
+    },
+    "tipo_contacto": {
+      "id": "4sj9sWAen1PvGCkn9eCN",
+      "fieldKey": "contact.tipo_contacto",
+      "dataType": "SINGLE_OPTIONS"
+    },
+    "grado_escolar": {
+      "id": "HjNeRtIv6XHHMgFbtsaR",
+      "fieldKey": "contact.grado_escolar",
+      "dataType": "TEXT"
+    },
+    "nivel_ingles": {
+      "id": "uOecQsOv9i3uwMeSgEkX",
+      "fieldKey": "contact.nivel_ingles",
+      "dataType": "SINGLE_OPTIONS"
+    },
+    "inicio_deseado": {
+      "id": "dUvMI4NaamfRPOF1p95q",
+      "fieldKey": "contact.inicio_deseado",
+      "dataType": "TEXT"
+    },
+    "fuente_lead": {
+      "id": "2hv0GovhSzZO3hj9cFqm",
+      "fieldKey": "contact.fuente_lead",
+      "dataType": "TEXT"
+    },
+    "origen": {
+      "id": "BEhJWnXS9SQovJTLSA2W",
+      "fieldKey": "contact.origen",
+      "dataType": "SINGLE_OPTIONS"
+    },
+    "ad_name": {
+      "id": "McKjVHiSyU1IU3G1PpN1",
+      "fieldKey": "contact.ad_name",
+      "dataType": "TEXT"
+    },
+    "platform": {
+      "id": "ffxBAFkCuCgBI1vo8PmS",
+      "fieldKey": "contact.platform",
+      "dataType": "SINGLE_OPTIONS"
+    },
+    "lead_score": {
+      "id": "bdNhsssN73XqIlflrAY3",
+      "fieldKey": "contact.lead_score",
+      "dataType": "NUMERICAL"
+    },
+    "tipo_lead": {
+      "id": "rfNYWVHisv9ZQBVAujVz",
+      "fieldKey": "contact.tipo_lead",
+      "dataType": "SINGLE_OPTIONS"
+    },
+    "estado_conversacion": {
+      "id": "Omg1BvHmpXR0MMGsrpFh",
+      "fieldKey": "contact.estado_conversacion",
+      "dataType": "SINGLE_OPTIONS"
+    },
+    "link_enviado": {
+      "id": "rHzGNiesWuESPmSZyviJ",
+      "fieldKey": "contact.link_enviado",
+      "dataType": "CHECKBOX"
+    },
+    "outreach_enviado": {
+      "id": "wFD12kJI9fCufQmvHAGc",
+      "fieldKey": "contact.outreach_enviado",
+      "dataType": "CHECKBOX"
+    },
+    "outreach_enviado_at": {
+      "id": "l02HPghZFnpC6Z9TcbFk",
+      "fieldKey": "contact.outreach_enviado_at",
+      "dataType": "DATE"
+    },
+    "toques_enviados": {
+      "id": "ez934lu03v7nC4ZRS7LJ",
+      "fieldKey": "contact.toques_enviados",
+      "dataType": "NUMERICAL"
+    },
+    "ultimo_toque_at": {
+      "id": "P3a7nGkO57LwCvHhYQyc",
+      "fieldKey": "contact.ultimo_toque_at",
+      "dataType": "DATE"
+    },
+    "touch1_programado_at": {
+      "id": "95bG6wvWFk2ma17T4NuE",
+      "fieldKey": "contact.touch1_programado_at",
+      "dataType": "DATE"
+    },
+    "ultima_actividad": {
+      "id": "jrdfZCF6VWAA3L7WDVdB",
+      "fieldKey": "contact.ultima_actividad",
+      "dataType": "DATE"
+    },
+    "destino_interes": {
+      "id": "QmDWjqLd0g9RF234PQkT",
+      "fieldKey": "contact.destino_interes",
+      "dataType": "TEXT"
+    },
+    "fecha_alta_original": {
+      "id": "U0sezuoXls1XSjDI71R8",
+      "fieldKey": "contact.fecha_alta_original",
+      "dataType": "DATE"
+    },
+    "nombre_estudiante": {
+      "id": "4O9lDGYjDo39jDiZFnbe",
+      "fieldKey": "contact.nombre_estudiante",
+      "dataType": "TEXT"
+    },
+    "contact_type": {
+      "id": "bVAAzSKN84iUMlB8dviC",
+      "fieldKey": "contact.contact_type",
+      "dataType": "TEXT"
+    },
+    "procesos_internos": {
+      "id": "la2wYRAkuRVGjIsZ62ri",
+      "fieldKey": "contact.procesos_internos",
+      "dataType": "TEXT"
+    },
+    "status_clientify": {
+      "id": "ZAYqnpf49GZsJ73zx1Gd",
+      "fieldKey": "contact.status_clientify",
+      "dataType": "TEXT"
+    },
+    "canal_origen": {
+      "id": "3fj5WwdrCyvm94XJPIW7",
+      "fieldKey": "contact.canal_origen",
+      "dataType": "TEXT"
+    },
+    "medium": {
+      "id": "4wKbFZUpm8V2kZMTeQTB",
+      "fieldKey": "contact.medium",
+      "dataType": "TEXT"
+    },
+    "rfc": {
+      "id": "tcUP15YUTjydYcYHCZxM",
+      "fieldKey": "contact.rfc",
+      "dataType": "TEXT"
+    },
+    "title": {
+      "id": "sm4yqyV2hbeNsAy67zD1",
+      "fieldKey": "contact.title",
+      "dataType": "TEXT"
+    },
+    "gdpr_accept": {
+      "id": "HlRciwKjLggmGkWhEEVH",
+      "fieldKey": "contact.gdpr_accept",
+      "dataType": "CHECKBOX"
+    },
+    "gdpr_acceptance_date": {
+      "id": "QdTGAs71x7BvsxO352jb",
+      "fieldKey": "contact.gdpr_acceptance_date",
+      "dataType": "DATE"
+    },
+    "gdpr_revoke_date": {
+      "id": "yJ7YcIov9fgspmlNQA8K",
+      "fieldKey": "contact.gdpr_revoke_date",
+      "dataType": "DATE"
+    },
+    "disclaimer": {
+      "id": "rePKX01KrvkAzAShwRGP",
+      "fieldKey": "contact.disclaimer",
+      "dataType": "CHECKBOX"
+    },
+    "Recomendación del programa": {
+      "id": "os6BuT8fFvPmRzoYvoZu",
+      "fieldKey": "contact.recomendacin_del_programa",
+      "dataType": "LARGE_TEXT"
+    },
+    "Experiencia Global Venttur": {
+      "id": "z8mCrRcL9z31EuQyFJmU",
+      "fieldKey": "contact.experiencia_global_venttur",
+      "dataType": "LARGE_TEXT"
+    },
+    "Mejora Venttur según cliente": {
+      "id": "IRjJHlazVb5WxtOCpdkS",
+      "fieldKey": "contact.mejora_venttur_segn_cliente",
+      "dataType": "LARGE_TEXT"
+    },
+    "Información Venttur": {
+      "id": "7Zn80ca43nxMEDjHkpaO",
+      "fieldKey": "contact.informacin_venttur",
+      "dataType": "LARGE_TEXT"
+    },
+    "Atención en extranjero Venttur": {
+      "id": "RaOwuFCYCBXsbDWvtH1W",
+      "fieldKey": "contact.atencin_en_extranjero_venttur",
+      "dataType": "LARGE_TEXT"
+    },
+    "Acompañamiento Venttur": {
+      "id": "OWy4NH2l5Rmao236phjy",
+      "fieldKey": "contact.acompaamiento_venttur",
+      "dataType": "LARGE_TEXT"
+    },
+    "Asesoría Venttur": {
+      "id": "bfb92OqcTJc6Cv5eopql",
+      "fieldKey": "contact.asesora_venttur",
+      "dataType": "LARGE_TEXT"
+    },
+    "Experiencia Cultural": {
+      "id": "c8UXpiUnePb3Ew4CHrX9",
+      "fieldKey": "contact.experiencia_cultural",
+      "dataType": "LARGE_TEXT"
+    },
+    "Adaptación": {
+      "id": "C85MfXwXbZnOo76jARLP",
+      "fieldKey": "contact.adaptacin",
+      "dataType": "LARGE_TEXT"
+    },
+    "Instalaciones": {
+      "id": "lRsqqyS9EVwiZU3wWEaX",
+      "fieldKey": "contact.instalaciones",
+      "dataType": "LARGE_TEXT"
+    },
+    "Calidad de clases/actividades": {
+      "id": "JghR4ciEURJPhtmazEpT",
+      "fieldKey": "contact.calidad_de_clasesactividades",
+      "dataType": "LARGE_TEXT"
+    },
+    "Experencia General Programa": {
+      "id": "iKCZgPIrtHR0cqnRbgnE",
+      "fieldKey": "contact.experencia_general_programa",
+      "dataType": "LARGE_TEXT"
+    },
+    "Recomendaciones y comentarios clientes Venttur": {
+      "id": "8ndHTU96rZRVZ355eojf",
+      "fieldKey": "contact.recomendaciones_y_comentarios_clientes_venttur",
+      "dataType": "LARGE_TEXT"
+    },
+    "Textinput": {
+      "id": "68jBAdpMekRhJevIhk1n",
+      "fieldKey": "contact.textinput",
+      "dataType": "TEXT"
+    },
+    "Guests": {
+      "id": "qczgNmnmyol73RGsBeYv",
+      "fieldKey": "contact.guests",
+      "dataType": "TEXT"
+    },
+    "Date": {
+      "id": "vE60TwiPLUB9Z3I5H6Fu",
+      "fieldKey": "contact.date",
+      "dataType": "TEXT"
+    },
+    "File": {
+      "id": "J0usv9TE6WXbQpir8aRN",
+      "fieldKey": "contact.file",
+      "dataType": "TEXT"
+    },
+    "Task-Id": {
+      "id": "6SEiW8JIZJijEuD81qxF",
+      "fieldKey": "contact.taskid",
+      "dataType": "TEXT"
+    },
+    "clientify_timezone": {
+      "id": "UymEdP0DgNVfS8dB8Opr",
+      "fieldKey": "contact.clientify_timezone",
+      "dataType": "TEXT"
+    },
+    "owner_clientify": {
+      "id": "Wpei0nIAGpS1wYmwo5Nr",
+      "fieldKey": "contact.owner_clientify",
+      "dataType": "TEXT"
+    }
+  },
+  "opportunity": {
+    "cierre_esperado": {
+      "id": "zdaPrYnYsYqtle3Kvkqe",
+      "fieldKey": "opportunity.cierre_esperado",
+      "dataType": "DATE"
+    },
+    "cierre_real": {
+      "id": "H6oTcaSmddnXCykNztmt",
+      "fieldKey": "opportunity.cierre_real",
+      "dataType": "DATE"
+    },
+    "probabilidad": {
+      "id": "50wc6etjnYNsnQCr8sLU",
+      "fieldKey": "opportunity.probabilidad",
+      "dataType": "NUMERICAL"
+    },
+    "moneda": {
+      "id": "hG3mI1uO2clPf8AhYIcq",
+      "fieldKey": "opportunity.moneda",
+      "dataType": "SINGLE_OPTIONS"
+    },
+    "owner_clientify": {
+      "id": "N4JhXNEWZ1ITJJQ0nUJ1",
+      "fieldKey": "opportunity.owner_clientify",
+      "dataType": "TEXT"
+    }
+  }
+}

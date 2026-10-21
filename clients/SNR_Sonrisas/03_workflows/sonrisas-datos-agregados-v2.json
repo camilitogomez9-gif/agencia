@@ -1,0 +1,1039 @@
+{
+  "name": "Sonrisas | Datos agregados v2",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.dentalink.healthatom.com/api/v1/pacientes",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token nsZXO2i9zjO9tYiqOxESqxVgsjpL3tTgQPdTQxti.NTb7Cg13dBRJrk27FXpLO1eSHeXdeOKtgVJ2Hl6e"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "nombre",
+              "value": "={{ JSON.parse($('OpenAI').item.json.choices[0].message.content).nombre }}"
+            },
+            {
+              "name": "apellidos",
+              "value": "={{ JSON.parse($('OpenAI').item.json.choices[0].message.content).apellido }}"
+            },
+            {
+              "name": "rut",
+              "value": "={{ JSON.parse($('OpenAI').item.json.choices[0].message.content).cedula }}"
+            },
+            {
+              "name": "email",
+              "value": "={{ JSON.parse($('OpenAI').item.json.choices[0].message.content).mail }}"
+            },
+            {
+              "name": "celular",
+              "value": "={{ JSON.parse($('OpenAI').item.json.choices[0].message.content).celulardentalink }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        32
+      ],
+      "id": "e1621d1e-76dd-460d-a759-f593549b7448",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.data[0] }}",
+                    "rightValue": "1",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Existe"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a1a26aa5-386a-4eec-a89a-0cc80c5367d2",
+                    "leftValue": "={{ $json.body.data[0] }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "notExists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "No existe"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        256,
+        -64
+      ],
+      "id": "5c7dff54-60c8-4e98-a465-49bcea79b466",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "url": "https://api.dentalink.healthatom.com/api/v1/pacientes",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "=q",
+              "value": "={\"rut\":{\"eq\":\"{{ $json.choices[0].message.content.cedula }}\"}}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token nsZXO2i9zjO9tYiqOxESqxVgsjpL3tTgQPdTQxti.NTb7Cg13dBRJrk27FXpLO1eSHeXdeOKtgVJ2Hl6e"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        32,
+        -64
+      ],
+      "id": "1a8c697b-734b-4aed-91f5-6992120a671a",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -768,
+        448
+      ],
+      "id": "a7ef47b1-a63f-44e5-950d-a36e4e33ab31",
+      "name": "Telegram Trigger",
+      "webhookId": "eaa4bc73-2ffd-4ee6-9b5c-c31044b9132c",
+      "credentials": {
+        "telegramApi": {
+          "id": "U6w5v5fCK9m1qbKO",
+          "name": "Crear Pacientes | Sonrisas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "✅ El paciente fue creado exitosamente en DENTALINK",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        704,
+        32
+      ],
+      "id": "e7e9d7b1-747d-4a2c-ba92-a75ad7122019",
+      "name": "Telegram",
+      "webhookId": "3aa1f372-f5bb-424a-8519-b1aa773c6df9",
+      "credentials": {
+        "telegramApi": {
+          "id": "U6w5v5fCK9m1qbKO",
+          "name": "Crear Pacientes | Sonrisas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "✅ El contacto fue creado exitosamente en CONTACTS",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        704,
+        416
+      ],
+      "id": "37d5cf49-7be0-4cc3-ae9d-cdcd919bb3e0",
+      "name": "Telegram2",
+      "webhookId": "3aa1f372-f5bb-424a-8519-b1aa773c6df9",
+      "credentials": {
+        "telegramApi": {
+          "id": "U6w5v5fCK9m1qbKO",
+          "name": "Crear Pacientes | Sonrisas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "=✅ El contacto fue actualizado en CONTACTS, ahora su nombre es: {{ $('buscar').item.json.names.displayName }} ({{ $('OpenAI').item.json.choices[0].message.content.nombre }} {{ $('OpenAI').item.json.choices[0].message.content.apellido }})",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1376,
+        416
+      ],
+      "id": "973b9664-ac84-4216-90a7-a113bd53408b",
+      "name": "Telegram3",
+      "webhookId": "3aa1f372-f5bb-424a-8519-b1aa773c6df9",
+      "credentials": {
+        "telegramApi": {
+          "id": "U6w5v5fCK9m1qbKO",
+          "name": "Crear Pacientes | Sonrisas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "✖️ El paciente ya existe en DENTALINK",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        -160
+      ],
+      "id": "e8f06538-4ff5-460b-8211-75f0619e8077",
+      "name": "Telegram4",
+      "webhookId": "3aa1f372-f5bb-424a-8519-b1aa773c6df9",
+      "credentials": {
+        "telegramApi": {
+          "id": "U6w5v5fCK9m1qbKO",
+          "name": "Crear Pacientes | Sonrisas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=✖️ El contacto ya existe en Google Contacts",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1152,
+        224
+      ],
+      "id": "96dc92b5-ae93-4f7c-afc0-862316f9370d",
+      "name": "Telegram5",
+      "webhookId": "3aa1f372-f5bb-424a-8519-b1aa773c6df9",
+      "credentials": {
+        "telegramApi": {
+          "id": "U6w5v5fCK9m1qbKO",
+          "name": "Crear Pacientes | Sonrisas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=⚠️ Datos incompletos. Ingresa:\n\n**Nombre Completo\nNúmero de Celular\nCédula de Identidad**\nCorreo electrónico (opcional)",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        32,
+        704
+      ],
+      "id": "51d04084-48e9-4218-b299-6549bedf651f",
+      "name": "Telegram8",
+      "webhookId": "3aa1f372-f5bb-424a-8519-b1aa773c6df9",
+      "credentials": {
+        "telegramApi": {
+          "id": "U6w5v5fCK9m1qbKO",
+          "name": "Crear Pacientes | Sonrisas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.choices[0].message.content.valido }}",
+                    "rightValue": false,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "800c9c3e-363c-4fd7-8fdb-566e1e4354f6"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "valido"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "93eb217e-7524-4a13-a197-d655cf55a026",
+                    "leftValue": "={{ $json.choices[0].message.content.solo_ci }}",
+                    "rightValue": false,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "solo_ci"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4943d3b9-94f7-411a-8cfe-68fb436d0d44",
+                    "leftValue": "={{ $json.choices[0].message.content.solo_ci }}",
+                    "rightValue": false,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "datos incorrectos"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -192,
+        416
+      ],
+      "id": "9fae14a1-7c1e-412b-964b-25b26a904915",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=⚠️ Detectamos una CI, para actualizar datos utilizar el bot de actualización de datos.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        32,
+        512
+      ],
+      "id": "b6f9cf13-f609-47b3-ba4b-311a514d5f3c",
+      "name": "Telegram9",
+      "webhookId": "3aa1f372-f5bb-424a-8519-b1aa773c6df9",
+      "credentials": {
+        "telegramApi": {
+          "id": "U6w5v5fCK9m1qbKO",
+          "name": "Crear Pacientes | Sonrisas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "familyName": "={{ $('OpenAI').item.json.choices[0].message.content.apellido }}",
+        "givenName": "={{ $('OpenAI').item.json.choices[0].message.content.nombre }}",
+        "additionalFields": {
+          "emailsUi": {
+            "emailsValues": [
+              {
+                "type": "home",
+                "value": "={{ $('OpenAI').item.json.choices[0].message.content.mail }}"
+              }
+            ]
+          },
+          "group": [
+            "contactGroups/5a45b5960d6c2415"
+          ],
+          "honorificPrefix": "Pac.",
+          "phoneUi": {
+            "phoneValues": [
+              {
+                "type": "mobile",
+                "value": "={{ $('OpenAI').item.json.choices[0].message.content.celularcontacts }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleContacts",
+      "typeVersion": 1,
+      "position": [
+        480,
+        416
+      ],
+      "id": "ed1059a1-da06-43a4-a6b4-40c4dbd77feb",
+      "name": "crear",
+      "retryOnFail": true,
+      "credentials": {
+        "googleContactsOAuth2Api": {
+          "id": "fXRpG9fgBT3lpMwL",
+          "name": "Sonrisas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "contactId": "={{ $('buscar_todos').item.json.contactId }}",
+        "fields": [
+          "names"
+        ]
+      },
+      "type": "n8n-nodes-base.googleContacts",
+      "typeVersion": 1,
+      "position": [
+        480,
+        224
+      ],
+      "id": "332b82d3-4482-4c4b-99f6-e2dfb55da217",
+      "name": "buscar",
+      "credentials": {
+        "googleContactsOAuth2Api": {
+          "id": "fXRpG9fgBT3lpMwL",
+          "name": "Sonrisas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "fields": [
+          "phoneNumbers"
+        ],
+        "useQuery": true,
+        "query": "={{ $json.choices[0].message.content.celularcontacts }}"
+      },
+      "type": "n8n-nodes-base.googleContacts",
+      "typeVersion": 1,
+      "position": [
+        32,
+        320
+      ],
+      "id": "9dcb4c4f-23aa-48d0-9421-e76ab202a5e5",
+      "name": "buscar_todos",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleContactsOAuth2Api": {
+          "id": "fXRpG9fgBT3lpMwL",
+          "name": "Sonrisas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "contactId": "={{ $json.contactId }}",
+        "updateFields": {
+          "familyName": "={{ $json.names.familyName }} ({{ $('OpenAI').item.json.choices[0].message.content.nombre }} {{ $('OpenAI').item.json.choices[0].message.content.apellido }})",
+          "givenName": "={{ $json.names.givenName }} "
+        }
+      },
+      "type": "n8n-nodes-base.googleContacts",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        416
+      ],
+      "id": "22339b35-3a77-40ca-a49b-48fb91af5caa",
+      "name": "actualizar",
+      "credentials": {
+        "googleContactsOAuth2Api": {
+          "id": "fXRpG9fgBT3lpMwL",
+          "name": "Sonrisas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "32a59548-3f00-4633-a708-e9c373a6f273",
+              "leftValue": "={{ $json.names.displayName }}",
+              "rightValue": "=Pac. {{ $('OpenAI').item.json.choices[0].message.content.nombre }} {{ $('OpenAI').item.json.choices[0].message.content.apellido }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        928,
+        320
+      ],
+      "id": "208f3306-daca-40dd-9dfa-8b849455547d",
+      "name": "coincide Dentalink"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "292c666d-072d-4466-8f42-56eec1223bbc",
+              "leftValue": "={{ $json.phoneNumbers }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        256,
+        320
+      ],
+      "id": "8a1aea90-73e8-4538-8b3f-32372f33c6fb",
+      "name": "existe"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=# Tarea:\nDada la variable de entrada \"{{ $json.message.text }}\" que contiene un mensaje con el formato:\nNombre Completo\nCédula de Identidad\nNúmero de Celular\nCorreo Electrónico\n\n**Ejemplo:** \nJuan Pablo Rosso\n54976342\n59899999999\njuan@gmail.com\n\nRealiza las siguientes acciones:\n1. Detecta si el mensaje comienza con \"FAM \" (la palabra FAM seguida de un espacio). Asigna `FAM = true` si es así, `FAM = false` si no. Luego elimina el prefijo \"FAM \" del mensaje antes de continuar el procesamiento.\n2. Separa el \"Nombre Completo\" en \"nombre\" (los nombres dados, típicamente uno o dos) y \"apellido\" (los apellidos, que pueden incluir partículas o guiones).\n3. Recolecta el \"Número de Celular\", la \"Cédula de Identidad\" y el \"Correo Electrónico\" directamente desde el mensaje.\n4. Transforma el \"Número de Celular\" en dos formatos:\n   - \"celularcontacts\": Formato \"xxx xxx xxx\" (manteniendo espacios cada tres dígitos).\n   - \"celulardentalink\": Formato \"+598xxxxxxxx\" (eliminando espacios, el cero inicial y agregando \"+598\" al principio).\n5. Devuelve SIEMPRE un JSON con exactamente las siguientes variables: \"nombre\", \"apellido\", \"celularcontacts\", \"celulardentalink\", \"mail\", \"cedula\", \"valido\", \"solo_ci\", \"FAM\". Todas deben estar presentes en el output sin excepción, aunque su valor sea \"\" o false.\n\n## Validez de datos\nLos datos son válidos si y solo si contienen Nombre Completo, Número de Celular y Cédula de Identidad y están en ese orden.\nLa forma de representar la validez de los datos en tu output es mediante las variables `solo_ci` y `valido`.\n- Si los datos son válidos -> `valido = true`, si no -> `valido = false`.\n- Si recibes únicamente una Cédula de Identidad (ej. \"58394059\") -> `solo_ci = true`, si no -> `solo_ci = false`.\n\n# Criterio:\n\n## Detección de FAM:\n- Antes de cualquier otro procesamiento, toma el mensaje crudo de entrada.\n- Si el mensaje comienza exactamente con \"FAM \" (mayúsculas, seguido de un espacio), asigna `FAM = true` y elimina ese prefijo \"FAM \" para procesar el resto del mensaje normalmente.\n- Si no comienza con \"FAM \", asigna `FAM = false` y procesa el mensaje tal como viene.\n- La detección es sensible a mayúsculas: \"fam \", \"Fam \" u otras variantes NO activan `FAM = true`.\n\n## Separación de Nombre Completo:\n- **Preprocesamiento**:\n  - Normaliza el input: elimina espacios múltiples, convierte a un solo espacio, elimina espacios iniciales y finales.\n  - Divide en tokens basados en espacios, preservando guiones (e.g., \"López-Gómez\" es un solo token).\n  - Define partículas comunes: [\"de\", \"del\", \"la\", \"los\"] (en minúsculas para comparación).\n- **Clasificación de tokens**:\n  - Identifica partículas (\"de\", \"del\", \"la\", \"los\") como indicadores de apellidos.\n  - Aplica las siguientes reglas según el número de tokens:\n    - 1 token (e.g., \"Madonna\"): \"nombre\": token, \"apellido\": \"\".\n    - 2 tokens (e.g., \"Ana López\"): \"nombre\": primer token, \"apellido\": segundo token.\n    - 3 tokens (e.g., \"Juan Pablo Rosso\" o \"Alfonso de Santos\"): Si el segundo token es una partícula, \"nombre\": primer token, \"apellido\": segundo + tercer token. De lo contrario, \"nombre\": primeros dos tokens, \"apellido\": tercer token.\n    - 4 tokens (e.g., \"Cinthia Valentina Fernandez Fernandez\"): Si el segundo o tercer token es una partícula, \"nombre\": tokens antes de la partícula, \"apellido\": partícula + tokens siguientes. De lo contrario, \"nombre\": primeros dos tokens, \"apellido\": últimos dos tokens.\n    - 5 o más tokens (e.g., \"Juan Pablo de la Cruz Gómez\"): Si hay una partícula en el segundo, tercer o cuarto token, \"nombre\": tokens antes de la partícula, \"apellido\": partícula + tokens siguientes. De lo contrario, \"nombre\": primeros dos tokens, \"apellido\": todos los tokens restantes.\n  - Une los tokens de \"nombre\" y \"apellido\" con un solo espacio, preservando guiones dentro de tokens.\n- **Casos límite**:\n  - Si el input está vacío o es nulo, asigna \"nombre\": \"\", \"apellido\": \"\".\n  - Si un token con guión es el único (e.g., \"López-Gómez\"), asigna como \"nombre\" y \"apellido\": \"\".\n  - Si una partícula aparece en la primera posición (e.g., \"de Juan\"), trátala como parte del \"nombre\" si no hay tokens suficientes para un apellido.\n  - Para apellidos con múltiples partículas (e.g., \"de la Cruz Gómez\"), incluye todas desde la primera partícula en el apellido.\n\n## Procesamiento del Número de Celular:\n- Para \"celularcontacts\":\n  Valida que el número de teléfono viene separado con un espacio cada 3 dígitos. Si no es así, acomoda el formato. Ejemplo: \"59899999999\" → \"59899999999\". Si el número viene con prefijo \"+598\", conviértelo primero a formato local (agrega el 0 inicial) y luego aplica el formato. Ejemplo: \"+59899123456\" → \"099 123 456\".\n- Para \"celulardentalink\":\n  Elimina el cero inicial y añade \"+598\". También quita los espacios. Ejemplo: \"59899999999\" → \"59899999999\". Si el número ya viene con \"+598\", déjalo como está eliminando solo los espacios. Procura no alterar el resto de los dígitos.\n\n## Recolección de Cédula y Mail:\n- La \"Cédula de Identidad\" es una cadena de caracteres sin espacios ni guiones. Debe quedar tal como viene en el mensaje, sin modificaciones.\n- El \"Correo Electrónico\" es una cadena válida de email. Debe quedar tal como viene.\n- Si algún campo es inválido (vacío, nulo), asigna \"\" a la variable correspondiente.\n\n# Ejemplos:\n\n## Ejemplo base con FAM:\nEntrada:\n```\nFAM la agencia\n54976342\n59899999999\njuan@gmail.com\n```\nSalida:\n```json\n{\n  \"nombre\": \"la agencia\",\n  \"apellido\": \"Prueba\",\n  \"celularcontacts\": \"59899999999\",\n  \"celulardentalink\": \"59899999999\",\n  \"mail\": \"juan@gmail.com\",\n  \"cedula\": \"54976342\",\n  \"valido\": true,\n  \"solo_ci\": false,\n  \"FAM\": true\n}\n```\n\n## Ejemplo base sin FAM:\nEntrada:\n```\nla agencia\n54976342\n59899999999\njuan@gmail.com\n```\nSalida:\n```json\n{\n  \"nombre\": \"la agencia\",\n  \"apellido\": \"Prueba\",\n  \"celularcontacts\": \"59899999999\",\n  \"celulardentalink\": \"59899999999\",\n  \"mail\": \"juan@gmail.com\",\n  \"cedula\": \"54976342\",\n  \"valido\": true,\n  \"solo_ci\": false,\n  \"FAM\": false\n}\n```\n\n## Ejemplo 1:\nEntrada:\n```\nJuan Pablo Rosso\n54976342\n59899999999\njuan@gmail.com\n```\nSalida:\n```json\n{\n  \"nombre\": \"Juan Pablo\",\n  \"apellido\": \"Rosso\",\n  \"celularcontacts\": \"59899999999\",\n  \"celulardentalink\": \"59899999999\",\n  \"mail\": \"juan@gmail.com\",\n  \"cedula\": \"54976342\",\n  \"valido\": true,\n  \"solo_ci\": false,\n  \"FAM\": false\n}\n```\n\n## Ejemplo 2:\nEntrada:\n```\nLucia Belen de los Reyes\n52877057\n096019931\nluciadelosreyes250302@gmail.com\n```\nSalida:\n```json\n{\n  \"nombre\": \"Lucia Belen\",\n  \"apellido\": \"de los Reyes\",\n  \"celularcontacts\": \"096 019 931\",\n  \"celulardentalink\": \"+59896019931\",\n  \"mail\": \"luciadelosreyes250302@gmail.com\",\n  \"cedula\": \"52877057\",\n  \"valido\": true,\n  \"solo_ci\": false,\n  \"FAM\": false\n}\n```\n\n## Ejemplo 3 (Nombre con Guiones):\nEntrada:\n```\nAna María López-Gómez\n51234567\n099 123 456\nana.lopez@gmail.com\n```\nSalida:\n```json\n{\n  \"nombre\": \"Ana María\",\n  \"apellido\": \"López-Gómez\",\n  \"celularcontacts\": \"099 123 456\",\n  \"celulardentalink\": \"+59899123456\",\n  \"mail\": \"ana.lopez@gmail.com\",\n  \"cedula\": \"51234567\",\n  \"valido\": true,\n  \"solo_ci\": false,\n  \"FAM\": false\n}\n```\n\n## Ejemplo 4 (Nombre Único y Celular con Prefijo):\nEntrada:\n```\nAlex\n59876543\n+59899123456\nalex@gmail.com\n```\nSalida:\n```json\n{\n  \"nombre\": \"Alex\",\n  \"apellido\": \"\",\n  \"celularcontacts\": \"099 123 456\",\n  \"celulardentalink\": \"+59899123456\",\n  \"mail\": \"alex@gmail.com\",\n  \"cedula\": \"59876543\",\n  \"valido\": true,\n  \"solo_ci\": false,\n  \"FAM\": false\n}\n```\n\n## Ejemplo 5 (Dos Apellidos):\nEntrada:\n```\nMary Estela Brun Chaves\n12345678\n099 987 654\nmary@gmail.com\n```\nSalida:\n```json\n{\n  \"nombre\": \"Mary Estela\",\n  \"apellido\": \"Brun Chaves\",\n  \"celularcontacts\": \"099 987 654\",\n  \"celulardentalink\": \"+59899987654\",\n  \"mail\": \"mary@gmail.com\",\n  \"cedula\": \"12345678\",\n  \"valido\": true,\n  \"solo_ci\": false,\n  \"FAM\": false\n}\n```\n\n## Ejemplo 6 (Solo cédula):\nEntrada:\n```\n58394059\n```\nSalida:\n```json\n{\n  \"nombre\": \"\",\n  \"apellido\": \"\",\n  \"celularcontacts\": \"\",\n  \"celulardentalink\": \"\",\n  \"mail\": \"\",\n  \"cedula\": \"58394059\",\n  \"valido\": false,\n  \"solo_ci\": true,\n  \"FAM\": false\n}\n```\n\n# Instrucciones finales:\n- Detecta `FAM` antes de cualquier otro procesamiento, luego elimina el prefijo si corresponde.\n- Procesa el mensaje dividiendo por líneas para extraer \"Nombre Completo\", \"Número de Celular\", \"Cédula de Identidad\" y \"Correo Electrónico\".\n- Separa \"Nombre Completo\" en \"nombre\" y \"apellido\" según el criterio.\n- Transforma \"Número de Celular\" en \"celularcontacts\" y \"celulardentalink\" según el criterio. No alteres los dígitos restantes.\n- Recolecta \"Cédula de Identidad\" y \"Correo Electrónico\" sin modificaciones.\n- **Siempre devuelve un JSON válido con exactamente estas 9 variables: \"nombre\", \"apellido\", \"celularcontacts\", \"celulardentalink\", \"mail\", \"cedula\", \"valido\", \"solo_ci\", \"FAM\". Ninguna puede faltar, aunque su valor sea \"\" o false.**\n- Maneja casos límite (campos vacíos, nulos, formatos inválidos) asignando \"\" a los campos de texto correspondientes y false a los booleanos.\n- No incluyas explicaciones ni texto adicional fuera del JSON.\n"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -544,
+        448
+      ],
+      "id": "1d4fb04c-a5cd-4a43-a1d4-0b855fce156e",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "Fa3aaCsYTBS79y3Y",
+          "name": "OpenAI la agencia®"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "45de1969-985b-4fa0-9566-4406607035ad",
+              "leftValue": "={{ $('OpenAI').item.json.choices[0].message.content.FAM }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        704,
+        224
+      ],
+      "id": "9946dad9-ecdf-4e1d-9ad3-972ae4832842",
+      "name": "es_familiar"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "contactId": "={{ $json.contactId }}",
+        "updateFields": {
+          "familyName": "={{ $('buscar').item.json.names.familyName }} ({{ $('OpenAI').item.json.choices[0].message.content.nombre }} {{ $('OpenAI').item.json.choices[0].message.content.apellido }})",
+          "givenName": "={{ $json.names.givenName }} ",
+          "honorificPrefix": "Pac. "
+        }
+      },
+      "type": "n8n-nodes-base.googleContacts",
+      "typeVersion": 1,
+      "position": [
+        928,
+        32
+      ],
+      "id": "1bcf65ab-cf16-4601-bfb3-373edb130bdd",
+      "name": "agregar_familiar",
+      "credentials": {
+        "googleContactsOAuth2Api": {
+          "id": "fXRpG9fgBT3lpMwL",
+          "name": "Sonrisas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "=✅ El familiar fue agregado en CONTACTS, ahora su nombre es: {{ $('buscar').item.json.names.familyName }} ({{ $('OpenAI').item.json.choices[0].message.content.nombre }} {{ $('OpenAI').item.json.choices[0].message.content.apellido }})",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1152,
+        32
+      ],
+      "id": "df4ab3c1-4696-43fb-99ee-ae8a2f2fdaf8",
+      "name": "Telegram6",
+      "webhookId": "3aa1f372-f5bb-424a-8519-b1aa773c6df9",
+      "credentials": {
+        "telegramApi": {
+          "id": "U6w5v5fCK9m1qbKO",
+          "name": "Crear Pacientes | Sonrisas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "6390727286",
+        "text": "=Fallo en el flujo:\n\n{{ $workflow.name }}\n\nCausa posible: API OpenAI\n\nVerifica la ejecución: {{ $json.execution.url }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        704
+      ],
+      "id": "5ae60b13-b2b1-4ab4-807d-2513880f8ddb",
+      "name": "Mensaje de error",
+      "webhookId": "3b706118-5877-4684-8e2d-7f4cb828a76e",
+      "credentials": {
+        "telegramApi": {
+          "id": "V5k84z3AjQc9Y5yg",
+          "name": "botla agencia"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 74447245,
+          "message": {
+            "message_id": 5336,
+            "from": {
+              "id": 8079765375,
+              "is_bot": false,
+              "first_name": "Suy",
+              "last_name": "Call Center",
+              "language_code": "es"
+            },
+            "chat": {
+              "id": 8079765375,
+              "first_name": "Suy",
+              "last_name": "Call Center",
+              "type": "private"
+            },
+            "date": 1778329828,
+            "text": "Estuve Matías Manfredi Nuñez 63242867  \n 096110816  luciladahiananunez@gmail.com",
+            "entities": [
+              {
+                "offset": 29,
+                "length": 8,
+                "type": "phone_number"
+              },
+              {
+                "offset": 41,
+                "length": 9,
+                "type": "phone_number"
+              },
+              {
+                "offset": 52,
+                "length": 28,
+                "type": "email"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Telegram4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "buscar_todos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "crear": {
+      "main": [
+        [
+          {
+            "node": "Telegram2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar": {
+      "main": [
+        [
+          {
+            "node": "es_familiar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_todos": {
+      "main": [
+        [
+          {
+            "node": "existe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "actualizar": {
+      "main": [
+        [
+          {
+            "node": "Telegram3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "coincide Dentalink": {
+      "main": [
+        [
+          {
+            "node": "Telegram5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "actualizar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "existe": {
+      "main": [
+        [
+          {
+            "node": "buscar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "crear",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mensaje de error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "es_familiar": {
+      "main": [
+        [
+          {
+            "node": "agregar_familiar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "coincide Dentalink",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agregar_familiar": {
+      "main": [
+        [
+          {
+            "node": "Telegram6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "errorWorkflow": "OBkUyb8fuo30DzA9"
+  },
+  "versionId": "99dc1de7-386e-4d66-affe-313f8a746071",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  },
+  "id": "w1WDz3915R5PGPjn",
+  "tags": []
+}

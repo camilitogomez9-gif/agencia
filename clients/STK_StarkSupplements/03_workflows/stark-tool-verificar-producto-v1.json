@@ -1,0 +1,1889 @@
+{
+  "name": "Stark | Tool Verificar Producto",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "mensaje_del_usuario",
+              "type": "any"
+            },
+            {
+              "name": "id",
+              "type": "any"
+            },
+            {
+              "name": "enviar_info"
+            },
+            {
+              "name": "entity_id",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        96,
+        752
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "b5942df6-0160-4ef7-965d-57583acdc8aa",
+      "name": "Replace me with your logic",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        320,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appuXkgI7RaGv3Tjp",
+          "mode": "list",
+          "cachedResultName": "Untitled Base",
+          "cachedResultUrl": "https://airtable.com/appuXkgI7RaGv3Tjp"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbljddNRjbNZXR1yt",
+          "mode": "list",
+          "cachedResultName": "Prods",
+          "cachedResultUrl": "https://airtable.com/appuXkgI7RaGv3Tjp/tbljddNRjbNZXR1yt"
+        },
+        "filterByFormula": "AND({Estado}=\"Activo\", {Tipo}=\"Unitario\")",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1344,
+        448
+      ],
+      "id": "eeb1ed68-6573-461c-83cc-7bb265b007f5",
+      "name": "Search records",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "4cTEmbk75advsozg",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# Mensaje del usuario: \n{{ $('When Executed by Another Workflow').first().json.mensaje_del_usuario }}\n\n# Últimos mensajes intercambiados entre el agente y el usuario: \n{{ $('Execute a SQL query2').first().json.contexto_formateado }}\n\n# Productos posibles (texto o lista): {{ $('Code in JavaScript1').item.json.product_options }}",
+        "options": {
+          "systemMessage": "=# Rol\nSos un verificador de producto (matching + selección).\nLeés:\n1) mensaje_del_usuario (texto exacto)\n2) ultimos_mensajes (historial reciente; puede incluir “Used tools…” con info de productos)\n3) productos_posibles (string con candidatos separados por comas y/o saltos de línea)\ny devolvés SOLO un JSON válido con la estructura indicada.\n\nPROHIBIDO: texto extra, explicaciones, markdown.\n\n# Output (OBLIGATORIO: SOLO este JSON)\n{\n  \"status\": \"RESOLVED\" | \"AMBIGUOUS\" | \"NOT_FOUND\",\n  \"productos_verificados\": array<string> | null,\n  \"posibles_productos\": array<string> | null,\n  \"producto_principal\": string | null\n}\n\n# Definiciones clave\n- “Familia/Base” = el texto ANTES del primer \"&\" en cada candidato (ej: \"Creatina Monohidratada\", \"Pre Entrenamiento\", \"Stark Whey Protein\", \"Stark ISO-X (Whey Isolate)\", \"Termogénico Stark Burner\").\n- “Variante” = sabor/tamaño/formato (todo lo que viene después del primer \"&\").\n\nREGLA CRÍTICA: En tus outputs NUNCA pongas 2 variantes de la MISMA familia.\nMáximo 1 candidato por familia. Máximo 3 candidatos totales.\n**Excepción:** El usuario pide explícitamente mostrar los productos de distinto sabor o cantidades.\n\n# Normalización mental (solo para comparar)\n- minúsculas, sin tildes\n- ignorar guiones/espacios/puntuación (iso-x == isox)\n- tolerar typos leves\n\n# Prioridad de señales (INNEGOCIABLE)\n1) Lo explícito en mensaje_del_usuario manda (ej “creatina”, “quemagrasa”, “pre entreno”, “omega 3”…).\n2) Si NO hay producto explícito, usar objetivo (masa / bajar grasa / rendimiento / cardio / energía).\n3) Si el usuario habla por referencia (“ese”, “el de antes”, “mandame de nuevo”, “la foto”), usar ultimos_mensajes.\n\n# Regla “YA MOSTRADO” (anti-repetición)\nConsiderá una familia como YA MOSTRADA si en ultimos_mensajes aparece:\n- un bloque de tool (“Used tools: ... verificar_producto ...”) con ese producto, o\n- el agente mencionó claramente esa familia en una recomendación.\n\n# Paso PREVIO OBLIGATORIO — Extraer FAMILIAS YA MOSTRADAS (hacer ANTES de cualquier selección)\n\nAntes de analizar la intención del usuario, DEBÉS recorrer ultimos_mensajes y construir una lista llamada FAMILIAS_EXCLUIDAS.\n\nUna familia se considera YA MOSTRADA si en ultimos_mensajes ocurre CUALQUIERA de estas condiciones:\n- El agente mencionó claramente esa familia en una recomendación (ej: \"te recomiendo la Creatina Monohidratada…\")\n- Un bloque \"Used tools: ... verificar_producto ... Result:\" contiene esa familia dentro del campo \"nombre\" del JSON de respuesta\n- El agente envió una ficha, foto o descripción de esa familia\n\nINSTRUCCIÓN CLAVE PARA DETECCIÓN EN BLOQUES DE TOOLS:\nLos bloques \"Used tools\" contienen JSONs extensos con fichas técnicas. NO leas todo el bloque. Buscá ÚNICAMENTE el campo \"nombre\" dentro del JSON. Ese campo contiene el nombre del producto que ya fue mostrado.\n\nEjemplo de extracción:\nSi en ultimos_mensajes hay un bloque que contiene:\n\"nombre\":\"Creatina Monohidratada & Sin sabor\"\nEntonces la familia \"Creatina Monohidratada\" va a FAMILIAS_EXCLUIDAS.\n\nREGLA ABSOLUTA: Las familias en FAMILIAS_EXCLUIDAS quedan ELIMINADAS de la selección. NO se consideran, NO se devuelven.\n\nÚNICA EXCEPCIÓN — el usuario pide explícitamente esa familia con:\n- Mención directa del producto (\"quiero la creatina\", \"mandame la whey\")\n- Re-envío (\"de nuevo\", \"reenviame\", \"pasame la foto/ficha otra vez\", \"ese mismo\", \"el de antes\")\n\nEn estos casos, la familia SÍ puede devolverse aunque esté en FAMILIAS_EXCLUIDAS.\n\nSi después de excluir las familias ya mostradas NO queda ninguna familia razonable para el objetivo del usuario, devolvé status = \"NOT_FOUND\". NUNCA repitas una familia ya mostrada como \"alternativa\".\n\n# Mapa objetivo → familias (usar solo si NO hay producto explícito)\n- aumentar masa / ganar músculo / hipertrofia -> Creatina Monohidratada + (Proteína)\n- rendimiento / fuerza / potencia / \"quiero mejorar\" -> Creatina Monohidratada (+ Pre Entrenamiento solo si menciona energía antes de entrenar)\n- consulta genérica de gym / \"qué me recomendás\" / \"qué es lo mejor\" -> Creatina Monohidratada\n- energía antes de entrenar / cardio intenso / \"pre\" -> Pre Entrenamiento\n- quemar grasa / quemagrasa / bajar grasa / definición / \"burner\" -> Termogénico Stark Burner\n- recuperación / agujetas / \"recuperar\" -> Glutamina\n- estrés / ansiedad / dormir -> Ashwagandha\n- salud general / corazón -> Omega 3 (y/o Multivitaminas si aplica)\n\n# Criterio de priorización — Creatina\nLa Creatina Monohidratada es el producto más vendido del negocio. Cuando la intención del usuario sea COMPATIBLE con creatina, priorizala sobre otras familias.\n\nIntenciones COMPATIBLES con creatina (priorizarla):\n- Rendimiento / fuerza / potencia\n- Aumentar masa / ganar músculo / hipertrofia\n- \"Quiero algo para el gym\" / \"qué me recomendás\" / \"qué es lo mejor\" / consultas genéricas de entrenamiento\n- Energía / \"me falta fuerza\" / \"quiero mejorar\"\n\nIntenciones NO compatibles (NO priorizar creatina, respetar el mapa de objetivos):\n- Bajar grasa / definición / quemar → Termogénico\n- Estrés / ansiedad / dormir → Ashwagandha\n- Recuperación / agujetas → Glutamina\n- Salud general / corazón → Omega 3\n- El usuario pide EXPLÍCITAMENTE otro producto (\"quiero pre entreno\", \"quiero proteína\")\n\nCómo aplicar la priorización:\n- Si la intención es compatible Y el usuario NO pidió un producto explícito → Creatina debe ser la PRIMERA familia seleccionada (producto_principal).\n- Si el mapa de objetivos indica múltiples familias (ej: masa → Proteína + Creatina), Creatina va primero como producto_principal.\n- Si Creatina está en FAMILIAS_EXCLUIDAS (ya se mostró), NO la fuerces. Pasá a la siguiente familia del mapa de objetivos con normalidad.\n- Si el usuario pide explícitamente otro producto, respetá su pedido. La priorización NUNCA anula un pedido explícito.\n\n# Regla proteína (para evitar AMBIGUOUS infinito)\nSi el usuario dice “proteína” sin especificar:\n- Si menciona “aislada / ISO / digestión / intolerancia lactosa / liviana” -> elegir Stark ISO-X (Whey Isolate)\n- Si NO menciona nada -> elegir Stark Whey Protein (por default)\n\n# Selección de representante por familia (anti-sabores)\nCuando elegís una línea candidata de una familia:\nA) Si el usuario menciona sabor/tamaño/formato -> debe coincidir.\nB) Si NO menciona variante:\n   1) Elegí la variante que contenga “Sin sabor” si existe.\n   2) Si NO existe “Sin sabor”, elegí la primera aparición de esa familia en productos_posibles (determinístico).\nNunca devuelvas más de 1 línea por familia.\n\n# Construcción del resultado\n1) Parseá productos_posibles (separador: comas y/o saltos de línea).\n2) Detectá familias pedidas por:\n   - palabras del mensaje (producto explícito)\n   - si no hay, por objetivo (mapa)\n   - si no hay, por referencia usando ultimos_mensajes\n3) ANTES DE SELECCIONAR: Eliminá de los candidatos todas las familias que estén en FAMILIAS_EXCLUIDAS (construida en el Paso PREVIO OBLIGATORIO). Solo avanzá con las familias restantes. Si no queda ninguna familia válida, devolvé NOT_FOUND.\n4) Seleccioná hasta 3 familias totales con esta prioridad:\n   - familias explícitas en el mensaje\n   - luego familias por objetivo\n   - luego familias por referencia/contexto\n   - y dentro de cada grupo: preferí las NO mostradas\n5) Para cada familia elegida, seleccioná 1 representante exacto de productos_posibles usando la regla anti-sabores.\n\n# Status\n- RESOLVED: si encontraste 1 a 3 representantes y no necesitás pedir una aclaración para cumplir el pedido actual.\n- AMBIGUOUS: SOLO si el mensaje pide algo que puede ser 2+ familias distintas y no hay señal para elegir (ej: “quiero algo para rendir” sin más) -> devolvé 1 representante por familia posible (max 3, sin variantes).\n- NOT_FOUND: si no hay match razonable ni por producto explícito, ni por objetivo, ni por referencia.\n\n# Autochequeo antes de responder (obligatorio)\n- JSON válido (comillas dobles, null real)\n- status consistente con nulos/no nulos\n- cada string devuelto existe EXACTO en productos_posibles\n- max 3 items, y sin repetir familia\n- ninguna familia devuelta está en FAMILIAS_EXCLUIDAS (salvo que el usuario pidió explícitamente esa familia o reenvío)\n- si el usuario pidió \"otro\", \"diferente\", \"alternativa\", \"qué más tenés\", \"más opciones\" -> TODAS las familias devueltas son DISTINTAS a las de FAMILIAS_EXCLUIDAS\n\n# Notas finales\n- Tomate el tiempo necesario para tomar la mejor decisión posible en cada interacción.\n- SIEMPRE construí FAMILIAS_EXCLUIDAS como primer paso, antes de cualquier análisis de intención o scoring."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1792,
+        448
+      ],
+      "id": "f01f6177-a438-46a0-8f4c-144112240a45",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node (JavaScript)\n// Objetivo: devolver un array con strings tipo: \"Nombre & Sabor (si aplica) & Contenido Neto\"\n// Soporta:\n// - items normales (cada item es un producto)\n// - un solo item cuyo json ES un array de productos (como en tu ejemplo)\n// - salidas tipo Airtable con `fields`\n// - keys con espacios: \"Contenido Neto\", etc.\n\nconst SOURCE_NODE = 'Search records';\n\n// 1) Traemos items del nodo \"Search records\" si existe; si no, usamos el input directo\nlet items = [];\ntry {\n  items = $items(SOURCE_NODE);\n} catch (e) {\n  items = $input.all();\n}\n\n// 2) Normalizamos a \"records\" (array de objetos producto)\nconst records = [];\n\nfor (const item of items) {\n  const j = item?.json;\n\n  if (Array.isArray(j)) {\n    // Caso: un item cuyo json ya es un array de productos\n    records.push(...j);\n    continue;\n  }\n\n  if (Array.isArray(j?.records)) {\n    // Caso: { records: [...] }\n    records.push(...j.records);\n    continue;\n  }\n\n  // Caso típico: un producto por item\n  if (j?.fields && typeof j.fields === 'object') {\n    // Airtable style: { id, fields: {...} }\n    records.push({ id: j.id, createdTime: j.createdTime, ...j.fields });\n  } else if (j && typeof j === 'object') {\n    records.push(j);\n  }\n}\n\n// 3) Helpers seguros\nconst clean = (v) => (v === undefined || v === null ? '' : String(v).trim());\n\nconst getField = (rec, keys) => {\n  for (const k of keys) {\n    if (rec && Object.prototype.hasOwnProperty.call(rec, k)) {\n      const val = clean(rec[k]);\n      if (val) return val;\n    }\n  }\n  return '';\n};\n\n// 4) Formateamos \"Nombre & Sabor (si aplica) & Contenido\"\nconst product_options = [];\n\nfor (const rec of records) {\n  const nombre = getField(rec, ['Nombre', 'name', 'producto', 'Product', 'Title']);\n  const sabor = getField(rec, ['Sabor', 'Flavor', 'flavor']);\n  const contenido = getField(rec, ['Contenido Neto', 'ContenidoNeto', 'contenido_neto', 'Net Content', 'net_content']);\n\n  if (!nombre) continue; // evitamos strings vacíos\n\n  let label = nombre;\n  if (sabor) label += ` & ${sabor}`;\n  if (contenido) label += ` & ${contenido}`;\n\n  product_options.push(label);\n}\n\n// 5) Validación: que no salga vacío\nif (product_options.length === 0) {\n  throw new Error(\n    `No se pudo construir ningún nombre de producto. Revisá que existan campos como \"Nombre\", \"Sabor\" y \"Contenido Neto\" en la salida de \"${SOURCE_NODE}\" (o en el input directo).`\n  );\n}\n\n// 6) Devolvemos 1 item con el array (ideal para pasárselo a un AI Agent)\nreturn [\n  {\n    json: {\n      product_options,\n      product_options_text: product_options.join('\\n'), // útil si preferís meterlo como texto al agente\n      count: product_options.length,\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        448
+      ],
+      "id": "96d4c420-9029-42c1-a10d-c2fe7931782d",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1776,
+        608
+      ],
+      "id": "f5f27455-8ea9-4022-a47f-d6a46ced2e99",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "CWz84fUE1wUT8CXn",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7646b217-3969-4a72-8eec-4c9c844d3a02",
+              "name": "respuesta",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2368,
+        560
+      ],
+      "id": "49020e04-f669-4e54-afe3-15372d2a050a",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "content": "## Arreglar code con nueva base de datos y que de el producto ganador o los productos ganadores separados por &",
+        "width": 720
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        400,
+        -400
+      ],
+      "id": "bbf52e60-92ce-48b0-9f91-479982a334e1",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2816,
+        352
+      ],
+      "id": "e98d149c-b87d-4e0c-8c08-fb8a73d7cf8e",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appuXkgI7RaGv3Tjp",
+          "mode": "list",
+          "cachedResultName": "Stark Supplements",
+          "cachedResultUrl": "https://airtable.com/appuXkgI7RaGv3Tjp"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbljddNRjbNZXR1yt",
+          "mode": "list",
+          "cachedResultName": "Prods",
+          "cachedResultUrl": "https://airtable.com/appuXkgI7RaGv3Tjp/tbljddNRjbNZXR1yt"
+        },
+        "filterByFormula": "=AND(\n  LOWER({Nombre}) = LOWER('{{ $json.nombre }}'),\n  LOWER({Sabor}) = LOWER('{{ $json.sabor }}')\n)\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        3264,
+        448
+      ],
+      "id": "b7075799-2206-4a0e-8fb6-0900785659bd",
+      "name": "Search_Products",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "4cTEmbk75advsozg",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        4208,
+        448
+      ],
+      "id": "aac8d80a-8691-4d74-93bf-4c62049fa5ba",
+      "name": "Wait3",
+      "webhookId": "7443fd4e-e2a5-43e5-b43e-66367bcb109f",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "producto",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2592,
+        352
+      ],
+      "id": "24c3fb7e-b111-4a27-b308-90be0e0e9020",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code Node (JavaScript)\n\n// Trae TODOS los items que salieron del nodo \"Code in JavaScript3\"\nconst items = $('ObtenerProds Sin sabor').all();\n\n// Armamos el array final de productos (solo strings)\nconst productos = items\n  .map(i => i.json?.producto)\n  .filter(p => typeof p === 'string' && p.trim() !== '')\n  .map(p => p.trim());\n\n// (opcional) también podés recuperar baseName si lo necesitás\nconst productos_detalle = items\n  .map(i => ({\n    producto: (i.json?.producto ?? '').toString().trim(),\n    baseName: (i.json?.baseName ?? '').toString().trim(),\n    index: i.json?.index ?? null\n  }))\n  .filter(x => x.producto);\n\nreturn [\n  {\n    json: {\n      productos,              // <-- array simple [\"...\", \"...\"]\n      productos_detalle,      // <-- array con info extra\n      total: productos.length\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3264,
+        256
+      ],
+      "id": "c6fe4760-6070-4f0b-9649-b7c201068690",
+      "name": "Recupera Prods"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\n\n// array de strings: [\"Stark ISO-X ... & Vainilla & ...\", ...]\nconst arr = Array.isArray(input.productos) ? input.productos : [];\n\nfunction escAirtableString(s) {\n  // Airtable usa comillas simples, y las comillas simples internas se escapan duplicándolas\n  return String(s ?? '').trim().replace(/'/g, \"''\");\n}\n\nfunction lowerKey(nombre, sabor) {\n  return `${String(nombre ?? '').trim().toLowerCase()}|${String(sabor ?? '').trim().toLowerCase()}`;\n}\n\n// 1) Parse por \"&\"\nconst parsed = arr.map((line, idx) => {\n  const parts = String(line ?? '')\n    .split('&')\n    .map(p => p.trim())\n    .filter(Boolean);\n\n  const nombre = parts[0] ?? null;\n  const sabor = parts[1] ?? 'Sin sabor';\n  const contenido = parts[2] ?? null;\n\n  return {\n    idx,\n    raw: line,\n    nombre,\n    sabor,\n    contenido,\n    key: lowerKey(nombre, sabor),\n  };\n}).filter(p => p.nombre); // descarta vacíos\n\n// 2) Construir OR( AND(nombre+sabor), AND(...), ... )\nconst conditions = parsed.map(p => {\n  const n = escAirtableString(p.nombre);\n  const s = escAirtableString(p.sabor);\n  return `AND(LOWER({Nombre})=LOWER('${n}'), LOWER({Sabor})=LOWER('${s}'))`;\n});\n\n// Si querés asegurar Activo:\nconst airtable_formula =\n  conditions.length === 0\n    ? `FALSE()`\n    : `AND({Estado}='Activo', OR(${conditions.join(',')}))`;\n\nreturn [{\n  json: {\n    ...input,\n    parsed_productos: parsed,\n    airtable_formula,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3472,
+        256
+      ],
+      "id": "3f376a26-b6f8-473f-8b98-fc764027042f",
+      "name": "Arma fórmula"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appuXkgI7RaGv3Tjp",
+          "mode": "list",
+          "cachedResultName": "Stark Supplements",
+          "cachedResultUrl": "https://airtable.com/appuXkgI7RaGv3Tjp"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbljddNRjbNZXR1yt",
+          "mode": "list",
+          "cachedResultName": "Prods",
+          "cachedResultUrl": "https://airtable.com/appuXkgI7RaGv3Tjp/tbljddNRjbNZXR1yt"
+        },
+        "filterByFormula": "={{ $json.airtable_formula }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        3696,
+        256
+      ],
+      "id": "6a15acdb-9dca-463a-879b-7cf3534b1456",
+      "name": "Obtengo prods",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "4cTEmbk75advsozg",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nfunction getFields(j) {\n  return (j && j.fields && typeof j.fields === 'object') ? j.fields : (j || {});\n}\n\nfunction clean(v) {\n  if (v === undefined || v === null) return null;\n  if (typeof v === 'string') {\n    const s = v.trim();\n    return s.length ? s : null;\n  }\n  return v;\n}\n\nconst FIELD_MAP = {\n  nombre:        \"Nombre\",\n  categoria:     \"Categoría\",\n  precio:        \"Precio\",\n  sabor:         \"Sabor\",\n  contenido_neto:\"Contenido Neto\",\n  casos_de_uso:  \"Casos de Uso\",\n  como_ingerir:  \"Como Ingerir\",\n};\n\nconst productos = items.map((it, idx) => {\n  const f = getFields(it.json);\n  return {\n    producto_n:     idx + 1,\n    nombre:         clean(f[FIELD_MAP.nombre]),\n    categoria:      clean(f[FIELD_MAP.categoria]),\n    precio:         clean(f[FIELD_MAP.precio]),\n    sabor:          clean(f[FIELD_MAP.sabor]),\n    contenido_neto: clean(f[FIELD_MAP.contenido_neto]),\n    casos_de_uso:   clean(f[FIELD_MAP.casos_de_uso]),\n    como_ingerir:   clean(f[FIELD_MAP.como_ingerir]),\n  };\n});\n\nconst productos_json = { productos };\n\nconst productos_texto = productos.map(p => [\n  `[[PRODUCTO_${p.producto_n}]]`,\n  `Nombre: ${p.nombre ?? \"N/D\"}`,\n  `Categoría: ${p.categoria ?? \"N/D\"}`,\n  `Precio: ${p.precio ?? \"N/D\"}`,\n  `Sabor: ${p.sabor ?? \"N/D\"}`,\n  `Contenido Neto: ${p.contenido_neto ?? \"N/D\"}`,\n  ``,\n  `Casos de Uso:`,\n  `${p.casos_de_uso ?? \"N/D\"}`,\n  ``,\n  `Como Ingerir:`,\n  `${p.como_ingerir ?? \"N/D\"}`,\n  `[[/PRODUCTO_${p.producto_n}]]`,\n].join('\\n')).join('\\n\\n-----\\n\\n');\n\nreturn [{\n  json: {\n    productos_json,\n    productos_json_string: JSON.stringify(productos_json),\n    productos_texto,\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3920,
+        256
+      ],
+      "id": "966b8a8d-32d7-4ad3-a1d1-83ddf75fe0e5",
+      "name": "ordena variables"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://criscapitalbrothers.kommo.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": {{ $('Search_Products').item.json.bot_id }},\n    \"entity_id\": {{ $('When Executed by Another Workflow').first().json.entity_id }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5072,
+        448
+      ],
+      "id": "f6b7f1f3-0475-4cae-b172-d71374767fd6",
+      "name": "Envio Foto",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node (JavaScript)\n\n// Entrada: puede venir en $json.productos, $json.producto, $json.text, etc.\n// Ajustá el fallback según tu flujo.\nconst raw =\n  $json.productos ??\n  $json.producto ??\n  $json.entrada ??\n  $json.text ??\n  '';\n\nconst s = String(raw).trim();\n\n// Separa por \"&\" y limpia espacios alrededor\nconst parts = s\n  .split('&')\n  .map(p => p.trim())\n  .filter(Boolean);\n\n// Mapea a campos esperados\nconst nombre = parts[0] ?? null;\nconst sabor = parts[1] ?? 'Sin sabor';\nconst contenido_neto = parts[2] ?? null;\n\nreturn [\n  {\n    json: {\n      entrada_raw: s,\n      nombre,\n      sabor,\n      contenido_neto,\n      parts,\n    },\n  },\n];\n$input.first().json.productos"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3040,
+        448
+      ],
+      "id": "60ac0aec-5447-47d6-bb0f-13bf45659f3d",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bc091aea-0fbc-4fa8-9153-aca18ab91ee7",
+              "name": "respuesta",
+              "value": "={{ $json.productos_json_string }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4144,
+        256
+      ],
+      "id": "7802619f-bd65-4f32-b00a-ed8f50389d51",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code Node (JavaScript)\n\n// 1) Tomamos el output del AI Agent (puede venir como string, objeto, o array como en tu ejemplo)\nconst raw = $('AI Agent').first().json.output;\n\n// Helpers de parse / extracción\nconst safeJsonParse = (s, ctx = 'payload') => {\n  try {\n    return JSON.parse(s);\n  } catch (e) {\n    throw new Error(`No se pudo parsear JSON en ${ctx}: ${e.message}`);\n  }\n};\n\n/**\n * Extrae el \"data\" final con esta lógica:\n * - Si raw es array: toma el primer elemento\n *   - si ese elemento tiene .output => usa eso\n * - Si raw es objeto y tiene .output => usa eso\n * - Si lo que queda es string => JSON.parse\n * - Si lo que queda es objeto => se usa tal cual\n */\nconst extractData = (rawValue) => {\n  if (rawValue == null) {\n    throw new Error(`$('AI Agent').first().json.output vino null/undefined`);\n  }\n\n  let payload = rawValue;\n\n  // Caso nuevo: output = [ { output: \"{...json...}\" } ]\n  if (Array.isArray(payload)) {\n    if (payload.length === 0) {\n      throw new Error(`$('AI Agent').first().json.output vino como array vacío`);\n    }\n    const first = payload[0];\n\n    if (first == null) {\n      throw new Error(`$('AI Agent').first().json.output[0] vino null/undefined`);\n    }\n\n    // Si es { output: \"...\" } o { output: {...} }\n    if (typeof first === 'object' && first !== null && 'output' in first) {\n      payload = first.output;\n    } else {\n      payload = first;\n    }\n  } else if (typeof payload === 'object' && payload !== null && 'output' in payload) {\n    // Caso: { output: \"...\" } directo\n    payload = payload.output;\n  }\n\n  // Ahora payload debería ser string JSON o un objeto ya parseado\n  if (typeof payload === 'string') {\n    return safeJsonParse(payload, \"$('AI Agent').first().json.output (string)\");\n  }\n\n  if (typeof payload === 'object' && payload !== null) {\n    return payload;\n  }\n\n  throw new Error(\n    `Tipo de payload no soportado: ${typeof payload}. Valor: ${String(payload)}`\n  );\n};\n\n// 2) Parseo robusto\nconst data = extractData(raw);\n\n// 3) Elegimos lista de productos\n//    Mantiene el comportamiento anterior con posibles_productos,\n//    pero si viene null (como tu ejemplo) usa productos_verificados.\nconst posibles = Array.isArray(data?.posibles_productos) ? data.posibles_productos : [];\nconst verificados = Array.isArray(data?.productos_verificados) ? data.productos_verificados : [];\n\n// Fuente principal: posibles_productos si es array con contenido; si no, productos_verificados\nconst productosFuente = posibles.length ? posibles : verificados;\n\n// Helpers de negocio (igual que antes)\nconst normalize = (s) => String(s ?? '').trim().toLowerCase();\n\nconst getBaseName = (s) => {\n  const str = String(s ?? '').trim();\n  if (!str) return '';\n  const idx = str.indexOf('&');\n  return (idx === -1 ? str : str.slice(0, idx)).trim();\n};\n\nconst isSinSabor = (s) => normalize(s).includes('sin sabor');\n\n// 4) Agrupamos por nombre base\nconst groups = new Map(); // baseNameLower -> { baseName, candidates: [] }\n\nfor (const p of productosFuente) {\n  if (p == null) continue;\n  const original = String(p).trim();\n  if (!original) continue;\n\n  const baseName = getBaseName(original);\n  const key = normalize(baseName) || normalize(original);\n\n  if (!groups.has(key)) {\n    groups.set(key, { baseName, candidates: [] });\n  }\n  groups.get(key).candidates.push(original);\n}\n\n// 5) Para cada grupo: elegir \"sin sabor\" si existe, si no la primera\nconst selected = [];\nfor (const [, group] of groups) {\n  const candidates = group.candidates;\n\n  const sinSaborCandidate = candidates.find(isSinSabor);\n\n  selected.push({\n    baseName: group.baseName || getBaseName(sinSaborCandidate ?? candidates[0]) || '',\n    producto: sinSaborCandidate ?? candidates[0],\n    teniaSinSabor: Boolean(sinSaborCandidate),\n    variantes_encontradas: candidates.length,\n  });\n}\n\n// 6) Output: un item por producto final (igual que antes)\nreturn selected.map((x, i) => ({\n  json: {\n    index: i + 1,\n    baseName: x.baseName,\n    producto: x.producto,\n    teniaSinSabor: x.teniaSinSabor,\n    variantes_encontradas: x.variantes_encontradas,\n  },\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2368,
+        352
+      ],
+      "id": "02726e1e-c8f2-4296-a5ff-486bcef544af",
+      "name": "ObtenerProds Sin sabor"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e09a844c-1bc7-48bb-b674-15d651eb5a57",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "NOT_FOUND",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2144,
+        448
+      ],
+      "id": "73c05403-f01e-4084-949d-4203290c3237",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# Mensaje del usuario: \n{{ $('When Executed by Another Workflow').first().json.mensaje_del_usuario }}\n\n# Últimos mensajes intercambiados entre el agente y el usuario: \n{{ $json.contexto_formateado }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Rol\nSos un clasificador binario.\nTu ÚNICA tarea es decidir si el siguiente paso debe recomendar/mostrar:\n- \"PACKS\" (default)\n- \"UNITARIO\" (solo si el usuario lo pide explícitamente)\n\nLeés:\n1) mensaje_del_usuario (texto exacto)\n2) ultimos_mensajes / contexto (si existe)\n\nDevolvés SOLO un JSON válido, sin texto extra.\n\n# Output (OBLIGATORIO)\n{\n  \"decision\": \"PACKS\" | \"UNITARIO\"\n}\n\n# Regla Maestra (INNEGOCIABLE)\nSi no hay evidencia FUERTE de que el usuario quiere unitario → decision = \"PACKS\".\n\n# Cuándo elegir UNITARIO (solo con evidencia fuerte)\nElegí \"UNITARIO\" si el usuario (en el mensaje actual o en el contexto inmediato) cumple AL MENOS 1 de estos casos:\n\nA) Rechaza pack/combo explícitamente:\n- \"no quiero pack\", \"no quiero combo\", \"sin pack\", \"sin combo\", \"no en pack\", \"no en combo\", entre otras similares.\n\nB) Pide el producto suelto / individual / por separado:\n- \"suelto\", \"unitario\", \"individual\", \"por separado\", \"solo el producto\", \"la (proteína/creatina) sola\", \"sin shaker\", \"sin barra\", \"sin ejercitador\", entre otros similares.\n- Preguntas tipo: \"¿Cuánto vale la proteína sola?\" / \"¿Cuánto sale la creatina sola?\"\n\nC) Indica que ya tiene parte del pack y solo necesita 1 cosa:\n- \"ya tengo creatina\", \"ya tengo proteína\", \"ya tengo shaker\", \"ya tengo pre entreno\", entre otros similares.\n- \"me falta solo X\", \"solo necesito X\", \"quiero reponer X\", entre otros similares.\n\nD) Pide explícitamente “solo 1 unidad” del producto (unitario) y NO muestra interés en combo:\n- \"una sola\", \"1 unidad\", \"solo 1\", entre otros similares.\n(IMPORTANTE: si el usuario solo dice \"quiero creatina\" o \"quiero proteína\" sin aclarar suelto/solo/unidad → NO es unitario; sigue siendo PACKS.)\n\n# Cuándo elegir PACKS (default + señales a favor)\nElegí \"PACKS\" si:\n- El usuario pide un producto genérico sin rechazar packs: \"quiero creatina\", \"quiero proteína\", \"recomendame para masa\", \"para bajar grasa\", etc.\n- El usuario habla de objetivos o quiere “combo/plan”: \"combo\", \"pack\", \"kit\", \"plan\", \"todo junto\", \"completo\", \"para arrancar\"\n- Hay ambigüedad o duda → PACKS.\n\n# Desempate / Anti-error\nSi aparece la palabra \"solo\" pero NO aparece \"suelto/individual/por separado/ya tengo/sin pack/sin shaker/sin barra\" → decision = \"PACKS\".\n\n# Autoverificación (antes de responder)\n- ¿Mi salida es JSON válido?\n- ¿La clave es exactamente \"decision\"?\n- ¿El valor es exactamente \"PACKS\" o \"UNITARIO\"?\n\n# Responder\nRespondé SOLO con el JSON final."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        768,
+        752
+      ],
+      "id": "a6540269-a0cb-4606-9b52-d9d6cfc20115",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "content": "## Productos unitarios",
+        "height": 128
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        272
+      ],
+      "id": "c76447a4-e3d9-4061-890d-0a6603262659",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Decisor",
+        "height": 128
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        672,
+        704
+      ],
+      "id": "786f6977-6367-4e17-91a0-c47d1133f9e3",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.decision }}",
+                    "rightValue": "UNITARIO",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "bd742318-9386-4751-9304-0e7a07cd09d2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "unitario"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e8708b60-1ee9-4892-9ce8-722c7f5822d4",
+                    "leftValue": "={{ $json.output.decision }}",
+                    "rightValue": "PACKS",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "pack"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        1120,
+        752
+      ],
+      "id": "027f49b6-9d0e-4b28-b3a2-c4df103afa79",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appuXkgI7RaGv3Tjp",
+          "mode": "list",
+          "cachedResultName": "Untitled Base",
+          "cachedResultUrl": "https://airtable.com/appuXkgI7RaGv3Tjp"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbljddNRjbNZXR1yt",
+          "mode": "list",
+          "cachedResultName": "Prods",
+          "cachedResultUrl": "https://airtable.com/appuXkgI7RaGv3Tjp/tbljddNRjbNZXR1yt"
+        },
+        "filterByFormula": "AND({Estado}=\"Activo\", {Tipo}=\"Packs\")",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1344,
+        848
+      ],
+      "id": "a2c5777b-fc8a-494b-a609-c7c1de8315a7",
+      "name": "Search records1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "4cTEmbk75advsozg",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# Mensaje del usuario: \n{{ $('When Executed by Another Workflow').first().json.mensaje_del_usuario }}\n\n# Últimos mensajes intercambiados entre el agente y el usuario: \n{{ $('Execute a SQL query2').first().json.contexto_formateado }}\n\n# Productos posibles (texto o lista): \n{{ $json.product_options_text }}",
+        "options": {
+          "systemMessage": "=# Rol\nSos un verificador/selector de PACKS (matching + selección).\nLeés:\n1) mensaje_del_usuario (texto exacto)\n2) ultimos_mensajes (historial reciente; puede incluir “Used tools…” y menciones previas)\n3) productos_posibles (string con candidatos separados por guíones y saltos de línea; SOLO PACKS)\ny devolvés SOLO un JSON válido con la estructura indicada.\n\nPROHIBIDO: texto extra, explicaciones, markdown.\n\n# Output (OBLIGATORIO: SOLO este JSON)\n{\n  \"status\": \"RESOLVED\" | \"AMBIGUOUS\" | \"NOT_FOUND\",\n  \"productos_verificados\": array<string> | null,\n  \"posibles_productos\": array<string> | null,\n  \"producto_principal\": string | null\n}\n\n# Reglas CRÍTICAS (INNEGOCIABLES)\n1) Tu salida debe contener SIEMPRE como máximo 1 pack:\n   - RESOLVED -> productos_verificados = [\"<1 pack exacto>\"] y producto_principal igual a ese pack\n   - posibles_productos SIEMPRE null\n2) NUNCA devuelvas 2+ packs, aunque el mensaje mencione 2 cosas. Elegís el MEJOR pack único.\n3) Los strings devueltos deben existir EXACTOS en productos_posibles (mismo texto).\n\n# Normalización mental (solo para comparar nombres de packs contra la intención del usuario)\n- minúsculas, sin tildes\n- ignorar guiones/espacios/puntuación (iso-x == isox)\n- colapsar espacios\n- tolerar typos leves (preentreno/pre entreno, quemagrasa/quemar grasa, etc.)\n\n# Paso 0 — Parseo\nParseá productos_posibles separando por:\n- saltos de línea\nCada item = 1 pack candidato (string completo).\n\n# Paso 1 — No suele ser común, pero: detectar si el usuario pide un pack específico (máxima prioridad)\nSi el usuario escribe un nombre/tier reconocible de pack:\n- “combo”, “super pack”, “mega pack”, “pro pack”, “max”, “infiniti”\ny/o menciona ISO/WHEY + pack,\nintentá matchear directo un candidato exacto o el más cercano.\nSi hay match claro -> ese es el pack elegido (salvo regla anti-repetición abajo).\n\n# Paso 2 — Extraer INTENCIÓN (tags) desde el mensaje (y contexto si el mensaje es corto)\nSi el mensaje es corto (“sí/no/dale/ok/ese/el de antes/mandame”) -> usá ultimos_mensajes para inferir objetivo/producto.\n\nExtraé TAGS de necesidad:\nA) Producto explícito:\n- creatina / creatinas / crea -> tag: CREATINA\n- proteína / whey / iso / isox -> tag: PROTEINA (subtag ISO o WHEY si aplica)\n- pre entreno / preentreno / pre / energía antes -> tag: PRE\n- quemagrasa / bajar grasa / definición / termogénico / burner -> tag: TERMO\n- omega 3 -> tag: OMEGA\n- glutamina -> tag: GLUTAMINA\n- colágeno -> tag: COLAGENO\n- multivitaminas -> tag: MULTI\n- bcaa / bcaas -> tag: BCAA\n- citratos / potasio -> tag: CITRATOS\n\nB) Objetivo (si NO hay producto explícito):\n- subir masa / ganar músculo / hipertrofia -> tags: CREATINA + PROTEINA (creatina primero)\n- rendimiento / fuerza / potencia / \"quiero mejorar\" -> tags: CREATINA (y PRE solo si menciona energía antes de entrenar)\n- consulta genérica de gym / \"qué me recomendás\" / \"qué es lo mejor\" -> tag: CREATINA\n- cardio / energía / \"antes de entrenar\" / \"me falta energía\" -> tag: PRE\n- bajar grasa / definición -> tag: TERMO (y PROTEINA si menciona cuidar músculo)\n- recuperación / agujetas -> tag: GLUTAMINA\n- estrés / dormir -> (si no hay packs de eso, NO inventes; elegí el pack más cercano si existe, si no NOT_FOUND)\n\n# Paso 3 — Regla ISO vs WHEY (anti-rotación sin sentido)\nSi la intención incluye PROTEINA y el usuario NO especifica ISO/WHEY:\n- Elegí WHEY por default (más general) SI existe algún pack WHEY relevante.\nElegí ISO SOLO si el usuario menciona cualquiera de estos disparadores:\n- “aislada”, “ISO”, “isox”, “digestión”, “liviana”, “intolerancia”, “me cae pesado”, “lactosa”.\nSi el usuario especifica ISO o WHEY -> respetalo.\n\n# Paso 3.5 — Criterio de priorización — Packs con Creatina\nLa Creatina es el producto más vendido del negocio. Cuando la intención del usuario sea COMPATIBLE con creatina, priorizá packs que incluyan creatina en su composición.\n\nIntenciones COMPATIBLES (priorizar packs con creatina):\n- Rendimiento / fuerza / potencia\n- Aumentar masa / ganar músculo / hipertrofia\n- \"Quiero algo para el gym\" / \"qué me recomendás\" / \"qué es lo mejor\" / consultas genéricas\n- Energía / \"quiero mejorar\"\n\nIntenciones NO compatibles (NO priorizar creatina, respetar los tags):\n- Bajar grasa / definición / quemar → packs con TERMOGENICO\n- Estrés / dormir → no forzar creatina\n- El usuario pide EXPLÍCITAMENTE un pack sin creatina (\"quiero solo proteínas\", \"un pack de colágeno\", etc.)\n\nCómo aplicar:\n- Si la intención es compatible, en el Paso 4 sumá +2 puntos extra a todo pack que contenga \"creatina\" o \"CREATINA\" en su nombre.\n- Si todos los packs con creatina están en PACKS_EXCLUIDOS (ya se mostraron), NO fuerces creatina. Pasá al siguiente mejor pack con normalidad.\n- Si el usuario pide explícitamente un pack sin creatina, respetá su pedido. La priorización NUNCA anula un pedido explícito.\n\n# Paso 4 — Scoring de packs (elegir 1 solo)\nANTES DE PUNTUAR: Eliminá de la lista de candidatos todos los packs que estén en PACKS_EXCLUIDOS (construida en Paso 5). Solo puntuá los packs restantes.\nPara cada pack candidato, asigná puntos mentalmente:\n\n1) Match de TAGS por nombre del pack:\n- +3 por cada tag principal presente en el texto del pack (ej: \"CREATINA\", \"WHEY\", \"ISO\", \"PRE\", \"TERMOGENICO\", \"OMEGA\", \"GLUTAMINA\", etc.)\n- +2 si incluye explícitamente el subtag correcto (ISO vs WHEY)\n- -3 si contradice subtag pedido (usuario pide ISO y el pack es WHEY, o viceversa)\n- +1 si el pack tiene \"SHAKER\" (no decide solo, solo suma si empata)\n- +2 si el pack contiene CREATINA y la intención es compatible con creatina (ver Paso 3.5)\n\n2) TIER/INTENCIÓN (escalar de menor a mayor):\nPor defecto, empezá siempre por los tiers más bajos (más accesibles):\n- Si es la primera recomendación o no hay señal de \"full\" → preferí \"COMBO\" o \"SUPER PACK\"\n- Si el usuario pide \"lo mejor\", \"full\", \"completo\", \"máximo\", \"pro\", \"todo\", \"fuerte\", \"no me importa el precio\" → preferí \"MEGA / PRO / MAX / INFINITI\"\n- Si el usuario ya vio un pack básico (está en PACKS_EXCLUIDOS) y pide otro/más/mejor → subí un tier (de COMBO → SUPER PACK → MEGA PACK → PRO PACK → MAX → INFINITI)\nRegla de seguridad:\n- NUNCA elijas \"MAX/INFINITI\" en la primera recomendación salvo que el usuario lo pida explícitamente o sea el único match fuerte.\n\n3) Determinismo:\nSi hay empate de score -> elegí el primer pack según el orden de aparición en productos_posibles.\n\n# Paso 5 — Extraer PACKS YA MOSTRADOS (OBLIGATORIO, hacer ANTES de cualquier scoring)\n\nAntes de analizar la intención del usuario, DEBÉS recorrer ultimos_mensajes y construir una lista llamada PACKS_EXCLUIDOS.\n\nUn pack se considera YA MOSTRADO si en ultimos_mensajes ocurre CUALQUIERA de estas condiciones:\n- El nombre del pack aparece como substring en un mensaje del agente (ej: el agente escribió \"te recomiendo el MEGA PACK WHEY…\")\n- Un bloque \"Used tools… Result:\" contiene el nombre del pack dentro del campo \"nombre\" del JSON de respuesta\n- El agente mencionó palabras clave únicas del pack que lo identifican inequívocamente\n\nINSTRUCCIÓN CLAVE: Para detectar el nombre dentro de bloques \"Used tools\", buscá específicamente el campo \"nombre\" dentro del JSON. Ignorá el resto del contenido técnico del bloque (mecanismo de acción, beneficios, etc.) — solo necesitás el campo \"nombre\".\n\nEjemplo de extracción:\nSi en ultimos_mensajes hay un bloque que contiene:\n\"nombre\":\"MEGA PACK WHEY + creatina + pre entreno + SHAKER\"\nEntonces PACKS_EXCLUIDOS = [\"MEGA PACK WHEY + creatina + pre entreno + SHAKER\"]\n\nREGLA ABSOLUTA: Los packs en PACKS_EXCLUIDOS quedan ELIMINADOS del scoring (Paso 4). NO se puntúan, NO se consideran, NO se devuelven.\n\nÚNICA EXCEPCIÓN: El usuario pide explícitamente el mismo pack con frases como:\n- \"ese mismo\", \"el mismo\", \"mandame ese\", \"reenviame\", \"mandalo de nuevo\", \"ese que me mostraste\", \"la foto otra vez\"\nEn ese caso, el pack SÍ puede devolverse aunque esté en PACKS_EXCLUIDOS.\n\nIMPORTANTE: Si después de excluir los packs ya mostrados NO queda ningún pack razonable para el objetivo del usuario, devolvé status = \"NOT_FOUND\". NUNCA repitas un pack ya mostrado como alternativa.\n\n# Notas finales:\n- el pack devuelto NO está en PACKS_EXCLUIDOS (salvo que el usuario pidió explícitamente reenvío)\n- si el usuario pidió \"otro\", \"diferente\", \"alternativa\", \"más opciones\" -> el pack devuelto es DISTINTO a todos los de PACKS_EXCLUIDOS"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1792,
+        848
+      ],
+      "id": "a6d13276-652e-499a-8d05-47aa17e15acf",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node (JavaScript)\n// Objetivo: devolver:\n// - product_options (array) con: \"Nombre & Categoría\"\n// - product_options_text (string) con bullets:\n//   - prod 1\n//   - prod 2\n//   - prod n\n\nconst SOURCE_NODE = 'Search records';\n\n// 1) Traemos items del nodo \"Search records\" si existe; si no, usamos el input directo\nlet items = [];\ntry {\n  items = $items(SOURCE_NODE);\n} catch (e) {\n  items = $input.all();\n}\n\n// 2) Normalizamos a \"records\" (array de objetos)\nconst records = [];\n\nfor (const item of items) {\n  const j = item?.json;\n\n  if (Array.isArray(j)) {\n    records.push(...j);\n    continue;\n  }\n\n  if (Array.isArray(j?.records)) {\n    records.push(...j.records);\n    continue;\n  }\n\n  if (j?.fields && typeof j.fields === 'object') {\n    records.push({ id: j.id, createdTime: j.createdTime, ...j.fields });\n  } else if (j && typeof j === 'object') {\n    records.push(j);\n  }\n}\n\n// 3) Helpers\nconst clean = (v) => (v === undefined || v === null ? '' : String(v).trim());\n\nconst getField = (rec, keys) => {\n  for (const k of keys) {\n    if (rec && Object.prototype.hasOwnProperty.call(rec, k)) {\n      const val = clean(rec[k]);\n      if (val) return val;\n    }\n  }\n  return '';\n};\n\n// 4) Formateamos \"Nombre & Categoría\"\nconst product_options = [];\n\nfor (const rec of records) {\n  const nombre = getField(rec, ['Nombre', 'name', 'producto', 'Product', 'Title']);\n  const categoria = getField(rec, ['Categoría', 'Categoria', 'category', 'Category']);\n\n  if (!nombre) continue;\n\n  let label = nombre;\n  if (categoria) label += ` & ${categoria}`;\n\n  product_options.push(label);\n}\n\n// 5) Validación\nif (product_options.length === 0) {\n  throw new Error(\n    `No se pudo construir ningún item. Revisá que existan los campos \"Nombre\" y/o \"Categoría\" en la salida de \"${SOURCE_NODE}\" (o en el input directo).`\n  );\n}\n\n// 6) Bullets con guión + enter\nconst product_options_text = `- ${product_options.join('\\n- ')}`;\n\n// 7) Output\nreturn [\n  {\n    json: {\n      product_options,\n      product_options_text,\n      count: product_options.length,\n    },\n  },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        848
+      ],
+      "id": "31778ee0-ed51-4841-9c73-08ae780ddd64",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1696,
+        992
+      ],
+      "id": "13d55c8b-f9e6-438d-95b2-aec8865845d6",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "CWz84fUE1wUT8CXn",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7646b217-3969-4a72-8eec-4c9c844d3a02",
+              "name": "respuesta",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2352,
+        1008
+      ],
+      "id": "a7c55a94-5d56-43ad-9f57-c78690a3dd0a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appuXkgI7RaGv3Tjp",
+          "mode": "list",
+          "cachedResultName": "Stark Supplements",
+          "cachedResultUrl": "https://airtable.com/appuXkgI7RaGv3Tjp"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbljddNRjbNZXR1yt",
+          "mode": "list",
+          "cachedResultName": "Prods",
+          "cachedResultUrl": "https://airtable.com/appuXkgI7RaGv3Tjp/tbljddNRjbNZXR1yt"
+        },
+        "filterByFormula": "=LOWER({Nombre}) = LOWER('{{ $json.nombre }}')\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2592,
+        832
+      ],
+      "id": "613808be-c0d1-4928-9cad-83278c02c102",
+      "name": "Search_Products1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "4cTEmbk75advsozg",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nfunction getFields(j) {\n  return (j && j.fields && typeof j.fields === 'object') ? j.fields : (j || {});\n}\n\nfunction clean(v) {\n  if (v === undefined || v === null) return null;\n  if (typeof v === 'string') {\n    const s = v.trim();\n    return s.length ? s : null;\n  }\n  return v;\n}\n\nconst FIELD_MAP = {\n  nombre:      \"Nombre\",\n  categoria:   \"Categoría\",\n  precio:      \"Precio\",\n  datos_clave: \"Datos Clave\",\n};\n\nconst productos = items.map((it, idx) => {\n  const f = getFields(it.json);\n  return {\n    producto_n: idx + 1,\n    nombre:      clean(f[FIELD_MAP.nombre]),\n    categoria:   clean(f[FIELD_MAP.categoria]),\n    precio:      clean(f[FIELD_MAP.precio]),\n    datos_clave: clean(f[FIELD_MAP.datos_clave]),\n  };\n});\n\nconst productos_json = { productos };\n\nconst productos_texto = productos.map(p => [\n  `[[PACK_${p.producto_n}]]`,\n  `Nombre: ${p.nombre ?? \"N/D\"}`,\n  `Categoría: ${p.categoria ?? \"N/D\"}`,\n  `Precio: ${p.precio ?? \"N/D\"}`,\n  ``,\n  `Datos Clave:`,\n  `${p.datos_clave ?? \"N/D\"}`,\n  `[[/PACK_${p.producto_n}]]`,\n].join('\\n')).join('\\n\\n-----\\n\\n');\n\nreturn [{\n  json: {\n    productos_json,\n    productos_json_string: JSON.stringify(productos_json),\n    productos_texto,\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2768,
+        832
+      ],
+      "id": "c053eb4b-76fb-4aa9-99c3-971130891baa",
+      "name": "ordena variables1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://criscapitalbrothers.kommo.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": {{ $('Search_Products1').item.json.bot_id }},\n    \"entity_id\": {{ $('When Executed by Another Workflow').first().json.entity_id }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4560,
+        832
+      ],
+      "id": "c9135385-4837-4acf-9c36-afd050c86b75",
+      "name": "Envio Foto1",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node (JavaScript)\n// Input principal: $('AI Agent2').first().json.output\n// Ese output suele venir como STRING con JSON adentro.\n// Luego:\n// - extrae producto_principal (fallback: productos_verificados[0])\n// - split por \"&\"\n// - mapea: nombre, categoria (y sabor como alias), contenido_neto\n\nconst agentRaw =\n  $('AI Agent2').first()?.json?.output ??\n  $json.output ??\n  $json.text ??\n  $json.entrada ??\n  '';\n\nconst rawStr = (typeof agentRaw === 'string') ? agentRaw : JSON.stringify(agentRaw);\nlet cleaned = String(rawStr).trim();\n\n// Limpia posibles fences ```json ... ```\ncleaned = cleaned\n  .replace(/^```(?:json)?/i, '')\n  .replace(/```$/i, '')\n  .trim();\n\n// Intenta parsear JSON\nlet parsed = null;\n\ntry {\n  parsed = JSON.parse(cleaned);\n} catch (e) {\n  // Fallback: busca el primer \"{\" y el último \"}\" y parsea ese fragmento\n  const start = cleaned.indexOf('{');\n  const end = cleaned.lastIndexOf('}');\n  if (start !== -1 && end !== -1 && end > start) {\n    try {\n      parsed = JSON.parse(cleaned.slice(start, end + 1));\n    } catch (e2) {\n      parsed = null;\n    }\n  }\n}\n\n// Si no pudimos parsear, tratamos el cleaned como si fuera directamente el producto\nif (!parsed || typeof parsed !== 'object') {\n  parsed = {\n    status: null,\n    productos_verificados: null,\n    posibles_productos: null,\n    producto_principal: cleaned,\n  };\n}\n\n// Elegimos el string del producto a partir del JSON del agente\nconst productStr =\n  (typeof parsed.producto_principal === 'string' && parsed.producto_principal.trim())\n    ? parsed.producto_principal.trim()\n    : (Array.isArray(parsed.productos_verificados) && parsed.productos_verificados.length)\n      ? String(parsed.productos_verificados[0]).trim()\n      : '';\n\nconst s = String(productStr).trim();\n\n// Split por \"&\"\nconst parts = s\n  .split('&')\n  .map(p => p.trim())\n  .filter(Boolean);\n\n// Mapeo de partes (mismo concepto que tu code)\nconst nombre = parts[0] ?? null;\nconst categoria = parts[1] ?? null;     // <- recomendado para tu caso \"Nombre & Categoría\"\nconst sabor = parts[1] ?? 'Sin sabor';  // <- alias por compatibilidad con tu estructura vieja\nconst contenido_neto = parts[2] ?? null;\n\nreturn [\n  {\n    json: {\n      agent_output_raw: cleaned,     // string original (limpio)\n      agent_output_parsed: parsed,   // objeto parseado\n      status: parsed.status ?? null,\n      productos_verificados: parsed.productos_verificados ?? null,\n      posibles_productos: parsed.posibles_productos ?? null,\n      producto_principal: parsed.producto_principal ?? null,\n\n      entrada_raw: s,               // producto final usado para split\n      parts,\n      nombre,\n      categoria,\n      sabor,\n      contenido_neto,\n    },\n  },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2368,
+        832
+      ],
+      "id": "9d979cff-b39e-4fa3-82b2-ca6db609a3bd",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bc091aea-0fbc-4fa8-9153-aca18ab91ee7",
+              "name": "respuesta",
+              "value": "={{ $('ordena variables1').item.json.productos_json_string }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4736,
+        832
+      ],
+      "id": "41ef885b-b2e4-4182-8cd3-2fe0557dca3d",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e09a844c-1bc7-48bb-b674-15d651eb5a57",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "NOT_FOUND",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2144,
+        848
+      ],
+      "id": "edce1df3-60ea-4256-9b09-1de80efae632",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "content": "## Packs",
+        "height": 128
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1856,
+        704
+      ],
+      "id": "751fcffd-5408-406f-a836-4ad5917990c0",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH msgs AS (\n  SELECT\n    id,\n    lower(message->>'type') AS mtype,\n    COALESCE(message->>'content', '') AS raw_content\n  FROM public.n8n_chat_histories\n  WHERE session_id = '{{ $('When Executed by Another Workflow').last().json.id }}'\n    AND message ? 'type'\n    AND message ? 'content'\n),\n\nclean AS (\n  SELECT\n    id,\n    mtype,\n\n    /* 1) Recorto TODO lo que sea “contexto inyectado” hacia abajo */\n    trim(\n      regexp_replace(\n        regexp_replace(\n          regexp_replace(\n            regexp_replace(\n              raw_content,\n\n              /* A) Si aparece el bloque “Ultimas interacciones...”, lo cortamos hasta el final */\n              '(?is)\\n*ultimas\\s+interacciones\\s+con\\s+el\\s+usuario\\s*:.*$',\n              '',\n              'g'\n            ),\n\n            /* B) Si por algún motivo ya viene con [INTERACCIÓN ...] adentro, lo cortamos */\n            '(?is)\\n*\\[interacci[oó]n\\s+\\d+\\].*$',\n            '',\n            'g'\n          ),\n\n          /* C) Sacamos tool traces del estilo “Calling X with input: {...}” */\n          '(?im)^\\s*calling\\s+[a-z0-9_]+\\s+with\\s+input\\s*:\\s*\\{.*$',\n          '',\n          'g'\n        ),\n\n        /* D) Quita prefijos tipo “Usuario:”, “Agente:”, etc. */\n        '(?im)^\\s*(mensaje\\s+del\\s+usuario|respuesta\\s+del\\s+agente|usuario|agente|assistant)\\s*:\\s*',\n        '',\n        'g'\n      )\n    ) AS content\n  FROM msgs\n),\n\nhumans AS (\n  SELECT id, content AS user_content\n  FROM clean\n  WHERE mtype IN ('human','user')\n    AND NULLIF(content, '') IS NOT NULL\n),\n\nais AS (\n  SELECT id, content AS agent_content\n  FROM clean\n  WHERE mtype IN ('ai','assistant')\n    AND NULLIF(content, '') IS NOT NULL\n),\n\npaired AS (\n  SELECT\n    h.id AS user_id,\n    h.user_content,\n    (\n      SELECT a.agent_content\n      FROM ais a\n      WHERE a.id > h.id\n      ORDER BY a.id\n      LIMIT 1\n    ) AS agent_content\n  FROM humans h\n  ORDER BY h.id DESC\n  LIMIT 6\n),\n\nordered AS (\n  SELECT\n    user_id,\n    user_content,\n    COALESCE(agent_content, '(sin respuesta registrada)') AS agent_content\n  FROM paired\n  ORDER BY user_id\n),\n\nformatted AS (\n  SELECT\n    '[INTERACCIÓN ' || ROW_NUMBER() OVER (ORDER BY user_id) || ']' || E'\\n' ||\n    'Usuario: ' || user_content || E'\\n' ||\n    'Agente: ' || agent_content AS block\n  FROM ordered\n)\n\nSELECT string_agg(block, E'\\n\\n') AS contexto_formateado\nFROM formatted;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        544,
+        752
+      ],
+      "id": "faf155c1-9b5c-4a78-97b8-3393f69d1a62",
+      "name": "Execute a SQL query2",
+      "credentials": {
+        "postgres": {
+          "id": "6DnX94CDxROcqpbH",
+          "name": "Stark Supplements"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"decision\": \"PACKS\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        912,
+        976
+      ],
+      "id": "f14239c9-2626-4397-8ac6-5ea782af86c3",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        784,
+        976
+      ],
+      "id": "af6f01eb-7f22-4ea8-b10e-c19b9d795541",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "CWz84fUE1wUT8CXn",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=# ROL\nSos un asesor técnico de Stark Supplements. Tu tarea es escribir una introducción técnica y convincente de un producto antes de que se le muestre la imagen al cliente por WhatsApp. La introducción se envía en 2 mensajes separados.\n\n# INPUT\nVas a recibir la siguiente información de UN solo producto:\n\"Nombre: {{ $json['Datos Clave'] }}\nCasos de uso: {{ $json['Casos de Uso'] }}\nBeneficios: {{ $json['Como Ingerir'] }}\"\n\n# REGLAS DE REDACCIÓN\n\n1) Escribí un texto TOTAL de 4 a 5 líneas, y después dividilo en 2 partes.\n2) El texto debe:\n   - Presentar qué es el producto y para qué sirve a nivel fisiológico/nutricional.\n   - Incluir al menos 2 datos técnicos reales, extraídos directamente de la variable de entrada. Ejemplos de datos técnicos: mecanismo de acción, compuesto activo, función biológica, valor nutricional concreto. Si la variable dice \"aumenta las reservas de fosfocreatina intramuscular\", usá eso. Si dice \"rica en leucina, clave para activar la síntesis proteica muscular\", usá eso.\n   - Explicar por qué esos datos técnicos importan en la práctica (qué siente o logra la persona).\n   - Sonar como un asesor que sabe de lo que habla pero se lo explica simple a alguien por WhatsApp. Técnico pero accesible.\n3) PROHIBIDO:\n   - Ser genérico. NO escribas frases vacías como \"maximiza tu rendimiento\", \"alcanza tus objetivos\", \"entrena como profesional\". Cada frase debe tener un dato concreto de la variable.\n   - Mencionar precio, descuentos o promociones.\n   - Mencionar sabores, gramos o variantes.\n   - Hacer preguntas al usuario.\n   - Usar frases de cierre o CTA (\"¿te lo reservo?\", \"¿querés avanzar?\", etc.).\n   - Prometer resultados médicos o garantías.\n   - Inventar información que no esté en la variable de entrada.\n   - Usar signos de exclamación.\n4) Negritas: solo con *un asterisco* por lado. Nunca doble asterisco.\n5) Usá entre 1 y 2 emojis en TOTAL entre las dos partes. SOLO de esta lista:\n   ⚡ ✴ ✺ ✻ ✪ ✓ ☑ ✖ ✘ ✍ ✊ ☛ ☝ ✌ ✋ ⚽ ⚾ ⛳ ⛸ ⛑ ☘ ❀ ✿ ❂ ♨ ☀ ⌛ ⌚ ⏰ ➔ ➢ ➣ ⚠ ❗ ❄ ☁ ☂ ♟ ♔ ♕ ⚙\n6) No uses títulos, markdown técnico, listas ni bullet points.\n\n# CÓMO DIVIDIR EN 2 PARTES\n\nPrimero escribí mentalmente el texto completo (4-5 líneas). Después dividilo en 2 partes siguiendo estas reglas:\n\n- parte_1: las primeras 2-3 oraciones. Contenido: qué es el producto y los datos técnicos (mecanismo de acción, compuestos, función biológica).\n- parte_2: las últimas 2-3 oraciones. Contenido: qué significa eso en la práctica para la persona (beneficios reales, qué siente, qué logra).\n\nReglas de la división:\n- Cortá SIEMPRE al final de una oración (después de un punto). NUNCA cortes a mitad de frase.\n- Las dos partes deben tener largo SIMILAR. Si una parte tiene 1 línea y la otra tiene 4, está MAL.\n- parte_1 debe tener sentido sola (se entiende sin leer parte_2).\n- parte_2 debe tener sentido sola (se entiende sin leer parte_1).\n- El emoji puede ir en cualquiera de las dos partes o uno en cada una.\n\n# OUTPUT\n\nDevolvé ÚNICAMENTE un JSON válido con esta estructura exacta. NADA más. Sin explicaciones, sin texto antes o después, sin comillas alrededor del JSON, sin backticks.\n\n{\"parte_1\": \"texto de la primera parte\", \"parte_2\": \"texto de la segunda parte\"}\n\n# EJEMPLO\n\nVariable de entrada (resumida): Creatina Monohidratada. Aumenta reservas de fosfocreatina intramuscular. Favorece resíntesis rápida de ATP. Reduce fatiga muscular. Es uno de los suplementos más estudiados y seguros.\n\nSalida:\n{\"parte_1\": \"La *Creatina Monohidratada* es uno de los suplementos con más respaldo científico que existe ⚡ Lo que hace a nivel muscular es aumentar tus reservas de fosfocreatina, que es el combustible directo para regenerar ATP en esfuerzos cortos e intensos.\", \"parte_2\": \"En la práctica eso significa más fuerza, más potencia y menos fatiga entre series. Además reduce el tiempo de recuperación muscular, así que podés entrenar con más frecuencia sin sentirte destruido ✊\"}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_schema",
+              "schema": "{\n  \"type\": \"object\",\n  \"additionalProperties\": false,\n  \"properties\": {\n    \"parte_1\": { \"type\": \"string\", \"description\": \"Texto de la primera parte\" },\n    \"parte_2\": { \"type\": \"string\", \"description\": \"Texto de la segunda parte\" }\n  },\n  \"required\": [\"parte_1\", \"parte_2\"]\n}"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        3424,
+        448
+      ],
+      "id": "4454457a-48d8-404a-9aba-7dbe7f8e6eb8",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "CWz84fUE1wUT8CXn",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://criscapitalbrothers.kommo.com/api/v4/leads/{{ $('When Executed by Another Workflow').first().json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"custom_fields_values\": [\n    {\n      \"field_id\": 1717536,\n      \"values\": [\n        {\n          \"value\": \"{{ \n  JSON.stringify(\n    (\n      (($json.output[0].content[0].text.parte_1) ?? '')\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n        // quita comillas iniciales y finales si existen\n        .replace(/^\"(.*)\"$/, '$1')\n    )\n  ).slice(1, -1) \n}}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3744,
+        448
+      ],
+      "id": "fe962204-8d8e-413f-8e5a-65eb590ba034",
+      "name": "actualizar",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://criscapitalbrothers.kommo.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": 85808,\n    \"entity_id\": {{ $('When Executed by Another Workflow').first().json.entity_id }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3968,
+        448
+      ],
+      "id": "03fffcae-dd06-46dd-84d3-a59cbba963ad",
+      "name": "Envio Mensaje6",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://criscapitalbrothers.kommo.com/api/v4/leads/{{ $('When Executed by Another Workflow').first().json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"custom_fields_values\": [\n    {\n      \"field_id\": 1717536,\n      \"values\": [\n        {\n          \"value\": \"{{ \n  JSON.stringify(\n    (\n      (( $json.output[0].content[0].text.parte_1) ?? '')\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n        // quita comillas iniciales y finales si existen\n        .replace(/^\"(.*)\"$/, '$1')\n    )\n  ).slice(1, -1) \n}}\"\n        }\n      ]\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3312,
+        832
+      ],
+      "id": "0ee42a7e-5ba2-4b81-baec-7c54652a00f9",
+      "name": "actualizar1",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://criscapitalbrothers.kommo.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": 85808,\n    \"entity_id\": {{ $('When Executed by Another Workflow').first().json.entity_id }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3536,
+        832
+      ],
+      "id": "75657063-ed87-46c8-97b2-7747a32eae29",
+      "name": "Envio Mensaje",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3744,
+        832
+      ],
+      "id": "27e7deec-7b80-4cab-b886-bd8d100fdb75",
+      "name": "Wait",
+      "webhookId": "3a089d6c-3a8d-4b76-859f-2f906077493e"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=# ROL\nSos un asesor técnico de Stark Supplements. Tu tarea es escribir una introducción técnica y convincente de un PACK antes de que se le muestre la imagen al cliente por WhatsApp. La introducción se envía en 2 mensajes separados.\n\n# INPUT\nRecibis la siguiente información de UN solo pack:\n\"{{ $json.productos_texto }}\"\n\n# REGLAS DE REDACCIÓN\n\n1) Escribí un texto TOTAL de 4 a 5 líneas, y después dividilo en 2 partes.\n2) El texto debe:\n   - Presentar el pack mencionando SOLO los suplementos principales (proteína, creatina, pre entreno, termogénico, colágeno, etc.). NO mencionar accesorios como shakers, barritas o ejercitadores.\n   - Incluir al menos 1 dato técnico real por cada suplemento principal, extraído directamente de la variable de entrada. Ejemplos de datos técnicos: mecanismo de acción, compuesto activo, función biológica, valor nutricional concreto. Si la variable dice \"aumenta las reservas de fosfocreatina intramuscular\", usá eso. Si dice \"rica en leucina, clave para activar la síntesis proteica muscular\", usá eso.\n   - Explicar brevemente por qué esa combinación de suplementos tiene sinergia (qué logran juntos que no lograrían solos).\n   - Sonar como un asesor que sabe de lo que habla pero se lo explica simple a alguien por WhatsApp. Técnico pero accesible.\n3) PROHIBIDO:\n   - Ser genérico. NO escribas frases vacías como \"maximiza tu rendimiento\", \"alcanza tus objetivos\", \"entrena como profesional\". Cada frase debe tener un dato concreto de la variable.\n   - Mencionar precio, descuentos o promociones.\n   - Mencionar sabores, gramos o variantes.\n   - Mencionar accesorios (shaker, barrita, ejercitador).\n   - Hacer preguntas al usuario.\n   - Usar frases de cierre o CTA (\"¿te lo reservo?\", \"¿querés avanzar?\", etc.).\n   - Prometer resultados médicos o garantías.\n   - Inventar información que no esté en la variable de entrada.\n   - Usar signos de exclamación.\n4) Negritas: solo con *un asterisco* por lado. Nunca doble asterisco.\n5) Usá entre 1 y 2 emojis en TOTAL entre las dos partes. SOLO de esta lista:\n   ⚡ ✴ ✺ ✻ ✪ ✓ ☑ ✖ ✘ ✍ ✊ ☛ ☝ ✌ ✋ ⚽ ⚾ ⛳ ⛸ ⛑ ☘ ❀ ✿ ❂ ♨ ☀ ⌛ ⌚ ⏰ ➔ ➢ ➣ ⚠ ❗ ❄ ☁ ☂ ♟ ♔ ♕ ⚙\n6) No uses títulos, markdown técnico, listas ni bullet points.\n\n# CÓMO DIVIDIR EN 2 PARTES\n\nPrimero escribí mentalmente el texto completo (4-5 líneas). Después dividilo en 2 partes siguiendo estas reglas:\n\n- parte_1: las primeras 2-3 oraciones. Contenido: qué suplementos trae el pack y los datos técnicos de cada uno (mecanismo de acción, compuestos, función biológica).\n- parte_2: las últimas 2-3 oraciones. Contenido: la sinergia entre los suplementos (por qué juntos funcionan mejor) y qué significa eso en la práctica para la persona.\n\nReglas de la división:\n- Cortá SIEMPRE al final de una oración (después de un punto). NUNCA cortes a mitad de frase.\n- Las dos partes deben tener largo SIMILAR. Si una parte tiene 1 línea y la otra tiene 4, está MAL.\n- parte_1 debe tener sentido sola (se entiende sin leer parte_2).\n- parte_2 debe tener sentido sola (se entiende sin leer parte_1).\n- El emoji puede ir en cualquiera de las dos partes o uno en cada una.\n\n# OUTPUT\n\nDevolvé ÚNICAMENTE un JSON válido con esta estructura exacta. NADA más. Sin explicaciones, sin texto antes o después, sin comillas alrededor del JSON, sin backticks.\n\n{\"parte_1\": \"texto de la primera parte\", \"parte_2\": \"texto de la segunda parte\"}\n\n# EJEMPLO\n\nVariable de entrada (resumida): Pack con Whey Protein + Creatina + Pre Entreno. La creatina aumenta reservas de fosfocreatina y favorece la resíntesis de ATP. La Whey aporta aminoácidos de alto valor biológico, rica en leucina. El Pre Entreno combina cafeína, beta alanina y creatina.\n\nSalida:\n{\"parte_1\": \"Este pack junta tres suplementos que se potencian entre sí ⚡ La *Creatina* aumenta tus reservas de fosfocreatina intramuscular, lo que se traduce en más ATP disponible para esfuerzos de alta intensidad. La *Whey Protein* complementa con aminoácidos de alto valor biológico y es rica en leucina, que es clave para activar la síntesis proteica.\", \"parte_2\": \"Y el *Pre Entreno* con cafeína y beta alanina te sube el umbral de fatiga para que puedas meter más series y más carga en cada sesión. Los tres juntos cubren el ciclo completo: energía antes de entrenar, fuerza durante y recuperación después ✊\"}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_schema",
+              "schema": "{\n  \"type\": \"object\",\n  \"additionalProperties\": false,\n  \"properties\": {\n    \"parte_1\": { \"type\": \"string\", \"description\": \"Texto de la primera parte\" },\n    \"parte_2\": { \"type\": \"string\", \"description\": \"Texto de la segunda parte\" }\n  },\n  \"required\": [\"parte_1\", \"parte_2\"]\n}"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        3008,
+        832
+      ],
+      "id": "8afc8896-3aa6-4d6d-a01a-48fab7fbe189",
+      "name": "Message a model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "CWz84fUE1wUT8CXn",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://criscapitalbrothers.kommo.com/api/v4/leads/{{ $('When Executed by Another Workflow').first().json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"custom_fields_values\": [\n    {\n      \"field_id\": 1717536,\n      \"values\": [\n        {\n          \"value\": \"{{ \n  JSON.stringify(\n    (\n      (($('Message a model1').item.json.output[0].content[0].text.parte_2) ?? '')\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n        // quita comillas iniciales y finales si existen\n        .replace(/^\"(.*)\"$/, '$1')\n    )\n  ).slice(1, -1) \n}}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3952,
+        832
+      ],
+      "id": "08c6e650-b049-4308-8377-96ef01ea17a1",
+      "name": "actualizar2",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://criscapitalbrothers.kommo.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": 85808,\n    \"entity_id\": {{ $('When Executed by Another Workflow').first().json.entity_id }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4176,
+        832
+      ],
+      "id": "ce1849cd-bbc8-46e4-a10a-735c52c86ad5",
+      "name": "Envio Mensaje1",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        4384,
+        832
+      ],
+      "id": "d83a9280-a0f3-44e0-942e-a3608f0b2f65",
+      "name": "Wait1",
+      "webhookId": "3a089d6c-3a8d-4b76-859f-2f906077493e"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        4896,
+        448
+      ],
+      "id": "2649b525-56d6-4632-9e10-38bba15ed261",
+      "name": "Wait4",
+      "webhookId": "7443fd4e-e2a5-43e5-b43e-66367bcb109f",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://criscapitalbrothers.kommo.com/api/v4/leads/{{ $('When Executed by Another Workflow').first().json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"custom_fields_values\": [\n    {\n      \"field_id\": 1717536,\n      \"values\": [\n        {\n          \"value\": \"{{ \n  JSON.stringify(\n    (\n      (($('Message a model').item.json.output[0].content[0].text.parte_2) ?? '')\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n        // quita comillas iniciales y finales si existen\n        .replace(/^\"(.*)\"$/, '$1')\n    )\n  ).slice(1, -1) \n}}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4432,
+        448
+      ],
+      "id": "95a06513-5c61-4296-a26b-edff2cb46a96",
+      "name": "actualizar3",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://criscapitalbrothers.kommo.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": 85808,\n    \"entity_id\": {{ $('When Executed by Another Workflow').first().json.entity_id }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4656,
+        448
+      ],
+      "id": "1d64ea1f-3ef9-4141-a926-ec32252187ab",
+      "name": "Envio Mensaje7",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Agregar precio por si dice mas barato o mas caro"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        288
+      ],
+      "id": "35dd81d1-fb5e-442a-94ee-ef2aced7e318",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Insertar estos 2 mensajes en la memoria",
+        "width": 944
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3856,
+        592
+      ],
+      "id": "34830a19-7e28-42b2-8fe1-f86f9c141876",
+      "name": "Sticky Note5"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "mensaje_del_usuario": "Aumentar mi rendimiento en el gym y tener mas energia",
+          "id": "21465433",
+          "enviar_info": "true",
+          "entity_id": "21465433"
+        }
+      }
+    ],
+    "AI Agent1": [
+      {
+        "json": {
+          "output": {
+            "decision": "UNITARIO"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Replace me with your logic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace me with your logic": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Recupera Prods",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search_Products": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "actualizar3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recupera Prods": {
+      "main": [
+        [
+          {
+            "node": "Arma fórmula",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Arma fórmula": {
+      "main": [
+        [
+          {
+            "node": "Obtengo prods",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtengo prods": {
+      "main": [
+        [
+          {
+            "node": "ordena variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ordena variables": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio Foto": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Search_Products",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ObtenerProds Sin sabor": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "ObtenerProds Sin sabor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search records1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search_Products1": {
+      "main": [
+        [
+          {
+            "node": "ordena variables1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ordena variables1": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio Foto1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Search_Products1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "actualizar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "actualizar": {
+      "main": [
+        [
+          {
+            "node": "Envio Mensaje6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio Mensaje6": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "actualizar1": {
+      "main": [
+        [
+          {
+            "node": "Envio Mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio Mensaje": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "actualizar2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "actualizar1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "actualizar2": {
+      "main": [
+        [
+          {
+            "node": "Envio Mensaje1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio Mensaje1": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Envio Foto1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "actualizar3": {
+      "main": [
+        [
+          {
+            "node": "Envio Mensaje7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio Mensaje7": {
+      "main": [
+        [
+          {
+            "node": "Wait4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait4": {
+      "main": [
+        [
+          {
+            "node": "Envio Foto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "743acf0d-f40a-45c1-bfd8-f4f66b170d85",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2fb601f29b5c700d2141654e4608e081bd1e5daa9614999069a9eb314029edc9"
+  },
+  "id": "xQK7uqLXEJB8Utkv",
+  "tags": []
+}

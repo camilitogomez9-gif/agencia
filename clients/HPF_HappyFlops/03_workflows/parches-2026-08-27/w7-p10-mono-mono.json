@@ -1,0 +1,27 @@
+{
+  "wf": "W7",
+  "descripcion": "P10 · Mono->Moño en el display del Recolector1 (W7). Espejo de W6.",
+  "ediciones": [
+    {
+      "nodo": "Recolector1",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "- **Pantuflas Mono Satín** — $30",
+      "reemplazo": "- **Pantuflas Moño Satín** — $30",
+      "motivo": "P10 reunión Oscar 2026-08-27: el producto se llama 'Moño' de cara al cliente, no 'Mono'. Cambio de display en el nombre que el bot MUESTRA (tablas de precio, listados, cotizaciones). W4 CALCULADORA ya canonicaliza 'mono' y 'moño' al mismo target ('Pantufla Moño Satin/Peluche') vía PRODUCT_ALIASES, así que el matching de la tool NO se rompe. No se tocan las líneas de reconocimiento del input del cliente ni la lógica interna (árbol normal/mono, tabla de mapeo). Espejo W7."
+    },
+    {
+      "nodo": "Recolector1",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "- **Pantuflas Mono Peluche** — $35",
+      "reemplazo": "- **Pantuflas Moño Peluche** — $35",
+      "motivo": "P10 reunión Oscar 2026-08-27: el producto se llama 'Moño' de cara al cliente, no 'Mono'. Cambio de display en el nombre que el bot MUESTRA (tablas de precio, listados, cotizaciones). W4 CALCULADORA ya canonicaliza 'mono' y 'moño' al mismo target ('Pantufla Moño Satin/Peluche') vía PRODUCT_ALIASES, así que el matching de la tool NO se rompe. No se tocan las líneas de reconocimiento del input del cliente ni la lógica interna (árbol normal/mono, tabla de mapeo). Espejo W7."
+    },
+    {
+      "nodo": "Recolector1",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "¿Las prefiere pantuflas normales o pantuflas mono (con moñito)? 😊",
+      "reemplazo": "¿Las prefiere pantuflas normales o pantuflas moño (con moñito)? 😊",
+      "motivo": "P10 reunión Oscar 2026-08-27: el producto se llama 'Moño' de cara al cliente, no 'Mono'. Cambio de display en el nombre que el bot MUESTRA (tablas de precio, listados, cotizaciones). W4 CALCULADORA ya canonicaliza 'mono' y 'moño' al mismo target ('Pantufla Moño Satin/Peluche') vía PRODUCT_ALIASES, así que el matching de la tool NO se rompe. No se tocan las líneas de reconocimiento del input del cliente ni la lógica interna (árbol normal/mono, tabla de mapeo). Espejo W7."
+    }
+  ]
+}

@@ -1,0 +1,364 @@
+{
+  "casos": [
+    {
+      "caso": "cilindros_control",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "step": "step_1",
+          "etapa": "Saludo Enviado",
+          "n_partes": 3,
+          "urls": []
+        },
+        {
+          "mensaje": "es para una boda",
+          "step": "step_2",
+          "etapa": "Evento Identificado",
+          "n_partes": 2,
+          "urls": [
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+          ]
+        },
+        {
+          "mensaje": "quiero los cilindros",
+          "step": "step_3",
+          "etapa": "Productos Mostrados",
+          "n_partes": 4,
+          "urls": [
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3df7d31b0eb454cf57.png",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/5f4fe0c1-0adb-4571-93c9-38f2de27c7ff.jpg",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701846a4c8a1a2c39fef44.mp4"
+          ]
+        }
+      ],
+      "assets_final": [
+        "Boda/Cilindros de 500ml boda personalizados [png]",
+        "Boda/Cilindros el catalogo boda [jpeg]",
+        "Otros/Cilindros video [?]"
+      ],
+      "urls_final": [
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3df7d31b0eb454cf57.png",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/5f4fe0c1-0adb-4571-93c9-38f2de27c7ff.jpg",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701846a4c8a1a2c39fef44.mp4"
+      ]
+    },
+    {
+      "caso": "pantufla_normal_1",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "step": "step_1",
+          "etapa": "Saludo Enviado",
+          "n_partes": 3,
+          "urls": []
+        },
+        {
+          "mensaje": "es para una boda",
+          "step": "step_2",
+          "etapa": "Evento Identificado",
+          "n_partes": 2,
+          "urls": [
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+          ]
+        },
+        {
+          "mensaje": "quiero las pantuflas normales",
+          "step": "step_3",
+          "etapa": "Productos Mostrados",
+          "n_partes": 6,
+          "urls": [
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3afb06386edeb04bce.pdf",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+          ]
+        }
+      ],
+      "assets_final": [
+        "Boda/Pantuflas boda [png]",
+        "Boda/Pantuflas mono peluche [jpeg]",
+        "Boda/Pantuflas mono satin [jpeg]",
+        "Boda/Pantuflas de satín boda personalizadas [pdf]",
+        "Otros/Pantuflas Video [?]"
+      ],
+      "urls_final": [
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3afb06386edeb04bce.pdf",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+      ]
+    },
+    {
+      "caso": "pantufla_normal_2",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "step": "step_1",
+          "etapa": "Saludo Enviado",
+          "n_partes": 3,
+          "urls": []
+        },
+        {
+          "mensaje": "es para una boda",
+          "step": "step_2",
+          "etapa": "Evento Identificado",
+          "n_partes": 2,
+          "urls": [
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+          ]
+        },
+        {
+          "mensaje": "quiero pantuflas",
+          "step": "step_3",
+          "etapa": "Productos Mostrados",
+          "n_partes": 6,
+          "urls": [
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3afb06386edeb04bce.pdf",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+          ]
+        }
+      ],
+      "assets_final": [
+        "Boda/Pantuflas boda [png]",
+        "Boda/Pantuflas mono peluche [jpeg]",
+        "Boda/Pantuflas mono satin [jpeg]",
+        "Boda/Pantuflas de satín boda personalizadas [pdf]",
+        "Otros/Pantuflas Video [?]"
+      ],
+      "urls_final": [
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3afb06386edeb04bce.pdf",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+      ]
+    },
+    {
+      "caso": "pantufla_normal_3",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "step": "step_1",
+          "etapa": "Saludo Enviado",
+          "n_partes": 3,
+          "urls": []
+        },
+        {
+          "mensaje": "es para una boda",
+          "step": "step_2",
+          "etapa": "Evento Identificado",
+          "n_partes": 2,
+          "urls": [
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+          ]
+        },
+        {
+          "mensaje": "quiero las pantuflas cerradas",
+          "step": "step_3",
+          "etapa": "Productos Mostrados",
+          "n_partes": 6,
+          "urls": [
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3afb06386edeb04bce.pdf",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+          ]
+        }
+      ],
+      "assets_final": [
+        "Boda/Pantuflas boda [png]",
+        "Boda/Pantuflas mono peluche [jpeg]",
+        "Boda/Pantuflas mono satin [jpeg]",
+        "Boda/Pantuflas de satín boda personalizadas [pdf]",
+        "Otros/Pantuflas Video [?]"
+      ],
+      "urls_final": [
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3afb06386edeb04bce.pdf",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+      ]
+    },
+    {
+      "caso": "pantufla_mono_peluche",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "step": "step_1",
+          "etapa": "Saludo Enviado",
+          "n_partes": 3,
+          "urls": []
+        },
+        {
+          "mensaje": "es para una boda",
+          "step": "step_2",
+          "etapa": "Evento Identificado",
+          "n_partes": 2,
+          "urls": [
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+          ]
+        },
+        {
+          "mensaje": "quiero las pantuflas mono peluche",
+          "step": "step_3",
+          "etapa": "Productos Mostrados",
+          "n_partes": 3,
+          "urls": [
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+          ]
+        }
+      ],
+      "assets_final": [
+        "Boda/Pantuflas mono peluche [jpeg]",
+        "Otros/Pantuflas Video [?]"
+      ],
+      "urls_final": [
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+      ]
+    },
+    {
+      "caso": "pantufla_peluche_corto",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "step": "step_1",
+          "etapa": "Saludo Enviado",
+          "n_partes": 3,
+          "urls": []
+        },
+        {
+          "mensaje": "es para una boda",
+          "step": "step_2",
+          "etapa": "Evento Identificado",
+          "n_partes": 2,
+          "urls": [
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+          ]
+        },
+        {
+          "mensaje": "quiero pantuflas de peluche",
+          "step": "step_3",
+          "etapa": "Productos Mostrados",
+          "n_partes": 3,
+          "urls": [
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+          ]
+        }
+      ],
+      "assets_final": [
+        "Boda/Pantuflas mono peluche [jpeg]",
+        "Otros/Pantuflas Video [?]"
+      ],
+      "urls_final": [
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+      ]
+    },
+    {
+      "caso": "pantufla_mono_satin",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "step": "step_1",
+          "etapa": "Saludo Enviado",
+          "n_partes": 3,
+          "urls": []
+        },
+        {
+          "mensaje": "es para una boda",
+          "step": "step_2",
+          "etapa": "Evento Identificado",
+          "n_partes": 2,
+          "urls": [
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+          ]
+        },
+        {
+          "mensaje": "quiero las pantuflas mono satín",
+          "step": "step_3",
+          "etapa": "Productos Mostrados",
+          "n_partes": 6,
+          "urls": [
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3afb06386edeb04bce.pdf",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+          ]
+        }
+      ],
+      "assets_final": [
+        "Boda/Pantuflas boda [png]",
+        "Boda/Pantuflas mono peluche [jpeg]",
+        "Boda/Pantuflas mono satin [jpeg]",
+        "Boda/Pantuflas de satín boda personalizadas [pdf]",
+        "Otros/Pantuflas Video [?]"
+      ],
+      "urls_final": [
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3afb06386edeb04bce.pdf",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+      ]
+    },
+    {
+      "caso": "pantufla_satin_corto",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "step": "step_1",
+          "etapa": "Saludo Enviado",
+          "n_partes": 3,
+          "urls": []
+        },
+        {
+          "mensaje": "es para una boda",
+          "step": "step_2",
+          "etapa": "Evento Identificado",
+          "n_partes": 2,
+          "urls": [
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+          ]
+        },
+        {
+          "mensaje": "quiero pantuflas de satín",
+          "step": "step_3",
+          "etapa": "Productos Mostrados",
+          "n_partes": 6,
+          "urls": [
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3afb06386edeb04bce.pdf",
+            "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+          ]
+        }
+      ],
+      "assets_final": [
+        "Boda/Pantuflas boda [png]",
+        "Boda/Pantuflas mono peluche [jpeg]",
+        "Boda/Pantuflas mono satin [jpeg]",
+        "Boda/Pantuflas de satín boda personalizadas [pdf]",
+        "Otros/Pantuflas Video [?]"
+      ],
+      "urls_final": [
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3afb06386edeb04bce.pdf",
+        "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+      ]
+    }
+  ]
+}

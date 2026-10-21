@@ -1,0 +1,137 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "v9HD7P2uroG4Ni3A",
+          "mode": "list",
+          "cachedResultName": "sys-tool-registrar-datos-lead-v3"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nombre": "={{ $('Validate Input').first().json.nombre }}",
+            "telefono": "={{ $('Validate Input').first().json.telefono }}",
+            "telefono_webhook": "={{ $('Validate Input').first().json.telefono_webhook }}",
+            "email": "={{ $('Validate Input').first().json.mail }}",
+            "aplicacion_interes": "={{ $('Validate Input').first().json.equipo_o_aplicacion }}",
+            "origen": "derivacion",
+            "canal": "={{ $('Validate Input').first().json.canal }}",
+            "subscriber_id": "={{ $('Validate Input').first().json.subscriber_id }}",
+            "session_id": "={{ $('Validate Input').first().json.session_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "telefono",
+              "displayName": "telefono",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "telefono_webhook",
+              "displayName": "telefono_webhook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "aplicacion_interes",
+              "displayName": "aplicacion_interes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "origen",
+              "displayName": "origen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "canal",
+              "displayName": "canal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "subscriber_id",
+              "displayName": "subscriber_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        200,
+        200
+      ],
+      "id": "notif-registra-planilla-0001",
+      "name": "Registrar en planilla",
+      "continueOnFail": true,
+      "notes": "v5 (2026-07-10) — Red estructural: tras derivar, registra el lead en la planilla llamando a registrar_datos_lead (v9HD7P2uroG4Ni3A). Le pasa telefono_webhook (determinístico ManyChat) + telefono (del agente) → registrar coalesce + gate. Si no hay teléfono válido, registrar devuelve REJECTED y no escribe (no rompe la derivación por continueOnFail). Va entre 'Update session_state' y 'Format Output'."
+    }
+  ],
+  "connections": {}
+}

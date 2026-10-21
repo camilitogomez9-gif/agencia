@@ -1,0 +1,335 @@
+{
+  "name": "Sonrisas | Gestión de Turnos Semanal",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                6
+              ],
+              "triggerAtHour": 18
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        96
+      ],
+      "id": "6307f620-7236-49e7-b07c-74472f552867",
+      "name": "Trigger Semanal (Sábado 18h)"
+    },
+    {
+      "parameters": {
+        "jsCode": "const tz = 'America/Montevideo';\nconst now = DateTime.now().setZone(tz).startOf('day');\nconst daysSinceSat = (now.weekday + 1) % 7; // 0=Sáb..6=Vie\nconst sabado = now.minus({ days: daysSinceSat });\nconst lunes = sabado.minus({ days: 5 });\nreturn [{\n  json: {\n    desde: lunes.toISODate(),\n    hasta: sabado.toISODate(),\n    semanaISO: sabado.toFormat(\"kkkk-'W'WW\"),\n    actualizado: DateTime.now().setZone(tz).toFormat('yyyy-MM-dd HH:mm')\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        784,
+        96
+      ],
+      "id": "b2a5989c-cc5c-47f6-8f7e-948bea2b4d49",
+      "name": "Calcular semana"
+    },
+    {
+      "parameters": {
+        "jsCode": "const helpers = this.helpers;\nconst token = 'Token nsZXO2i9zjO9tYiqOxESqxVgsjpL3tTgQPdTQxti.NTb7Cg13dBRJrk27FXpLO1eSHeXdeOKtgVJ2Hl6e';\nconst API = 'https://api.dentalink.healthatom.com/api/v1';\nconst meta = $input.first().json;\n\nasync function fetchAll(startUrl) {\n  const out = [];\n  let url = startUrl;\n  let guard = 0;\n  while (url && guard < 500) {\n    guard++;\n    const resp = await helpers.httpRequest({ method: 'GET', url, headers: { Authorization: token }, json: true });\n    const data = (resp && Array.isArray(resp.data)) ? resp.data : [];\n    out.push(...data);\n    const next = (resp && resp.links) ? resp.links.next : null;\n    if (!next || next === url || data.length === 0) break;\n    url = next;\n  }\n  return out;\n}\n\nconst qCitas = JSON.stringify({ fecha: { gte: meta.desde, lte: meta.hasta } });\nconst citas = await fetchAll(API + '/citas?q=' + encodeURIComponent(qCitas));\nconst sucursales = await fetchAll(API + '/sucursales');\n\nreturn [{ json: { meta, sucursales, citas, totalCitas: citas.length } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1008,
+        96
+      ],
+      "id": "75f72e81-4145-4b49-ac41-71c6d431215e",
+      "name": "Obtener citas + sucursales (paginado)"
+    },
+    {
+      "parameters": {
+        "jsCode": "const root = $input.first().json;\nconst meta = root.meta;\nconst sucursales = root.sucursales || [];\nconst citas = root.citas || [];\n\n// Universo 'Agendadas' = {7,28,8,19,14} + Atendido(2)\nconst AGENDADA = new Set([7, 28, 8, 19, 14, 2]);\n\nconst buckets = {};\nfor (const s of sucursales) {\n  buckets[String(s.id)] = { Sucursal: s.nombre || ('Sucursal ' + s.id), agendadas: 0, atendidos: 0, noAsistio: 0 };\n}\nfor (const c of citas) {\n  const sid = String(c.id_sucursal);\n  if (!buckets[sid]) buckets[sid] = { Sucursal: 'Sucursal ' + sid, agendadas: 0, atendidos: 0, noAsistio: 0 };\n  const est = Number(c.id_estado);\n  if (AGENDADA.has(est)) buckets[sid].agendadas++;\n  if (est === 2) buckets[sid].atendidos++;\n  if (est === 8) buckets[sid].noAsistio++;\n}\n\nconst r1 = (n) => Math.round(n * 10) / 10;\nconst rows = Object.values(buckets).map((b) => ({\n  json: {\n    Semana: meta.semanaISO,\n    Desde: meta.desde,\n    Hasta: meta.hasta,\n    Sucursal: b.Sucursal,\n    Agendadas: b.agendadas,\n    Atendidos: b.atendidos,\n    'No asistió': b.noAsistio,\n    '% Atendidos': b.agendadas > 0 ? r1(b.atendidos / b.agendadas * 100) : 0,\n    '% Inasistencia': b.agendadas > 0 ? r1(b.noAsistio / b.agendadas * 100) : 0,\n    Actualizado: meta.actualizado\n  }\n}));\nrows.sort((a, b) => String(a.json.Sucursal).localeCompare(String(b.json.Sucursal)));\nreturn rows;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        96
+      ],
+      "id": "724115ae-0d3f-4d61-9027-94e0dd7ec589",
+      "name": "Agregar por sucursal"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1dzRLe1Zw76J6dV2olIpoxzXLySMQXfEWIDA6q7q0DAk",
+          "mode": "list",
+          "cachedResultName": "Métricas de Pacientes 2026 | Sonrisas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dzRLe1Zw76J6dV2olIpoxzXLySMQXfEWIDA6q7q0DAk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "=% Asistencia {{ $json.Sucursal.substring(4,5) }}",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Semana": "={{ $json.Semana.substring(6,8) }}",
+            "Desde": "={{ $json.Desde.toDateTime().format('dd-MM-yy') }}",
+            "Hasta": "={{ $json.Hasta.toDateTime().format('dd-MM-yy') }}",
+            "Atendidos": "={{ $json.Atendidos }}",
+            "Agendadas": "={{ $json.Agendadas }}",
+            "No asistió": "={{ $json['No asistió'] }}",
+            "% Atendidos": "={{ $json['% Atendidos'] }}",
+            "% Inasistencia": "={{ $json['% Inasistencia'] }}",
+            "Actualizado": "={{ $json.Actualizado.toDateTime().format('dd-MM-yy HH:mm') }}"
+          },
+          "matchingColumns": [
+            "Semana"
+          ],
+          "schema": [
+            {
+              "id": "Semana",
+              "displayName": "Semana",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Desde",
+              "displayName": "Desde",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Hasta",
+              "displayName": "Hasta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Agendadas",
+              "displayName": "Agendadas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Atendidos",
+              "displayName": "Atendidos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "No asistió",
+              "displayName": "No asistió",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "% Atendidos",
+              "displayName": "% Atendidos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "% Inasistencia",
+              "displayName": "% Inasistencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Actualizado",
+              "displayName": "Actualizado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1680,
+        112
+      ],
+      "id": "b432fe3a-9adf-474e-a896-e592d2c7d2c8",
+      "name": "Escribir métricas por sucursal",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## 📊 Informe semanal de gestión de turnos (por sucursal)\n\n**Qué hace:** cada **sábado 18:00 (Montevideo)** consulta la API de Dentalink, cuenta por sucursal las citas de la semana (Lun–Sáb) según su **estado actual**, y hace upsert por semana en el Google Sheets (una pestaña por sucursal).\n\n**Métricas (estado actual):**\n- Agendadas = estados {7,28,8,19,14,2}\n- Atendidos = 2 · No asistió = 8\n- % Atendidos = Atendidos/Agendadas · % Inasistencia = No asistió/Agendadas\n\n**⚠️ Configurar antes del primer uso:**\n1. Nodo `Escribir métricas por sucursal` → pegar el **ID del nuevo Google Sheet** en `documentId` (hoy dice `PEGAR_ID_DEL_NUEVO_GOOGLE_SHEET`).\n2. Crear en ese Sheet **una pestaña por sucursal**, con nombre EXACTO al de Dentalink, y la fila de encabezados:\n   `Semana | Desde | Hasta | Sucursal | Agendadas | Atendidos | No asistió | % Atendidos | % Inasistencia | Actualizado`\n   (Tip: corré una vez con el Trigger Manual y mirá la salida de `Agregar por sucursal` para copiar los nombres.)\n3. Settings del workflow → **Error Workflow** = este mismo workflow (o tu workflow global de errores) para que dispare el aviso de Telegram.\n4. El token de Dentalink está hardcodeado (igual que los otros flujos). Ideal: migrarlo a una credencial Header Auth.",
+        "height": 476,
+        "width": 864,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        640,
+        -416
+      ],
+      "id": "d8e4d8ee-4ef1-4afa-aa74-e81970b454f9",
+      "name": "Sticky Note - Setup"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1456,
+        96
+      ],
+      "id": "183ce758-9301-45a2-8865-fd166b78d733",
+      "name": "Loop Over Items"
+    }
+  ],
+  "connections": {
+    "Trigger Semanal (Sábado 18h)": {
+      "main": [
+        [
+          {
+            "node": "Calcular semana",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calcular semana": {
+      "main": [
+        [
+          {
+            "node": "Obtener citas + sucursales (paginado)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener citas + sucursales (paginado)": {
+      "main": [
+        [
+          {
+            "node": "Agregar por sucursal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agregar por sucursal": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escribir métricas por sucursal": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Escribir métricas por sucursal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "Trigger Semanal (Sábado 18h)": [
+      {
+        "timestamp": "2026-05-25T22:34:47.525+02:00",
+        "Readable date": "May 25th 2026, 10:34:47 pm",
+        "Readable time": "10:34:47 pm",
+        "Day of week": "Monday",
+        "Year": "2026",
+        "Month": "May",
+        "Day of month": "25",
+        "Hour": "22",
+        "Minute": "34",
+        "Second": "47",
+        "Timezone": "Europe/Berlin (UTC+02:00)"
+      }
+    ]
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Montevideo",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "tags": [],
+  "meta": {
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  }
+}

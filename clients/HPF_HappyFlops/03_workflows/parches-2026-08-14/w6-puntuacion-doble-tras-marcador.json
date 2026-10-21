@@ -1,0 +1,12 @@
+{
+  "wf": "W6",
+  "descripcion": "Colapsa la puntuación duplicada que queda al sacar el link del marcador de pago: '...del anticipo:. 😊' → '...del anticipo. 😊'. Es la misma familia que el cascarón '[ ]()': el agente introduce el marcador con dos puntos y al removerlo queda el signo colgado.",
+  "ediciones": [
+    {
+      "nodo": "Partir en burbujas",
+      "campo": "parameters.jsCode",
+      "anchor": "           .replace(/\\s+([,;:.!?])/g, '$1')",
+      "reemplazo": "           .replace(/\\s+([,;:.!?])/g, '$1')\n           // Dos signos seguidos: el agente presenta el marcador con dos puntos\n           // (\"...para el pago del anticipo: [ ](url…).\") y al sacarlo quedan \":.\"\n           // pegados. Se queda el segundo. No toca \"Dígame:\\n- Cantidad\" (después de\n           // los dos puntos viene un salto y un guión, que no están en la clase) ni\n           // \"Total: $2,100\" (viene un espacio y un símbolo).\n           .replace(/([,;:])\\s*([.,;:!?])/g, '$2')"
+    }
+  ]
+}

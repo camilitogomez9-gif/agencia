@@ -1,0 +1,1114 @@
+[
+  {
+    "name": "confirmacion_p1_boarding",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "UTILITY",
+    "components": [
+      {
+        "type": "HEADER",
+        "format": "VIDEO",
+        "example": {
+          "header_handle": [
+            "https://scontent.whatsapp.net/v/t61.29466-34/760522225_1077181054929307_2528367487538919193_n.mp4?ccb=1-7&_nc_sid=8b1bef&_nc_ohc=T1IoL5r7KL0Q7kNvwHTNQSc&_nc_oc=AdpQddmlVagtGlWVB5Q-A9i_NPEaejet-8rNiXVodXEkOY7TB6pwkbYmF4MfLmyCny4&_nc_zt=28&_nc_ht=scontent.whatsapp.net&edm=AH51TzQEAAAA&_nc_gid=QafKhy0rSITS8Fm7toY6fw&_nc_tpa=Q5bMBQJsV3Osa6ezll04BjmQbeuxwzEoz8qqHkd9CQmib1tU3JHNPcS5AK0Yls9ibHpAYa_J11HaJL19bg&oh=01_Q5Aa5gFlzbiJMvw-NbTNz66z-rf7Y9cuFQK2IA64t_2XVqF6Rw&oe=6AD3CA89"
+          ]
+        }
+      },
+      {
+        "type": "BODY",
+        "text": "Hola {{1}},  Soy Rodrigo, el asesor con quien tendrás tu sesión sobre internados en el extranjero para estudiantes de secundaria y preparatoria.\n\nEn este video te explico cómo ingresar al enlace de tu reunión.\n\nVi que acabas de reservar y quiero confirmar personalmente que el horario sí te funciona.\n\nResponde, por favor:\n1. Sí, confirmo mi asistencia.\n2. Necesito cambiar el horario.\n\nRodrigo Garcia de la Vega\nVenttur Education & Travel",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "1077181051595974"
+  },
+  {
+    "name": "confirmacion_0_cita_internados_2026",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "UTILITY",
+    "components": [
+      {
+        "type": "HEADER",
+        "format": "VIDEO",
+        "example": {
+          "header_handle": [
+            "https://scontent.whatsapp.net/v/t61.29466-34/590540867_2122694995125764_6603501902221000897_n.mp4?ccb=1-7&_nc_sid=8b1bef&_nc_ohc=O2xgeRrc6uYQ7kNvwFFaBLe&_nc_oc=Adrof4Iy0bCo7CSdogm2-PpJRMWfCNkX1whTODaT-UY3pwErCwWl-BkuqupME2aGaUg&_nc_zt=28&_nc_ht=scontent.whatsapp.net&edm=AH51TzQEAAAA&_nc_gid=QafKhy0rSITS8Fm7toY6fw&_nc_tpa=Q5bMBQJlsCdd-ZXhUMzFqX_lR6bFzt0RT433a7XDQAizlOqp9X5gizg7hCfBEMhN3Sno7CUCSY_-sxdYNw&oh=01_Q5Aa5gGylOGHuEXZHhrZ1K9aTz5zfbA7QptLDLg3jxjZWEdjBw&oe=6AD3F3FC"
+          ]
+        }
+      },
+      {
+        "type": "BODY",
+        "text": "Hola {{1}},  Soy Rodrigo, el asesor con quien tendrás tu sesión sobre internados en el extranjero para estudiantes de secundaria y preparatoria.\n\nEn este video te explico cómo ingresar al enlace de tu reunión.\n\nVi que acabas de reservar y quiero confirmar personalmente que el horario sí te funciona.\n\nResponde, por favor:\n1. Sí, confirmo mi asistencia.\n2. Necesito cambiar el horario.\n\nRodrigo Garcia de la Vega\nVenttur Education & Travel",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "2122694988459098"
+  },
+  {
+    "name": "confirmacion_02_cita_boarding",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "UTILITY",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}, te recordamos que tu asesoría con Venttur Education & Travel inicia en *60 minutos*.\n\nSi no encuentras el enlace de tu reunión o surge algún imprevisto antes de iniciar, responde a este mensaje y con gusto te apoyamos.",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "3022360834624458"
+  },
+  {
+    "name": "confirmacion_01_cita_boarding",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "UTILITY",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}, te recordamos que tienes una asesoría agendada con Venttur Education & Travel el día de *mañana.*\n\nPara *reagendar* o resolver dudas sobre tu cita, responde a este mensaje.",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "1340953967493385"
+  },
+  {
+    "name": "rescate2_noshow_pathway",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "HEADER",
+        "format": "TEXT",
+        "text": "¿Es realmente posible estudiar en Alemania?"
+      },
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}\n\nSé que a veces el día se complica y no siempre logramos coincidir.\n\nMuchos padres que consideran Alemania tienen la misma duda:\n¿qué tan viable es realmente ingresar a una universidad pública y cumplir con los requisitos?\n\nEl reto normalmente no es la capacidad del estudiante, sino iniciar el proceso sin una ruta clara de idioma, validación académica y tiempos.\n\nCuando todo se estructura correctamente desde el inicio —idioma, Studienkolleg y proceso universitario— las probabilidades de éxito cambian completamente.\n\nEn la sesión revisamos su caso y les explicamos los pasos reales del proceso para que puedan tomar una decisión con claridad.",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "BUTTONS",
+        "buttons": [
+          {
+            "type": "URL",
+            "text": "Visit website",
+            "url": "https://promo.venttur.com/PW_Alemania_Agendar{{1}}",
+            "example": [
+              "https://promo.venttur.com/PW_Alemania_Agendar"
+            ]
+          }
+        ]
+      }
+    ],
+    "id": "932658979479677"
+  },
+  {
+    "name": "rescate2_noshow_summercamp",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "HEADER",
+        "format": "TEXT",
+        "text": "¿Es buena idea empezar con un Summer Camp?"
+      },
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}\n\nSé que a veces el día se complica y no siempre logramos coincidir.\n\nMuchos padres que consideran un Summer Camp tienen dudas muy similares:\n¿será una buena primera experiencia?, ¿será seguro?, ¿realmente aprenderá o solo será un viaje?\n\nJustamente por eso muchos estudiantes comienzan con programas cortos: permiten vivir una primera experiencia internacional en un entorno supervisado, estructurado y con enfoque en idioma y convivencia multicultural.\n\nEn la sesión revisamos su edad, nivel de idioma y objetivos para ayudarles a elegir la opción más adecuada para una primera experiencia segura y formativa.",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "BUTTONS",
+        "buttons": [
+          {
+            "type": "URL",
+            "text": "Visit website",
+            "url": "https://promo.venttur.com/SummerCamp-Agendar{{1}}",
+            "example": [
+              "https://promo.venttur.com/SummerCamp-Agendar"
+            ]
+          }
+        ]
+      }
+    ],
+    "id": "2008426973439109"
+  },
+  {
+    "name": "rescate2_noshow_aafamilia",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "HEADER",
+        "format": "TEXT",
+        "text": "La duda más común antes de estudiar en el extranjero"
+      },
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}\n\nSé que a veces el día se complica y no siempre logramos coincidir.\n\nUna duda muy común entre los padres es:\n¿mi hijo podrá adaptarse si aún no domina el idioma del país al que quiere ir?\n\nLa mayoría de los estudiantes comienzan con un nivel básico. Lo que realmente marca la diferencia es la inmersión diaria viviendo con una familia anfitriona y el acompañamiento durante todo el proceso.\n\nEn la sesión revisamos su caso, exploramos las opciones que mejor se adapten a su perfil y resolvemos todas sus dudas para que puedan tomar una decisión con claridad.",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "BUTTONS",
+        "buttons": [
+          {
+            "type": "URL",
+            "text": "Visit website",
+            "url": "https://promo.venttur.com/AAFamilia-Agendar{{1}}",
+            "example": [
+              "https://promo.venttur.com/AAFamilia-Agendar"
+            ]
+          }
+        ]
+      }
+    ],
+    "id": "2474891242980432"
+  },
+  {
+    "name": "rescate2_noshow_internado",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "HEADER",
+        "format": "TEXT",
+        "text": "Lo que muchos padres descubren sobre el internado"
+      },
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}\nSé que a veces el día se complica y no siempre logramos coincidir.\nMuchos padres que consideran un internado tienen dudas como:\n“¿Y si todavía no está listo para estar lejos?” o\n“Su nivel de idioma aún no es el ideal?”\nLo interesante es que, en un entorno de internado con acompañamiento académico y residencial, los estudiantes suelen desarrollar autonomía mucho más rápido.\nLa sesión dura 45 minutos y nos permite revisar su situación, ver opciones reales según su perfil y resolver todas sus dudas.\nAquí pueden reagendar cuando les sea conveniente",
+        "example": {
+          "body_text": [
+            [
+              "Max"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "BUTTONS",
+        "buttons": [
+          {
+            "type": "URL",
+            "text": "Visit website",
+            "url": "https://promo.venttur.com/agendar-ema{{1}}",
+            "example": [
+              "https://promo.venttur.com/agendar-ema"
+            ]
+          }
+        ]
+      }
+    ],
+    "id": "964884869508372"
+  },
+  {
+    "name": "rescate1_noshow_internado",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "HEADER",
+        "format": "TEXT",
+        "text": "Lo que muchos padres descubren sobre el internado"
+      },
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}\nSé que a veces el día se complica y no siempre logramos coincidir.\nMuchos padres que consideran un internado tienen dudas como:\n“¿Y si todavía no está listo para estar lejos?” o\n“Su nivel de idioma aún no es el ideal?”\nLo interesante es que, en un entorno de internado con acompañamiento académico y residencial, los estudiantes suelen desarrollar autonomía mucho más rápido.\nLa sesión dura 45 minutos y nos permite revisar su situación, ver opciones reales según su perfil y resolver todas sus dudas.\nAquí pueden reagendar cuando les sea conveniente",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "BUTTONS",
+        "buttons": [
+          {
+            "type": "URL",
+            "text": "Reagendar cita",
+            "url": "https://promo.venttur.com/agendar-ema{{1}}",
+            "example": [
+              "https://promo.venttur.com/agendar-ema"
+            ]
+          }
+        ]
+      }
+    ],
+    "id": "34266371773008355"
+  },
+  {
+    "name": "formulario_aafamilia",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}} !\n\nMucho gusto, soy {{2}} de Venttur, recientemente nos dejaste tus datos para solicitar mas información respecto al programa de Intercambio Año Académico para Adolescentes.\n\nCon mucho gusto te apoyo a resolver tus dudas, serias tan amable de platicarme, en que grado escolar va tu hijo/a?\nCon esto podemos brindar información mas precisa.",
+        "example": {
+          "body_text": [
+            [
+              "max",
+              "rodrigo"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "2776109932729316"
+  },
+  {
+    "name": "formulario_boarding",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}} !\nMucho gusto, soy {{2}} de Venttur, recientemente nos dejaste tus datos para solicitar mas información respecto al programa de Boarding school (Internados).\nCon mucho gusto te apoyo a resolver tus dudas, serias tan amable de platicarme, cuántos años tiene tu hija/o y  qué tipo de internado estas buscando? Con esto podemos brindar información más precisa.",
+        "example": {
+          "body_text": [
+            [
+              "max",
+              "rodrigo"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "1252588299819460"
+  },
+  {
+    "name": "rescate1_noshow_summercamp",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "HEADER",
+        "format": "TEXT",
+        "text": "¿Es buena idea empezar con un Summer Camp?"
+      },
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}\n\nSé que a veces el día se complica y no siempre logramos coincidir.\n\nMuchos padres que consideran un Summer Camp tienen dudas muy similares:\n¿será una buena primera experiencia?, ¿será seguro?, ¿realmente aprenderá o solo será un viaje?\n\nJustamente por eso muchos estudiantes comienzan con programas cortos: permiten vivir una primera experiencia internacional en un entorno supervisado, estructurado y con enfoque en idioma y convivencia multicultural.\n\nEn la sesión revisamos su edad, nivel de idioma y objetivos para ayudarles a elegir la opción más adecuada para una primera experiencia segura y formativa.",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "BUTTONS",
+        "buttons": [
+          {
+            "type": "URL",
+            "text": "Reagendar cita",
+            "url": "https://promo.venttur.com/SummerCamp-Agendar"
+          }
+        ]
+      }
+    ],
+    "id": "1246508093681024"
+  },
+  {
+    "name": "rescate1_noshow_pathway",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "HEADER",
+        "format": "TEXT",
+        "text": "¿Es realmente posible estudiar en Alemania?"
+      },
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}\n\nSé que a veces el día se complica y no siempre logramos coincidir.\n\nMuchos padres que consideran Alemania tienen la misma duda:\n¿qué tan viable es realmente ingresar a una universidad pública y cumplir con los requisitos?\n\nEl reto normalmente no es la capacidad del estudiante, sino iniciar el proceso sin una ruta clara de idioma, validación académica y tiempos.\n\nCuando todo se estructura correctamente desde el inicio —idioma, Studienkolleg y proceso universitario— las probabilidades de éxito cambian completamente.\n\nEn la sesión revisamos su caso y les explicamos los pasos reales del proceso para que puedan tomar una decisión con claridad.",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "BUTTONS",
+        "buttons": [
+          {
+            "type": "URL",
+            "text": "Reagendar cita",
+            "url": "https://promo.venttur.com/PW_Alemania_Agendar"
+          }
+        ]
+      }
+    ],
+    "id": "1688479855916662"
+  },
+  {
+    "name": "rescate1_noshow_aafamilia",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "HEADER",
+        "format": "TEXT",
+        "text": "La duda más común antes de estudiar en el extranjero"
+      },
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}\n\nSé que a veces el día se complica y no siempre logramos coincidir.\n\nUna duda muy común entre los padres es:\n¿mi hijo podrá adaptarse si aún no domina el idioma del país al que quiere ir?\n\nLa mayoría de los estudiantes comienzan con un nivel básico. Lo que realmente marca la diferencia es la inmersión diaria viviendo con una familia anfitriona y el acompañamiento durante todo el proceso.\n\nEn la sesión revisamos su caso, exploramos las opciones que mejor se adapten a su perfil y resolvemos todas sus dudas para que puedan tomar una decisión con claridad.",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "BUTTONS",
+        "buttons": [
+          {
+            "type": "URL",
+            "text": "Reagendar cita",
+            "url": "https://promo.venttur.com/AAFamilia-Agendar"
+          }
+        ]
+      }
+    ],
+    "id": "1666721127794771"
+  },
+  {
+    "name": "confirmacion_cita_3_summer",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola, {{1}} 👋\n En 60 minutos iniciamos nuestra asesoría.\nSerá un espacio para entender tu situación con calma, aclarar las dudas que hoy tienes y ayudarte a tomar la mejor decisión para tu hijo y tu familia, con claridad y tranquilidad.\nSi por algún motivo no encuentras el enlace de la reunión o surge algún imprevisto antes de iniciar, escríbeme por aquí y con gusto te apoyo.",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "2054053841802392"
+  },
+  {
+    "name": "confirmacion_cita_2_summer",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola, {{1}} 👋\nMañana tenemos tu asesoría programada.\nEste espacio está pensado para ayudarte a ordenar tu situación, aclarar tus dudas y tomar tu siguiente paso con mayor certeza.\nLa idea es que puedas llegar con tranquilidad y aprovechar al máximo la conversación.\nSi antes de la asesoría necesitas aclarar algo puntual, puedes escribirme por aquí.\nNos vemos mañana.",
+        "example": {
+          "body_text": [
+            [
+              "Max"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "2337404343422907"
+  },
+  {
+    "name": "confirmacion_cita_1_summer",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "HEADER",
+        "format": "VIDEO",
+        "example": {
+          "header_handle": [
+            "https://scontent.whatsapp.net/v/t61.29466-34/635094479_2102775883821389_1067770655062852322_n.mp4?ccb=1-7&_nc_sid=8b1bef&_nc_ohc=pjzn20l0plQQ7kNvwFujAvZ&_nc_oc=Adqt2cHS-TCa_jy0WIEx7unfxx3tge5d6jxwgIVl1X-QyzsWv0-NL7DPlDAMdi1nSus&_nc_zt=28&_nc_ht=scontent.whatsapp.net&edm=AH51TzQEAAAA&_nc_gid=QafKhy0rSITS8Fm7toY6fw&_nc_tpa=Q5bMBQJzsvVyCxuSXhz7z7-584P769h4RRk2ff7Qpwc4I8CDqeoNqGHy5VWRzBd1SorCw3x5P55n_LxhRw&oh=01_Q5Aa5gHL0zxqNQ-1fdK0I1Po0lAfeeYSPUAYu9LkU2CxCYlKzA&oe=6AD3C61C"
+          ]
+        }
+      },
+      {
+        "type": "BODY",
+        "text": "Hola, {{1}}  👋\nSoy Rodrigo, fundador de Venttur Education & Travel.\nTe escribo para confirmar tu asesoría.\nTe comparto un breve video para presentarme y explicarte cómo ingresar al link de tu cita 🙂.",
+        "example": {
+          "body_text": [
+            [
+              "Max"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "2102775880488056"
+  },
+  {
+    "name": "candidatas_no_community_manager",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}\n\nQueremos agradecerte por haber participado en nuestro proceso de selección para la posición de Community Manager en Venttur. Recibimos muchas candidaturas de gran nivel y, después de un análisis detallado, hemos decidido avanzar con otro perfil para esta ocasión.\n\nValoramos mucho el tiempo y esfuerzo que dedicaste a este proceso y realmente apreciamos tu interés en formar parte de nuestro equipo. Te deseamos el mayor de los éxitos en tu camino profesional y esperamos que en el futuro nuestros caminos puedan volver a cruzarse.\n\nMuchas gracias nuevamente y mucho éxito en todo lo que venga.\n\nSaludos,\nEquipo Venttur",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "1716437099729642"
+  },
+  {
+    "name": "instrucciones_para_la_candidata",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}} !Hemos decidido implementar una etapa intermedia antes de agendar tu segunda entrevista. Necesitamos que realices este ejercicio rápido (máximo 30 min). No buscamos perfección técnica, buscamos tu visión estratégica\":\n1.⁠ ⁠Auditoría Express: Revisa nuestro último Reel en Instagram. Escríbenos 3 puntos concretos de por qué crees que un usuario le daría swipe down (pasar de largo) y qué frase usarías tú en los primeros 3 segundos para evitarlo.\n2.⁠ ⁠Video Crudo (Sin editar): Grábate con tu celular (en vertical) explicando un solo beneficio de estudiar en el extranjero con Venttur como si se lo contaras a un amigo. Regla: Máximo 40 segundos, video crudo, sin filtros ni edición. Queremos ver tu carisma natural.\n\nPuedes enviar la actividad por este medio o a nvaleriano@venttur.com",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "2343905589421062"
+  },
+  {
+    "name": "confirmacion_cita_3_aafrancia",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola, {{1}} 👋\n En 60 minutos iniciamos nuestra asesoría.\nSerá un espacio para entender tu situación con calma, aclarar las dudas que hoy tienes y ayudarte a tomar la mejor decisión para tu hijo y tu familia, con claridad y tranquilidad.\nSi por algún motivo no encuentras el enlace de la reunión o surge algún imprevisto antes de iniciar, escríbeme por aquí y con gusto te apoyo.",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "2374475856332497"
+  },
+  {
+    "name": "confirmacion_cita_2_aafrancia",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola, {{1}} 👋\nMañana tenemos tu asesoría programada.\nEste espacio está pensado para ayudarte a ordenar tu situación, aclarar tus dudas y tomar tu siguiente paso con mayor certeza.\nLa idea es que puedas llegar con tranquilidad y aprovechar al máximo la conversación.\nSi antes de la asesoría necesitas aclarar algo puntual, puedes escribirme por aquí.\nNos vemos mañana.",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "863320246334214"
+  },
+  {
+    "name": "confirmacion_cita_1_aafrancia",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "HEADER",
+        "format": "VIDEO",
+        "example": {
+          "header_handle": [
+            "https://scontent.whatsapp.net/v/t61.29466-34/616377863_2076618126618667_4359752349207799415_n.mp4?ccb=1-7&_nc_sid=8b1bef&_nc_ohc=n_rZig_niLcQ7kNvwHFBNxh&_nc_oc=AdqxIkoxbe8_ZSuB31PCzY6r497f-aDaHg61o_uANI9GU5G3kEEaSxcayAsP_qRJCew&_nc_zt=28&_nc_ht=scontent.whatsapp.net&edm=AH51TzQEAAAA&_nc_gid=QafKhy0rSITS8Fm7toY6fw&_nc_tpa=Q5bMBQL2Dn-f7eAsdAeKua8UL7Gb8B-5zGHPre8EvcmV16LiMbuerXyjgph4j9oGqErUQCrNVYGtEyRpkg&oh=01_Q5Aa5gG0IsEe1I7JP0jv8y_NYp7xvlImSo4eKQNEime7kZValA&oe=6AD3CE10"
+          ]
+        }
+      },
+      {
+        "type": "BODY",
+        "text": "Hola, {{1}} 👋\nSoy Rodrigo, fundador de Venttur Education & Travel.\nTe escribo para confirmar tu asesoría.\nTe comparto un breve video para presentarme y explicarte cómo ingresar al link de tu cita 🙂.",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "2076618123285334"
+  },
+  {
+    "name": "confirmacion_cita_1_boarding",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "HEADER",
+        "format": "VIDEO",
+        "example": {
+          "header_handle": [
+            "https://scontent.whatsapp.net/v/t61.29466-34/604930724_1925380485039776_4203648062599731107_n.mp4?ccb=1-7&_nc_sid=8b1bef&_nc_ohc=8-jgihsDsswQ7kNvwFLWC55&_nc_oc=Adqjet1D2dypHvBM9Kss-9DM1Nqlq0Sx6fkXJp93Lkv8vB-QxAlYmQxjkmEMu7FHWDA&_nc_zt=28&_nc_ht=scontent.whatsapp.net&edm=AH51TzQEAAAA&_nc_gid=QafKhy0rSITS8Fm7toY6fw&_nc_tpa=Q5bMBQJMKPnpyvFak5Uj8lxCrc4qGFAFxqEm0fAIyW9KLO59v9uZepkhpEAAPAB6ygNIuu2w8KhNYB006g&oh=01_Q5Aa5gGXVafEqd15y5EjhzzFRW_jS1LkX3FWBbHglA_skuy03w&oe=6AD3E412"
+          ]
+        }
+      },
+      {
+        "type": "BODY",
+        "text": "Hola, {{1}} 👋\nSoy Rodrigo, fundador de Venttur Education & Travel.\nTe escribo para confirmar tu asesoría.\nTe comparto un breve video para presentarme y explicarte cómo ingresar al link de tu cita 🙂.",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "1925380481706443"
+  },
+  {
+    "name": "confirmacion_cita_3_boarding",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola, {{1}} 👋\n En *60 minutos* iniciamos nuestra asesoría.\nSerá un espacio para entender tu situación con calma, aclarar las dudas que hoy tienes y ayudarte a *tomar la mejor decisión para tu hijo y tu familia,* con claridad y tranquilidad.\nSi por algún motivo no encuentras el enlace de la reunión o surge algún imprevisto antes de iniciar, escríbeme por aquí y con gusto te apoyo.",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "869294019228652"
+  },
+  {
+    "name": "confirmacion_cita_2_boarding",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola, {{1}} 👋\nTe recuerdo que tenemos programada *tu asesoría para el día de mañana.*\nEste espacio está pensado para ayudarte a ordenar tu situación, aclarar tus dudas y tomar tu siguiente paso con mayor certeza.\nLa idea es que puedas llegar con tranquilidad y aprovechar al máximo la conversación.\nSi antes de la asesoría necesitas aclarar algo puntual, puedes escribirme por aquí.\n*Nos vemos mañana.*",
+        "example": {
+          "body_text": [
+            [
+              "Max"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "1187832943420931"
+  },
+  {
+    "name": "saludo_despues_de_feria_educativa_alemania",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}, como estás?\nSoy {{2}} de Venttur. Nos conocimos en la feria del Instituto de Ciencias y me contaste que te interesa estudiar la carrera en Alemania. ¿Te late venir a la oficina para armar tu plan educativo (qué carrera te queda, cómo mejorar tus materias y los pasos para estudiar allá sin colegiatura)?\nTe dejo mi calendario para que agendes el día y hora que te acomode mejor. \nSaludos!",
+        "example": {
+          "body_text": [
+            [
+              "Juan",
+              "Andres"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "BUTTONS",
+        "buttons": [
+          {
+            "type": "URL",
+            "text": "Agendar asesoría",
+            "url": "https://reuniones.clientify.com/#/Venttur_Andres/PW_Alemania_presencial"
+          }
+        ]
+      }
+    ],
+    "id": "3282633701888708"
+  },
+  {
+    "name": "formulario_aa",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}!\n\nMucho gusto, soy {{2}} de Venttur, recientemente nos dejaste tus datos para solicitar mas información respecto al programa de Año Académico en Francia para Adolescentes.\n\nCon mucho gusto te apoyo a resolver tus dudas, serias tan amable de platicarme, en que grado escolar va tu hijo/a y como esta su nivel de Ingles y Frances?\n\nCon esto podemos brindar información mas precisa.",
+        "example": {
+          "body_text": [
+            [
+              "Mariana",
+              "Mauricio"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "1486764655542206"
+  },
+  {
+    "name": "plantilla_formulario_aa",
+    "language": "en",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}!\n\nMucho gusto, soy {{2}} de Venttur, recientemente nos dejaste tus datos para solicitar mas información respecto al programa de Año Académico en Francia para Adolescentes.\n\nCon mucho gusto te apoyo a resolver tus dudas, serias tan amable de platicarme, en que grado escolar va tu hijo/a y como esta su nivel de Ingles y Frances?\n\nCon esto podemos brindar información mas precisa.",
+        "example": {
+          "body_text": [
+            [
+              "Mariana",
+              "Maurcicio"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "1101985585414726"
+  },
+  {
+    "name": "notificacion_vacante_ocupada",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}},\n\nQueremos agradecerte por haber participado en nuestro proceso de selección para la posición de Growth & Partnerships Manager en Venttur. Recibimos muchas candidaturas de gran nivel y, después de un análisis detallado, hemos decidido avanzar con otro perfil para esta ocasión.\n\nValoramos mucho el tiempo y esfuerzo que dedicaste a este proceso y realmente apreciamos tu interés en formar parte de nuestro equipo. Te deseamos el mayor de los éxitos en tu camino profesional y esperamos que en el futuro nuestros caminos puedan volver a cruzarse.\n\nMuchas gracias nuevamente y mucho éxito en todo lo que venga.\n\nSaludos,\nEquipo Venttur",
+        "example": {
+          "body_text": [
+            [
+              "Niza"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "776824774673796"
+  },
+  {
+    "name": "notificacion_candidatas_no_elegidas",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}},\n\nQueremos agradecerte por haber participado en nuestro proceso de selección para la posición de Gerente de Marketing en Venttur. Recibimos muchas candidaturas de gran nivel y, después de un análisis detallado, hemos decidido avanzar con otro perfil para esta ocasión.\n\nValoramos mucho el tiempo y esfuerzo que dedicaste a este proceso y realmente apreciamos tu interés en formar parte de nuestro equipo. Te deseamos el mayor de los éxitos en tu camino profesional y esperamos que en el futuro nuestros caminos puedan volver a cruzarse.\n\nMuchas gracias nuevamente y mucho éxito en todo lo que venga.\n\nSaludos,\nEquipo Venttur",
+        "example": {
+          "body_text": [
+            [
+              "mariana"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "2083716778768070"
+  },
+  {
+    "name": "seguimiento_ema_dia_10_3",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "HEADER",
+        "format": "IMAGE",
+        "example": {
+          "header_handle": [
+            "https://scontent.whatsapp.net/v/t61.29466-34/455274687_560899806268814_3441258536977698721_n.jpg?ccb=1-7&_nc_sid=8b1bef&_nc_ohc=YfLJ_l2Pzv8Q7kNvwEyCByR&_nc_oc=AdpU3AE5J9SQZ8dARUU2zlm0wFk4etuvY8-3OAhJUWb7rOW1FdMk9BGOTmMcA_kLEyU&_nc_zt=3&_nc_ht=scontent.whatsapp.net&edm=AH51TzQEAAAA&_nc_gid=QafKhy0rSITS8Fm7toY6fw&_nc_tpa=Q5bMBQJMEQCmn-26X4-U8iRU5DSDkLzo9bYZI_JYtohiY0jrIoH8hyRFnHMAqwvcIFD_W0LZiLZeguHgVQ&oh=01_Q5Aa5gH_gIOeEhayJnMYV-GCAW9VM449xi6JraXkLl6VvqXQpQ&oe=6AD3FAF6"
+          ]
+        }
+      },
+      {
+        "type": "BODY",
+        "text": "¡Hola {{1}}!\n\nSoy {{2}} nuevamente. 😊\n\nQuería compartir contigo un testimonio sobre cómo la metodología EMA para la busqueda y seleccion de escuelas en el extranjero, ayudó a estos estudiantes y sus familias a tener una experiencia que les cambió la vida. Creo que te será muy útil.\n\n¿Tienes algún tiempo esta semana para una breve llamada o reunión virtual? Me encantaría responder a todas tus dudas e inquietudes personalmente.\n\nSaludos,\n{{3}}",
+        "example": {
+          "body_text": [
+            [
+              "Juan",
+              "Mau",
+              "Mau"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "BUTTONS",
+        "buttons": [
+          {
+            "type": "URL",
+            "text": "Volver a Ver el Video",
+            "url": "https://promo.venttur.com/entrenamientospe"
+          },
+          {
+            "type": "URL",
+            "text": "Agendar Asesoría Gratuita",
+            "url": "https://promo.venttur.com/SPEagendar"
+          },
+          {
+            "type": "QUICK_REPLY",
+            "text": "¡Quiero Más Información!"
+          }
+        ]
+      }
+    ],
+    "id": "560899802935481"
+  },
+  {
+    "name": "confirmacion_basica_hoy",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "¡Hola {{1}}! ¿Cómo estás?\n\nSolamente quería confirmar nuestra reunión de hoy.\n\nSaludos y cualquier cosa estoy al pendiente.",
+        "example": {
+          "body_text": [
+            [
+              "Rodrigo"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "1176264210157355"
+  },
+  {
+    "name": "confirmacin_cita_internados_nuevo",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "¡Hola {{1}}! ¿Cómo estás?\n\nSolamente quería confirmar nuestra reunión de hoy con Rodrigo García, nuestro director de programas de internado. \n\nSaludos y cualquier cosa estoy al pendiente.",
+        "example": {
+          "body_text": [
+            [
+              "Rodrigo"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "1009573767319087"
+  },
+  {
+    "name": "seguimiento_ema_dia_15",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "👋 ¡Hola {{1}}!\n\nSoy {{2}} de Venttur Education & Travel.\n\nEspero que estés bien. Quería compartir contigo algo especial: en Venttur, estamos tan seguros de nuestra metodología EMA que ofrecemos una garantía única. Si las opciones que te presentamos como ideales para tu hij@ no son de tu agrado, *te regresamos íntegramente el costo de implementación,* *¡SIN PREGUNTAS!* 🎓✨\n\nEs una excelente oportunidad para resolver cualquier duda que tengas y explorar cómo podemos ayudarte a encontrar el internado ideal para tu hij@.\n\n¡Espero verte pronto!\n\nSaludos,\n{{3}}",
+        "example": {
+          "body_text": [
+            [
+              "ERIKA",
+              "ERIKA",
+              "ERIKA"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "BUTTONS",
+        "buttons": [
+          {
+            "type": "URL",
+            "text": "Volver a Ver el Video",
+            "url": "https://promo.venttur.com/entrenamientospe"
+          },
+          {
+            "type": "URL",
+            "text": "Agendar Asesoría Gratuita",
+            "url": "https://promo.venttur.com/SPEagendar"
+          },
+          {
+            "type": "QUICK_REPLY",
+            "text": "¡Quiero Más Información!"
+          }
+        ]
+      }
+    ],
+    "id": "511668711345378"
+  },
+  {
+    "name": "mensaje_1_seguimiento_ema",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "🌟¡Hola {{1}}!\n\nEspero te encuentres muy bien. Soy {{2}} de Venttur Education & Travel. 🌍 ✈️ \n\n¡Gracias por interesarte en nuestra metodología EMA para encontrar el internado ideal para tu hij@! 💪\n\nPara poder ayudarte de la mejor manera, ¿hay alguna duda o inquietud que tengas después de ver el video? 😊\n\nTambién, me encantaría saber qué aspectos te interesan más sobre los internados para poder brindarte información más precisa y útil.\n\nQuedo atenta a tu respuesta.\n\nSaludos cordiales,\n{{3}}",
+        "example": {
+          "body_text": [
+            [
+              "Mauricio",
+              "Erika",
+              "Erika"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "BUTTONS",
+        "buttons": [
+          {
+            "type": "URL",
+            "text": "Volver a Ver el Video",
+            "url": "https://promo.venttur.com/entrenamientospe"
+          },
+          {
+            "type": "URL",
+            "text": "Agendar Asesoría Gratuita",
+            "url": "https://promo.venttur.com/SPEagendar"
+          },
+          {
+            "type": "QUICK_REPLY",
+            "text": "¡Tengo Dudas!"
+          }
+        ]
+      }
+    ],
+    "id": "1536051487262969"
+  },
+  {
+    "name": "postulantes_gerente_operativo",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}!\n\nMi nombre es {{2}} de Venttur Education & Travel. Nos dejaste tu CV en una plataforma digital y te postulaste para nuestra vacante de Gerente Operativo.\n\nLa intención de este mensaje es ver si tu interés por el puesto sigue en pie y de ser así comentarte los siguientes pasos de nuestro proceso de reclutamiento.\n\nQuedo atenta a tus comentarios.\nSaludos cordiales.",
+        "example": {
+          "body_text": [
+            [
+              "Nombre",
+              "Agente"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "2309471802777995"
+  },
+  {
+    "name": "saludo_entrevista_1",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}!\n\nMucho gusto, te escribe {{2}} de Venttur Education & Travel. Actualmente tenemos una vacante abierta para el puesto de Gerente de Marketing y por ahi nos comentaron que pudieras estar interesada en ingresar al proceso de reclutamiento.\n\nLa intención de este mensaje es saber si sigues interesada en la vacante, así mismo aclararte por este medio cualquier duda que pueda surgir respecto a la misma, una vez aclaradas tus dudas procederemos a agendar una entrevista.\n\nQuedo atento a tus comentarios.\nSaludos cordiales.",
+        "example": {
+          "body_text": [
+            [
+              "mich",
+              "mau"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "1610097643111578"
+  },
+  {
+    "name": "entrevista_laboral_2",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}!\n\nHas sido seleccionada para continuar el proceso de la vacante que platicamos en la entrevista pasada, lo siguiente sería agendar una reunión presencial en nuestras oficinas.\n\nMe confirmas si aún hay interés de tu parte por este puesto?\nUna vez confirmado tu interés procederé a enviarte la liga para agendar la reunión.\n\nQuedo atento a tus comentarios!\nSaludos cordiales.\n{{2}}",
+        "example": {
+          "body_text": [
+            [
+              "sofi",
+              "mau"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "7226360347409725"
+  },
+  {
+    "name": "seguimiento_reclutamiento_venttur",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}!\n\nRecientemente te postulaste como candidato a una vacante que tenemos abierta, tu CV nos gustó mucho y queremos agendar una primera entrevista.\n\nFavor de contestar a este mensaje para poder dar seguimiento al proceso!\n\nMucho gusto!\nSaludos cordiales!\n{{2}}\nVenttur Education & Travel",
+        "example": {
+          "body_text": [
+            [
+              "Roxana",
+              "Mauricio"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "7289463401121226"
+  },
+  {
+    "name": "confirmacion_cita_afiliados",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}!\n\nTe escribo para recordarte que tenemos una reunión a través de meet el día de hoy!\n\nCualquier duda que tengas respecto a como conectarte lo puedes consultar por este medio!\n\n¡Nos vemos pronto!\n\nMauricio Garcia.",
+        "example": {
+          "body_text": [
+            [
+              "Margarita"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "1437760236856145"
+  },
+  {
+    "name": "saludo_retomar_conversacion",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "¡Hola, {{1}}!\n¿Cómo estás?\nSoy, {{2}}, de Venttur Education & Travel✏️✈. Gusto en saludarte nuevamente!!!",
+        "example": {
+          "body_text": [
+            [
+              "Juan",
+              "Mario"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "682331830397135"
+  },
+  {
+    "name": "confirmacion_cita_internados",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "¡Hola {{1}}!\n\nEspero que te encuentres muy bien. \n\nEl motivo de mi mensaje es confirmar nuestra reunión de hoy. Será un gusto conocerlos y ayudarlos a encontrar el internado ideal para sus hijos. \n\nNo duden en contactarme si tienen alguna duda con respecto a la reunión. \n\nRodrigo Garcia de la Vega\nVenttur Education & Travel ✈️",
+        "example": {
+          "body_text": [
+            [
+              "Roberto"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "1016982012752067"
+  }
+]

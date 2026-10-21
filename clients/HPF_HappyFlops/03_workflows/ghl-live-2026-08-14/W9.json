@@ -1,0 +1,315 @@
+{
+  "updatedAt": "2026-08-12T19:34:31.843Z",
+  "createdAt": "2026-08-07T23:48:41.727Z",
+  "id": "2Govwp16YAcpgJ2C",
+  "name": "HPF·GHL · W9 SQL lectura",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hpf-w9-sql",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a1d30796-14b5-41a6-b5e6-817bda3dcc3b",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -460,
+        0
+      ],
+      "webhookId": "265c136a-3fc9-485d-95e3-ed01d246e93f",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jUb7ZjztncX5ACpc",
+          "name": "HPF GHL Webhook Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Lista blanca de consultas. El llamador elige por nombre; la SQL no viaja nunca por\n// la red. Todas son SELECT y todas toman un único $1.\nconst CONSULTAS = {\n  // ¿Con qué formato están guardadas las sesiones? Contesta si el session_id\n  // histórico de Kommo lleva el '+' del teléfono o no — de eso depende que los leads\n  // en curso conserven su memoria en el cutover.\n  sesiones: `SELECT session_id, count(*)::int AS mensajes, max(id) AS ultimo_id\n             FROM n8n_chat_histories\n             WHERE session_id LIKE $1\n             GROUP BY session_id ORDER BY max(id) DESC LIMIT 25`,\n\n  // Los últimos mensajes de una sesión, para ver qué quedó escrito en la memoria\n  // compartida (incluidos los {\"step\":\"step_N\"} del Router).\n  mensajes: `SELECT id, message->>'type' AS tipo,\n                    left(message->>'content', 220) AS contenido\n             FROM n8n_chat_histories WHERE session_id = $1\n             ORDER BY id DESC LIMIT 20`,\n\n  // Estado de la caché del catálogo que alimenta a W3.\n  fichas: `SELECT count(*)::int AS total,\n                  count(media_url)::int AS con_asset,\n                  max(refrescado_at) AS refrescado\n           FROM hpf_fichas WHERE nombre ILIKE $1`,\n\n  // El mapeo contacto GHL -> session_id que arma W1.\n  identidad: `SELECT ghl_contact_id, phone_e164, session_id, created_at\n              FROM hpf_identity WHERE ghl_contact_id LIKE $1\n              ORDER BY created_at DESC LIMIT 25`,\n\n  // Estado de la cola de seguimientos de una sesión.\n  seg_fila: `SELECT * FROM hpf_seguimientos WHERE session_id = $1`,\n\n  // El evento que el lead eligió, persistido por W6. Es la memoria que antes no\n  // existía: sin ella el agente Products re-adivinaba el evento en cada turno y\n  // derrapaba a \"Boda\", así que una conversación de XV recibía fichas de Boda.\n  estado_sesion: `SELECT session_id, evento, actualizado_at\n                  FROM hpf_estado_sesion WHERE session_id LIKE $1\n                  ORDER BY actualizado_at DESC LIMIT 25`,\n\n  // ── Mutaciones SÓLO DE TEST ───────────────────────────────────────────────────\n  // Rompen la regla de \"todo es SELECT\" a propósito y con límites duros: son\n  // sentencias FIJAS (no hay SQL del llamador), tocan UNA sola tabla —\n  // `hpf_seguimientos`, que sólo usa el stack nuevo— y siempre filtran por\n  // `session_id = $1`.\n  //\n  // Existen porque la cadencia real es de 1 a 29 horas: sin poder adelantar el reloj,\n  // la máquina de seguimientos sólo se podría probar esperando un día por caso.\n  // Lo que se prueba es la MÁQUINA, no el reloj.\n  seg_vencer_toque: `UPDATE hpf_seguimientos\n    SET proximo_at = now() - interval '1 minute', bloqueado_hasta = NULL\n    WHERE session_id = $1 RETURNING session_id, proximo_at`,\n  // La línea de tiempo real, comprimida: el lead escribió hace 30 h, la última ola\n  // salió hace 24 h, y la evaluación vence ahora. Lo importante es que\n  // `ultimo_inbound_at` quede ANTES de `evaluacion_desde_at`: eso es \"estuvo callado\".\n  seg_vencer_eval: `UPDATE hpf_seguimientos\n    SET proximo_at = NULL, ola = 3, bloqueado_hasta = NULL,\n        ultimo_inbound_at   = now() - interval '30 hours',\n        desde_at            = now() - interval '30 hours',\n        evaluacion_desde_at = now() - interval '24 hours',\n        evaluacion_at       = now() - interval '1 minute'\n    WHERE session_id = $1 RETURNING session_id, evaluacion_at`,\n\n  // Igual pero el lead SÍ escribió después de la última ola: dispara el clasificador\n  // de desinterés.\n  seg_vencer_eval_hablo: `UPDATE hpf_seguimientos\n    SET proximo_at = NULL, ola = 3, bloqueado_hasta = NULL,\n        desde_at            = now() - interval '30 hours',\n        evaluacion_desde_at = now() - interval '24 hours',\n        ultimo_inbound_at   = now() - interval '1 hour',\n        evaluacion_at       = now() - interval '1 minute'\n    WHERE session_id = $1 RETURNING session_id, ultimo_inbound_at`,\n  seg_respondio: `UPDATE hpf_seguimientos\n    SET proximo_at = now() - interval '1 minute', bloqueado_hasta = NULL,\n        ultimo_inbound_at = now() + interval '1 minute'\n    WHERE session_id = $1 RETURNING session_id, ultimo_inbound_at`,\n  seg_futuro: `UPDATE hpf_seguimientos\n    SET proximo_at = now() + interval '2 hours',\n        bloqueado_hasta = now() - interval '1 minute'\n    WHERE session_id = $1 RETURNING session_id, proximo_at`,\n};\n\nconst j0 = $input.first().json || {};\nconst src = (j0.body && j0.body.consulta !== undefined) ? j0.body : j0;\nconst nombre = String(src.consulta || '');\nif (!CONSULTAS[nombre]) {\n  throw new Error(`W9: consulta \"${nombre}\" no está en la lista blanca ` +\n    `(${Object.keys(CONSULTAS).join(', ')})`);\n}\nreturn [{ json: { consulta: nombre, sql: CONSULTAS[nombre],\n                  param: src.param !== undefined ? String(src.param) : '%' } }];"
+      },
+      "id": "b7ba30fb-00a0-4511-b22e-d07469ae82d8",
+      "name": "Elegir consulta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ $json.sql }}",
+        "options": {
+          "queryReplacement": "={{ [ $json.param ] }}"
+        }
+      },
+      "id": "60f66d21-68f7-4dc4-868f-a347f01cd3a1",
+      "name": "Consultar",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        -20,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "id": "f29b5012-3d55-41f5-9521-d95cedaa6dd2",
+      "name": "Responder",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        200,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Elegir consulta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Elegir consulta": {
+      "main": [
+        [
+          {
+            "node": "Consultar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar": {
+      "main": [
+        [
+          {
+            "node": "Responder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "83019c3a-5e11-4dcf-8461-efcdb3096c1a",
+  "activeVersionId": "83019c3a-5e11-4dcf-8461-efcdb3096c1a",
+  "versionCounter": 9,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-08-07T23:48:41.727Z",
+      "createdAt": "2026-08-07T23:48:41.727Z",
+      "role": "workflow:owner",
+      "workflowId": "2Govwp16YAcpgJ2C",
+      "projectId": "g2TpxqLMiC0UsUBj",
+      "project": {
+        "updatedAt": "2025-05-10T12:26:37.475Z",
+        "createdAt": "2025-05-10T12:24:10.921Z",
+        "id": "g2TpxqLMiC0UsUBj",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-05-10T12:24:10.921Z",
+            "createdAt": "2025-05-10T12:24:10.921Z",
+            "userId": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+            "projectId": "g2TpxqLMiC0UsUBj",
+            "user": {
+              "updatedAt": "2026-08-14T04:35:54.326Z",
+              "createdAt": "2025-05-10T12:24:07.518Z",
+              "id": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "lastName": "AI",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-05-10T12:26:59.729Z",
+                "personalization_survey_n8n_version": "1.91.3",
+                "companySize": "<20",
+                "companyType": "systems-integrator",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "6fpcC3iGwfEYO3Eu",
+                "userActivatedAt": 1757033385622,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1773184568459
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "aiAgentStarterCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-08-14",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-08-12T19:34:31.834Z",
+    "createdAt": "2026-08-12T19:34:31.834Z",
+    "versionId": "83019c3a-5e11-4dcf-8461-efcdb3096c1a",
+    "workflowId": "2Govwp16YAcpgJ2C",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "hpf-w9-sql",
+          "authentication": "headerAuth",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "a1d30796-14b5-41a6-b5e6-817bda3dcc3b",
+        "name": "Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -460,
+          0
+        ],
+        "webhookId": "265c136a-3fc9-485d-95e3-ed01d246e93f",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "jUb7ZjztncX5ACpc",
+            "name": "HPF GHL Webhook Auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Lista blanca de consultas. El llamador elige por nombre; la SQL no viaja nunca por\n// la red. Todas son SELECT y todas toman un único $1.\nconst CONSULTAS = {\n  // ¿Con qué formato están guardadas las sesiones? Contesta si el session_id\n  // histórico de Kommo lleva el '+' del teléfono o no — de eso depende que los leads\n  // en curso conserven su memoria en el cutover.\n  sesiones: `SELECT session_id, count(*)::int AS mensajes, max(id) AS ultimo_id\n             FROM n8n_chat_histories\n             WHERE session_id LIKE $1\n             GROUP BY session_id ORDER BY max(id) DESC LIMIT 25`,\n\n  // Los últimos mensajes de una sesión, para ver qué quedó escrito en la memoria\n  // compartida (incluidos los {\"step\":\"step_N\"} del Router).\n  mensajes: `SELECT id, message->>'type' AS tipo,\n                    left(message->>'content', 220) AS contenido\n             FROM n8n_chat_histories WHERE session_id = $1\n             ORDER BY id DESC LIMIT 20`,\n\n  // Estado de la caché del catálogo que alimenta a W3.\n  fichas: `SELECT count(*)::int AS total,\n                  count(media_url)::int AS con_asset,\n                  max(refrescado_at) AS refrescado\n           FROM hpf_fichas WHERE nombre ILIKE $1`,\n\n  // El mapeo contacto GHL -> session_id que arma W1.\n  identidad: `SELECT ghl_contact_id, phone_e164, session_id, created_at\n              FROM hpf_identity WHERE ghl_contact_id LIKE $1\n              ORDER BY created_at DESC LIMIT 25`,\n\n  // Estado de la cola de seguimientos de una sesión.\n  seg_fila: `SELECT * FROM hpf_seguimientos WHERE session_id = $1`,\n\n  // El evento que el lead eligió, persistido por W6. Es la memoria que antes no\n  // existía: sin ella el agente Products re-adivinaba el evento en cada turno y\n  // derrapaba a \"Boda\", así que una conversación de XV recibía fichas de Boda.\n  estado_sesion: `SELECT session_id, evento, actualizado_at\n                  FROM hpf_estado_sesion WHERE session_id LIKE $1\n                  ORDER BY actualizado_at DESC LIMIT 25`,\n\n  // ── Mutaciones SÓLO DE TEST ───────────────────────────────────────────────────\n  // Rompen la regla de \"todo es SELECT\" a propósito y con límites duros: son\n  // sentencias FIJAS (no hay SQL del llamador), tocan UNA sola tabla —\n  // `hpf_seguimientos`, que sólo usa el stack nuevo— y siempre filtran por\n  // `session_id = $1`.\n  //\n  // Existen porque la cadencia real es de 1 a 29 horas: sin poder adelantar el reloj,\n  // la máquina de seguimientos sólo se podría probar esperando un día por caso.\n  // Lo que se prueba es la MÁQUINA, no el reloj.\n  seg_vencer_toque: `UPDATE hpf_seguimientos\n    SET proximo_at = now() - interval '1 minute', bloqueado_hasta = NULL\n    WHERE session_id = $1 RETURNING session_id, proximo_at`,\n  // La línea de tiempo real, comprimida: el lead escribió hace 30 h, la última ola\n  // salió hace 24 h, y la evaluación vence ahora. Lo importante es que\n  // `ultimo_inbound_at` quede ANTES de `evaluacion_desde_at`: eso es \"estuvo callado\".\n  seg_vencer_eval: `UPDATE hpf_seguimientos\n    SET proximo_at = NULL, ola = 3, bloqueado_hasta = NULL,\n        ultimo_inbound_at   = now() - interval '30 hours',\n        desde_at            = now() - interval '30 hours',\n        evaluacion_desde_at = now() - interval '24 hours',\n        evaluacion_at       = now() - interval '1 minute'\n    WHERE session_id = $1 RETURNING session_id, evaluacion_at`,\n\n  // Igual pero el lead SÍ escribió después de la última ola: dispara el clasificador\n  // de desinterés.\n  seg_vencer_eval_hablo: `UPDATE hpf_seguimientos\n    SET proximo_at = NULL, ola = 3, bloqueado_hasta = NULL,\n        desde_at            = now() - interval '30 hours',\n        evaluacion_desde_at = now() - interval '24 hours',\n        ultimo_inbound_at   = now() - interval '1 hour',\n        evaluacion_at       = now() - interval '1 minute'\n    WHERE session_id = $1 RETURNING session_id, ultimo_inbound_at`,\n  seg_respondio: `UPDATE hpf_seguimientos\n    SET proximo_at = now() - interval '1 minute', bloqueado_hasta = NULL,\n        ultimo_inbound_at = now() + interval '1 minute'\n    WHERE session_id = $1 RETURNING session_id, ultimo_inbound_at`,\n  seg_futuro: `UPDATE hpf_seguimientos\n    SET proximo_at = now() + interval '2 hours',\n        bloqueado_hasta = now() - interval '1 minute'\n    WHERE session_id = $1 RETURNING session_id, proximo_at`,\n};\n\nconst j0 = $input.first().json || {};\nconst src = (j0.body && j0.body.consulta !== undefined) ? j0.body : j0;\nconst nombre = String(src.consulta || '');\nif (!CONSULTAS[nombre]) {\n  throw new Error(`W9: consulta \"${nombre}\" no está en la lista blanca ` +\n    `(${Object.keys(CONSULTAS).join(', ')})`);\n}\nreturn [{ json: { consulta: nombre, sql: CONSULTAS[nombre],\n                  param: src.param !== undefined ? String(src.param) : '%' } }];"
+        },
+        "id": "b7ba30fb-00a0-4511-b22e-d07469ae82d8",
+        "name": "Elegir consulta",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -240,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "={{ $json.sql }}",
+          "options": {
+            "queryReplacement": "={{ [ $json.param ] }}"
+          }
+        },
+        "id": "60f66d21-68f7-4dc4-868f-a347f01cd3a1",
+        "name": "Consultar",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          -20,
+          0
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "uK59P60DJmOJc4Lm",
+            "name": "H.F"
+          }
+        },
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "respondWith": "allIncomingItems",
+          "options": {}
+        },
+        "id": "f29b5012-3d55-41f5-9521-d95cedaa6dd2",
+        "name": "Responder",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          200,
+          0
+        ]
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Elegir consulta",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Elegir consulta": {
+        "main": [
+          [
+            {
+              "node": "Consultar",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Consultar": {
+        "main": [
+          [
+            {
+              "node": "Responder",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "la agencia",
+    "name": null,
+    "description": null
+  }
+}

@@ -1,0 +1,490 @@
+{
+  "name": "Chequear disponibilidad | Tofo v5",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "fecha_hora"
+            },
+            {
+              "name": "nombre"
+            },
+            {
+              "name": "subscriber_id"
+            },
+            {
+              "name": "canal"
+            },
+            {
+              "name": "telefono"
+            }
+          ]
+        }
+      },
+      "id": "762c8913-a316-4502-bef2-20b4554a9646",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -896,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// Validar entrada — TFO Chequear disponibilidad v5\n// ------------------------------------------------------------\n// Reglas (CDMX, America/Mexico_City):\n//  - Formato ISO 8601 (con o sin offset; si no trae, asume CDMX)\n//  - Fecha futura (> ahora CDMX)\n//  - Día Lunes a Viernes (weekday 1..5)\n//  - Hora ∈ {10, 11, 12} y minutos == 0\n// Si falla algo, retorna {valid:false, libre:false, motivo, mensaje} listo para el agente.\n// Si pasa, retorna fechas ISO calculadas en CDMX para los nodos siguientes.\n// ============================================================\n\nconst TZ = 'America/Mexico_City';\nconst inp = $input.first().json;\n\nconst fechaHora = inp.fecha_hora || '';\nconst nombre = inp.nombre || '';\nconst subscriberId = inp.subscriber_id || '';\nconst canal = inp.canal || '';\nconst telefono = inp.telefono || '';\n\nconst makeFail = (motivo, mensaje) => [{\n  json: {\n    valid: false,\n    libre: false,\n    motivo,\n    mensaje,\n    alternativas: [],\n    fecha_hora_solicitada: fechaHora,\n    nombre, subscriber_id: subscriberId, canal, telefono\n  }\n}];\n\n// 1) Parseo ISO en zona CDMX\nlet dt;\ntry {\n  dt = DateTime.fromISO(fechaHora, { zone: TZ });\n  if (!dt.isValid) throw new Error(dt.invalidReason || 'invalid');\n} catch (e) {\n  return makeFail(\n    'formato_invalido',\n    'No pude entender la fecha y hora que me pasaron. Pedile al lead que la repita con día y hora claros (ej: \"lunes 9 de junio a las 11:00\").'\n  );\n}\n\nconst now = DateTime.now().setZone(TZ);\n\n// 2) Futura\nif (dt <= now) {\n  return makeFail(\n    'fecha_pasada',\n    'Esa fecha ya pasó. Proponé un horario futuro: lunes a viernes, 10:00, 11:00 o 12:00 (hora México).'\n  );\n}\n\n// 3) Lunes a Viernes\nif (dt.weekday > 5) {\n  return makeFail(\n    'no_laboral',\n    'Solo tomamos reuniones de lunes a viernes. Proponé un día hábil a las 10:00, 11:00 o 12:00 (hora México).'\n  );\n}\n\n// 4) Hora en ventana laboral\nif (![10, 11, 12].includes(dt.hour)) {\n  return makeFail(\n    'fuera_ventana',\n    'Las reuniones son a las 10:00, 11:00 o 12:00 hs (hora México). Proponé un horario dentro de ese rango.'\n  );\n}\n\n// 5) Minutos redondos\nif (dt.minute !== 0 || dt.second !== 0) {\n  return makeFail(\n    'minutos_no_redondos',\n    'Las reuniones empiezan en hora exacta. Proponé 10:00, 11:00 o 12:00 (hora México).'\n  );\n}\n\n// VÁLIDO — devuelve los campos calculados\nreturn [{\n  json: {\n    valid: true,\n    fecha_inicio: dt.toISO(),\n    fecha_fin: dt.plus({ minutes: 30 }).toISO(),\n    fecha_dia_inicio: dt.startOf('day').toISO(),\n    fecha_dia_fin: dt.endOf('day').toISO(),\n    fecha_humana: dt.setLocale('es').toFormat(\"cccc d 'de' LLLL 'a las' HH:mm\"),\n    fecha_hora_solicitada: fechaHora,\n    nombre, subscriber_id: subscriberId, canal, telefono\n  }\n}];\n"
+      },
+      "id": "6b5fc507-46e6-45c1-a7dc-ed777a7549c5",
+      "typeVersion": 2,
+      "name": "Validar entrada",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -672,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "valid-true",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2f9cbb2e-c660-4185-ab6f-f5183e565eb2",
+      "typeVersion": 2.2,
+      "name": "¿Es válido?",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -448,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "calendar",
+        "calendar": {
+          "__rl": true,
+          "value": "mauriciogarciadelav@gmail.com",
+          "mode": "list",
+          "cachedResultName": "mauriciogarciadelav@gmail.com"
+        },
+        "timeMin": "={{ $json.fecha_dia_inicio }}",
+        "timeMax": "={{ $json.fecha_dia_fin }}",
+        "options": {
+          "outputFormat": "bookedSlots",
+          "timezone": {
+            "__rl": true,
+            "value": "",
+            "mode": "list",
+            "cachedResultName": "",
+            "cachedResultUrl": ""
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -224,
+        192
+      ],
+      "id": "472dbd74-6d8c-4f3c-9dac-8640e5fc422b",
+      "name": "Get availability in a calendar",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "z0IngCgigP1wgAux",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// Evaluar solapamiento + calcular alternativas\n// ------------------------------------------------------------\n// Slots ocupados vienen como ítems con {start, end} (ISO).\n// Si Google Calendar no devolvió slots, $input.all() es array vacío\n// o con un ítem sin start/end (alwaysOutputData=true en el calendar).\n// ============================================================\n\nconst TZ = 'America/Mexico_City';\nconst val = $('Validar entrada').first().json;\n\nconst fechaInicio = DateTime.fromISO(val.fecha_inicio, { zone: TZ });\nconst fechaFin = DateTime.fromISO(val.fecha_fin, { zone: TZ });\n\n// Slots ocupados desde el nodo Calendar\nconst slots = $input.all()\n  .map(s => s.json)\n  .filter(s => s && s.start && s.end)\n  .map(s => ({\n    start: DateTime.fromISO(s.start, { zone: TZ }),\n    end: DateTime.fromISO(s.end, { zone: TZ })\n  }));\n\n// Solapamiento de intervalos [s1,e1) vs [s2,e2)\nconst solapa = (s1, e1, s2, e2) => s1 < e2 && s2 < e1;\n\n// ¿Está ocupado el horario solicitado?\nconst ocupada = slots.some(o => solapa(fechaInicio, fechaFin, o.start, o.end));\n\nif (!ocupada) {\n  return [{ json: { ...val, libre: true } }];\n}\n\n// Calcular alternativas: cupos {10,11,12} del MISMO día (excluyendo el solicitado)\nconst dia = fechaInicio.startOf('day');\nconst cupos = [10, 11, 12];\nconst alternativas = [];\n\nfor (const h of cupos) {\n  const iniCupo = dia.set({ hour: h, minute: 0, second: 0, millisecond: 0 });\n  const finCupo = iniCupo.plus({ minutes: 30 });\n  // Saltar el cupo solicitado (ya sabemos que está ocupado)\n  if (+iniCupo === +fechaInicio) continue;\n  const libreCupo = !slots.some(o => solapa(iniCupo, finCupo, o.start, o.end));\n  if (libreCupo) alternativas.push(iniCupo.toFormat('HH:mm'));\n}\n\nconst mensaje = alternativas.length > 0\n  ? `Ese horario está ocupado. Para ese mismo día tengo libre: ${alternativas.join(', ')} (hora México).`\n  : 'Ese horario está ocupado y no me quedan otros cupos disponibles ese día. Proponé otro día (lunes a viernes, 10:00, 11:00 o 12:00 hora México).';\n\nreturn [{\n  json: {\n    ...val,\n    libre: false,\n    motivo: 'ocupado',\n    mensaje,\n    alternativas\n  }\n}];\n"
+      },
+      "id": "0ce0b801-6d04-4b7d-82f3-31ec88980dc8",
+      "typeVersion": 2,
+      "name": "Evaluar solapamiento",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        0,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "libre-true",
+                    "leftValue": "={{ $json.libre }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "LIBRE"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "libre-false",
+                    "leftValue": "={{ $json.libre }}",
+                    "rightValue": false,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "OCUPADO"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        224,
+        192
+      ],
+      "id": "e36d1de6-c7c4-4bae-8a08-c66e991d051e",
+      "name": "¿Libre u ocupado?"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "mauriciogarciadelav@gmail.com",
+          "mode": "list",
+          "cachedResultName": "mauriciogarciadelav@gmail.com"
+        },
+        "start": "={{ $('Evaluar solapamiento').first().json.fecha_inicio }}",
+        "end": "={{ $('Evaluar solapamiento').first().json.fecha_fin }}",
+        "additionalFields": {
+          "conferenceDataUi": {
+            "conferenceDataValues": {
+              "conferenceSolution": "hangoutsMeet"
+            }
+          },
+          "description": "=Lead: {{ $('Evaluar solapamiento').first().json.nombre }}\nCanal: {{ $('Evaluar solapamiento').first().json.canal || 'n/a' }}\nTeléfono: {{ $('Evaluar solapamiento').first().json.telefono || 'n/a' }}\nSubscriber ID: {{ $('Evaluar solapamiento').first().json.subscriber_id || 'n/a' }}\n\nAgendado vía agente TOFO B2B",
+          "summary": "=Reunión TOFO con {{ $('Evaluar solapamiento').first().json.nombre }}{{ $('Evaluar solapamiento').first().json.canal ? ' (' + $('Evaluar solapamiento').first().json.canal + ')' : '' }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        448,
+        96
+      ],
+      "id": "765503a0-b7d4-4711-89ba-881dd789f661",
+      "name": "Crear evento",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "CVeDywE8Gb5JgEjC",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "out-libre-1",
+              "name": "libre",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "out-libre-2",
+              "name": "evento_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "out-libre-3",
+              "name": "fecha",
+              "value": "={{ $('Evaluar solapamiento').item.json.fecha_inicio }}",
+              "type": "string"
+            },
+            {
+              "id": "out-libre-4",
+              "name": "fecha_humana",
+              "value": "={{ $('Evaluar solapamiento').item.json.fecha_humana }}",
+              "type": "string"
+            },
+            {
+              "id": "out-libre-5",
+              "name": "meet_link",
+              "value": "={{ $json.hangoutLink || ($json.conferenceData && $json.conferenceData.entryPoints && $json.conferenceData.entryPoints[0] ? $json.conferenceData.entryPoints[0].uri : null) }}",
+              "type": "string"
+            },
+            {
+              "id": "out-libre-6",
+              "name": "mensaje",
+              "value": "={{ $json.hangoutLink ? ('La cita quedó agendada para el ' + $('Evaluar solapamiento').item.json.fecha_humana + ' hs (hora México). Te conectás por este link de Google Meet el día de la cita: ' + $json.hangoutLink) : ('La cita quedó agendada para el ' + $('Evaluar solapamiento').item.json.fecha_humana + ' hs (hora México). El link de la videollamada te lo paso por acá un rato antes de la cita.') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        96
+      ],
+      "id": "b4ad624d-41fa-47ef-b9cc-a4f31aee70d1",
+      "name": "Respond LIBRE"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "out-ocupado-1",
+              "name": "libre",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "out-ocupado-2",
+              "name": "motivo",
+              "value": "={{ $json.motivo }}",
+              "type": "string"
+            },
+            {
+              "id": "out-ocupado-3",
+              "name": "mensaje",
+              "value": "={{ $json.mensaje }}",
+              "type": "string"
+            },
+            {
+              "id": "out-ocupado-4",
+              "name": "alternativas",
+              "value": "={{ $json.alternativas }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        288
+      ],
+      "id": "13745edd-9d26-498a-9fe5-9a1ea3279ca7",
+      "name": "Respond OCUPADO"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "out-novalid-1",
+              "name": "libre",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "out-novalid-2",
+              "name": "motivo",
+              "value": "={{ $json.motivo }}",
+              "type": "string"
+            },
+            {
+              "id": "out-novalid-3",
+              "name": "mensaje",
+              "value": "={{ $json.mensaje }}",
+              "type": "string"
+            },
+            {
+              "id": "out-novalid-4",
+              "name": "alternativas",
+              "value": "={{ $json.alternativas }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -224,
+        464
+      ],
+      "id": "b4abf412-3c69-4bd1-9924-7739844c0abe",
+      "name": "Respond NO VÁLIDO"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "fecha_hora": "2026-06-23T11:00:00-06:00",
+          "nombre": "Test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Validar entrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar entrada": {
+      "main": [
+        [
+          {
+            "node": "¿Es válido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es válido?": {
+      "main": [
+        [
+          {
+            "node": "Get availability in a calendar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond NO VÁLIDO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get availability in a calendar": {
+      "main": [
+        [
+          {
+            "node": "Evaluar solapamiento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluar solapamiento": {
+      "main": [
+        [
+          {
+            "node": "¿Libre u ocupado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Libre u ocupado?": {
+      "main": [
+        [
+          {
+            "node": "Crear evento",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond OCUPADO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear evento": {
+      "main": [
+        [
+          {
+            "node": "Respond LIBRE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "callerPolicy": "any",
+    "timeSavedMode": "fixed",
+    "availableInMCP": false
+  },
+  "versionId": "5a8b1c2d-3e4f-5a6b-7c8d-9e0f1a2b3c4d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c1ba6feaa6a193d007ad82da6440581c8d7568c90e248228239c4fc34db48d20"
+  },
+  "nodeGroups": [],
+  "id": "vpLmZ299yXJrOSBv",
+  "tags": []
+}

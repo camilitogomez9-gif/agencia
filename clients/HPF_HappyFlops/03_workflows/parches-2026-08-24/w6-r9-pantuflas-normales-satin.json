@@ -1,0 +1,16 @@
+{
+  "wf": "W6",
+  "descripcion": "R9 · corregir falsa premisa 'NO existen Pantuflas Normales Satín'. Las Pantuflas normales SÍ son de satín (la descripción literal del catálogo dice 'Pantuflas de satín personalizadas' — es su material intrínseco). 'Pantuflas Normales Peluche' sí es correcto que no existan (el peluche solo aplica a Mono). Fix quirúrgico: reemplazo la oración falsa preservando el sentido de la REGLA CRÍTICA, dejando la tabla de desambiguación y las preguntas exactas downstream sin tocar.",
+  "medicion": "smoke pre-fix: 'quiero 50 pantuflas normales de satín' → rechaza / pide aclaración. post-fix: cotiza 50 x Pantuflas ($30).",
+  "cuidado": "no tocar la tabla de mapeo cliente→producto (líneas 850-856 del systemMessage): la fila 'pantufla satín → Mono Satín' se preserva como decisión operativa de negocio (default a Mono cuando piden 'satín' sin más contexto).",
+  "no_toca_memoria": "n8n_chat_histories no se toca; sólo cambia el prompt del Recolector.",
+  "asimetria_w6_w7": "Recolector1 en W7 ya no tenía esta afirmación falsa. Este fix alinea W6 con W7.",
+  "ediciones": [
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "El material (satín / peluche) es una característica EXCLUSIVA de Pantuflas Mono. **NO existen \"Pantuflas Normales Satín\" ni \"Pantuflas Normales Peluche\".** Si tu primera reacción es generar uno de esos productos en una cotización, estás equivocada — pará y revisá.",
+      "reemplazo": "Las Pantuflas (normales) son de satín por defecto — ese es su material intrínseco y no hace falta preguntar por material cuando el cliente pide pantuflas normales. **Lo que NO existe es \"Pantuflas Normales Peluche\": el peluche solo aplica al modelo Mono.** Si tu primera reacción es generar \"Pantuflas Normales Peluche\" en una cotización, estás equivocada — pará y revisá."
+    }
+  ]
+}

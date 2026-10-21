@@ -1,0 +1,130 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [-112, -192],
+      "id": "8307b1fb-74ab-42fb-b26a-b709f39436dd",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date();\nconst domingo = new Date(now);\ndomingo.setHours(0, 0, 0, 0);\nconst lunes = new Date(domingo);\nlunes.setDate(domingo.getDate() - 6);\nconst fmt = d => d.toISOString().split('T')[0];\nreturn [{ json: { fechaDesde: fmt(lunes), fechaHasta: fmt(domingo) } }];"
+      },
+      "id": "80f6b046-4c85-4a72-9700-1575fab62eed",
+      "name": "Calcular fechas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [112, -192]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.notion.com/v1/databases/32127c52-c286-812c-93db-ee50e579a9d6/query",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Notion-Version", "value": "2022-06-28" },
+            { "name": "Authorization", "value": "{{NOTION_API_TOKEN}}" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"filter\": {\n    \"and\": [\n      {\"property\": \"Fecha\", \"date\": {\"on_or_after\": \"{{ $json.fechaDesde }}\"}},\n      {\"property\": \"Fecha\", \"date\": {\"on_or_before\": \"{{ $json.fechaHasta }}\"}}\n    ]\n  },\n  \"sorts\": [{\"property\": \"Fecha\", \"direction\": \"ascending\"}]\n}",
+        "options": {}
+      },
+      "id": "8cdd531f-8caf-432e-8f64-fc57e1417d64",
+      "name": "Consultar Notion",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [336, -192]
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = $input.item.json.results || [];\n\nconst entradas = results.map(e => {\n  const p = e.properties;\n  const concepto  = p.Concepto?.title?.[0]?.plain_text || 'Sin nombre';\n  const monto     = p.Monto?.number || 0;\n  const realizado = p.Realizado?.checkbox || false;\n  return { concepto, monto, realizado };\n});\n\nconst ingresos = entradas.filter(e => e.monto > 0);\nconst egresos  = entradas.filter(e => e.monto < 0).map(e => ({ ...e, monto: Math.abs(e.monto) }));\n\nconst totalCobrado = ingresos.filter(e => e.realizado).reduce((s, e) => s + e.monto, 0);\nconst totalGastado = egresos.filter(e => e.realizado).reduce((s, e) => s + e.monto, 0);\nconst neto = totalCobrado - totalGastado;\n\nconst fmt = n => '$' + n.toLocaleString('es-AR', { minimumFractionDigits: 2 });\nconst fila = ({ concepto, monto, realizado }) =>\n  `  ${realizado ? '✅' : '⏳'} ${concepto}: *${fmt(monto)}*`;\n\nconst ingresosLines = ingresos.length ? ingresos.map(fila).join('\\n') : '  Nada. Ni un peso, gloriosos.';\nconst egresosLines  = egresos.length  ? egresos.map(fila).join('\\n')  : '  Milagrosamente, nada.';\n\nconst fechaDesde = $('Calcular fechas').item.json.fechaDesde;\nconst fechaHasta = $('Calcular fechas').item.json.fechaHasta;\nconst fmtDate = s => { const [y,m,d] = s.split('-'); return `${d}/${m}`; };\nconst rango = `${fmtDate(fechaDesde)} al ${fmtDate(fechaHasta)}/${fechaHasta.split('-')[0]}`;\n\nconst nivelTono = totalCobrado < 1000\n  ? 'PELIGRO: menos de $1.000 cobrado. Tono de alarma total, drama, como si la empresa estuviera en llamas. Urgente y sarcástico.'\n  : totalCobrado < 2000\n  ? 'NEUTRO: entre $1.000 y $2.000. Tono de \"no están tan arruinados, sigan así\". Ni eufórico ni catastrófico.'\n  : 'ÉXITO: más de $2.000. Tono eufórico y motivador. Llamalos \"toros\". Mencioná el Porsche, el éxito, que sigan metiéndole.';\n\nconst prompt = `Sos el bot financiero sarcástico de la agencia, una agencia de automatización con IA. Tu trabajo es mandar el reporte semanal al equipo con un tono irreverente, gracioso y directo.\\n\\nDATOS DE LA SEMANA (${rango}):\\n\\nINGRESOS:\\n${ingresosLines}\\n\\nEGRESOS:\\n${egresosLines}\\n\\nCOBRADO: ${fmt(totalCobrado)}\\nGASTADO: ${fmt(totalGastado)}\\nNETO: ${fmt(neto)}\\n\\nTONO A USAR: ${nivelTono}\\n\\nGenerá el reporte completo en este formato exacto para Telegram (Markdown):\\n\\n📊 *REPORTE SEMANAL — ${rango}*\\n_(frase sarcástica tuya como bot)_\\n\\n💰 *ENTRÓ*\\n${ingresosLines}\\n\\n🔥 *SALIÓ*\\n${egresosLines}\\n\\n━━━━━━━━━━━━━━━\\n📥 Cobrado: *${fmt(totalCobrado)}*\\n📤 Gastado: *${fmt(totalGastado)}*\\n🏦 Neto: *${fmt(neto)}*\\n\\n[mensaje final gracioso acorde al tono indicado, 1-2 líneas con emojis]\\n\\nReglas:\\n- Usá los números y listas exactamente como están arriba, no los cambies\\n- Solo devolvé el mensaje, sin explicaciones ni texto extra\\n- El mensaje final tiene que ser fresco, distinto cada semana, nunca genérico`;\n\nreturn [{ json: { prompt } }];"
+      },
+      "id": "6865db2e-654f-4c1a-bddc-ca8a388188e8",
+      "name": "Formatear reporte",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [560, -192]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer [GROQ_API_KEY]" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ ({ model: 'llama-3.3-70b-versatile', temperature: 0.9, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {}
+      },
+      "id": "9527a1d0-d839-48a4-9ef3-af905d43f57d",
+      "name": "Generar mensaje",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [784, -192]
+    },
+    {
+      "parameters": {
+        "chatId": "-5222520529",
+        "text": "={{ $json.choices[0].message.content }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "19c2aa4b-9e18-4de4-ae7a-c0b2b41e6423",
+      "name": "Enviar reporte",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1008, -192],
+      "webhookId": "3d5490c6-7746-4474-b3ce-0141a27800ed",
+      "credentials": {
+        "telegramApi": {
+          "id": "0aKSpmK6tq07Vh5E",
+          "name": "Bot Asistente Claude"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [[{ "node": "Calcular fechas", "type": "main", "index": 0 }]]
+    },
+    "Calcular fechas": {
+      "main": [[{ "node": "Consultar Notion", "type": "main", "index": 0 }]]
+    },
+    "Consultar Notion": {
+      "main": [[{ "node": "Formatear reporte", "type": "main", "index": 0 }]]
+    },
+    "Formatear reporte": {
+      "main": [[{ "node": "Generar mensaje", "type": "main", "index": 0 }]]
+    },
+    "Generar mensaje": {
+      "main": [[{ "node": "Enviar reporte", "type": "main", "index": 0 }]]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  }
+}

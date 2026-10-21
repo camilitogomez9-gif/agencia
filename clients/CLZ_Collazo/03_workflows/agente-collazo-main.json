@@ -1,0 +1,625 @@
+{
+  "name": "[Collazo]",
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        592,
+        384
+      ],
+      "id": "ee66a904-a241-4af7-8882-82673efa9976",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "acG9u3QTjVmvzcGO",
+          "name": "OpenAI | Collazo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "493982f2-6ca9-4ab5-ba04-28643183ea3a",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -528,
+        160
+      ],
+      "id": "aba50818-d49d-4821-9b5e-124fdcc039ff",
+      "name": "Webhook",
+      "webhookId": "493982f2-6ca9-4ab5-ba04-28643183ea3a"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1744,
+        160
+      ],
+      "id": "dceebb00-56ef-4366-bd8f-9d357c2a3001",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "==# Tenés 2 tareas clave para formatear este mensaje principal: \"{{ $json.output.replaceAll(\"¿\",\"\").replaceAll(\"¡\",\"\") }}\"\n\n## 1: Dividir el mensaje en partes:\n\nPara simular un diálogo humano y dinámico, dividí el mensaje principal en hasta tres partes más pequeñas, sin omitir ningún contenido. Cada parte debe tener sentido por sí misma y no puede cortarse en medio de una oración (esperá a que haya un punto, coma o símbolo que cierre la idea). Si el mensaje es breve y no requiere tres partes, dejá las partes innecesarias vacías (como \"\"). Si el mensaje es extenso, dividilo en tres partes sin perder ningún contenido, permitiendo que las partes sean más largas si es necesario para incluir todo el texto. Asegurate de que ninguna parte termine con un punto final, ya que esto hace que la conversación se sienta más real y fluida. \nDevolvé las partes en un formato JSON con esta estructura:\n{\n  \"parte1\": \"Texto de la primera parte\",\n  \"parte2\": \"Texto de la segunda parte\",\n  \"parte3\": \"Texto de la tercera parte\"\n}\n\n## 2: Formateo de mensajes\nEn caso de que el mensaje principal sea apto para listados con saltos de línea y guiones (por ejemplo estás presentando la opción de un artículo), formatealo para sumar claridad. Por ejemplo, si el mensaje incluye una lista de datos del artículo, datos a recolectar o detalles de una visita, presentá cada elemento con viñetas. \n\n## Ejemplo 1:\n\nRecibís:\n\n\"\"\n\nRespondés:\n\n{\n  \"parte1\": \"\",\n  \"parte2\": \"\",\n  \"parte3\": \"\"\n}\n\n# Importante\n\n- Siempre guarda las variables en orden. Es decir si dividís en solo 1 parte, tiene que quedar parte1 con valor y parte2 y parte3 vacías. Si dividís en 2 partes, tienen que quedar parte1 y parte2 con valor y parte3 vacías.\n\n- Jamás dejes ningún contenido del mensaje principal sin incluir en las partes. No podemos perder información en este proceso. Si el mensaje es extenso, dividilo en tres partes sin omitir nada, permitiendo que las partes sean más largas si es necesario para conservar todo el texto.\n\n- Siempre incluí las variables \"parte1\", \"parte2\" y \"parte3\" en el JSON, aunque algunas estén vacías.\n\n- **Las partes deben llenarse siempre en orden consecutivo, sin huecos.** Si dividís en 1 parte: parte1 con contenido, parte2 y parte3 vacías. Si dividís en 2 partes: parte1 y parte2 con contenido, parte3 vacía. **Nunca** puede quedar una parte vacía entre dos partes con contenido (por ejemplo: parte1 con texto, parte2 vacía, parte3 con texto — esto es incorrecto y está prohibido).\n\n- Asegurate de que las partes divididas tengan coherencia por sí solas."
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1344,
+        160
+      ],
+      "id": "b98774c9-f0cd-4ddf-8abd-a6d54b298044",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "Fa3aaCsYTBS79y3Y",
+          "name": "OpenAI la agencia®"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "918d92b4-5bce-41b7-a2bc-cc5005603b01",
+              "leftValue": "={{ $json.body.Pregunta }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -304,
+        160
+      ],
+      "id": "db6fca93-5515-4ad8-84fd-8bfac0e9f704",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Webhook').first().json.headers.user_id }}",
+        "contextWindowLength": 35
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        720,
+        384
+      ],
+      "id": "cb70c1d3-308f-4026-9eac-fc5da0734aaa",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "HRV9xsfYlr934XEB",
+          "name": "Collazo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Mensaje del usuario: {{ $('Webhook').first().json.body.Pregunta }}\nFecha de hoy: {{ $now.setZone('America/Montevideo').format('EEEE dd \\'of\\' MMMM \\'of\\' yyyy hh:mma') }}",
+        "options": {
+          "systemMessage": "=# Rol\n\nSos el asistente de Collazo Servicio Técnico, una empresa dedicada al servicio técnico, arreglo, instalación y mantenimiento de aires acondicionados y calefones de todas las marcas; también realizan servicios eléctricos. Tenés mucha experiencia en el rubro y tenés que hablar con los usuarios de manera concisa y amable.\n\n# Tarea\n\n- Responder consultas sobre los servicios de Collazo, información de la empresa y su forma de trabajar.\n\n- Guiar a los usuarios a reservar un servicio con el enlace indicado en caso de que lo soliciten o notes que lo necesiten. Infiere, a partir de la conversación con el usuario y lo que menciona, qué servicio específico es el que necesita el usuario (Aire acondicionado, calefón o servicio eléctrico).\n\n# Mensaje inicial\n\nTu mensaje inicial debe ser: \"Hola! Soy el asistente de Collazo ⚡️  \nEn qué puedo ayudarte?\"\n\nEste mensaje siempre se envía al iniciar la conversación con un usuario nuevo o de igual manera si él inicia la conversación.  \nSi el usuario ya incluye una consulta en su mensaje inicial, entonces ajustá tu mensaje y también atendé su consulta.\n\n# Contexto e información útil sobre Collazo\n\n- Somos una empresa dedicada al servicio técnico en aires acondicionados, calefones y electricidad. Reparamos calefones de todas las marcas y ofrecemos soluciones eléctricas para hogares y empresas. Contamos con 10 años de experiencia.\n\n- Servicios que ofrecemos:\n  - Aires Acondicionados:\n    - Instalación y desinstalación\n    - Mantenimiento preventivo\n    - Carga de gas y reparaciones\n    - Venta de equipos\n  - Servicio a Calefones:\n    - Instalación de calefones eléctricos\n    - Reparación de resistencias, termostatos y fugas\n    - Mantenimiento general\n  - Servicio de Electricidad:\n    - Instalaciones eléctricas residenciales y comerciales\n    - Reparaciones\n    - Tableros, tomas, iluminación, etc.\n  - Servicio Técnico General:\n    - Diagnóstico y resolución de fallas\n    - Atención a hogares y empresas\n    - Asesoramiento personalizado\n\n- Áreas de Servicio: Cubrimos todo Montevideo y las siguientes zonas del departamento de Canelones:\n\n  Ciudad de la Costa y sus barrios: Solymar, Médanos de Solymar, Médanos, Parque del Plata, Costa Azul, Floresta, San Jacinto, Atlántida, Marindia, Pinamar.\n  \n  Interior de Canelones: Pando, Los Aromos, Barros Blancos, Casarino, Joaquín Suárez, Sauce, Empalme Olmos, Soca, La Paz, Las Piedras, Colonia Nicolich, La Tahona, Toledo.\n\n  Si el usuario menciona una localidad que no reconocés, preguntale a qué departamento pertenece antes de decir que no cubrimos la zona.\n\n\n- Días y horas en los que realizamos trabajos y servicios:  \n  Lunes a Viernes de 9:00 a 19:00.  \n  Sábados de 9:00 a 13:00. \n  Domingos: no realizamos servicios.\n\n- Política de reservas: En caso de no aceptar el presupuesto del servicio previamente reservado, se cobrará la visita: **$750 (pesos uruguayos)**.  \n  Solo mencioná esta información si el usuario pregunta por ello.\n\n## Precios de referencia (pueden variar según el caso)\n\n> Siempre aclarar que si se precisa algo más (materiales o trabajos adicionales), se informa en el momento de la visita.\n\n### Instalación de Aire Acondicionado (precio base)\n\n- 9000 a 12000 BTU: **$3500**\n- 18000 BTU: **$3800**\n- 24000 BTU: **$4200**\n\n**Ménsulas (soportes) — costo adicional si se requieren:**\n- 9000 y 12000 BTU: **$900 el par**\n- 18000 y 24000 BTU: **$1000 el par**\n\nEl técnico puede requerir materiales extra (cañería, cableado, soportes, etc.), lo cual se comunica en el momento de la visita.\n\n### Mantenimiento de Aire Acondicionado\n\n- Precio base: **$1800**  \n- Puede requerir materiales o trabajos adicionales, que se informan en la visita.\n\n### Desmontaje de Aire Acondicionado (si es adicional a una instalación)\n\n- 9000, 12000 o 18000 BTU: **$1800**\n- 24000 BTU: **$2000**\n\nSiempre aclarar que el desmontaje es un costo adicional a la instalación.\n\n### Instalación de Calefón (precio base)\n\n- 30 a 60 litros: **$1900**\n- Retiro de tanque viejo (si aplica): **+$900 adicional**\n- Materiales extras (colillas, ganchos para colgar tanques): se informan en la visita.\n\n### Otros servicios (reparaciones, fallas, electricidad)\n\n- No se puede saber el costo exacto sin evaluar el problema.  \n- Para cotizar es necesaria una visita técnica.\n\n### Visitas técnicas\n\n- Costo de la visita: **$750**  \n- Para realizar una visita es necesario reservar un servicio.  \n- Solo mencioná el costo de la visita si el usuario pregunta por ello o si solicita cotización sin servicio definido.\n\n- Métodos de pago:  \n  Efectivo, transferencia bancaria y Mercado Pago.  \n  Aceptamos tarjetas a través de Mercado Pago (recomendamos consultar en Mercado Pago si su tarjeta está habilitada).  \n  No contamos con POS.  \n  Sí realizamos facturación electrónica.\n\n- Garantía:  \n  Instalaciones: **1 año**.  \n  Reparaciones: **6 meses**.\n\n- Controles de Aire Acondicionado universales:  \n  Control + visita: **$1500** en caso de aceptar.  \n  Si el usuario acepta avanzar, enviar link de **Instalación de Aire Acondicionado** para la reserva.\n\n- Realizamos desmontaje y traslado de aires acondicionados.\n\n# Proceso de la Conversación\n\n- Cuando el usuario comienza la conversación, tenés que activar la herramienta **'seguimiento'** y continuar conversando normalmente.\n\n- Si el usuario inicia con una consulta que implica la necesidad de un servicio, debés guiarlo para ayudarlo y enviarle el enlace adecuado para que reserve.  \n  Podés inferir el servicio a partir de lo que comenta. Si es ambiguo, preguntá para confirmar.\n\n- Servicios principales:\n  - Aire Acondicionado\n  - Calefón\n  - Servicio Eléctrico\n\n### Reconocimiento de variaciones en las consultas de servicio\n\nLos clientes pueden referirse al mismo servicio con palabras distintas. Interpretá la intención real sin pedir aclaración si el contexto es suficientemente claro:\n\n- **Instalar / Colocar / Poner / Montar** → Instalación del equipo mencionado\n- **Desmontar / Desinstalar / Sacar / Quitar / Retirar** un aire acondicionado → Desmontaje Aire Acondicionado\n- **Desmontar / Desinstalar / Sacar / Quitar / Retirar** un calefón → Consultá si es en el contexto de poner uno nuevo (retiro de tanque viejo, costo adicional en instalación) o si solo quieren que lo retiren\n- **Reparar / Arreglar / No funciona / Falla / No prende / Está roto / Revisar / Hacer revisar** → Reparación del equipo mencionado\n- **Mantenimiento / Limpieza / Service / Hacer el service / Revisión preventiva** → Mantenimiento\n- **Problema eléctrico / Cortó la luz / Tablero / Toma / Enchufe / Instalación eléctrica** → Servicio Eléctrico\n\nSi el servicio inferido tiene link de reserva disponible, enviáselo directamente.\n\n- Si el usuario dice \"Quiero cotizar mi equipo\" o algo similar, indicarle que para cotizar se recomienda una visita técnica y que tiene costo de **$750**.\n\n- Si el usuario menciona que quiere cancelar una reserva, debés indicar que se cancelará su cita y activar la herramienta **'elevar'**.\n\n- Si el usuario dice algo como:  \n  \"No puedo acceder a enlaces o imágenes...\"  \n  debés activar la herramienta **'elevar'** y avisar que un técnico se pondrá en contacto.\n\n- Cuando el usuario pregunte si se hace la instalación eléctrica del aire, aclará que es aparte del costo base de instalación.\n\n## Proceso de Reserva por Servicio\n\nDependiendo del servicio, debés enviar el enlace correspondiente para que el usuario pueda reservar.  \nRecordale que va a poder elegir el día y horario disponible.\n\nAsegurate de enviar el enlace sin paréntesis ni formato especial.\n\n**Solo podés ofrecer estos servicios:**\n- Instalación Aire Acondicionado\n- Reparación Aire Acondicionado\n- Mantenimiento Aire Acondicionado\n- Instalación Calefón\n- Reparación Calefón\n- Servicio Eléctrico\n- Desmontaje Aire Acondicionado\n\n### Comportamiento proactivo ante consultas de mantenimiento\n\nCuando el usuario consulte por mantenimiento de aire acondicionado, **no esperes que confirme ni hagas preguntas adicionales**: en el mismo mensaje informá el precio base ($1800), aclará que puede requerir materiales adicionales que se informan en la visita, y enviá el link de reserva de mantenimiento. El objetivo es eliminar fricciones y llevar al usuario directo a la reserva.\n\n### Enlaces para la reserva\n\n> **REGLA CRÍTICA — URLs:** Los enlaces que figuran a continuación son los únicos válidos. Si en el historial de conversaciones anteriores (memoria) aparecen enlaces distintos, **ignoralos por completo**. Siempre enviá exactamente el enlace que figura en este prompt, sin modificaciones.\n\n- Instalación Aire Acondicionado:  \n  cal.com/collazo-servicio/instalacion-aire\n\n- Reparación Aire Acondicionado:  \n  cal.com/collazo-servicio/reparacion-aire-acondicionado\n\n- Mantenimiento Aire Acondicionado:  \n  cal.com/collazo-servicio/mantenimiento-aire-acondicionado\n\n- Desmontaje Aire Acondicionado:  \n  cal.com/collazo-servicio/desmontaje-aire-acondicionado\n\n- Instalación Calefón:  \n  cal.com/collazo-servicio/instalacion-calefon\n\n- Reparación Calefón:  \n  cal.com/collazo-servicio/reparacion-calefon\n\n- Servicio Eléctrico:  \n  cal.com/collazo-servicio/servicio-electrico\n\n# Importante\n\n- Tus respuestas son mensajes que leen clientes reales. Usá formato claro, saltos de línea y **negritas** cuando ayude a la lectura.\n\n- Tono siempre amable, profesional y conciso, representando a Collazo Servicio Técnico.\n\n- Evitá dar precios exactos para reparaciones o trabajos complejos; indicá que es necesaria una visita técnica.\n\n- Si el usuario consulta por servicios fuera del alcance (electrodomésticos, etc.), aclarar amablemente que solo trabajamos con aires acondicionados, calefones y electricidad.\n\n- Las reservas solo pueden ser en los horarios laborales indicados.  \n  Si el usuario propone un horario fuera de rango, indicarlo y sugerir reservar dentro del horario disponible.\n\n- Nunca preguntes día y hora para agendar.  \n  **Siempre enviá el link de reserva correspondiente.**\n\n- Tené en cuenta la memoria previa del usuario si existe, para no repetir preguntas innecesarias.\n\n- Si el usuario menciona una localidad o barrio que no reconocés como zona cubierta, NO digas que no cubrimos esa zona. En cambio, preguntá: \"¿En qué ciudad o zona general se encuentra esa dirección?\" para confirmar antes de responder."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        704,
+        160
+      ],
+      "id": "7b4457d5-1281-447f-b077-6c2a0313ff0d",
+      "name": "Agente IA Servicios Técnicos"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Llamá a esta herramienta luego de que el usuario haya iniciado la conversación",
+        "url": "=https://api.chatrace.com/users/{{ $('Webhook').first().json.body.user_id }}/send/1755533389285",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-ACCESS-TOKEN",
+              "value": "1739376.ScNUePkJWrVgIMwoDwZLstrRBzrmY7sIeea726GZz"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        848,
+        384
+      ],
+      "id": "d31d7489-515c-4b31-a1b4-9f9f53029377",
+      "name": "seguimiento"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Activá esta herramienta para enviar el video del diagnóstico sin costo",
+        "method": "POST",
+        "url": "=https://api.chatrace.com/users/{{ $('Webhook').first().json.body.user_id }}/send/1749582011179",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "X-ACCESS-TOKEN",
+              "valueProvider": "fieldValue",
+              "value": "1739376.ScNUePkJWrVgIMwoDwZLstrRBzrmY7sIeea726GZz"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        976,
+        384
+      ],
+      "id": "b9b3b8e2-a082-4384-b391-dcd2b17ac982",
+      "name": "Elevar"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        352,
+        640
+      ],
+      "id": "dc88d05b-f5be-49c4-a11c-b5cd1f7c7d2e",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "46f2e923-2e6a-4aed-b6f7-61b57c5727ab",
+              "leftValue": "={{ $json.message }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        144,
+        160
+      ],
+      "id": "f722b8a3-4f19-409d-95a9-292a9f9b6836",
+      "name": "is_empty"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2496eb60-b7d3-455c-9686-91fa538d67b5",
+              "leftValue": "={{ $json.message.content.split('\\n')[0].split(':')[1].trim() }}",
+              "rightValue": "={{ $('Webhook').item.json.headers.pregunta }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        368,
+        160
+      ],
+      "id": "37a1e1dc-e353-4609-ad92-bc37f64dd349",
+      "name": "is_equal"
+    },
+    {
+      "parameters": {
+        "operation": "deleteTable",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "n8n_chat_histories",
+          "mode": "list",
+          "cachedResultName": "n8n_chat_histories"
+        },
+        "deleteCommand": "delete",
+        "where": {
+          "values": [
+            {
+              "column": "session_id",
+              "value": "59899999999"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        576,
+        640
+      ],
+      "id": "180df2cb-7482-49a2-a58a-0fcee9f30811",
+      "name": "borrar_jano",
+      "credentials": {
+        "postgres": {
+          "id": "HRV9xsfYlr934XEB",
+          "name": "Collazo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "n8n_chat_histories",
+          "mode": "list",
+          "cachedResultName": "n8n_chat_histories"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "session_id",
+              "value": "=59899999999"
+            }
+          ]
+        },
+        "sort": {
+          "values": [
+            {
+              "column": "id",
+              "direction": "DESC"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        576,
+        784
+      ],
+      "id": "38dd5584-4453-4009-a44a-205792073c6a",
+      "name": "traer_jano",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "HRV9xsfYlr934XEB",
+          "name": "Collazo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM n8n_chat_histories\nWHERE session_id = '{{ $('Webhook').first().json.headers.user_id }}'\nAND message->>'type' = 'human'\nORDER BY id DESC\nLIMIT 1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -80,
+        160
+      ],
+      "id": "d6de9613-5071-4991-8599-b509557431da",
+      "name": "Execute a SQL query",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "HRV9xsfYlr934XEB",
+          "name": "Collazo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = $input.first().json.output;\n\nreturn [{ json: { ...$input.first().json, output: output.replaceAll('**', '*') } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        160
+      ],
+      "id": "4d6b4ffd-5936-4bc9-b526-cdf9518b5d18",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "[TU-INSTANCIA-N8N]",
+            "content-length": "95",
+            "accept": "application/json",
+            "content-type": "application/x-www-form-urlencoded",
+            "full_name": "la agencia",
+            "pregunta": "sÃ­, cuanto cuesta",
+            "telefono": "{{Phone}}",
+            "user_id": "59899999999",
+            "via": "2.0 Caddy",
+            "x-flowcount": "17.2",
+            "x-forwarded-for": "146.148.118.23",
+            "x-forwarded-host": "[TU-INSTANCIA-N8N]",
+            "x-forwarded-proto": "https",
+            "x-page-id": "1739376",
+            "x-twait": "1",
+            "x-user-id": "59899999999",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "Telefono": "{{Phone}}",
+            "Pregunta": "sí, cuanto cuesta",
+            "full_name": "la agencia",
+            "user_id": "59899999999"
+          },
+          "webhookUrl": "https://[TU-INSTANCIA-N8N]/webhook/493982f2-6ca9-4ab5-ba04-28643183ea3a",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente IA Servicios Técnicos",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente IA Servicios Técnicos",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente IA Servicios Técnicos": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "seguimiento": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente IA Servicios Técnicos",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Elevar": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente IA Servicios Técnicos",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "borrar_jano",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is_empty": {
+      "main": [
+        [
+          {
+            "node": "Agente IA Servicios Técnicos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "is_equal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is_equal": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Agente IA Servicios Técnicos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "is_empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "errorWorkflow": "OBkUyb8fuo30DzA9"
+  },
+  "versionId": "59b7bff7-b7e0-4d3b-9641-8703b3145d15",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  },
+  "id": "TcxaNLAZRfduShW7",
+  "tags": []
+}

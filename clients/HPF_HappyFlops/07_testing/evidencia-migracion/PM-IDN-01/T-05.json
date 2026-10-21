@@ -1,0 +1,148 @@
+{
+  "test_id": "T-05",
+  "punto": "PM-IDN-01",
+  "titulo": "upsert-contact + dedup por teléfono",
+  "resultado": "CORROBORADO",
+  "detalle": "id1=3tzzBVjsKlOF2RJjKNOL id2=3tzzBVjsKlOF2RJjKNOL dedup=sí phone_readback=+5213300000199",
+  "pasos": [
+    {
+      "paso": "upsert #1",
+      "method": "POST",
+      "path": "/contacts/upsert",
+      "request": {
+        "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+        "phone": "+5213300000199",
+        "firstName": "ZZ Test",
+        "lastName": "Migracion GHL",
+        "name": "ZZ Test Migracion GHL",
+        "tags": [
+          "lead_prueba"
+        ],
+        "source": "hpf-migracion-l2"
+      },
+      "status": 201,
+      "response": {
+        "new": false,
+        "succeded": true,
+        "succeeded": true,
+        "contact": {
+          "id": "3tzzBVjsKlOF2RJjKNOL",
+          "dateAdded": "2026-08-06T19:14:43.333Z",
+          "type": "lead",
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "firstName": "ZZ",
+          "firstNameLowerCase": "zz",
+          "fullNameLowerCase": "zz test migracion ghl",
+          "lastName": "Test Migracion GHL",
+          "lastNameLowerCase": "test migracion ghl",
+          "phone": "+5213300000199",
+          "country": "MX",
+          "createdBy": {
+            "source": "INTEGRATION",
+            "channel": "OAUTH",
+            "sourceId": "6a355d3fd70f7bc6633d2172",
+            "timestamp": "2026-08-06T19:14:43.333Z"
+          },
+          "additionalPhones": [],
+          "source": "hpf-migracion-l2",
+          "dateUpdated": "2026-08-06T23:31:10.992Z",
+          "tags": [
+            "lead_prueba"
+          ],
+          "followers": [],
+          "customFields": [],
+          "additionalEmails": []
+        },
+        "traceId": "4e403d83-02be-4605-967e-b720c56afbfb"
+      }
+    },
+    {
+      "paso": "upsert #2 (mismo phone)",
+      "method": "POST",
+      "path": "/contacts/upsert",
+      "request": {
+        "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+        "phone": "+5213300000199",
+        "firstName": "ZZ Test",
+        "lastName": "Migracion GHL",
+        "name": "ZZ Test Migracion GHL",
+        "tags": [
+          "lead_prueba"
+        ],
+        "source": "hpf-migracion-l2"
+      },
+      "status": 201,
+      "response": {
+        "new": false,
+        "succeded": true,
+        "succeeded": true,
+        "contact": {
+          "id": "3tzzBVjsKlOF2RJjKNOL",
+          "dateAdded": "2026-08-06T19:14:43.333Z",
+          "type": "lead",
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "firstName": "ZZ",
+          "firstNameLowerCase": "zz",
+          "fullNameLowerCase": "zz test migracion ghl",
+          "lastName": "Test Migracion GHL",
+          "lastNameLowerCase": "test migracion ghl",
+          "phone": "+5213300000199",
+          "country": "MX",
+          "createdBy": {
+            "source": "INTEGRATION",
+            "channel": "OAUTH",
+            "sourceId": "6a355d3fd70f7bc6633d2172",
+            "timestamp": "2026-08-06T19:14:43.333Z"
+          },
+          "additionalPhones": [],
+          "tags": [
+            "lead_prueba"
+          ],
+          "dateUpdated": "2026-08-06T23:31:11.401Z",
+          "source": "hpf-migracion-l2",
+          "followers": [],
+          "customFields": [],
+          "additionalEmails": []
+        },
+        "traceId": "70b97739-d384-4570-a3b4-1725cc410a42"
+      }
+    },
+    {
+      "paso": "read-back",
+      "method": "GET",
+      "path": "/contacts/3tzzBVjsKlOF2RJjKNOL",
+      "request": null,
+      "status": 200,
+      "response": {
+        "contact": {
+          "id": "3tzzBVjsKlOF2RJjKNOL",
+          "dateAdded": "2026-08-06T19:14:43.333Z",
+          "type": "lead",
+          "locationId": "onRwi0ZF4uYi0Lp6GAbE",
+          "firstName": "ZZ",
+          "firstNameLowerCase": "zz",
+          "fullNameLowerCase": "zz test migracion ghl",
+          "lastName": "Test Migracion GHL",
+          "lastNameLowerCase": "test migracion ghl",
+          "phone": "+5213300000199",
+          "country": "MX",
+          "createdBy": {
+            "source": "INTEGRATION",
+            "channel": "OAUTH",
+            "sourceId": "6a355d3fd70f7bc6633d2172",
+            "timestamp": "2026-08-06T19:14:43.333Z"
+          },
+          "additionalPhones": [],
+          "tags": [
+            "lead_prueba"
+          ],
+          "source": "hpf-migracion-l2",
+          "dateUpdated": "2026-08-06T23:31:11.404Z",
+          "customFields": [],
+          "additionalEmails": []
+        },
+        "traceId": "3c4cfa6b-a92f-4745-bed6-f09d6ce5dfb1"
+      }
+    }
+  ]
+}

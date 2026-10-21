@@ -1,0 +1,17 @@
+{
+  "wf": "W6",
+  "descripcion": "Fix C4 · el bot pedía aclaración ('¿normales o mono?') cuando el cliente decía 'pantuflas de satín' sin más contexto — post-R9 el LLM quedó en zona ambigua porque el párrafo corregido ('las normales SON de satín') generaba duda sobre la resolución que dice la tabla downstream (satín sin contexto → Mono Satín cotizar directo). Fix: agregar aclaración explícita en el mismo párrafo de R9 que confirme la convención de negocio, sin volver a la premisa falsa.",
+  "medicion": "smoke pre-fix (medido 25/8): 'pantuflas de satín, 50 al CP 44100' → 'necesitaría confirmar si son normales o mono' (pide aclaración). post-fix: 'Cotización 50 Pantuflas Mono Satín x $30 = $1.500' (cotiza directo, paridad con el viejo).",
+  "cuidado": "no tocar la tabla de mapeo (líneas ~850-856 del systemMessage) ni el resto del prompt. Sólo agregar 1 párrafo nuevo al final del párrafo del R9. Preservar la mitad verdadera del R9 (las normales son de satín) y la mitad verdadera restante (no existen Normales Peluche).",
+  "no_toca_memoria": "n8n_chat_histories no se toca; sólo cambia el prompt del Recolector.",
+  "no_toca_otros_flujos": "el párrafo agregado es específico a la resolución de 'satín sin contexto'. NO afecta: pantuflas a secas (sigue preguntando modelo), pantuflas de moño sin material (sigue preguntando material), pantuflas de moño de satín/peluche (siguen cotizando directo), pantuflas normales (siguen cotizando directo), pantufla peluche sin contexto (sigue → Mono Peluche $35 según tabla), otros productos (sandalias/cilindros/mandiles/anticrudas/vasos — sin cambio).",
+  "riesgo_para_oscar": "sin este fix, cuando pruebe 'pantuflas de satín' el nuevo pide aclaración y el viejo cotiza directo — Oscar dijo 'si no contesta como este agente contesta, me voy a molestar muchísimo'. Con este fix, ambos cotizan igual.",
+  "ediciones": [
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "Las Pantuflas (normales) son de satín por defecto — ese es su material intrínseco y no hace falta preguntar por material cuando el cliente pide pantuflas normales. **Lo que NO existe es \"Pantuflas Normales Peluche\": el peluche solo aplica al modelo Mono.** Si tu primera reacción es generar \"Pantuflas Normales Peluche\" en una cotización, estás equivocada — pará y revisá.",
+      "reemplazo": "Las Pantuflas (normales) son de satín por defecto — ese es su material intrínseco y no hace falta preguntar por material cuando el cliente pide pantuflas normales. **Lo que NO existe es \"Pantuflas Normales Peluche\": el peluche solo aplica al modelo Mono.** Si tu primera reacción es generar \"Pantuflas Normales Peluche\" en una cotización, estás equivocada — pará y revisá.\n\n**Convención de resolución cuando dicen \"satín\" sin más contexto**: aunque las Pantuflas normales también son de satín, cuando el cliente dice \"pantuflas de satín\" / \"pantuflas satin\" (sin la palabra \"normales\" ni \"mono\" ni \"moño\"), la convención de negocio es resolver a **Pantuflas Mono Satín** ($30) y cotizar directo — así lo indica la tabla de mapeo abajo. **NO** pidas aclaración de si son normales o mono en ese caso: cotizá directo Mono Satín. La aclaración sí corresponde cuando el cliente pide \"pantuflas\" a secas (sin material), o \"pantufla mono\" sin material, o cualquier otra ambigüedad genuina de la tabla."
+    }
+  ]
+}

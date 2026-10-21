@@ -1,0 +1,15 @@
+{
+  "prompt": "starter",
+  "item_reunion": "3",
+  "descripcion": "negritas en el saludo fijo: Happy Flops, Rebeca y las tres opciones de evento",
+  "cita_oscar": "Aquí en Happy Flops va a negritas, en Rebeca va negritas, y acá no los tiene. […] en boda, 15 años, y en otros también.",
+  "nota": "El prompt declara el mensaje inmodificable. Ese guard existe para que el LLM no improvise, no para congelar el texto: se cambia el mensaje canónico y el guard queda intacto. Formato WhatsApp con asterisco simple, igual que el promo de agente-main-image.md.",
+  "ediciones": [
+    {
+      "anchor": "“Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\"\n\nMe podría decir de que es su evento? \n\n🤵👰 - Boda\n🎂🥳 - XV Años\n👼🏢 - Otros”",
+      "reemplazo": "“Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\n\nMe podría decir de que es su evento? \n\n🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*”",
+      "motivo": "Oscar pidió negritas en la marca, el nombre del asistente y las 3 opciones; en México el texto plano se lee mal. Además saca la comilla recta suelta del final de la primera línea: el mensaje abre con “ y cierra con ”, esa \" no cierra nada y es un typo del prompt original. Antes no se notaba porque el LLM reescribía el mensaje; ahora que se envía literal, le llegaría al cliente."
+    }
+  ],
+  "divergencia_del_original": "se elimina la comilla recta suelta (typo del original). Es el único cambio de este delta que Oscar NO pidió: si se prefiere paridad byte-exacta con Kommo, revertir esta parte y dejar el resto."
+}

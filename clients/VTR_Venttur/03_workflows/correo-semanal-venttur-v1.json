@@ -1,0 +1,201 @@
+{
+  "name": "Venttur | Correo Semanal",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        -160
+      ],
+      "id": "02e40309-7fd0-4d6d-806e-fdcf39b0adbe",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\n\n// Procesar fuentes\nconst raw = item['Fuente lead Rollup (from Leads)'] || '';\nconst fuentes = raw.split(';').filter(f => f.trim() !== '');\nconst counts = {};\nfuentes.forEach(f => {\n  const key = f.trim();\n  counts[key] = (counts[key] || 0) + 1;\n});\nconst fuentesFormateadas = Object.entries(counts)\n  .sort((a, b) => b[1] - a[1])\n  .map(([k, v]) => `<strong>${k}</strong>: ${v}`)\n  .join('<br>');\n\n// Pre-calcular porcentajes (enteros, listos para mostrar)\nconst cualificadosPct = Math.round((item['Cualificados (%)'] || 0) * 100);\nconst conversionPct   = Math.round((item['Tasa de conversión a cita'] || 0) * 100);\nconst asistenciaPct   = Math.round((item['Tasa de asistencia a cita'] || 0) * 100);\n\n// Resumen compacto para pasar al LLM\nconst resumenParaLLM = JSON.stringify({\n  leads_total:          item['Cantidad total de leads'],\n  cualificados:         item['Cualificados'],\n  cualificados_pct:     cualificadosPct,\n  citas_agendadas:      item['Citas agendadas'],\n  conversion_pct:       conversionPct,\n  asistieron:           item['Asisten a cita'],\n  asistencia_pct:       asistenciaPct,\n  no_continuadas:       item['Conversaciones no continuadas'],\n  fuentes_raw:          raw\n});\n\nreturn {\n  ...item,\n  fuentesFormateadas,\n  cualificadosPct,\n  conversionPct,\n  asistenciaPct,\n  resumenParaLLM\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        -160
+      ],
+      "id": "4ee23df3-ea9e-4265-a2f9-172918467943",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblrXIUd7CGtiZEaS",
+          "mode": "list",
+          "cachedResultName": "Reporte semanal",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]/tblrXIUd7CGtiZEaS"
+        },
+        "filterByFormula": "IS_AFTER({Created}, DATEADD(TODAY(), -7, 'days'))",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        224,
+        -160
+      ],
+      "id": "7fe10db2-3833-491e-9a39-71fb43c9bf87",
+      "name": "Fuente lead Rollup",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Eres analista de Venttur E&T. Con base en las métricas semanales del agente IA, escribe UN solo párrafo (máximo 3 oraciones) con la conclusión más relevante: identificá el patrón principal y la brecha más crítica en el embudo. Sé directo y accionable. No repitas los números, ya están en el reporte."
+            },
+            {
+              "content": "={{ $json.resumenParaLLM }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        672,
+        -160
+      ],
+      "id": "bbbc0dca-6ea1-46e5-aee5-8924fb6de380",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ibkhdCMyhr3yqDQk",
+          "name": "OpenAI | Venttur"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "[EMAIL-AGENCIA]",
+        "subject": "=📊 Resumen semanal Venttur — {{ $('Code in JavaScript').item.json['Created'] }}",
+        "message": "=CORRER FLUJO MANUAL\n\n<!DOCTYPE html>\n<html lang=\"es\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Resumen Semanal — Venttur E&T</title>\n</head>\n<body style=\"margin:0;padding:0;background-color:#f0f0f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">\n\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" bgcolor=\"#f0f0f0\" style=\"background-color:#f0f0f0;\">\n    <tr>\n      <td align=\"center\" style=\"padding:40px 16px;\">\n\n        <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"max-width:600px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;\">\n\n          <!-- HEADER -->\n          <tr>\n            <td bgcolor=\"#0d0a1f\" style=\"background-color:#0d0a1f;padding:36px 40px 30px 40px;border-radius:16px 16px 0 0;\">\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td>\n                    <p style=\"margin:0 0 6px 0;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#a78bfa;font-weight:600;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">Venttur E&amp;T</p>\n                    <h1 style=\"margin:0;font-size:26px;font-weight:700;color:#ffffff;line-height:1.2;letter-spacing:-0.5px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">📊 Resumen semanal del Agente IA</h1>\n                    <p style=\"margin:10px 0 0 0;font-size:13px;color:#a78bfa;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">Semana del {{ $('Code in JavaScript').item.json['Created'] }}</p>\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <!-- ACCENT BAR -->\n          <tr>\n            <td bgcolor=\"#7c3aed\" style=\"background-color:#7c3aed;height:3px;line-height:3px;font-size:0;\">&nbsp;</td>\n          </tr>\n\n          <!-- HERO -->\n          <tr>\n            <td style=\"padding:48px 40px 40px 40px;text-align:center;border-bottom:1px solid #e5e7eb;\">\n              <p style=\"margin:0 0 4px 0;font-size:13px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:1px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">Total de leads captados</p>\n              <p style=\"margin:0;font-size:96px;font-weight:700;color:#6366f1;line-height:1;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">{{ $('Code in JavaScript').item.json['Cantidad total de leads'] }}</p>\n              <p style=\"margin:12px 0 0 0;font-size:15px;color:#6b7280;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">leads entrantes esta semana</p>\n            </td>\n          </tr>\n\n          <!-- KPI CARDS -->\n          <tr>\n            <td style=\"padding:32px 40px;border-bottom:1px solid #e5e7eb;\">\n              <p style=\"margin:0 0 20px 0;font-size:13px;font-weight:700;color:#1f2937;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">Métricas clave</p>\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n\n                  <!-- Card: Cualificados -->\n                  <td width=\"32%\" style=\"vertical-align:top;\">\n                    <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td bgcolor=\"#f5f3ff\" style=\"background-color:#f5f3ff;padding:20px 16px;border-radius:12px;text-align:center;\">\n                          <p style=\"margin:0;font-size:48px;font-weight:700;color:#6366f1;line-height:1;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">{{ $('Code in JavaScript').item.json['Cualificados'] }}</p>\n                          <p style=\"margin:8px 0 6px 0;font-size:12px;color:#6b7280;line-height:1.4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">leads cualificados</p>\n                          <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" align=\"center\">\n                            <tr>\n                              <td bgcolor=\"#ede9fe\" style=\"background-color:#ede9fe;padding:3px 10px;border-radius:9999px;\">\n                                <p style=\"margin:0;font-size:11px;font-weight:700;color:#7c3aed;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">{{ $('Code in JavaScript').item.json.cualificadosPct }}% del total</p>\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n\n                  <td width=\"2%\">&nbsp;</td>\n\n                  <!-- Card: Citas agendadas -->\n                  <td width=\"32%\" style=\"vertical-align:top;\">\n                    <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td bgcolor=\"#f5f3ff\" style=\"background-color:#f5f3ff;padding:20px 16px;border-radius:12px;text-align:center;\">\n                          <p style=\"margin:0;font-size:48px;font-weight:700;color:#6366f1;line-height:1;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">{{ $('Code in JavaScript').item.json['Citas agendadas'] }}</p>\n                          <p style=\"margin:8px 0 6px 0;font-size:12px;color:#6b7280;line-height:1.4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">citas agendadas</p>\n                          <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" align=\"center\">\n                            <tr>\n                              <td bgcolor=\"#ede9fe\" style=\"background-color:#ede9fe;padding:3px 10px;border-radius:9999px;\">\n                                <p style=\"margin:0;font-size:11px;font-weight:700;color:#7c3aed;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">{{ $('Code in JavaScript').item.json.conversionPct }}% conv.</p>\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n\n                  <td width=\"2%\">&nbsp;</td>\n\n                  <!-- Card: Asistencia -->\n                  <td width=\"32%\" style=\"vertical-align:top;\">\n                    <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td bgcolor=\"#f5f3ff\" style=\"background-color:#f5f3ff;padding:20px 16px;border-radius:12px;text-align:center;\">\n                          <p style=\"margin:0;font-size:48px;font-weight:700;color:#6366f1;line-height:1;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">{{ $('Code in JavaScript').item.json['Asisten a cita'] }}</p>\n                          <p style=\"margin:8px 0 6px 0;font-size:12px;color:#6b7280;line-height:1.4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">asistieron a cita</p>\n                          <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" align=\"center\">\n                            <tr>\n                              <td bgcolor=\"#ede9fe\" style=\"background-color:#ede9fe;padding:3px 10px;border-radius:9999px;\">\n                                <p style=\"margin:0;font-size:11px;font-weight:700;color:#7c3aed;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">{{ $('Code in JavaScript').item.json.asistenciaPct }}% asist.</p>\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <!-- CONVERSACIONES NO CONTINUADAS -->\n          <tr>\n            <td style=\"padding:28px 40px;border-bottom:1px solid #e5e7eb;\">\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td bgcolor=\"#fef3c7\" style=\"background-color:#fef3c7;padding:20px 24px;border-radius:12px;\">\n                    <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"vertical-align:middle;\">\n                          <p style=\"margin:0;font-size:12px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:1px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">⚠️ Conversaciones no continuadas</p>\n                          <p style=\"margin:4px 0 0 0;font-size:13px;color:#78350f;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">Leads que no llegaron a agendar</p>\n                        </td>\n                        <td align=\"right\" style=\"vertical-align:middle;\">\n                          <p style=\"margin:0;font-size:48px;font-weight:700;color:#d97706;line-height:1;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">{{ $('Code in JavaScript').item.json['Conversaciones no continuadas'] }}</p>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <!-- FUENTES DE LEADS -->\n          <tr>\n            <td style=\"padding:28px 40px;border-bottom:1px solid #e5e7eb;\">\n              <p style=\"margin:0 0 16px 0;font-size:13px;font-weight:700;color:#1f2937;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">🎯 Fuente de los leads</p>\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td bgcolor=\"#f9fafb\" style=\"background-color:#f9fafb;padding:18px 20px;border-radius:12px;border:1px solid #e5e7eb;\">\n                    <p style=\"margin:0;font-size:14px;color:#374151;line-height:2;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">{{ $('Code in JavaScript').item.json.fuentesFormateadas }}</p>\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <!-- CONCLUSIÓN IA -->\n          <tr>\n            <td style=\"padding:28px 40px 36px 40px;\">\n              <p style=\"margin:0 0 16px 0;font-size:13px;font-weight:700;color:#1f2937;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">🔎 Conclusión</p>\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"border-left:3px solid #6366f1;padding-left:16px;\">\n                    <p style=\"margin:0;font-size:14px;color:#374151;line-height:1.75;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">{{ $json.output[0].content[0].text }}</p>\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <!-- FOOTER -->\n          <tr>\n            <td bgcolor=\"#0d0a1f\" style=\"background-color:#0d0a1f;padding:24px 40px;border-radius:0 0 16px 16px;\">\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"vertical-align:middle;\">\n                    <p style=\"margin:0;font-size:14px;font-weight:700;color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">la agencia</p>\n                    <p style=\"margin:3px 0 0 0;font-size:12px;color:#a78bfa;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">la agencia® — Automatización con inteligencia</p>\n                  </td>\n                  <td align=\"right\" style=\"vertical-align:middle;\">\n                    <p style=\"margin:0;font-size:11px;color:#6b7280;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;\">Generado automáticamente</p>\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n        </table>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1024,
+        -160
+      ],
+      "id": "42e63f8e-f190-47a9-8b61-c80dbddba948",
+      "name": "Send a message",
+      "webhookId": "c2cda60b-00e9-4b78-a37b-47a7c0312ccc",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "5R0ScEVqcfjKYanp",
+          "name": "Gmail | la agencia®"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fuente lead Rollup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fuente lead Rollup": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "errorWorkflow": "OBkUyb8fuo30DzA9"
+  },
+  "versionId": "a3f6a49a-daab-473a-a6c8-a410e157a98d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  },
+  "id": "BrFfQyDfamdUzq64",
+  "tags": []
+}

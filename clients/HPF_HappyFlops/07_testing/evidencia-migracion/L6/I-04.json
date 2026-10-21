@@ -1,0 +1,58 @@
+{
+  "caso": "I-04",
+  "titulo": "cliente que vuelve (Ganado) → el bot no responde y avisa al equipo",
+  "resultado": "CORROBORADO",
+  "detalle": "ruta=cliente_vuelve via=existente etapa=Ganado llegó_al_cerebro=False (debe ser False) · avisó_por_telegram=True",
+  "aristas": [
+    "cliente_vuelve"
+  ],
+  "pasos": [
+    {
+      "evaluar": {
+        "contactId": "3tzzBVjsKlOF2RJjKNOL",
+        "conversationId": "44tBzIqK9ODLJ7Jr9Lco",
+        "messageId": "48c1e525-6e74-42ec-83a8-645798024285",
+        "messageId_derivado": false,
+        "phone": "+5213300000199",
+        "canal": "WhatsApp",
+        "texto": "hola, quiero repetir el pedido",
+        "adjuntos": [],
+        "tipo": "texto",
+        "debounce_seg": 0,
+        "recibido_at": "2026-08-24T19:00:14.373-03:00",
+        "_forzar_fuera_horario": false,
+        "sessionId": "+52133000001992131",
+        "opportunityId": "vzYAb3P86uJ08CI9jKyV",
+        "etapa_id": "909a816d-997e-4d90-8dc1-dc4b0dcd16d7",
+        "etapa": "Ganado",
+        "via_oportunidad": "existente",
+        "ruta": "cliente_vuelve",
+        "motivo_bloqueo": "ganado",
+        "primer_contacto": false,
+        "turnos_previos": 109,
+        "gates": {
+          "etapa": "Ganado",
+          "bloqueo": "ganado",
+          "via": "existente",
+          "cliente_vuelve": true,
+          "primer_contacto": false
+        }
+      },
+      "corridos": [
+        "Aviso · cliente vuelve",
+        "Cliente vuelve · sin respuesta",
+        "Evaluar estado",
+        "Idempotencia",
+        "Normalizar entrada",
+        "Resolver identidad",
+        "Responder ack",
+        "Ruteo por estado",
+        "W0 · find or create",
+        "W0 · leer oportunidad",
+        "Webhook inbound",
+        "¿Hay historial?",
+        "¿Mensaje nuevo?"
+      ]
+    }
+  ]
+}

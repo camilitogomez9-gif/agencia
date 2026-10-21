@@ -1,0 +1,38 @@
+{
+  "caso": "S-04",
+  "titulo": "pausa entre burbujas, no después de la última",
+  "resultado": "CORROBORADO",
+  "detalle": "http=200 gap_real_entre_burbujas=4.81s (pausa_seg=4) · duración_total=6.5s",
+  "pasos": [
+    {
+      "req": [
+        "S04-a-1786059348",
+        "S04-b-1786059348"
+      ],
+      "resp": {
+        "ok": true,
+        "partes_enviadas": 2,
+        "enviados": [
+          {
+            "seq": 1,
+            "body": "S04-a-1786059348",
+            "attachments": [],
+            "ghl_message_id": "jcN0AnT3FiApmOSsLmc9",
+            "ghl_conversation_id": "44tBzIqK9ODLJ7Jr9Lco",
+            "http_status": 201
+          },
+          {
+            "seq": 2,
+            "body": "S04-b-1786059348",
+            "attachments": [],
+            "ghl_message_id": "NNxZF6M0GUB9dfau6i9O",
+            "ghl_conversation_id": "44tBzIqK9ODLJ7Jr9Lco",
+            "http_status": 201
+          }
+        ]
+      },
+      "gap_seg": 4.809999942779541,
+      "duracion_http": 6.497403144836426
+    }
+  ]
+}

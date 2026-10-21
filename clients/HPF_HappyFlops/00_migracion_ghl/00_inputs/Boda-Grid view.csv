@@ -1,0 +1,320 @@
+﻿productos,id,subcategoria,descripcion,archivo,URL,CURL,bot_id
+Colores de tintas 2025,1mVJRAVIE-Le_RkeJTLRP56DGc2Lb-la4,Accesorios,Aqui te muestro los *colores disponibles* para las *TINTAS*,COLORES DE TINTAS 2025 (1).jpeg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/j8TMFdzmmLvqU8QnLnlR9g/rQoZyrkoP3fl8lCV6vUMMNwjeJYsqiZh-_0X8bvQsr_9DLL2sJQI4mW1G14Vuj3hFuA8vOD1uio97TS50FV29ztA8iFIxPtWAxEKQNNv9s5WS5dqnH13gLNOrrTaxyW3eT-7lbAdFERKKUg9DUwkc8DuXqe8LJA7Xkza4ghMxHI/hoZl9a0BkW1fBQPHHqhI8zDLeaELwS8U12Pav3fOpXA),https://i.ibb.co/rRVGZtqL/6843598253827.jpg,"curl 'https://amojo.kommo.com/v2/cfc7e714-80be-4fc3-b1d9-2a7c3fb252ce/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: befa9c05-c93a-44d9-845e-a8d45f2ee40e' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""141"", ""Not?A_Brand"";v=""8"", ""Chromium"";v=""141""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""19ab3b6b-ad17-4b0e-b2bc-763508b0bec5"",""group_id"":null,""text"":""Aqui te muestro los *colores disponibles* para las *TINTAS*"",""crm_dialog_id"":182513,""crm_contact_id"":23876071,""crm_account_id"":33068423,""crm_entity"":{""id"":21789041,""type"":2},""attachments"":[{""external_file_id"":""50f7c5fd-66fc-4e4d-afd1-37b89199c0b3"",""external_file_vers_id"":""740367e4-64ab-4700-b199-3c269fbaa0a6"",""type"":""picture""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60734
+Correas 15MM,1RSvV4pTwng5DJXvOhdfmOaLgegdgs8G0,Accesorios,CORREAS 15MM,CORREAS 15MM (1).jpg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/fFwmYr4_VO4Qn2MVIBFqWw/j1AIYkmtbxGi8n7fDsjbsrKNyb4N3vLTSqq8E1Jx8UuYaZfnBDobGU9ey_sGDgKUvpSXflfMwkyKSHD-XTaCH0rM87UyYQTumBYO_spEMgmHlgGA8XOC0JxP0WbN4ZBCn4weX6HCs0N-HYhzJRz1z6CW2HLlQsCJZKY2iZ1Mruk/mKTnPu8t5AjCu-FGyWsiYn6UYpX1qf2R-_GIRX6APPk),https://i.ibb.co/bgGFrHcD/6843598e72a98.jpg,"curl 'https://amojo.kommo.com/v2/780187c1-40c3-4af3-b468-130d9ea7a2f3/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: 2f5df118-0600-42ec-9fbb-0b169e016bac' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""137"", ""Chromium"";v=""137"", ""Not/A)Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""4dbcac2a-c514-4d71-abc0-68f91ff42330"",""group_id"":null,""text"":""CORREAS DE SUELA GRUESA"",""crm_dialog_id"":148248,""crm_contact_id"":22428677,""crm_account_id"":33068423,""crm_entity"":{""id"":20262327,""type"":2},""attachments"":[{""external_file_id"":""5dc696b8-4e60-41bd-af06-683d085244c4"",""external_file_vers_id"":""1e49dedd-d8e4-4603-8609-46b9cfc06594"",""type"":""picture""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60736
+Bolsa tipo shein de regalo,1skc7xng5ZIpx0yp3_dg0mj4U8hb8Yrj8,Accesorios,"De *REGALO* Cada par viene en *BOLSA TIPO SHEIN* para meter los tacones.
+Si quiere el *COSTALITO PERSONALIZADO $7C/U*",shein bolsa def.jpg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/2QGYTSTKGA3vbnlakesWTg/GrXg-hHgrpQ9_ZrSi2yHJ42Y8nmdXBvsEX4RLN8nHTH0VyTpoxKcgb8CQcAJgCRsE8sYHak31LToR2PvCus6xDnUypcCpmJTuXtSSDGXocwydm7EWgmm9azvLB_wr98JulbAOG24mDjDOZSdCrnrWdJXmCwNNg1phXLgzeLqpXw/sdcV2FgOCYKF0DL9ms3DdvqoVr-IKhv0FxBR-2VZ-ls),https://i.ibb.co/N696v1yV/6843596fd985c.jpg,"curl 'https://amojo.kommo.com/v2/780187c1-40c3-4af3-b468-130d9ea7a2f3/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: 2f5df118-0600-42ec-9fbb-0b169e016bac' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""137"", ""Chromium"";v=""137"", ""Not/A)Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""4dbcac2a-c514-4d71-abc0-68f91ff42330"",""group_id"":null,""text"":""De *REGALO* Cada par viene en *BOLSA TIPO SHEIN* para meter los tacones.\n\n*LA FRASE VIENE TAL CUAL COMO EN LA IMAGEN Y NO SE MODIFICA*\n\n*NO SE PERSONALIZA*\n\nSi quiere el *COSTALITO PERSONALIZADO $7C/U*"",""crm_dialog_id"":148248,""crm_contact_id"":22428677,""crm_account_id"":33068423,""crm_entity"":{""id"":20262327,""type"":2},""attachments"":[{""external_file_id"":""34a2d148-ac84-433a-8075-a082999ad908"",""external_file_vers_id"":""f444afb6-166e-4a10-8c6e-91773d250a5d"",""type"":""picture""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60732
+Correas 9MM,1VG8og0onNtvxOqlzd0mUAXiw80GbK85q,Accesorios,CORREAS 9MM,CORREAS 9MM (1) (1).png (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/ALApX_cc58Mt0nlnLY_8XQ/LWz3JdttUGFs9_ls_b5KDakBCv2fahr1ZkSfY8ZhwFGWGANtTvLl-y2gq20ocUqc22vS2rvSsbPOd90aiUtPfHqdxGkGZ13NEO5k2-uvy6KoocuzBqDOa7Z78Fa3FOyhpyUXuVBjqjHJaHoqkmFuSlEWcz4Kr5BGW0tvs_q5H8s/NGwCnDNOW2H4H-krXcavpr_lmT43g6IBLYkVUxMG45U),https://i.ibb.co/s9VcrD8n/684359a1847ef.jpg,"curl 'https://amojo.kommo.com/v2/780187c1-40c3-4af3-b468-130d9ea7a2f3/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: 2f5df118-0600-42ec-9fbb-0b169e016bac' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""137"", ""Chromium"";v=""137"", ""Not/A)Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""4dbcac2a-c514-4d71-abc0-68f91ff42330"",""group_id"":null,""text"":""CORREAS DE SUELA DELGADA"",""crm_dialog_id"":148248,""crm_contact_id"":22428677,""crm_account_id"":33068423,""crm_entity"":{""id"":20262327,""type"":2},""attachments"":[{""external_file_id"":""a7a45a1a-aa0a-421e-b6ee-f25f9ce53007"",""external_file_vers_id"":""9c018b00-ca9c-4de1-9a3b-457b0580ecf9"",""type"":""picture""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60740
+Tapas termos,1wfeba3EmNWB7kJ0Gq3l5EjzCqbVVn1aQ,Accesorios,Aqui te muestro las *tapas* de los *Termos*,TAPAS TERMOS (1).jpg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/H6_-s0e-KNUWc9zjv7vmbg/qSY5XuPfePgh-0sU1e6pYm85ZUmQiiyjbYVB2JExr-65r-ZEa4kN7rJB67xw9tYNolK4GIL-m112F698Bom7XzesfKukslsYcsaQ0nu3FW4jhcGWJp0VNywobEpI00dlLpA6i3e8Ylb-GdVbdeXWqlavw0opTh4-IY3pfeZpckk/5-9K3M6qD8T0HPvs5w5RMz0qiuiDHT17TborS6d84lk),https://i.ibb.co/5xBmhSdK/684359acdcdba.jpg,"curl 'https://amojo.kommo.com/v2/780187c1-40c3-4af3-b468-130d9ea7a2f3/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: 2f5df118-0600-42ec-9fbb-0b169e016bac' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""137"", ""Chromium"";v=""137"", ""Not/A)Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""4dbcac2a-c514-4d71-abc0-68f91ff42330"",""group_id"":null,""text"":""Colores de *tapas* disponibles, puede ir surtido en los *colores* que gustes"",""crm_dialog_id"":148248,""crm_contact_id"":22428677,""crm_account_id"":33068423,""crm_entity"":{""id"":20262327,""type"":2},""attachments"":[{""external_file_id"":""c85091cc-7656-454d-aeb4-323ca8d55c8e"",""external_file_vers_id"":""f7900469-e7d9-442c-9391-8b1d6a92fae8"",""type"":""picture""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60742
+Cilindros de 500ml boda personalizados,C1,Producto Principal,"✨ Cilindros personalizados
+🎉 Ideales para todo tipo de evento
+
+🎨 Por cada 20 piezas se realiza un diseño diferente.
+
+💰 Precio promo: $10 c/u
+📦 Pedido mínimo de 40 piezas",INFOGRAFIA final-01 (1).png (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/glAU8PmkJ97-Lj7EO7Ap2g/GvLKWRuNvXchAcUcVo5VV1Th-2q46R9SPrrHLsxQ36Krk7GoNO8lte0m3pInxYKiao0mBF6xKCgPj3FXQlWf9QR5UlK0V8dX7eDioKd4iCSBM_gmG_jNAF7iloClXWK4JZlbmd4ScHj9TtDHTY3wfQQOk6WPmC7V8Fu2WdWt1YI/h9B0zdh71S8_w5O_vZ3cFnInSuJ5lhUiEZxGOstcK-0),,"curl 'https://amojo.kommo.com/v2/29ed740d-12e3-49fa-b8e0-5bc04e7a92d7/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36' \
+  -H 'X-Auth-Token: 96d79b57-0137-4ae8-aa5d-ee1844121933' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""143"", ""Chromium"";v=""143"", ""Not A(Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?1' \
+  -H 'sec-ch-ua-platform: ""Android""' \
+  --data-raw '{""recipient_id"":""b38c8bd6-6ebc-407e-b11d-b85a26bf1461"",""group_id"":null,""text"":""✨ Cilindros personalizados\n🎉 Ideales para todo tipo de evento\n\n🎨 Por cada 20 piezas se realiza un diseño diferente.\n\n💰 Precio promo: $10 c/u\n📦 Pedido mínimo de 40 piezas"",""crm_dialog_id"":222281,""crm_contact_id"":26966712,""crm_account_id"":33068423,""crm_entity"":{""id"":24953770,""type"":2},""attachments"":[{""external_file_id"":""b053415c-38ea-4c6e-9f15-2137f1201ebc"",""external_file_vers_id"":""3e0ddcee-8cfa-4780-a952-afc761e8f00e"",""type"":""picture""}],""set_personalization"":false,""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60754
+Cilindros el catalogo boda,C2,Producto Principal,Te comparto el *catalogo de diseños* que tenemos para *Cilindros*,CATALOGO BODA (1).jpeg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/Te2iEMsqDz-11sd6aBR41A/pmDcbEasLeEFugytAlj-07fMO4MBSDfyW_QbMg65QPf-5_DCEWKkfcPjiz1AnjLHZ_0Y4AelHXXYrHFlBe-4WIL3Eb_AlLKKw7rZVXjG7o1NC5W6dcbM_Q-O0GjDKm6VmWMZqhqb9q1L__NJyo8TFFbd3IVX4zjREffVo5OjHLo/ZhsOtkCa0UfZUCMVZUzx-PA-CDnCt6AQyPrblkD3Hvg),https://i.ibb.co/TMNBpPgZ/684359bde4dec.jpg,"curl 'https://amojo.kommo.com/v2/780187c1-40c3-4af3-b468-130d9ea7a2f3/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: 2f5df118-0600-42ec-9fbb-0b169e016bac' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""137"", ""Chromium"";v=""137"", ""Not/A)Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""4dbcac2a-c514-4d71-abc0-68f91ff42330"",""group_id"":null,""text"":""Te comparto el *catalogo de diseños* que tenemos para *Cilindros*"",""crm_dialog_id"":148248,""crm_contact_id"":22428677,""crm_account_id"":33068423,""crm_entity"":{""id"":20262327,""type"":2},""attachments"":[{""external_file_id"":""4719b4ca-2168-4335-ad17-bb65568e8102"",""external_file_vers_id"":""8630609b-5d49-4bf8-a136-b4def2186a40"",""type"":""picture""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60730
+Cilindros video,C3,Producto Principal,,,,,61880
+Kit anticruda principal,K1,Producto Principal,"✨ Kit anticruda personalizado
+🎉 Ideal para cualquier tipo de evento
+🛍️ Costal de tela personalizado a 1 tinta
+📏 Medidas: 16 x 22 cm
+
+💡 Solo incluye el costal, tú lo llenas con los productos que prefieras.
+
+💰 Precio promo: $10 c/u
+📦 Pedido mínimo de 35 piezas.",INFOGRAFÍA final 2-10 (1).png (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/bclD_kYSY_KkhghsEcF5Mw/Ta3uUKJ3XyMJ5rPvyZ0tnof0b_F3x37Dk_PQfYBlHrtMjcxAE4V02roG9aYXIF3gSv3NRteWwbKOePoIT5apBkoGkODHC-cIDAcosoynhE-HDxpQ_ffFWU6HALJk6Lows9l_aqchcDEL_Blv4F_99jzSZkjc6rC3wU9jN-6Vn_I/2_D9pHJX7nxTBEw9JnFggcV7HU7M551rWGoVCZrwYTc),,"curl 'https://amojo.kommo.com/v2/29ed740d-12e3-49fa-b8e0-5bc04e7a92d7/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36' \
+  -H 'X-Auth-Token: 96d79b57-0137-4ae8-aa5d-ee1844121933' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""143"", ""Chromium"";v=""143"", ""Not A(Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?1' \
+  -H 'sec-ch-ua-platform: ""Android""' \
+  --data-raw '{""recipient_id"":""b38c8bd6-6ebc-407e-b11d-b85a26bf1461"",""group_id"":null,""text"":""✨ Kit anticruda personalizado\n🎉 Ideal para cualquier tipo de evento\n🛍️ Costal de tela personalizado a 1 tinta\n📏 Medidas: 16 x 22 cm\n\n💡 Solo incluye el costal, tú lo llenas con los productos que prefieras.\n\n💰 Precio promo: $10 c/u\n📦 Pedido mínimo de 35 piezas."",""crm_dialog_id"":222281,""crm_contact_id"":26966712,""crm_account_id"":33068423,""crm_entity"":{""id"":24953770,""type"":2},""attachments"":[{""external_file_id"":""97ad4d15-0943-4758-b4d7-ea6b5d9801c0"",""external_file_vers_id"":""fa8635db-ee06-4f86-ad9a-3230b73bd7d7"",""type"":""picture""}],""set_personalization"":false,""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60758
+Catálogo de frases anticruda,K2,Producto Principal,Te dejo el catalogo de frases que tenemos para los ANTICRUDAS,kitanitcruda.jpg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/4NWpq0oLbs4Rk_9V3z4IVg/3jYNiiaD63JrzN6biR2x6A9bvOniFUW2GbjU5vuFigcGll8H58Bd1nKj-akavSXCwXHvx-yIUOjHfxDr6wi0Fr9KJ-kl6Jp0nlqKLRhZA-uC2C01COzcyYg37PGmHNzGO28LAYYO_TEO0NdJtEhz4mwCMTIEYNVoXxqfxENzJPc/7j0n632bN-TPz790KdiXjcsNrOqDKbNb67bjKLM3pwU),https://i.ibb.co/k6vzkZns/68435a4e8ae4e.jpg,"curl 'https://amojo.kommo.com/v2/f202389a-a729-4283-90e6-304e989a73bb/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: 59866b69-7ca8-45f3-9e08-6dfed18ea0cb' \
+  -H 'sec-ch-ua: ""Not;A=Brand"";v=""99"", ""Google Chrome"";v=""139"", ""Chromium"";v=""139""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""afebf778-943e-485a-a9d2-a77bd7a6f418"",""group_id"":null,""text"":""Te dejo el catalogo de frases que tenemos para los *ANTICRUDAS*"",""crm_dialog_id"":159636,""crm_contact_id"":23241591,""crm_account_id"":33068423,""crm_entity"":{""id"":21116147,""type"":2},""attachments"":[{""external_file_id"":""3f7cd8d4-7b5c-41bb-bc5b-47cd4c993723"",""external_file_vers_id"":""c1bfe482-99e1-42d1-8196-c0bffd9c0c5e"",""type"":""picture""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60744
+Kit anticruda Video,K3,Producto Principal,,,,,61882
+Mandiles,M1,Producto Principal,"✨ Mandiles para boda
+🍾 Ideales para el novio y sus amigos
+🖤 Diseño divertido para la fiesta
+
+ℹ️ No se personalizan.
+
+💰 Precio promo: $12 c/u
+📦 Pedido mínimo de 12 piezas.",INFOGRAFIA final-04 (1).png (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/jkOxGN-w-k-p-_ipnUEXvw/-KcPF6CJkes1naC4jHmRNa34shCCea3hqXxvuPqkPjkvgHpd44NdTElAKj0pEKIO1tNQnWWD2kjj-GUS1Y9ZALuT0H-9cw65aINgaFZlQ_7Jc_VOicXeEU_pGfe-M10KAjJIdcWs84abhiH9_6YRSzq_Q_735DiOaksyx_QQIQ0/bo7KL6PtlB2wSqnw3_765cl63c1ec4g8IUHZ_MlGJ-s),,"curl 'https://amojo.kommo.com/v2/29ed740d-12e3-49fa-b8e0-5bc04e7a92d7/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36' \
+  -H 'X-Auth-Token: 96d79b57-0137-4ae8-aa5d-ee1844121933' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""143"", ""Chromium"";v=""143"", ""Not A(Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?1' \
+  -H 'sec-ch-ua-platform: ""Android""' \
+  --data-raw '{""recipient_id"":""b38c8bd6-6ebc-407e-b11d-b85a26bf1461"",""group_id"":null,""text"":""✨ Mandiles para boda\n🍾 Ideales para el novio y sus amigos\n🖤 Diseño divertido para la fiesta\n\nℹ️ No se personalizan.\n\n💰 Precio promo: $12 c/u\n📦 Pedido mínimo de 12 piezas."",""crm_dialog_id"":222281,""crm_contact_id"":26966712,""crm_account_id"":33068423,""crm_entity"":{""id"":24953770,""type"":2},""attachments"":[{""external_file_id"":""8e3f5c2d-0e49-414b-a855-a7409820854d"",""external_file_vers_id"":""02215491-0483-41c6-9239-0c1ba0e0ad6f"",""type"":""picture""}],""set_personalization"":false,""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60762
+Catalogo de Mandiles,M2,Producto Principal,Te comparto el *catálogo de diseños* que tenemos para *Mandiles*,WhatsApp Image 2026-01-05 at 12.12.19.jpeg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/TK7bFrAGta8jF7NC-ggJbw/pe1Rn52VORvSkOJv3vcgUbxGdCa_q08QWyaf_eGpC48ZywFB7qJ1KZ4KkjO5sq7fsXsAVQXAscFV0y7tNG52OH4sr_U59r8g2gf6nLdBCtdHvaxEDuMRsStjVGVAiIAcruCmZGXsYUwalinKXDIDXB43VNICUJ96mmCYvK41Ly1ibMEWcFiFD6nHpXyf3VZI/Q_R8Q3JoTh6FZFGw0UwsOGAP-YE2dUVIqF8dDTlvQ78),,"curl 'https://amojo.kommo.com/v2/29ed740d-12e3-49fa-b8e0-5bc04e7a92d7/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36' \
+  -H 'X-Auth-Token: 96d79b57-0137-4ae8-aa5d-ee1844121933' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""143"", ""Chromium"";v=""143"", ""Not A(Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?1' \
+  -H 'sec-ch-ua-platform: ""Android""' \
+  --data-raw '{""recipient_id"":""b38c8bd6-6ebc-407e-b11d-b85a26bf1461"",""group_id"":null,""text"":""Te comparto el *catálogo de diseños* que tenemos para *Mandiles*"",""crm_dialog_id"":222281,""crm_contact_id"":26966712,""crm_account_id"":33068423,""crm_entity"":{""id"":24953770,""type"":2},""attachments"":[{""external_file_id"":""c03b5eeb-bead-4c8c-85ba-8152fb0b03e2"",""external_file_vers_id"":""ab215184-8111-4cab-a569-70ef0a47559c"",""type"":""picture""}],""set_personalization"":false,""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60768
+Mandiles Video,M3,Producto Principal,,,,,61878
+Pantuflas boda,P1,Producto Principal,"✨ Pantuflas de satín personalizadas
+💖 Un detalle elegante y cómodo para tu evento
+🥿 Suela y esponja más gruesa
+🎨 Personalizadas con nombre y fecha
+
+📏 Unitalla (les queda del 23 al 26)
+💰 Precio promo: $29 el par
+📦 Pedido mínimo de 50 pares
+
+🎁 Opción de bolsa:
+* Bolsa de tela personalizada (+$7 c/u)
+* Bolsa tipo SHEIN no personalizada (tal cual la imagen)",INFOGRAFÍA final 2-11 (1).png (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/swIewUtNX_255eHrzVxjHg/OA58C0Gz1LZgzt2zTTq03keFNmuN2D8UX7tfFSl5-XDo5T7CgihtzpFstf1YfZ92-fkFKUyAWJ0czhfJAacQozKfbiP46nnByvRbt5E6x6y4gMlgm6hKWhnCkzqKsy3xz8wEM_LixhLVPJewLPKOde7Izoq88iFvSx1CKChAJjU/LmXbuQjSLxasuegDAauhTTFMS_TlHXy8RhIj9h_JQk8),,"curl 'https://amojo.kommo.com/v2/449d0073-dbc8-4adf-8e69-66eb90f315ba/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36' \
+  -H 'X-Auth-Token: 34c860dd-1537-4fb1-a45b-588583165914' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""143"", ""Chromium"";v=""143"", ""Not A(Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?1' \
+  -H 'sec-ch-ua-platform: ""Android""' \
+  --data-raw '{""recipient_id"":null,""group_id"":null,""text"":""✨ Pantuflas de satín personalizadas\n💖 Un detalle elegante y cómodo para tu evento\n🥿 Suela y esponja más gruesa\n🎨 Personalizadas con nombre y fecha\n\n📏 Unitalla (les queda del 23 al 26)\n💰 Precio promo: $30 el par\n📦 Pedido mínimo de 50 pares\n\n🎁 Opción de bolsa:\n* Bolsa de tela personalizada (+$7 c/u)\n* Bolsa tipo SHEIN no personalizada (tal cual la imagen)"",""crm_entity"":{""id"":24953770,""type"":2},""attachments"":[{""external_file_id"":""4e624ade-50a9-4f2f-8055-ee6beb8a0539"",""external_file_vers_id"":""6378883a-1f45-45cd-a38f-81b64745ef5e"",""type"":""picture""}],""set_personalization"":false,""skip_link_shortener"":true,""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60764
+Pantuflas de satín boda personalizadas,P4,Producto Principal, ,CATALOGO_PANTUFLA_BODAS.pdf (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/ON1RkHtZS7f7D2uqqmtHTA/KnOjscf578zPPm1dW1C_V9vJw1ZyumfjtQgwCdGA2EwwMGJEhhlGRK-DcFgREum6_cmqUMtsxl-iwRfbG_hB0GKb25vswxuie58P25Lf26K-nlIg8-XYkK5LExV_KMiFzKcjXCQGkwssS14xSUU1zv7Zhdo7oghhQ2rKWO-KK7E8iOttK96aNybfS1l_lwaR/BcfblAiL5eiYs6VaaWwbfTZcGvzZoCSWNONTffSFptw),,"curl 'https://amojo.kommo.com/v2/780187c1-40c3-4af3-b468-130d9ea7a2f3/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: 2f5df118-0600-42ec-9fbb-0b169e016bac' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""137"", ""Chromium"";v=""137"", ""Not/A)Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""4dbcac2a-c514-4d71-abc0-68f91ff42330"",""group_id"":null,""text"":"""",""crm_dialog_id"":148248,""crm_contact_id"":22428677,""crm_account_id"":33068423,""crm_entity"":{""id"":20262327,""type"":2},""attachments"":[{""external_file_id"":""e9e55c58-e221-4887-9bcc-bcaf1fa9146a"",""external_file_vers_id"":""46e172e0-a1f2-47a8-998f-7af304ca2396"",""type"":""file""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60748
+Pantuflas Video,P5,Producto Principal,,,,,61876
+Pantuflas mono satin,P6,Producto Principal,"✨ Pantufla de moño de satín para boda
+🥿 Suela y esponja más gruesa
+📏 Es unitalla, les queda desde el 23 al 26
+🎨 1 diseño cada 50 pares
+🌈 Colores disponibles: blanca, negra, morada, rosa, cielo y beige
+
+💰 Precio promo: $30 el par
+📦 Pedido mínimo: 50 pares
+
+🎁 Elige entre:
+* Bolsa tipo SHEIN no personalizada, tal cual como en la imagen
+* Bolsa de tela personalizada (+$7 c/u)",pantufla mono satin BODA.jpeg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/vzV1t832eBMXaYIyBF2yGA/Z19Ps-FjamKFM5Y0VpDPy5_8MHxkLXbsCgS5XOCNRG4MSFOr-Bpb-V3B-xjsTVwJxAiA-cQiEUzPKxmVBWpu9Rf1jYTx2mz2OP0UjoKSxsqQm0sQkr-oxHydhfJZBBsQdwgy2HjsGPX2m7RLZKiqoD_qD4y3gwQ7LlDQ2-mIesJO_c0PzZ6DsfmWze-ezTq8/2sArtltA3fWevVlG0a3onE363rkGVMP61Uw7AQolU6o),-,-,62554
+Pantuflas mono peluche,P7,Producto Principal,"✨ Pantufla de moño de peluche para boda
+🥿 Suela y esponja más gruesa
+📏 Es unitalla, les queda desde el 23 al 26
+🎨 1 diseño cada 50 pares
+🌈 Colores disponibles: blanca, negra, morada y rosa
+
+💰 Precio promo: $35 el par
+📦 Pedido mínimo: 50 pares
+
+🎁 Elige entre:
+* Bolsa tipo SHEIN no personalizada, tal cual como en la imagen
+* Bolsa de tela personalizada (+$7 c/u)",pantufla mono peluche BODA.jpeg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/Knm8ZNm2Fe7yMMRyr7kybw/_CHzud_hKokiGj6q5iYKkoDio14MSco5eSfISFivuc4y2NJiE63Rs5iJ1XKNz7zr-V2YP9YMdDig1weP0OYnYau3WU2djuIQ6BFxwWM7h3nWtxvnMvw0Q3ArRcihuP3Rke-k9INhityN1qsRxA12SCPdc81MjFmxP6JPX44FMcwaJKKLrJ8Prjz5azeaQya2/j0KJXwXPYxkk4i7D-zOqw9EhAb1O7QKZNJif17PzUVo),,,62610
+Sandalias personalizadas,S1,Producto Principal,"✨ Sandalias personalizadas
+💕 Un detalle que todos van a agradecer en tu evento
+👡 Súper cómodas y personalizadas
+
+💡 Disponibles en suela delgada ($24) o suela gruesa ($29), según la comodidad que estés buscando.
+📦 Pedido mínimo de 50 pares.",boda.jpeg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/rM67siflcxTO7DxKDzGtaA/_QL0k0qaXPieJRGWZDtL2v6goxbzfNqTUkB7LIYJAD8Z7jFozaReOUXQm4MqcOsRWP2h-j1-buBQMX_h9q0PaSo9IXt2RqXGxOXaZjEvfOmtBEQOQSNJJ8UuGIQw6OQ7jvKrpz_Gm3DVwlVhSerqPg/1fd7e51lawHr2i63C03tBvOGmom2s6y57sOym14NZ08),,"curl 'https://amojo.kommo.com/v2/449d0073-dbc8-4adf-8e69-66eb90f315ba/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36' \
+  -H 'X-Auth-Token: 34c860dd-1537-4fb1-a45b-588583165914' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""143"", ""Chromium"";v=""143"", ""Not A(Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?1' \
+  -H 'sec-ch-ua-platform: ""Android""' \
+  --data-raw '{""recipient_id"":null,""group_id"":null,""text"":""✨ Sandalias personalizadas\n💕 Un detalle que todos van a agradecer en tu evento\n👡 Súper cómodas y personalizadas\n\n💡 Disponibles en suela delgada ($25) o suela gruesa ($30), según la comodidad que estés buscando.\n📦 Pedido mínimo de 50 pares."",""crm_entity"":{""id"":24953770,""type"":2},""attachments"":[{""external_file_id"":""c71ccb04-81a8-4a89-8c04-e23748d70be5"",""external_file_vers_id"":""31a416ca-0738-4ce0-8f8e-b5be7ac68b5a"",""type"":""picture""}],""set_personalization"":false,""skip_link_shortener"":true,""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60766
+Sandalias para boda personalizadas,S3,Producto Principal, ,CATALOGO_SANDALIAS_BODAS.pdf (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/-h0hQVf0E192KCsP7lml_Q/PnM_MUeWUZHqGTWbWec11BbMls4XxtXkckYU-QvEycxLbG4RCoGnzKOArYgjBfROj_evk4_26YjYtCzG3kh3QvbnlbPoTNOAuPZuP5vlBPoqyV8FN7O7i5nFL-t4KFEiJkPATcdtSJvN2FJYfjBJrP_vMcmObR6FqOP4tatisJrF795LRLW_B_8-aEiRMutf/Zz_4d11CiuYeXSY6vdEvzwUB_Er1bfzvHCSsXCoEnBw),,"curl 'https://amojo.kommo.com/v2/780187c1-40c3-4af3-b468-130d9ea7a2f3/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: 2f5df118-0600-42ec-9fbb-0b169e016bac' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""137"", ""Chromium"";v=""137"", ""Not/A)Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""4dbcac2a-c514-4d71-abc0-68f91ff42330"",""group_id"":null,""text"":"""",""crm_dialog_id"":148248,""crm_contact_id"":22428677,""crm_account_id"":33068423,""crm_entity"":{""id"":20262327,""type"":2},""attachments"":[{""external_file_id"":""8bdc19a1-4884-4af8-b84d-fa52789772e7"",""external_file_vers_id"":""239f9a91-cd4d-4726-b340-0daff6f8f914"",""type"":""file""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60752
+Sandalias Video,S4,Producto Principal,,,,,61874
+Vasos popote 24 oz,V1,Producto Principal,"✨ Vaso con popote 24 oz para boda
+🖨️ Diseño en serigrafía
+🥤 Vasos personalizados
+🎨 Mismo diseño y tinta para todas las piezas
+🎨 1 diseño cada 50 vasos
+
+🌈 Tenemos varios colores de vasos
+🥤 Puede escoger 1 color de vaso por cada 20 vasos
+
+💰 Precio promo: $35
+📦 Pedido mínimo: 50 piezas
+⏳ Tiempo de fabricación: 15 días",vaso popote 24 oz BODA.jpeg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/MAnzf1xSUyzY237zD0c24g/_OiNNbWOOcQkvSEjiXZ-meiZE2p663Z9J99RR1LU5-fhiQv0cUdqzUI-uAqw_SRG4uhrtM8c4VvFHN96InmqFa4GGzOXgw36sJq0OHTjgirojMp493WVop8V-43Guhpf255JRwcogfegUusG4Ds41dLiAX7_N_MzBQ4-Mmq_Fys/FuU_kkhsCgt5kQJfXyRX47iy-8Qz-wtX9XZtKlU1Hjo),,,62612

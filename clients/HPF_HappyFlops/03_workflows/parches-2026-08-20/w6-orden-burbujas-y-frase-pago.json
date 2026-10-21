@@ -1,0 +1,28 @@
+{
+  "wf": "W6",
+  "descripcion": "S3-a (la prueba social salia antes de la cotizacion) + S3-c (decia 'enlace' y adjuntaba un PDF).",
+  "s3a": "El concat fichas+partes NO era la causa; invertirlo no arreglaba nada. La causa es el splice en `fichasFinales.length`: en el turno de la cotizacion NO hay fichas, asi que esa posicion es 0 y el video quedaba primero. Ademas la cotizacion y los 7 pasos salian en UNA sola burbuja porque INDIVISIBLE matchea el texto entero. Orden del viejo: cotizacion -> video -> desconfianza -> 7 pasos.",
+  "s3c": "Nuevo (linea 5653 del transcript): 'Aqui tienes el enlace para realizar el pago del anticipo'. Viejo: 'Aqui tiene toda la info para el pago'. Se adjunta un PDF, no un enlace.",
+  "cuidado": "El PDF de pago se cuelga de la ULTIMA burbuja. Por eso el video se inserta EN el borde de los 7 pasos y no con un push al final: con push, el PDF terminaria colgado del video. Y el `RE_7PASOS` del corte y el de la insercion son LA MISMA constante, a proposito: si difieren, el findIndex no encuentra la burbuja y el video vuelve al final.",
+  "no_toca_memoria": "`Partir en burbujas` corre DESPUES de los agentes, asi que no altera lo que se escribe en n8n_chat_histories. No puede producir el efecto de ruteo que produjo R2.",
+  "ediciones": [
+    {
+      "nodo": "Partir en burbujas",
+      "campo": "parameters.jsCode",
+      "anchor": "let partes;\nif (INDIVISIBLE.test(txt)) {\n  partes = [txt];                                  // entero, sin cortar\n} else {",
+      "reemplazo": "// Dónde arranca el bloque de los 7 pasos. Se usa para DOS cosas: cortar ahí (acá abajo)\n// y meter el video de reseñas en ese mismo borde (más abajo). Tiene que ser la MISMA\n// expresión en los dos lugares o el video termina en la posición equivocada.\nconst RE_7PASOS = /7 SENCILLOS PASOS/i;\n\nlet partes;\nif (INDIVISIBLE.test(txt)) {\n  // REGLA HEREDADA: una cotización no se parte, y el bloque de los 7 pasos tampoco. Pero\n  // eso NO quiere decir que vayan en la MISMA burbuja: el viejo manda la cotización y los\n  // 7 pasos como mensajes separados, con la prueba social en el medio (medido en A1, C4 y\n  // F5 del test de paridad del 19/08).\n  //\n  // Salían pegados porque `INDIVISIBLE` matchea el texto ENTERO si aparece cualquiera de\n  // sus marcas, y `partes = [txt]` dejaba una sola burbuja gigante con cotización + cierre\n  // + 7 pasos. Se corta SÓLO en ese borde y cada bloque queda intacto.\n  const m7 = txt.match(RE_7PASOS);\n  let corte = null;\n  if (m7 && m7.index > 0) {\n    // Cortar al principio de la LÍNEA que contiene la marca, no en la marca misma: si no,\n    // \"¡HAZ TU PEDIDO EN \" queda colgando al final de la cotización.\n    const ini = txt.lastIndexOf('\\n', m7.index);\n    corte = ini < 0 ? 0 : ini + 1;\n  }\n  if (corte) {\n    const antes = txt.slice(0, corte).trim();\n    const desde = txt.slice(corte).trim();\n    partes = (antes && desde) ? [antes, desde] : [txt];\n  } else {\n    partes = [txt];                                // entero, sin cortar\n  }\n} else {"
+    },
+    {
+      "nodo": "Partir en burbujas",
+      "campo": "parameters.jsCode",
+      "anchor": "if (/7 SENCILLOS PASOS/i.test(txt)) {\n  partesFinales.splice(fichasFinales.length, 0,\n    { texto: TEXTO_RESENAS, adjuntos: [VIDEO_RESENAS] });\n}",
+      "reemplazo": "if (RE_7PASOS.test(txt)) {\n  // Va JUSTO ANTES de la burbuja de los 7 pasos, no antes del texto del agente.\n  //\n  // El splice en `fichasFinales.length` ponía el video en la posición 0 cuando el turno no\n  // traía fichas — que es exactamente el turno de la cotización —, así que la prueba social\n  // salía ANTES de cotizar. El viejo cotiza y DESPUÉS tranquiliza.\n  //\n  // No contradice a Oscar (11/08, \"antes de enviar los pasos\"): los dos criterios apuntan\n  // al mismo lugar, entre la cotización y los 7 pasos.\n  const i7 = partesFinales.findIndex(p => RE_7PASOS.test(p.texto || ''));\n  partesFinales.splice(i7 >= 0 ? i7 : partesFinales.length, 0,\n    { texto: TEXTO_RESENAS, adjuntos: [VIDEO_RESENAS] });\n}"
+    },
+    {
+      "nodo": "Partir en burbujas",
+      "campo": "parameters.jsCode",
+      "anchor": "           .replace(/[ \\t]{2,}/g, ' ')\n           .replace(/\\n{3,}/g, '\\n\\n').trim();\n}",
+      "reemplazo": "           .replace(/[ \\t]{2,}/g, ' ')\n           .replace(/\\n{3,}/g, '\\n\\n').trim();\n\n  // Lo que se adjunta es un PDF, no un enlace. El prompt del Recolector le dice \"URL\" al\n  // marcador, así que el modelo redacta \"Aquí tienes el enlace para realizar el pago\" y al\n  // lead le llega esa frase con un PDF colgado (medido en el test de paridad, línea 5653).\n  // El viejo dice \"Aquí tiene toda la info para el pago\", que describe lo que manda.\n  //\n  // Se corrige acá y no en el prompt porque acá se sabe DETERMINÍSTICAMENTE qué se adjunta.\n  txt = txt\n    .replace(/\\bel\\s+(?:enlace|link)\\s+(?:para\\s+(?:realizar\\s+|hacer\\s+)?el\\s+pago|de\\s+pago|para\\s+el\\s+pago)/gi,\n             'toda la info para el pago')\n    .replace(/\\b(?:este|ese)\\s+(?:enlace|link)\\b/gi, 'esta info');\n}"
+    }
+  ]
+}

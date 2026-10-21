@@ -1,0 +1,445 @@
+{
+  "name": "sys-seguimientos-leads-v1",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9-17/4 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "b9d297b2-ef86-479d-86e3-c3c6b9b71420",
+      "name": "Schedule Trigger (Lun-Vie 9/13/17 ART)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -720,
+        -16
+      ],
+      "notes": "Cron expression: 0 9-17/4 * * 1-5 (Lun-Vie a las 9, 13 y 17 hs ART). Alineado con horario humano declarado en prompt v2.0 Regla 8. Ajustar zona horaria del n8n a America/Argentina/Buenos_Aires si no está."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  session_id,\n  perfil,\n  etapa,\n  datos_capturados,\n  productos_mostrados,\n  ultima_actividad,\n  seguimientos_enviados,\n  toque_a_enviar\nFROM sys_leads_para_seguimiento;",
+        "options": {}
+      },
+      "id": "dea795b8-9f04-44d9-b504-6cf2067e2872",
+      "name": "Get leads para seguir",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -496,
+        -16
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "notes": "Lee la vista sys_leads_para_seguimiento (ver supabase-schema-v2-seguimientos.sql). Cada fila trae toque_a_enviar = 1 (24h) o 2 (7d)."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "has-rows",
+              "leftValue": "={{ $json.session_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "37de1473-3753-4d07-a90f-7e4abdd51def",
+      "name": "IF hay leads?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -272,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Para cada lead, extrae subscriber_id del session_id (formato 'wa_XXXX', 'ig_XXXX', etc.)\n// y prepara el contexto para el LLM.\n// v1.1: arma 'instrucciones_tono' por toque de forma determinista — el LLM solo redacta,\n// no decide entre 2 reglas (eso causaba mensajes idénticos en toque 1 y 2).\nconst lead = $input.first().json;\nconst sessionId = String(lead.session_id || '');\nconst parts = sessionId.split('_');\nconst canal = parts[0] || 'unknown';\nconst subscriberId = parts.slice(1).join('_') || '';\n\nconst datos = lead.datos_capturados || {};\nconst nombre = datos.nombre || '';\nconst equipo = datos.equipo || datos.equipo_o_aplicacion || '';\nconst toque = Number(lead.toque_a_enviar);\n\n// Instrucciones específicas por toque — el LLM las usa directamente, no elige.\nlet instrucciones_tono = '';\nif (toque === 1) {\n  instrucciones_tono = `Este es el PRIMER seguimiento, 24h después de la última interacción. Reactivá la conversación con calidez en 2 partes naturales (parte1 = saludo + apertura cálida; parte2 = referencia a la consulta previa + UNA pregunta abierta para invitar a retomar tipo \"¿pudiste verlo?\", \"¿seguís interesado?\", \"¿necesitás algo más para decidir?\"). NO uses despedida tipo \"saludos\" — es pregunta, no cierre. NO menciones que es un seguimiento ni que pasaron horas/días. Dejá parte3 vacía.`;\n} else if (toque === 2) {\n  instrucciones_tono = `Este es el SEGUNDO y ÚLTIMO seguimiento, 7 días después del primero sin respuesta. Tono de cierre amable en 2 partes (parte1 = saludo + aviso explícito de que es el último mensaje desde el asistente, frase tipo \"este es mi último mensaje desde acá\" o \"no te escribo más desde el bot\"; parte2 = invitación a que retome cuando quiera + saludo de cierre tipo \"saludos\"). NO hagas preguntas — es cierre, no invitación a responder. Dejá parte3 vacía.`;\n} else {\n  instrucciones_tono = 'Mensaje genérico de reactivación en 1 parte (solo parte1). Tono cálido y abierto. Dejá parte2 y parte3 vacías.';\n}\n\nreturn [{\n  json: {\n    session_id: sessionId,\n    subscriber_id: subscriberId,\n    canal,\n    nombre,\n    equipo,\n    toque,\n    instrucciones_tono,\n    seguimientos_enviados: lead.seguimientos_enviados,\n    datos_capturados: datos,\n    ultima_actividad: lead.ultima_actividad\n  }\n}];"
+      },
+      "id": "ef68678a-f73c-4afb-a42c-b524d61a7e80",
+      "name": "Prepare lead context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        176,
+        0
+      ],
+      "notes": "Extrae subscriber_id del session_id (que tiene formato 'wa_XXXXX') y agrupa los datos en estructura limpia para el LLM."
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Sos el asistente virtual de Sistemas y Soluciones (industria gráfica argentina). Tenés que escribir un mensaje breve y natural por WhatsApp para un lead, dividido en hasta 3 partes que simulan el ritmo de una conversación humana.\n\n# Datos del lead\n- Nombre: {{ $json.nombre || 'desconocido' }}\n- Equipo/aplicación consultada: {{ $json.equipo || 'no especificada' }}\n\n# Instrucciones específicas para este mensaje\n{{ $json.instrucciones_tono }}\n\n# Reglas generales de estilo (siempre)\n- Tono rioplatense, directo, sin frases robóticas (\"Estimado/a\", \"¡Perfecto!\", \"Saludos cordiales\").\n- Cada parte debe tener sentido por sí misma; cortes naturales (no a mitad de oración).\n- NO uses emojis excesivos (uno máximo en TODO el mensaje, solo si suma).\n- NO repreguntes datos que el lead ya dio.\n- Si tenés el nombre, usalo en el saludo (parte1). Si no, hacé un saludo neutro tipo \"Hola, ¿cómo va?\".\n- Si tenés el equipo consultado, hacé referencia específica (ej. \"la consulta del DTF textil\"). Si no, referí genéricamente a \"tu consulta\".\n- Cada parte termina sin punto final (más natural en WA).\n- Las partes vacías van como string vacío \"\", NO como null.\n\n# Formato de salida\nDevolvé JSON con exactamente esta estructura, sin ningún texto extra:\n{\n  \"parte1\": \"<texto de la primera parte>\",\n  \"parte2\": \"<texto de la segunda parte o cadena vacía>\",\n  \"parte3\": \"<texto de la tercera parte o cadena vacía>\"\n}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "id": "8a303c94-644b-46b7-928d-33dd7b35ff79",
+      "name": "Generar mensaje seguimiento",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        400,
+        0
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "Fa3aaCsYTBS79y3Y",
+          "name": "OpenAI la agencia®"
+        }
+      },
+      "notes": "Genera el mensaje de seguimiento con gpt-4o-mini personalizado por lead. temperature=0.7 para naturalidad. Costo: ~USD 0.001 por seguimiento."
+    },
+    {
+      "parameters": {
+        "jsCode": "// v1.1 multi-parte: parsea el JSON {parte1, parte2, parte3} del LLM y compacta\n// partes no-vacías en ai_msg_1/2/3 + ai_msg_count, mismo patrón que el main 'Split Respuesta'.\nconst llmOut = $input.first().json;\nconst leadCtx = $('Prepare lead context').item.json;\n\n// El LLM con jsonOutput=true puede devolver el JSON en .message.content (string) o ya parseado.\nconst raw = llmOut.message?.content ?? llmOut.content ?? llmOut;\nlet parsed = {};\ntry {\n  parsed = typeof raw === 'string' ? JSON.parse(raw) : (raw && typeof raw === 'object' ? raw : {});\n} catch (e) {\n  // Fallback: si el LLM rompió el JSON, mete todo en parte1.\n  parsed = { parte1: typeof raw === 'string' ? raw : String(raw), parte2: '', parte3: '' };\n}\n\n// Compactar partes no-vacías en orden (descarta empties intermedios, evita que ManyChat saltee mensaje).\nconst allParts = [parsed.parte1, parsed.parte2, parsed.parte3]\n                   .map(p => String(p || '').trim())\n                   .filter(p => p.length > 0);\n\nconst ai_msg_1 = allParts[0] || '';\nconst ai_msg_2 = allParts[1] || '';\nconst ai_msg_3 = allParts[2] || '';\nconst ai_msg_count = allParts.length || 1;\n\nreturn [{\n  json: {\n    ...leadCtx,\n    ai_msg_1,\n    ai_msg_2,\n    ai_msg_3,\n    ai_msg_count\n  }\n}];"
+      },
+      "id": "12e9ed9b-44d9-43e9-b55f-c11da7f167dd",
+      "name": "Build ManyChat payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        752,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/subscriber/setCustomFields",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  subscriber_id: $json.subscriber_id,\n  fields: [\n    { field_name: \"ai_msg_1\", field_value: $json.ai_msg_1 },\n    { field_name: \"ai_msg_2\", field_value: $json.ai_msg_2 || null },\n    { field_name: \"ai_msg_3\", field_value: $json.ai_msg_3 || null },\n    { field_name: \"ai_msg_count\", field_value: $json.ai_msg_count }\n  ]\n}) }}",
+        "options": {}
+      },
+      "id": "0d04a881-f071-4224-920b-3e0e9796b147",
+      "name": "setCustomFields ManyChat",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        976,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "E41Ucr4mYfSjuoxJ",
+          "name": "ManyChat - SYS"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "Setea el mensaje en el custom field ai_msg_1 del subscriber. ai_msg_2 y ai_msg_3 en null (no se envía multi-parte en seguimientos)."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  subscriber_id: $('Prepare lead context').item.json.subscriber_id,\n  flow_ns: \"content20260602201354_388410\"\n}) }}",
+        "options": {}
+      },
+      "id": "7a35a20d-d0eb-4ba1-8a48-bb2fe70ef71d",
+      "name": "sendFlow ManyChat (Responder Multi-parte)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "E41Ucr4mYfSjuoxJ",
+          "name": "ManyChat - SYS"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "Dispara el mismo flow 'Responder Multi-parte' que usa el main (lee ai_msg_1/2/3 y los envía como mensajes secuenciales). flow_ns ya validado en producción."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE sys_session_state\nSET\n  seguimientos_enviados = seguimientos_enviados + 1,\n  ultima_actividad = NOW(),\n  etapa = CASE WHEN $2::int = 2 THEN 'cerrado' ELSE etapa END\nWHERE session_id = $1;",
+        "options": {
+          "queryReplacement": "={{ [$('Prepare lead context').item.json.session_id, $('Prepare lead context').item.json.toque] }}"
+        }
+      },
+      "id": "5ed6f732-c5f3-4f9d-8f5b-d97afac60376",
+      "name": "Update tracking",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1424,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "notes": "Incrementa seguimientos_enviados, marca ultima_actividad = NOW() (para que no vuelva a entrar al cron), y si fue el toque 2 marca la sesión como 'cerrado'."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sys_tool_calls (session_id, tool_name, input_payload, output_payload, status, duration_ms)\nVALUES ($1, 'seguimiento_auto', $2::jsonb, $3::jsonb, 'RESOLVED', 0);",
+        "options": {
+          "queryReplacement": "={{ [$('Prepare lead context').item.json.session_id, JSON.stringify({toque: $('Prepare lead context').item.json.toque, nombre: $('Prepare lead context').item.json.nombre, equipo: $('Prepare lead context').item.json.equipo}), JSON.stringify({ai_msg_1: $('Build ManyChat payload').item.json.ai_msg_1, ai_msg_2: $('Build ManyChat payload').item.json.ai_msg_2, ai_msg_3: $('Build ManyChat payload').item.json.ai_msg_3, ai_msg_count: $('Build ManyChat payload').item.json.ai_msg_count, subscriber_id: $('Build ManyChat payload').item.json.subscriber_id})] }}"
+        }
+      },
+      "id": "06f8de98-761c-4afc-874b-e9469ff4e6a6",
+      "name": "Log to sys_tool_calls",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1648,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "Audit log con tool_name='seguimiento_auto'. Permite trackear cuántos seguimientos se enviaron, a quién, y con qué mensaje."
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -48,
+        -16
+      ],
+      "id": "5dd1f0f4-a1e8-4fd1-a885-eb69e89b2835",
+      "name": "Loop Over Items"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger (Lun-Vie 9/13/17 ART)": {
+      "main": [
+        [
+          {
+            "node": "Get leads para seguir",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get leads para seguir": {
+      "main": [
+        [
+          {
+            "node": "IF hay leads?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF hay leads?": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare lead context": {
+      "main": [
+        [
+          {
+            "node": "Generar mensaje seguimiento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generar mensaje seguimiento": {
+      "main": [
+        [
+          {
+            "node": "Build ManyChat payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build ManyChat payload": {
+      "main": [
+        [
+          {
+            "node": "setCustomFields ManyChat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "setCustomFields ManyChat": {
+      "main": [
+        [
+          {
+            "node": "sendFlow ManyChat (Responder Multi-parte)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sendFlow ManyChat (Responder Multi-parte)": {
+      "main": [
+        [
+          {
+            "node": "Update tracking",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update tracking": {
+      "main": [
+        [
+          {
+            "node": "Log to sys_tool_calls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Prepare lead context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to sys_tool_calls": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1,
+    "availableInMCP": false
+  },
+  "versionId": "01ac93ba-a198-4aae-a029-92355a8a7931",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  },
+  "id": "8XkICVXpp7qnAfBX",
+  "tags": [
+    {
+      "updatedAt": "2026-05-29T18:34:16.955Z",
+      "createdAt": "2026-05-29T18:34:16.955Z",
+      "id": "frzN1ezwC8wCA6mR",
+      "name": "SYS"
+    },
+    {
+      "updatedAt": "2026-06-05T14:32:47.250Z",
+      "createdAt": "2026-06-05T14:32:47.250Z",
+      "id": "tzCmkzx1SWzxOyKm",
+      "name": "F8"
+    },
+    {
+      "name": "seguimientos",
+      "id": "XKP0LK8RtJvGi8XJ",
+      "updatedAt": "2026-06-05T19:27:36.013Z",
+      "createdAt": "2026-06-05T19:27:36.013Z"
+    },
+    {
+      "name": "cron",
+      "id": "herwqo0JJxIFYzZg",
+      "updatedAt": "2026-06-05T19:27:35.987Z",
+      "createdAt": "2026-06-05T19:27:35.987Z"
+    }
+  ]
+}

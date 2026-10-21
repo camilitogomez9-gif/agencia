@@ -1,0 +1,15 @@
+{
+  "caso": "C-07",
+  "titulo": "imagen principal distinta por evento (3 fichas homónimas)",
+  "resultado": "CORROBORADO",
+  "detalle": "{'Boda': 'e2-bfac-05dd969c3ea7.jpg', 'XV': '67-a408-16742a068939.jpg', 'Otros': 'e3-b30d-71e910093962.jpg'} distintas=True",
+  "pasos": [
+    {
+      "por_evento": {
+        "Boda": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg",
+        "XV": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/136d7ce1-0487-4767-a408-16742a068939.jpg",
+        "Otros": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/10880c83-56c2-4ee3-b30d-71e910093962.jpg"
+      }
+    }
+  ]
+}

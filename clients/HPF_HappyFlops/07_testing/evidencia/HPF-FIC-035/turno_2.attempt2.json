@@ -1,0 +1,73 @@
+{
+  "probe_id": "sess_hpf_fic_035_1785955386#4c774f66106a",
+  "session_id": "sess_hpf_fic_035_1785955386",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "quiero pantuflas de peluche",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 7.2,
+  "version_antes": "f787487c-8332-405d-8053-16b9b8eb1189",
+  "version_despues": "f787487c-8332-405d-8053-16b9b8eb1189",
+  "capturado_utc": "2026-08-05T18:43:38.798652+00:00",
+  "execution_id": "989677",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T18:43:26.752Z",
+  "stoppedAt": "2026-08-05T18:43:33.080Z",
+  "n_esperadas": 2,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Perfecto! Tenemos pantuflas moño de peluche en colores blanco, negro, morado y rosa, ideales para consentir a tus invitadas en la boda",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "Me puedes decir cuántos pares necesitas y a qué código postal sería el envío? Así te preparo la cotización",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 247,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1912,
+      "chat_id": 6390727286,
+      "texto_entregado": "Perfecto! Tenemos pantuflas moño de peluche en colores blanco, negro, morado y rosa, ideales para consentir a tus invitadas en la boda",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 271,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1913,
+      "chat_id": 6390727286,
+      "texto_entregado": "Me puedes decir cuántos pares necesitas y a qué código postal sería el envío? Así te preparo la cotización",
+      "error": null
+    }
+  ],
+  "n_entregadas": 2,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Perfecto! Tenemos pantuflas moño de peluche en colores blanco, negro, morado y rosa, ideales para consentir a tus invitadas en la boda. \n\n¿Me puedes decir cuántos pares necesitas y a qué código postal sería el envío? Así te preparo la cotización.",
+    "tools": [
+      "IDENTIFICAR_EVENTO",
+      "MOSTRAR_PRODUCTOS"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-FIC-035"
+}

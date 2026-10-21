@@ -1,0 +1,1039 @@
+{
+  "updatedAt": "2026-08-14T16:15:38.457Z",
+  "createdAt": "2026-08-08T19:01:27.439Z",
+  "id": "Ki7IRFYQn1mqOh5p",
+  "name": "HPF·GHL · W8 Relay de entrada",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "9b46f9d9-20c3-4ae8-ad69-50b317c513d4",
+      "name": "Cada minuto",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1184,
+        -80
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "d4dcd1ef-b813-49c3-8ecb-a62d46cb5870",
+      "name": "Disparo manual",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1184,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hpf-w8-relay",
+        "authentication": "headerAuth",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "16db0f41-d26c-43ac-970c-a968ccd2d54f",
+      "name": "Webhook (carril de prueba)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1184,
+        304
+      ],
+      "webhookId": "a8e1712e-c7c1-4316-9f0d-4f7b27386eef",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jUb7ZjztncX5ACpc",
+          "name": "HPF GHL Webhook Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "CREATE TABLE IF NOT EXISTS hpf_relay_estado (\n  id           int PRIMARY KEY DEFAULT 1,\n  ultimo_ms    bigint NOT NULL DEFAULT 0,\n  corrido_at   timestamptz NOT NULL DEFAULT now(),\n  CONSTRAINT hpf_relay_una_fila CHECK (id = 1)\n);\nINSERT INTO hpf_relay_estado (id, ultimo_ms) VALUES (1, 0)\nON CONFLICT (id) DO NOTHING;\nSELECT ultimo_ms FROM hpf_relay_estado WHERE id = 1;",
+        "options": {}
+      },
+      "id": "2bc01553-233a-4083-bfdf-b0d5178bb8af",
+      "name": "Leer marca de agua",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        -960,
+        112
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VK4M7VQm8CMefbty",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W0 Client"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "op": "buscar_conversaciones",
+            "args": "={{ {limit: 50} }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "9b6eb584-d77b-46e5-824c-72c1f8042425",
+      "name": "W0 · buscar conversaciones",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -736,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Conversaciones con actividad nueva desde la última corrida.\n//\n// El filtro es por `lastMessageDate`, no por dirección: una conversación cuyo último\n// mensaje es nuestro puede tener ADEMÁS un inbound sin procesar (el lead escribió dos\n// veces y contestamos al primero). Filtrar acá por `lastMessageDirection == inbound`\n// perdería esos casos. La dirección se decide mensaje por mensaje, más adelante.\nconst marca = Number(($('Leer marca de agua').first().json || {}).ultimo_ms || 0);\n// W0 envuelve la respuesta de GHL en {ok, op, http_status, via, data, error}: lo que\n// busca este nodo cuelga de `data`, no de la raíz.\nconst r = ($input.first().json || {}).data || {};\nconst convs = r.conversations || [];\n\nconst nuevas = convs.filter(c => Number(c.lastMessageDate || 0) > marca);\n\n// Primera corrida (marca 0): NO barrer el histórico entero. Sólo se fija la marca al\n// más reciente y se arranca a escuchar desde ahí, o el primer ciclo dispararía el bot\n// contra 89 conversaciones viejas.\nif (marca === 0) {\n  const tope = convs.reduce((a, c) => Math.max(a, Number(c.lastMessageDate || 0)), 0);\n  return [{ json: { _arranque: true, tope, conversaciones: [],\n                    _nota: 'primera corrida: marca fijada, sin reprocesar histórico' } }];\n}\n\nreturn nuevas.map(c => ({ json: {\n  conversationId: c.id, contactId: c.contactId,\n  lastMessageDate: Number(c.lastMessageDate || 0),\n  _marca: marca,\n} }));"
+      },
+      "id": "1378f48c-37de-4c00-a5c8-b8b1713e2909",
+      "name": "Elegir conversaciones nuevas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -512,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "9520d066-6c27-4e12-a8da-03e8c840ff9e",
+              "leftValue": "={{ $json._arranque }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "527ad306-4d42-403e-884a-ec01f8f4ea3e",
+      "name": "¿Arranque?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -288,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "3f69457a-3a96-413a-a5bd-6c0cdca3a9a2",
+      "name": "Por conversación",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -64,
+        136
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "8b3507eb-0e30-4f4b-8197-a0b61b8ed3ee",
+      "name": "Conversación en curso",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        160,
+        136
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "VK4M7VQm8CMefbty",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W0 Client"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "op": "get_mensajes",
+            "args": "={{ {conversationId: $json.conversationId, limit: 20} }}"
+          },
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "11e99a4e-6955-453a-9f92-2e2e0765dce5",
+      "name": "W0 · mensajes de la conversación",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        384,
+        136
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// De los mensajes de la conversación, los INBOUND posteriores a la marca.\n//\n// `direction` viene 'inbound' | 'outbound'. Se filtra acá y no en la búsqueda porque\n// la API de conversaciones no deja pedir sólo los entrantes.\nconst ctx = $('Elegir conversaciones nuevas').first().json;\nconst marca = Number(ctx._marca || 0);\nconst conv = $('Conversación en curso').first().json;\n\nconst r = ($input.first().json || {}).data || {};\nconst lista = (r.messages && r.messages.messages) || r.messages || [];\n\nconst salida = [];\nfor (const m of Array.isArray(lista) ? lista : []) {\n  if (String(m.direction || '').toLowerCase() !== 'inbound') continue;\n  const ts = Date.parse(m.dateAdded || 0) || 0;\n  if (ts <= marca) continue;\n\n  let adj = m.attachments || [];\n  if (!Array.isArray(adj)) adj = adj ? [adj] : [];\n\n  salida.push({ json: {\n    contactId: m.contactId || conv.contactId,\n    conversationId: conv.conversationId,\n    // id REAL de GHL: idempotencia fuerte, W1 no necesita derivarla\n    messageId: String(m.id),\n    body: String(m.body || ''),\n    attachments: adj,\n    canal: 'WhatsApp',\n    _ts: ts,\n  } });\n}\n// Del más viejo al más nuevo: el orden en que el lead los escribió es el orden en que\n// el agente los tiene que ver.\nsalida.sort((a, b) => a.json._ts - b.json._ts);\nreturn salida;"
+      },
+      "id": "6711159d-94fa-4829-b71d-7f12a3fe5425",
+      "name": "Mensajes entrantes nuevos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        136
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://[TU-INSTANCIA-N8N]/webhook/hpf-w1-inbound",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({contactId: $json.contactId, conversationId: $json.conversationId, messageId: $json.messageId, body: $json.body, attachments: $json.attachments, canal: $json.canal}) }}",
+        "options": {}
+      },
+      "id": "2ad8be4a-ed94-4df6-8803-2a9eb9a1265b",
+      "name": "Entregar a W1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        832,
+        208
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jUb7ZjztncX5ACpc",
+          "name": "HPF GHL Webhook Auth"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// La marca nueva es el máximo timestamp visto en esta corrida. Se toma de las\n// conversaciones y NO de los mensajes entregados: si una conversación traía sólo\n// outbound, igual hay que avanzar o se relee para siempre.\nconst el = $('Elegir conversaciones nuevas');\nconst items = el.isExecuted ? el.all().map(i => i.json) : [];\n\nif (items.length && items[0]._arranque) {\n  return [{ json: { tope: Number(items[0].tope || 0), arranque: true, entregados: 0 } }];\n}\n\nlet tope = 0;\nfor (const it of items) tope = Math.max(tope, Number(it.lastMessageDate || 0));\n\nconst ent = $('Mensajes entrantes nuevos');\nconst entregados = ent.isExecuted ? ent.all().length : 0;\nreturn [{ json: { tope, arranque: false, entregados,\n                  conversaciones: items.length } }];"
+      },
+      "id": "60de5467-c4c5-4ba2-a52b-63f6e1eb9aba",
+      "name": "Avanzar marca",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        -56
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE hpf_relay_estado\nSET ultimo_ms = GREATEST(ultimo_ms, $1::bigint), corrido_at = now()\nWHERE id = 1\nRETURNING ultimo_ms;",
+        "options": {
+          "queryReplacement": "={{ [ $json.tope ] }}"
+        }
+      },
+      "id": "c4c425e1-f409-41fc-bda1-798af309ed0b",
+      "name": "Guardar marca",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        384,
+        -56
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "5bfbf65a-d625-48f2-965c-ee07a4c0a7da",
+      "name": "Fin",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        608,
+        -56
+      ]
+    }
+  ],
+  "connections": {
+    "Cada minuto": {
+      "main": [
+        [
+          {
+            "node": "Leer marca de agua",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Disparo manual": {
+      "main": [
+        [
+          {
+            "node": "Leer marca de agua",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook (carril de prueba)": {
+      "main": [
+        [
+          {
+            "node": "Leer marca de agua",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer marca de agua": {
+      "main": [
+        [
+          {
+            "node": "W0 · buscar conversaciones",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "W0 · buscar conversaciones": {
+      "main": [
+        [
+          {
+            "node": "Elegir conversaciones nuevas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Elegir conversaciones nuevas": {
+      "main": [
+        [
+          {
+            "node": "¿Arranque?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Arranque?": {
+      "main": [
+        [
+          {
+            "node": "Avanzar marca",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Por conversación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Por conversación": {
+      "main": [
+        [
+          {
+            "node": "Avanzar marca",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Conversación en curso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversación en curso": {
+      "main": [
+        [
+          {
+            "node": "W0 · mensajes de la conversación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "W0 · mensajes de la conversación": {
+      "main": [
+        [
+          {
+            "node": "Mensajes entrantes nuevos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensajes entrantes nuevos": {
+      "main": [
+        [
+          {
+            "node": "Entregar a W1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Entregar a W1": {
+      "main": [
+        [
+          {
+            "node": "Por conversación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Avanzar marca": {
+      "main": [
+        [
+          {
+            "node": "Guardar marca",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar marca": {
+      "main": [
+        [
+          {
+            "node": "Fin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Cada minuto": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": null,
+  "pinData": {},
+  "versionId": "6c67f4f8-e536-43f3-8c7c-cf72b998da01",
+  "activeVersionId": "6c67f4f8-e536-43f3-8c7c-cf72b998da01",
+  "versionCounter": 14,
+  "triggerCount": 2,
+  "shared": [
+    {
+      "updatedAt": "2026-08-08T19:01:27.439Z",
+      "createdAt": "2026-08-08T19:01:27.439Z",
+      "role": "workflow:owner",
+      "workflowId": "Ki7IRFYQn1mqOh5p",
+      "projectId": "g2TpxqLMiC0UsUBj",
+      "project": {
+        "updatedAt": "2025-05-10T12:26:37.475Z",
+        "createdAt": "2025-05-10T12:24:10.921Z",
+        "id": "g2TpxqLMiC0UsUBj",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-05-10T12:24:10.921Z",
+            "createdAt": "2025-05-10T12:24:10.921Z",
+            "userId": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+            "projectId": "g2TpxqLMiC0UsUBj",
+            "user": {
+              "updatedAt": "2026-08-24T21:50:45.371Z",
+              "createdAt": "2025-05-10T12:24:07.518Z",
+              "id": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "lastName": "AI",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-05-10T12:26:59.729Z",
+                "personalization_survey_n8n_version": "1.91.3",
+                "companySize": "<20",
+                "companyType": "systems-integrator",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "6fpcC3iGwfEYO3Eu",
+                "userActivatedAt": 1757033385622,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1773184568459
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "aiAgentStarterCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-08-24",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-08-14T16:15:38.444Z",
+    "createdAt": "2026-08-14T16:15:38.444Z",
+    "versionId": "6c67f4f8-e536-43f3-8c7c-cf72b998da01",
+    "workflowId": "Ki7IRFYQn1mqOh5p",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "minutes",
+                "minutesInterval": 1
+              }
+            ]
+          }
+        },
+        "id": "9b46f9d9-20c3-4ae8-ad69-50b317c513d4",
+        "name": "Cada minuto",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -1184,
+          -80
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "d4dcd1ef-b813-49c3-8ecb-a62d46cb5870",
+        "name": "Disparo manual",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -1184,
+          112
+        ]
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "hpf-w8-relay",
+          "authentication": "headerAuth",
+          "responseMode": "lastNode",
+          "options": {}
+        },
+        "id": "16db0f41-d26c-43ac-970c-a968ccd2d54f",
+        "name": "Webhook (carril de prueba)",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -1184,
+          304
+        ],
+        "webhookId": "a8e1712e-c7c1-4316-9f0d-4f7b27386eef",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "jUb7ZjztncX5ACpc",
+            "name": "HPF GHL Webhook Auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "CREATE TABLE IF NOT EXISTS hpf_relay_estado (\n  id           int PRIMARY KEY DEFAULT 1,\n  ultimo_ms    bigint NOT NULL DEFAULT 0,\n  corrido_at   timestamptz NOT NULL DEFAULT now(),\n  CONSTRAINT hpf_relay_una_fila CHECK (id = 1)\n);\nINSERT INTO hpf_relay_estado (id, ultimo_ms) VALUES (1, 0)\nON CONFLICT (id) DO NOTHING;\nSELECT ultimo_ms FROM hpf_relay_estado WHERE id = 1;",
+          "options": {}
+        },
+        "id": "2bc01553-233a-4083-bfdf-b0d5178bb8af",
+        "name": "Leer marca de agua",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          -960,
+          112
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "postgres": {
+            "id": "uK59P60DJmOJc4Lm",
+            "name": "H.F"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "VK4M7VQm8CMefbty",
+            "mode": "id",
+            "cachedResultName": "HPF·GHL · W0 Client"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "op": "buscar_conversaciones",
+              "args": "={{ {limit: 50} }}"
+            },
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "id": "9b6eb584-d77b-46e5-824c-72c1f8042425",
+        "name": "W0 · buscar conversaciones",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          -736,
+          112
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Conversaciones con actividad nueva desde la última corrida.\n//\n// El filtro es por `lastMessageDate`, no por dirección: una conversación cuyo último\n// mensaje es nuestro puede tener ADEMÁS un inbound sin procesar (el lead escribió dos\n// veces y contestamos al primero). Filtrar acá por `lastMessageDirection == inbound`\n// perdería esos casos. La dirección se decide mensaje por mensaje, más adelante.\nconst marca = Number(($('Leer marca de agua').first().json || {}).ultimo_ms || 0);\n// W0 envuelve la respuesta de GHL en {ok, op, http_status, via, data, error}: lo que\n// busca este nodo cuelga de `data`, no de la raíz.\nconst r = ($input.first().json || {}).data || {};\nconst convs = r.conversations || [];\n\nconst nuevas = convs.filter(c => Number(c.lastMessageDate || 0) > marca);\n\n// Primera corrida (marca 0): NO barrer el histórico entero. Sólo se fija la marca al\n// más reciente y se arranca a escuchar desde ahí, o el primer ciclo dispararía el bot\n// contra 89 conversaciones viejas.\nif (marca === 0) {\n  const tope = convs.reduce((a, c) => Math.max(a, Number(c.lastMessageDate || 0)), 0);\n  return [{ json: { _arranque: true, tope, conversaciones: [],\n                    _nota: 'primera corrida: marca fijada, sin reprocesar histórico' } }];\n}\n\nreturn nuevas.map(c => ({ json: {\n  conversationId: c.id, contactId: c.contactId,\n  lastMessageDate: Number(c.lastMessageDate || 0),\n  _marca: marca,\n} }));"
+        },
+        "id": "1378f48c-37de-4c00-a5c8-b8b1713e2909",
+        "name": "Elegir conversaciones nuevas",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -512,
+          112
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "version": 2,
+              "typeValidation": "loose"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "9520d066-6c27-4e12-a8da-03e8c840ff9e",
+                "leftValue": "={{ $json._arranque }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "527ad306-4d42-403e-884a-ec01f8f4ea3e",
+        "name": "¿Arranque?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          -288,
+          112
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "3f69457a-3a96-413a-a5bd-6c0cdca3a9a2",
+        "name": "Por conversación",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -64,
+          136
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "8b3507eb-0e30-4f4b-8197-a0b61b8ed3ee",
+        "name": "Conversación en curso",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          160,
+          136
+        ]
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "VK4M7VQm8CMefbty",
+            "mode": "id",
+            "cachedResultName": "HPF·GHL · W0 Client"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "op": "get_mensajes",
+              "args": "={{ {conversationId: $json.conversationId, limit: 20} }}"
+            },
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "id": "11e99a4e-6955-453a-9f92-2e2e0765dce5",
+        "name": "W0 · mensajes de la conversación",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          384,
+          136
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// De los mensajes de la conversación, los INBOUND posteriores a la marca.\n//\n// `direction` viene 'inbound' | 'outbound'. Se filtra acá y no en la búsqueda porque\n// la API de conversaciones no deja pedir sólo los entrantes.\nconst ctx = $('Elegir conversaciones nuevas').first().json;\nconst marca = Number(ctx._marca || 0);\nconst conv = $('Conversación en curso').first().json;\n\nconst r = ($input.first().json || {}).data || {};\nconst lista = (r.messages && r.messages.messages) || r.messages || [];\n\nconst salida = [];\nfor (const m of Array.isArray(lista) ? lista : []) {\n  if (String(m.direction || '').toLowerCase() !== 'inbound') continue;\n  const ts = Date.parse(m.dateAdded || 0) || 0;\n  if (ts <= marca) continue;\n\n  let adj = m.attachments || [];\n  if (!Array.isArray(adj)) adj = adj ? [adj] : [];\n\n  salida.push({ json: {\n    contactId: m.contactId || conv.contactId,\n    conversationId: conv.conversationId,\n    // id REAL de GHL: idempotencia fuerte, W1 no necesita derivarla\n    messageId: String(m.id),\n    body: String(m.body || ''),\n    attachments: adj,\n    canal: 'WhatsApp',\n    _ts: ts,\n  } });\n}\n// Del más viejo al más nuevo: el orden en que el lead los escribió es el orden en que\n// el agente los tiene que ver.\nsalida.sort((a, b) => a.json._ts - b.json._ts);\nreturn salida;"
+        },
+        "id": "6711159d-94fa-4829-b71d-7f12a3fe5425",
+        "name": "Mensajes entrantes nuevos",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          608,
+          136
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://[TU-INSTANCIA-N8N]/webhook/hpf-w1-inbound",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({contactId: $json.contactId, conversationId: $json.conversationId, messageId: $json.messageId, body: $json.body, attachments: $json.attachments, canal: $json.canal}) }}",
+          "options": {}
+        },
+        "id": "2ad8be4a-ed94-4df6-8803-2a9eb9a1265b",
+        "name": "Entregar a W1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          832,
+          208
+        ],
+        "retryOnFail": true,
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "jUb7ZjztncX5ACpc",
+            "name": "HPF GHL Webhook Auth"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "jsCode": "// La marca nueva es el máximo timestamp visto en esta corrida. Se toma de las\n// conversaciones y NO de los mensajes entregados: si una conversación traía sólo\n// outbound, igual hay que avanzar o se relee para siempre.\nconst el = $('Elegir conversaciones nuevas');\nconst items = el.isExecuted ? el.all().map(i => i.json) : [];\n\nif (items.length && items[0]._arranque) {\n  return [{ json: { tope: Number(items[0].tope || 0), arranque: true, entregados: 0 } }];\n}\n\nlet tope = 0;\nfor (const it of items) tope = Math.max(tope, Number(it.lastMessageDate || 0));\n\nconst ent = $('Mensajes entrantes nuevos');\nconst entregados = ent.isExecuted ? ent.all().length : 0;\nreturn [{ json: { tope, arranque: false, entregados,\n                  conversaciones: items.length } }];"
+        },
+        "id": "60de5467-c4c5-4ba2-a52b-63f6e1eb9aba",
+        "name": "Avanzar marca",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          160,
+          -56
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE hpf_relay_estado\nSET ultimo_ms = GREATEST(ultimo_ms, $1::bigint), corrido_at = now()\nWHERE id = 1\nRETURNING ultimo_ms;",
+          "options": {
+            "queryReplacement": "={{ [ $json.tope ] }}"
+          }
+        },
+        "id": "c4c425e1-f409-41fc-bda1-798af309ed0b",
+        "name": "Guardar marca",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          384,
+          -56
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "postgres": {
+            "id": "uK59P60DJmOJc4Lm",
+            "name": "H.F"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "id": "5bfbf65a-d625-48f2-965c-ee07a4c0a7da",
+        "name": "Fin",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          608,
+          -56
+        ]
+      }
+    ],
+    "connections": {
+      "Cada minuto": {
+        "main": [
+          [
+            {
+              "node": "Leer marca de agua",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Disparo manual": {
+        "main": [
+          [
+            {
+              "node": "Leer marca de agua",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook (carril de prueba)": {
+        "main": [
+          [
+            {
+              "node": "Leer marca de agua",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Leer marca de agua": {
+        "main": [
+          [
+            {
+              "node": "W0 · buscar conversaciones",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "W0 · buscar conversaciones": {
+        "main": [
+          [
+            {
+              "node": "Elegir conversaciones nuevas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Elegir conversaciones nuevas": {
+        "main": [
+          [
+            {
+              "node": "¿Arranque?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Arranque?": {
+        "main": [
+          [
+            {
+              "node": "Avanzar marca",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Por conversación",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Por conversación": {
+        "main": [
+          [
+            {
+              "node": "Avanzar marca",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Conversación en curso",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Conversación en curso": {
+        "main": [
+          [
+            {
+              "node": "W0 · mensajes de la conversación",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "W0 · mensajes de la conversación": {
+        "main": [
+          [
+            {
+              "node": "Mensajes entrantes nuevos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mensajes entrantes nuevos": {
+        "main": [
+          [
+            {
+              "node": "Entregar a W1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Entregar a W1": {
+        "main": [
+          [
+            {
+              "node": "Por conversación",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Avanzar marca": {
+        "main": [
+          [
+            {
+              "node": "Guardar marca",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Guardar marca": {
+        "main": [
+          [
+            {
+              "node": "Fin",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "la agencia",
+    "name": null,
+    "description": null
+  }
+}

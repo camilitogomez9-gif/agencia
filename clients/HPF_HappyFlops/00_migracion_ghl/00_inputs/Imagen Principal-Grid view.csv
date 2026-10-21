@@ -1,0 +1,71 @@
+﻿titulo,evento,Imagen,URL,Descripcion,CURL,bot_id
+Todos los productos,Boda,COPIA PRODUCTOS (1).jpeg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/QdBS_-26I-B9mQLDJScTsQ/-bPPTpfxl03irGlOQUQhrRhp3oJ1d-srfbIrKfc2l7V06DWgppLtB-3Pd7awhl6mh1AcQ9kk_m348RM2it28kFeaLv1iLiDcX3Xs1smnWtlCc5qenJ7B76Ne5hzMe7Hm46dj8O7JvYQ65d8jyc7jPPU9lEssPJe5Y4cene-tpU4/0A4v_zqQ0Rns4KICu975YW6C9Ev2_9A8w7isT6ey7uQ),https://i.ibb.co/SGdcy2K/684358c9dea5b.jpg,"TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:
+
+*Sandalias*
+*Cilindros*
+*Mandiles para Boda*
+*Kit anti cruda*
+*Pantuflas*
+
+Cuáles te interesan?","curl 'https://amojo.kommo.com/v2/f202389a-a729-4283-90e6-304e989a73bb/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: 59866b69-7ca8-45f3-9e08-6dfed18ea0cb' \
+  -H 'sec-ch-ua: ""Not;A=Brand"";v=""99"", ""Google Chrome"";v=""139"", ""Chromium"";v=""139""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""afebf778-943e-485a-a9d2-a77bd7a6f418"",""group_id"":null,""text"":""TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Mandiles para Boda*\n*Kit anti cruda*\n*Pantuflas*\n\nDime cuales te interesan, así te mostramos toda su información 😊"",""crm_dialog_id"":159636,""crm_contact_id"":23241591,""crm_account_id"":33068423,""crm_entity"":{""id"":21116147,""type"":2},""attachments"":[{""external_file_id"":""b97802cb-62b5-4bfc-855e-03789e65a236"",""external_file_vers_id"":""4e3f216e-fba2-4bd5-a808-0603b17e025e"",""type"":""picture""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60810
+Todos los productos,XV,todos xv.jpg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/GIWsbh8S_Vp7I5yADQvWcg/0OtiMT1BKAH2uClBCT0SnXDwXE7LkG4atjjeyxykLd0WxENmKo_osUzpP688pbdBzaMlNhX4PKvy8sod4XvLI7fd_6g_na2UlNumukENplgZ3RssLUyqbzsoMJPOfAKQgfZ-q12PN4Vkxjdw5Gw27V2xCOJNnnQau1kmJwfDxLE/0RXQ1gm-WXB-4a9I3cliyAZvnUJoWjnmaMYQ9orT13U),https://i.ibb.co/pvsW9s7D/684358d8cddbd.jpg,"TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:
+
+*Sandalias*
+*Cilindros*
+*Kit anti cruda*
+*Pantuflas*
+
+Cuáles te interesan?","curl 'https://amojo.kommo.com/v2/f202389a-a729-4283-90e6-304e989a73bb/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: 59866b69-7ca8-45f3-9e08-6dfed18ea0cb' \
+  -H 'sec-ch-ua: ""Not;A=Brand"";v=""99"", ""Google Chrome"";v=""139"", ""Chromium"";v=""139""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""afebf778-943e-485a-a9d2-a77bd7a6f418"",""group_id"":null,""text"":""TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Kit anti cruda*\n*Pantuflas*\n\nDime cuales te interesan, así te mostramos toda su información  😊"",""crm_dialog_id"":159636,""crm_contact_id"":23241591,""crm_account_id"":33068423,""crm_entity"":{""id"":21116147,""type"":2},""attachments"":[{""external_file_id"":""50bdbfd5-0094-4888-a96c-b4b6a77888ac"",""external_file_vers_id"":""3e802ffd-b5f1-4513-ba8e-2f5bbc4427b2"",""type"":""picture""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60814
+Todos los productos,Otros,Imagen de WhatsApp 2025-06-17 a las 15.12.56_d921bd8d.jpg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/Qt8uZgv3lMXJXn_PLHcvuQ/lTF2L0LDqDfP7gUUM4aOLgwwT8fkzLhGYhaU28uPTq3iaHu1IY7GXr-ehO7FsGJ0SpTd2INt7eUoWNXFTJyf8l5yMywzU27QQCuRgbo1DIA1Kp0EI6lEsEjVYnUVWPylStkj6HN2OaoMffoJJtWsvyLGyflKboYQCIENxXoZffG3kxK1gmqic63GgkkBdiUBcg8MMBKWJt2pUEcDGkGTDg/_V26Q7lP6SrPXmbOe6vFIgfhgi2YF1pZ2XT_vP6F1YA),https://i.ibb.co/qYpxkqcP/5f983f64604b.jpg,"TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:
+
+*Sandalias*
+*Cilindros*
+*Kit anti cruda*
+*Pantuflas*
+
+Cuáles te interesan?","curl 'https://amojo.kommo.com/v2/f202389a-a729-4283-90e6-304e989a73bb/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: 59866b69-7ca8-45f3-9e08-6dfed18ea0cb' \
+  -H 'sec-ch-ua: ""Not;A=Brand"";v=""99"", ""Google Chrome"";v=""139"", ""Chromium"";v=""139""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""afebf778-943e-485a-a9d2-a77bd7a6f418"",""group_id"":null,""text"":""TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Kit anti cruda*\n*Pantuflas*\n\nDime cuales te interesan, así te mostramos toda su información 😊"",""crm_dialog_id"":159636,""crm_contact_id"":23241591,""crm_account_id"":33068423,""crm_entity"":{""id"":21116147,""type"":2},""attachments"":[{""external_file_id"":""b67f4d6a-8960-471e-afeb-ffa600661505"",""external_file_vers_id"":""fb0bb031-8c38-4587-b1a6-cee238574bfd"",""type"":""picture""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60816

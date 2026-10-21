@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-07-01T00:00:00.000Z" agent="la agencia-AI" version="24.0.0">
+  <diagram id="sys-airtable-schema-real" name="SYS Airtable Schema Real (2026-07-01)">
+    <mxGraphModel dx="2400" dy="1600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2400" pageHeight="1600" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="SYS - Airtable &apos;SyS Catalogo&apos; - Schema REAL (2026-07-01)&#xa;Base appMD3g2HWxzBaZAM - 11 tablas - 266 records&#xa;Rojo=P0 (rompe tool viva) | Naranja=P1 (bug importante) | Amarillo=P2 (cosmetico)" style="text;html=1;strokeColor=none;fillColor=#f5f5f5;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;spacingLeft=8;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1120" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend" value="LEYENDA&#xa;&#x1f511; Primary field&#xa;-&gt; Link (multipleRecordLinks)&#xa;(N links) = uso real en la base viva" style="text;html=1;strokeColor=#666666;fillColor=#ffffff;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;spacingLeft=8;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="20" width="280" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="tbl_equipos" value="Equipos&#xa;(92 records) - HUB CENTRAL" style="swimlane;fontSize=13;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;horizontalStackDeep=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="600" width="360" height="440" as="geometry"/>
+        </mxCell>
+        <mxCell id="eq_f1" value="&#x1f511; Modelo (multilineText)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_equipos">
+          <mxGeometry y="42" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="eq_f2" value="Marca (singleSelect) [P1: KONIKA/MINOLTA split]" style="text;strokeColor=none;fillColor=#ffe6cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_equipos">
+          <mxGeometry y="64" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="eq_f3" value="-&gt; Tecnologia (73 links)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_equipos">
+          <mxGeometry y="86" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="eq_f4" value="-&gt; Linea de Producto (link)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_equipos">
+          <mxGeometry y="108" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="eq_f5" value="-&gt; Aplicaciones compatibles (0 links) [P0]" style="text;strokeColor=none;fillColor=#f8cecc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_equipos">
+          <mxGeometry y="130" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="eq_f6" value="-&gt; Sustratos compatibles (77 links, 100% BASURA) [P0]" style="text;strokeColor=none;fillColor=#f8cecc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_equipos">
+          <mxGeometry y="152" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="eq_f7" value="Formato (singleSelect) [P1: MESA/Mesa dup]" style="text;strokeColor=none;fillColor=#ffe6cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_equipos">
+          <mxGeometry y="174" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="eq_f8" value="Ancho, Disponibilidad zona" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_equipos">
+          <mxGeometry y="196" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="eq_f9" value="Descripcion corta [P1: 91/92 vacia]" style="text;strokeColor=none;fillColor=#ffe6cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_equipos">
+          <mxGeometry y="218" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="eq_f10" value="Status (singleSelect) [P2: falta Discontinuado]" style="text;strokeColor=none;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_equipos">
+          <mxGeometry y="240" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="eq_f11" value="Notas internas [P1: singleSelect ROTO]" style="text;strokeColor=none;fillColor=#ffe6cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_equipos">
+          <mxGeometry y="262" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="eq_f12" value="Cabezales hasta / incluidos / tipo (3 escalares)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_equipos">
+          <mxGeometry y="284" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="eq_f13" value="Datos extra, Tipo de Uso, Precio USD" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_equipos">
+          <mxGeometry y="306" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="eq_f14" value="Nombre (from Tecnologia) [lookup]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_equipos">
+          <mxGeometry y="328" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="eq_f15" value="Ultima modificacion" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_equipos">
+          <mxGeometry y="350" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="eq_note" value="FALTAN: Velocidad (m2/h), Especificaciones tecnicas, Imagen principal, link Cabezales [P1/P2]" style="text;strokeColor=none;fillColor=#e1d5e7;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=10;fontStyle=2;" vertex="1" parent="tbl_equipos">
+          <mxGeometry y="380" width="360" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="tbl_sustratos" value="Sustratos&#xa;(53 records - ESPERADOS 16) [P0]" style="swimlane;fontSize=13;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;horizontalStackDeep=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="820" width="360" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="su_f1" value="&#x1f511; Sustrato (multilineText) [P0 CONTAMINADO]" style="text;strokeColor=none;fillColor=#f8cecc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="tbl_sustratos">
+          <mxGeometry y="42" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="su_f2" value="Tipo (singleSelect)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_sustratos">
+          <mxGeometry y="64" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="su_f3" value="-&gt; Tecnologias compatibles (0 links) [P1]" style="text;strokeColor=none;fillColor=#ffe6cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_sustratos">
+          <mxGeometry y="86" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="su_f4" value="Notas (multilineText)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_sustratos">
+          <mxGeometry y="108" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="su_f5" value="-&gt; Equipos [reverse] (77 links, TODOS BASURA)" style="text;strokeColor=none;fillColor=#f8cecc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_sustratos">
+          <mxGeometry y="130" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="su_note" value="37/53 records son anchos/dims (200, 500, 90*60, A4, 297*420...). Bug reportado por Edgardo 2026-07-01. Falta vista &apos;Para agente&apos;." style="text;strokeColor=none;fillColor=#e1d5e7;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=10;fontStyle=2;" vertex="1" parent="tbl_sustratos">
+          <mxGeometry y="160" width="360" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="tbl_tec" value="Tecnologias&#xa;(10 records)" style="swimlane;fontSize=13;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;horizontalStackDeep=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="480" y="820" width="340" height="270" as="geometry"/>
+        </mxCell>
+        <mxCell id="tec_f1" value="&#x1f511; Nombre (multilineText)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_tec">
+          <mxGeometry y="42" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="tec_f2" value="Linea principal [P2: multilineText, docs=singleSelect]" style="text;strokeColor=none;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_tec">
+          <mxGeometry y="64" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="tec_f3" value="Descripcion larga, Materiales, Restricciones" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_tec">
+          <mxGeometry y="86" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="tec_f4" value="Aplicaciones tipicas, Notas para agente" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_tec">
+          <mxGeometry y="108" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="tec_f5" value="-&gt; Sustratos (0 links) [P1]" style="text;strokeColor=none;fillColor=#ffe6cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_tec">
+          <mxGeometry y="130" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="tec_f6" value="-&gt; Aplicaciones (34 links)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_tec">
+          <mxGeometry y="152" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="tec_f7" value="-&gt; Equipos [reverse] (73 links)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_tec">
+          <mxGeometry y="174" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="tec_note" value="IDL Laser y Gran Formato huerfanas (0 Equipos linkeados)." style="text;strokeColor=none;fillColor=#e1d5e7;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=10;fontStyle=2;" vertex="1" parent="tbl_tec">
+          <mxGeometry y="205" width="340" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="tbl_apl" value="Aplicaciones&#xa;(20 records)" style="swimlane;fontSize=13;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;horizontalStackDeep=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="60" y="600" width="340" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="ap_f1" value="&#x1f511; Aplicacion (multilineText) [P0 en tool]" style="text;strokeColor=none;fillColor=#f8cecc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_apl">
+          <mxGeometry y="42" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="ap_f2" value="Categoria (singleSelect) [P2: falta Otros]" style="text;strokeColor=none;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_apl">
+          <mxGeometry y="64" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="ap_f3" value="-&gt; Tecnologias recomendadas (34 links)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_apl">
+          <mxGeometry y="86" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="ap_f4" value="Sustratos tipicos [P1: multipleSelects, docs=Link]" style="text;strokeColor=none;fillColor=#ffe6cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_apl">
+          <mxGeometry y="108" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="ap_f5" value="Keywords cliente (multipleSelects, 52 tags)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_apl">
+          <mxGeometry y="130" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="ap_f6" value="-&gt; Equipos [reverse] (0 links) [P0]" style="text;strokeColor=none;fillColor=#f8cecc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_apl">
+          <mxGeometry y="152" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="ap_note" value="Tool usa {Nombre} y {Sustratos tipicos} sin tilde: 0 matches. Falta &apos;Notas asesoramiento&apos; y vista &apos;Para agente&apos;." style="text;strokeColor=none;fillColor=#e1d5e7;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=10;fontStyle=2;" vertex="1" parent="tbl_apl">
+          <mxGeometry y="183" width="340" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="tbl_lp" value="Lineas de Producto&#xa;(10 records)" style="swimlane;fontSize=13;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;horizontalStackDeep=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="600" width="340" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="lp_f1" value="&#x1f511; Linea (multilineText)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_lp">
+          <mxGeometry y="42" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="lp_f2" value="Tipo (singleSelect) [P2: falta Generico]" style="text;strokeColor=none;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_lp">
+          <mxGeometry y="64" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="lp_f3" value="Descripcion" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_lp">
+          <mxGeometry y="86" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="lp_f4" value="-&gt; Representantes (0 links) [P1]" style="text;strokeColor=none;fillColor=#ffe6cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_lp">
+          <mxGeometry y="108" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="lp_f5" value="-&gt; Equipos [reverse]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_lp">
+          <mxGeometry y="130" width="340" height="22" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="tbl_cab" value="Cabezales&#xa;(10 records)" style="swimlane;fontSize=13;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;horizontalStackDeep=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="120" width="340" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="cab_f1" value="&#x1f511; Modelo (multilineText)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_cab">
+          <mxGeometry y="42" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="cab_f2" value="Marca (singleSelect)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_cab">
+          <mxGeometry y="64" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="cab_f3" value="Tipo (singleSelect) [P2: falta Compatible/Repuesto]" style="text;strokeColor=none;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_cab">
+          <mxGeometry y="86" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="cab_f4" value="Gama, Cabezal familia, Perfil de Usuario" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_cab">
+          <mxGeometry y="108" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="cab_f5" value="URL tienda [P2: multilineText, docs=URL]" style="text;strokeColor=none;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_cab">
+          <mxGeometry y="130" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="cab_f6" value="Precio USD (number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_cab">
+          <mxGeometry y="152" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="cab_f7" value="Stock disponible [P2: multilineText, docs=Checkbox]" style="text;strokeColor=none;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_cab">
+          <mxGeometry y="174" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="cab_note" value="NO tiene link a Equipos (docs prometian bidireccional). Equipos usa 3 escalares." style="text;strokeColor=none;fillColor=#e1d5e7;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=10;fontStyle=2;" vertex="1" parent="tbl_cab">
+          <mxGeometry y="200" width="340" height="35" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="tbl_ins" value="Insumos&#xa;(32 records)" style="swimlane;fontSize=13;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;horizontalStackDeep=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="120" width="340" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="ins_f1" value="&#x1f511; Insumo (multilineText) [P1: 6 basura]" style="text;strokeColor=none;fillColor=#ffe6cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_ins">
+          <mxGeometry y="42" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="ins_f2" value="Categoria [P1: 3 choices vs 6 docs]" style="text;strokeColor=none;fillColor=#ffe6cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_ins">
+          <mxGeometry y="64" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="ins_f3" value="Marca, Tecnologia, Modelo de cabezal" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_ins">
+          <mxGeometry y="86" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="ins_f4" value="Configuracion de color, Tipo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_ins">
+          <mxGeometry y="108" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="ins_f5" value="Cantidad ML/G (number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_ins">
+          <mxGeometry y="130" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="ins_f6" value="URL tienda, Precio USD, Descripcion" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_ins">
+          <mxGeometry y="152" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="ins_note" value="Docs prometian link a Equipos + Stock Checkbox: NO existen." style="text;strokeColor=none;fillColor=#e1d5e7;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=10;fontStyle=2;" vertex="1" parent="tbl_ins">
+          <mxGeometry y="180" width="340" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="tbl_km" value="Konica Minolta&#xa;(22 records, refurbished)" style="swimlane;fontSize=13;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;horizontalStackDeep=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="820" y="120" width="340" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="km_f1" value="&#x1f511; Modelo (multilineText) [P1: pseudo-record Alquiler]" style="text;strokeColor=none;fillColor=#ffe6cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_km">
+          <mxGeometry y="42" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="km_f2" value="Marca, Tipo (COLOR/BN)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_km">
+          <mxGeometry y="64" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="km_f3" value="Copias Total / Negro / Color (number)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_km">
+          <mxGeometry y="86" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="km_f4" value="Accesorios (multilineText)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_km">
+          <mxGeometry y="108" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="km_f5" value="Estado, Ubicacion, Stock" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_km">
+          <mxGeometry y="130" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="km_f6" value="Precio USD, Notas" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_km">
+          <mxGeometry y="152" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="km_note" value="Sin link a otras tablas (standalone). Tool lee campos inexistentes: Descripcion corta, Tipo de Uso, Contador copias [P0]." style="text;strokeColor=none;fillColor=#f8cecc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=10;fontStyle=2;" vertex="1" parent="tbl_km">
+          <mxGeometry y="180" width="340" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="tbl_faq" value="FAQs&#xa;(10 records)" style="swimlane;fontSize=13;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;horizontalStackDeep=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="440" y="120" width="340" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="faq_f1" value="&#x1f511; Pregunta (multilineText)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_faq">
+          <mxGeometry y="42" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="faq_f2" value="Categoria [P1: multilineText, docs=singleSelect]" style="text;strokeColor=none;fillColor=#ffe6cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_faq">
+          <mxGeometry y="64" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="faq_f3" value="Keywords (multipleSelects, 47 tags)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_faq">
+          <mxGeometry y="86" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="faq_f4" value="Respuesta corta (multilineText)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_faq">
+          <mxGeometry y="108" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="faq_f5" value="Status (singleSelect) [P2: Desactivo typo]" style="text;strokeColor=none;fillColor=#fff2cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_faq">
+          <mxGeometry y="130" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="faq_note" value="Standalone (sin links). Vista &apos;Por categoria&apos; = group by texto libre." style="text;strokeColor=none;fillColor=#e1d5e7;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=10;fontStyle=2;" vertex="1" parent="tbl_faq">
+          <mxGeometry y="158" width="340" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="tbl_rep" value="Representantes&#xa;(1 record: &apos;Equipo Comercial&apos;)" style="swimlane;fontSize=13;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;horizontalStackDeep=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1980" y="600" width="360" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="rep_f1" value="&#x1f511; Nombre (multilineText)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_rep">
+          <mxGeometry y="42" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="rep_f2" value="Mail, Telefono, Mail Gerente (multilineText)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_rep">
+          <mxGeometry y="64" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="rep_f3" value="Lineas asignadas [P1: multipleSelects, docs=Link]" style="text;strokeColor=none;fillColor=#ffe6cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_rep">
+          <mxGeometry y="86" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="rep_f4" value="Zonas asignadas (multipleSelects)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_rep">
+          <mxGeometry y="108" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="rep_f5" value="Activo (checkbox)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_rep">
+          <mxGeometry y="130" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="rep_f6" value="-&gt; Lineas de Producto (0 links) [P1]" style="text;strokeColor=none;fillColor=#ffe6cc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_rep">
+          <mxGeometry y="152" width="360" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="rep_note" value="CRM pausado 2026-05-28 (Opcion A). Tool notificar_lead no lee esta tabla. Falta link Backup (docs)." style="text;strokeColor=none;fillColor=#e1d5e7;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=10;fontStyle=2;" vertex="1" parent="tbl_rep">
+          <mxGeometry y="180" width="360" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="tbl_cfg" value="Config Mensual&#xa;(1 record: 2026-05)" style="swimlane;fontSize=13;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;horizontalStackDeep=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="60" y="120" width="340" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="cfg_f1" value="&#x1f511; Mes (multilineText)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_cfg">
+          <mxGeometry y="42" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="cfg_f2" value="Lineas priorizadas [P0: multilineText, docs=Link]" style="text;strokeColor=none;fillColor=#f8cecc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_cfg">
+          <mxGeometry y="64" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="cfg_f3" value="Notas para agente" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_cfg">
+          <mxGeometry y="86" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="cfg_f4" value="Activo (checkbox)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="tbl_cfg">
+          <mxGeometry y="108" width="340" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="cfg_note" value="Tool consultar_lineas_priorizadas espera link, recibe texto." style="text;strokeColor=none;fillColor=#f8cecc;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=10;fontStyle=2;" vertex="1" parent="tbl_cfg">
+          <mxGeometry y="135" width="340" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="tbl_leads" value="Leads&#xa;NO EXISTE (documentada v1.1) [P1]" style="swimlane;fontSize=13;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;horizontalStackDeep=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;strokeWidth=2;dashed=1;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1980" y="120" width="360" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="lead_note" value="Doc §Tabla 10 la especifica con 20 campos + 6 vistas. La base viva NO la tiene. CRM pausado (upsell futuro)." style="text;strokeColor=none;fillColor=#f5f5f5;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;fontSize=10;fontStyle=2;fontColor=#666666;" vertex="1" parent="tbl_leads">
+          <mxGeometry y="42" width="360" height="78" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge_eq_su" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b85450;strokeWidth=3;endArrow=classicThin;startArrow=classicThin;fontSize=10;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="tbl_equipos" target="tbl_sustratos">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1500" y="900"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_eq_su_lbl" value="Sustratos compatibles (77 CORRUPTOS)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#b85450;fontStyle=1;" vertex="1" connectable="0" parent="edge_eq_su">
+          <mxGeometry x="-0.1" relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge_eq_tec" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#82b366;strokeWidth=2;endArrow=classicThin;startArrow=classicThin;fontSize=10;" edge="1" parent="1" source="tbl_equipos" target="tbl_tec">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_eq_tec_lbl" value="Tecnologia (73 links)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="edge_eq_tec">
+          <mxGeometry x="-0.1" relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge_eq_lp" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#82b366;strokeWidth=2;endArrow=classicThin;startArrow=classicThin;fontSize=10;" edge="1" parent="1" source="tbl_equipos" target="tbl_lp">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_eq_lp_lbl" value="Linea de Producto" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="edge_eq_lp">
+          <mxGeometry x="-0.1" relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge_eq_ap" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b85450;strokeWidth=2;endArrow=classicThin;startArrow=classicThin;fontSize=10;dashed=1;" edge="1" parent="1" source="tbl_equipos" target="tbl_apl">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="700" y="700"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_eq_ap_lbl" value="Aplicaciones compatibles (0 links)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#b85450;fontStyle=1;" vertex="1" connectable="0" parent="edge_eq_ap">
+          <mxGeometry x="-0.1" relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge_tec_ap" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#82b366;strokeWidth=2;endArrow=classicThin;startArrow=classicThin;fontSize=10;" edge="1" parent="1" source="tbl_tec" target="tbl_apl">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_tec_ap_lbl" value="Aplicaciones (34 links)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="edge_tec_ap">
+          <mxGeometry x="-0.1" relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge_tec_su" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#d79b00;strokeWidth=2;endArrow=classicThin;startArrow=classicThin;fontSize=10;dashed=1;" edge="1" parent="1" source="tbl_tec" target="tbl_sustratos">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1200" y="1200"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_tec_su_lbl" value="Sustratos (0 links)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#d79b00;fontStyle=1;" vertex="1" connectable="0" parent="edge_tec_su">
+          <mxGeometry x="-0.1" relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge_lp_rep" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#d79b00;strokeWidth=2;endArrow=classicThin;startArrow=classicThin;fontSize=10;dashed=1;" edge="1" parent="1" source="tbl_lp" target="tbl_rep">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_lp_rep_lbl" value="Representantes (0 links)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#d79b00;fontStyle=1;" vertex="1" connectable="0" parent="edge_lp_rep">
+          <mxGeometry x="-0.1" relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="footer" value="Fuentes: snapshot API 2026-07-01 (/tmp/.../airtable-snapshot/00-schema.json + 11 dumps). Doc referencia: clients/SYS_SistemasYSoluciones/05_crm/airtable-syscatalogo-schema.md v1.1.&#xa;76 findings de auditoria (10 P0 / 25 P1 / 41 P2). Bug verbatim Edgardo 2026-07-01: Sustratos.Sustrato contaminada con anchos/dimensiones (37/53 records basura, 77/77 links Equipos apuntan a basura).&#xa;Tools afectadas: consultar_catalogo (P0 en Aplicaciones {Nombre}/{Sustratos tipicos} sin tilde + P0 Konica Minolta campos inexistentes + P0 Marca canonica no matchea)." style="text;html=1;strokeColor=none;fillColor=#f5f5f5;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;spacingLeft=8;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1180" width="2300" height="80" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

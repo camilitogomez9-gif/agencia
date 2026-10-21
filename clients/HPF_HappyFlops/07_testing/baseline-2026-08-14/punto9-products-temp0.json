@@ -1,0 +1,219 @@
+{
+ "tasa": "3/6",
+ "corridas": [
+  {
+   "i": 0,
+   "exec": "1065867",
+   "ofrecido": [
+    "cilindros"
+   ],
+   "responde": [
+    "cilindros"
+   ],
+   "acierta": true,
+   "repite_lo_cotizado": false,
+   "step": "step_4",
+   "rama": "Recolector",
+   "products_productos": null,
+   "canonicos_productos": null,
+   "nodos": [
+    "Elegir ruta",
+    "LM Recolector",
+    "LM Router",
+    "Leer evento",
+    "Memoria Recolector",
+    "Memoria Router",
+    "Normalizar entrada",
+    "Partir en burbujas",
+    "Recolector",
+    "Respond to Webhook",
+    "Router",
+    "Switch de step",
+    "Webhook (carril de prueba)",
+    "¿Vino por webhook?"
+   ]
+  },
+  {
+   "i": 1,
+   "exec": "1065875",
+   "ofrecido": [],
+   "responde": [
+    "sandalias"
+   ],
+   "acierta": false,
+   "repite_lo_cotizado": true,
+   "step": "step_4",
+   "rama": "Recolector",
+   "products_productos": null,
+   "canonicos_productos": null,
+   "nodos": [
+    "Elegir ruta",
+    "LM Recolector",
+    "LM Router",
+    "Leer evento",
+    "Memoria Recolector",
+    "Memoria Router",
+    "Normalizar entrada",
+    "Partir en burbujas",
+    "Recolector",
+    "Respond to Webhook",
+    "Router",
+    "Switch de step",
+    "Webhook (carril de prueba)",
+    "¿Vino por webhook?"
+   ]
+  },
+  {
+   "i": 2,
+   "exec": "1065887",
+   "ofrecido": [
+    "cilindros"
+   ],
+   "responde": [
+    "sandalias"
+   ],
+   "acierta": false,
+   "repite_lo_cotizado": true,
+   "step": "step_3",
+   "rama": "Products",
+   "products_productos": [
+    "sandalias"
+   ],
+   "canonicos_productos": [
+    "sandalias"
+   ],
+   "nodos": [
+    "Canonicalizar productos",
+    "Cards a partes",
+    "Elegir ruta",
+    "LM Products",
+    "LM Router",
+    "Leer Products",
+    "Leer canónicos",
+    "Leer evento",
+    "Memoria Products",
+    "Memoria Router",
+    "Normalizar entrada",
+    "Products",
+    "Recuperar cards",
+    "Respond to Webhook",
+    "Router",
+    "Switch de step",
+    "W3 · fichas",
+    "Webhook (carril de prueba)",
+    "¿Consulta especial?",
+    "¿Es step_3?",
+    "¿Hay productos?",
+    "¿Requiere cotizar?",
+    "¿Vino por webhook?"
+   ]
+  },
+  {
+   "i": 3,
+   "exec": "1065899",
+   "ofrecido": [],
+   "responde": [
+    "sandalias"
+   ],
+   "acierta": false,
+   "repite_lo_cotizado": true,
+   "step": "step_3",
+   "rama": "Products",
+   "products_productos": [
+    "sandalias"
+   ],
+   "canonicos_productos": [
+    "sandalias"
+   ],
+   "nodos": [
+    "Canonicalizar productos",
+    "Cards a partes",
+    "Elegir ruta",
+    "LM Products",
+    "LM Router",
+    "Leer Products",
+    "Leer canónicos",
+    "Leer evento",
+    "Memoria Products",
+    "Memoria Router",
+    "Normalizar entrada",
+    "Products",
+    "Recuperar cards",
+    "Respond to Webhook",
+    "Router",
+    "Switch de step",
+    "W3 · fichas",
+    "Webhook (carril de prueba)",
+    "¿Consulta especial?",
+    "¿Es step_3?",
+    "¿Hay productos?",
+    "¿Requiere cotizar?",
+    "¿Vino por webhook?"
+   ]
+  },
+  {
+   "i": 4,
+   "exec": "1065910",
+   "ofrecido": [
+    "cilindros"
+   ],
+   "responde": [
+    "cilindros"
+   ],
+   "acierta": true,
+   "repite_lo_cotizado": false,
+   "step": "step_4",
+   "rama": "Recolector",
+   "products_productos": null,
+   "canonicos_productos": null,
+   "nodos": [
+    "Elegir ruta",
+    "LM Recolector",
+    "LM Router",
+    "Leer evento",
+    "Memoria Recolector",
+    "Memoria Router",
+    "Normalizar entrada",
+    "Partir en burbujas",
+    "Recolector",
+    "Respond to Webhook",
+    "Router",
+    "Switch de step",
+    "Webhook (carril de prueba)",
+    "¿Vino por webhook?"
+   ]
+  },
+  {
+   "i": 5,
+   "exec": "1065920",
+   "ofrecido": [
+    "cilindros"
+   ],
+   "responde": [
+    "cilindros"
+   ],
+   "acierta": true,
+   "repite_lo_cotizado": false,
+   "step": "step_4",
+   "rama": "Recolector",
+   "products_productos": null,
+   "canonicos_productos": null,
+   "nodos": [
+    "Elegir ruta",
+    "LM Recolector",
+    "LM Router",
+    "Leer evento",
+    "Memoria Recolector",
+    "Memoria Router",
+    "Normalizar entrada",
+    "Partir en burbujas",
+    "Recolector",
+    "Respond to Webhook",
+    "Router",
+    "Switch de step",
+    "Webhook (carril de prueba)",
+    "¿Vino por webhook?"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1367 @@
+{
+  "id": "AfOlO59HbeD3u1nq",
+  "name": "Sonrisas | Correos Reportes Facturación",
+  "active": true,
+  "isArchived": false,
+  "versionId": "4a4c0875-7b5b-4857-ae40-2eeb4155859c",
+  "triggerCount": 3,
+  "createdAt": "2026-04-06T21:44:50.043Z",
+  "updatedAt": "2026-05-23T18:52:29.000Z",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true,
+    "errorWorkflow": "OBkUyb8fuo30DzA9"
+  },
+  "connections": {
+    "Trigger Reporte Diario": {
+      "main": [
+        [
+          {
+            "node": "Filtro Domingos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Filtro de campos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro de campos": {
+      "main": [
+        [
+          {
+            "node": "Filtro7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro": {
+      "main": [
+        [
+          {
+            "node": "Categoria",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Clase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clase": {
+      "main": [
+        [
+          {
+            "node": "Pagado y Cantidad Semana",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Categoria": {
+      "main": [
+        [
+          {
+            "node": "Pagado Semana",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pagado Semana": {
+      "main": [
+        [
+          {
+            "node": "Combinar categorías1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pagado y Cantidad Semana": {
+      "main": [
+        [
+          {
+            "node": "Combinar categorías4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combinar categorías1": {
+      "main": [
+        [
+          {
+            "node": "Semana",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combinar categorías4": {
+      "main": [
+        [
+          {
+            "node": "Semana",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Trigger Reporte Semanal": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar HTML 2": {
+      "main": [
+        [
+          {
+            "node": "la agencia (pruebas)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Semanal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pagos2": {
+      "main": [
+        [
+          {
+            "node": "hay pagos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize1": {
+      "main": [
+        [
+          {
+            "node": "Preparar HTML2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar HTML2": {
+      "main": [
+        [
+          {
+            "node": "Diario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Summarize1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro3": {
+      "main": [
+        [
+          {
+            "node": "Categoria1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Clase1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clase1": {
+      "main": [
+        [
+          {
+            "node": "Pagado y Cantidad Mes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Categoria1": {
+      "main": [
+        [
+          {
+            "node": "Pagado Mes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar HTML ": {
+      "main": [
+        [
+          {
+            "node": "Mensual",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "la agencia (pruebas)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro4": {
+      "main": [
+        [
+          {
+            "node": "Filtro3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pagado Mes": {
+      "main": [
+        [
+          {
+            "node": "Combinar categorías Mes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pagado y Cantidad Mes": {
+      "main": [
+        [
+          {
+            "node": "Combinar Orto Mes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combinar categorías Mes": {
+      "main": [
+        [
+          {
+            "node": "Mes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combinar Orto Mes": {
+      "main": [
+        [
+          {
+            "node": "Mes",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Mes": {
+      "main": [
+        [
+          {
+            "node": "Preparar HTML ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Semana": {
+      "main": [
+        [
+          {
+            "node": "Preparar HTML 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Filtro de campos1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro de campos1": {
+      "main": [
+        [
+          {
+            "node": "Filtro4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Reporte Mensual": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fecha_hoy": {
+      "main": [
+        [
+          {
+            "node": "Pagos2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro Domingos": {
+      "main": [
+        [
+          {
+            "node": "fecha_hoy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Diario": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Notificación1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "hay pagos": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro7": {
+      "main": [
+        [
+          {
+            "node": "Filtro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 21
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2960,
+        672
+      ],
+      "id": "4b34d11b-45d3-4c56-9f48-0bad636bfbad",
+      "name": "Trigger Reporte Diario"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1RnWwaqEnGlyuUNnG4HW8jl5WoxFB7ypEm-Ey67bQkO8",
+          "mode": "list",
+          "cachedResultName": "Ingreso datos | Sonrisas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RnWwaqEnGlyuUNnG4HW8jl5WoxFB7ypEm-Ey67bQkO8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Histórico",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2736,
+        -176
+      ],
+      "id": "99c2de92-016a-4e3d-826f-35b3623261c6",
+      "name": "Get row(s) in sheet"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "91c3688d-b6f4-4038-93de-91519e7e63c0",
+              "name": "Abono Libre",
+              "value": "={{ $json['Abono Libre'] }}",
+              "type": "number"
+            },
+            {
+              "id": "cb7dbe17-34c5-46c2-b3c2-735d21cdcbc8",
+              "name": "Categoria",
+              "value": "={{ $json['Nombre categoría'] }}",
+              "type": "string"
+            },
+            {
+              "id": "d1c81239-d1e0-4782-92d0-93a1057846d9",
+              "name": "Mes",
+              "value": "={{ $json['Mes de recepción del pago'] }}",
+              "type": "string"
+            },
+            {
+              "id": "0cff9990-9f14-475c-86a5-078a3cd135ce",
+              "name": "Semana",
+              "value": "={{\n(() => {\n  const tz = 'America/Montevideo';\n\n  // Parse explícito del formato YYYY-MM-DD\n  const dt = DateTime\n    .fromFormat($json['Fecha de recepción del pago'], 'yyyy-MM-dd', { zone: tz })\n    .startOf('day');\n\n  const jan1 = dt.startOf('year');\n\n  // weekday: 1 = lunes ... 7 = domingo\n  const daysToFirstSunday = (7 - jan1.weekday) % 7;\n  const firstSunday = jan1.plus({ days: daysToFirstSunday });\n\n  // Semana 1\n  if (dt <= firstSunday) return 'S1';\n\n  // Semana 2 empieza el lunes siguiente\n  const firstMonday = firstSunday.plus({ days: 1 });\n\n  const diffDays = Math.floor(dt.diff(firstMonday, 'days').days);\n  const week = 2 + Math.floor(diffDays / 7);\n\n  return 'S'+ week;\n})()\n}}",
+              "type": "string"
+            },
+            {
+              "id": "56fbe308-4dca-4b53-93ba-fa6e80639938",
+              "name": "Sucursal",
+              "value": "={{ $json['Nombre Sucursal'] }}",
+              "type": "string"
+            },
+            {
+              "id": "aea2ba7d-41aa-4e70-98b8-f7e93f123418",
+              "name": "Código Prestación",
+              "value": "={{ $json['Código Prestación'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "row_number, ['Pagado Prestación']",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2512,
+        -176
+      ],
+      "id": "96a0ee5a-5fe9-46f4-8eae-7d3d5ae195dd",
+      "name": "Filtro de campos"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Valida que cada código exista en el Listado de Precios.\n// Si hay códigos desconocidos → aborta el flujo con error.\n// Si todos son válidos → agrega flags computaImporte y computaCantidad.\n\nconst CODIGOS_VALIDOS = new Set([\n  \"00001\",\n\n  \"A0000\",\"A0001\",\"A0002\",\"A0003\",\"A0004\",\"A0005\",\"A0007\",\"A0008\",\"A0009\",\n\n  \"C0000\",\"C0001\",\"C0002\",\"C0003\",\"C0004\",\"C0005\",\"C0006\",\"C0007\",\"C0008\",\"C0009\",\"C0010\",\n  \"C0011\",\"C0012\",\"C0013\",\"C0014\",\"C0015\",\"C0050\",\"C0051\",\"C0052\",\"C0053\",\"C0054\",\"C0055\",\"C0056\",\n  \"C0057\",\n\n  \"E0001\",\"E0002\",\"E0003\",\"E0004\",\"E0005\",\"E0006\",\"E0007\",\"E0008\",\"E0050\",\"E0051\",\"E0052\",\n\n  \"HB000\",\"HB001\",\"HB002\",\"HB003\",\"HB004\",\"HB005\",\"HB006\",\"HB007\",\n\n  \"OA001\",\"OA002\",\"OA003\",\"OA004\",\"OA005\",\"OA006\",\"OA007\",\"OA008\",\"OA009\",\"OA010\",\"OA011\",\n  \"OA012\",\"OA013\",\"OA014\",\"OA015\",\"OA016\",\"OA017\",\"OA018\",\"OA019\",\"OA020\",\"OA021\",\"OA022\",\n  \"OA023\",\"OA024\",\"OA025\",\"OA026\",\"OA027\",\"OA028\",\"OA029\",\"OA030\",\"OA031\",\"OA032\",\"OA033\",\n  \"OA034\",\"OA035\",\"OA036\",\"OA037\",\"OA038\",\"OA039\",\"OA040\",\"OA041\",\"OA042\",\"OA043\",\"OA044\",\n  \"OA045\",\"OA046\",\"OA047\",\"OA048\",\"OA100\",\"OA101\",\"OA102\",\"OA103\",\"OA104\",\"OA105\",\"OA106\",\n  \"OA107\",\"OA108\",\"OA109\",\"OA110\",\"OA111\",\"OA200\",\"OA201\",\"OA202\",\"OA203\",\"OA204\",\"OA205\",\n  \"OA206\",\"OA207\",\"OA208\",\"OA300\",\"OA301\",\"OA302\",\"OA600\",\"OA601\",\"OA602\",\"OA603\",\"OA604\",\n  \"OA605\",\"OA606\",\"OA607\",\"OA608\",\"OA609\",\"OA700\",\"OA701\",\"OA702\",\"OA703\",\"OA704\",\"OA800\",\n  \"OA801\",\n\n  \"OG001\",\"OG002\",\"OG003\",\"OG004\",\"OG005\",\"OG006\",\"OG007\",\"OG020\",\"OG021\",\"OG022\",\"OG023\",\n  \"OG024\",\"OG025\",\"OG026\",\"OG027\",\"OG028\",\"OG040\",\"OG041\",\"OG042\",\"OG043\",\"OG044\",\"OG045\",\n  \"OG046\",\"OG047\",\"OG048\",\"OG049\",\"OG050\",\"OG051\",\"OG052\",\"OG060\",\"OG061\",\"OG062\",\"OG063\",\n  \"OG064\",\"OG065\",\"OG066\",\"OG067\",\"OG068\",\"OG070\",\"OG071\",\"OG072\",\"OG073\",\"OG074\",\"OG075\",\n  \"OG076\",\"OG077\",\"OG080\",\"OG081\",\"OG082\",\n\n  \"OO001\",\"OO002\",\"OO003\",\"OO004\",\"OO005\",\"OO006\",\"OO100\",\"OO101\",\"OO102\",\"OO200\",\n\n  \"OP000\",\"OP001\",\"OP100\",\"OP101\",\"OP102\",\"OP103\",\"OP104\",\"OP105\",\"OP106\",\"OP107\",\"OP108\",\n  \"OP109\",\"OP110\",\"OP111\",\"OP112\",\"OP113\",\"OP114\",\"OP115\",\"OP116\",\"OP117\",\"OP118\",\"OP119\",\n  \"OP200\",\"OP201\",\"OP202\",\"OP203\",\"OP204\",\"OP205\",\n\n  \"OR001\",\"OR002\",\"OR003\",\"OR004\",\"OR005\",\"OR006\",\"OR007\",\"OR008\",\"OR009\",\"OR010\",\"OR011\",\n  \"OR012\",\"OR013\",\"OR014\",\"OR016\",\"OR017\",\"OR018\",\"OR019\",\"OR020\",\"OR021\",\"OR022\",\"OR100\",\n  \"OR101\",\"OR102\",\"OR103\",\"OR104\",\"OR105\",\"OR106\",\"OR107\",\"OR108\",\"OR109\",\"OR110\",\"OR111\",\n  \"OR112\",\"OR113\",\"OR114\",\"OR115\",\"OR116\",\"OR117\",\"OR118\",\"OR119\",\"OR120\",\"OR121\",\"OR122\",\n  \"OR123\",\"OR124\",\"OR125\",\"OR126\",\"OR200\",\"OR201\",\"OR202\",\n\n  \"P0000\",\"P0001\",\"P0002\",\"P0003\",\"P0004\",\"P0005\",\"P0006\",\"P0007\",\"P0008\",\"P0009\",\"P0010\",\n  \"P0011\",\n\n  \"P1000\",\"P1001\",\"P1002\",\"P1003\",\"P1004\",\"P1005\",\"P1006\",\"P1007\",\n\n  \"P2000\",\"P2001\",\"P2002\",\"P2003\",\"P2004\",\"P2005\",\"P2006\",\"P2007\",\"P2008\",\"P2009\",\n\n  \"P3000\",\"P3001\",\"P3002\",\"P3003\",\"P3004\",\"P3005\",\"P3006\",\"P3007\",\"P3008\",\n\n  \"RD000\",\"RD001\",\"RD002\",\"RD003\",\"RD004\",\"RD005\",\"RD006\",\"RD007\",\n]);\n\n// Todos los códigos computan para importe\nconst noComputaImporte = new Set();\n\n// Códigos que NO computan para cantidad\nconst noComputaCantidad = new Set([\n  \"00001\",\"OA600\",\"OA601\",\"OA602\",\"OA603\",\"OA604\",\"OA605\",\"OA606\",\"OA607\",\"OA608\",\"OA609\",\n  \"OA700\",\"OA701\",\"OA702\",\"OA703\",\"OA704\",\"OA800\",\"OA801\",\"OO001\",\"OO002\",\"OO003\",\"OO004\",\n  \"OO005\",\"OO006\",\"OO100\",\"OO101\",\"OO102\",\"OO200\",\"OR008\",\"OR009\",\"OR010\",\"OR011\",\"OR012\",\n  \"OR013\",\"OR014\",\"OR016\",\"OR017\",\"OR018\",\"OR019\",\"OR020\",\"OR021\",\"OR022\"\n]);\n\n// Detectar códigos desconocidos\nconst desconocidos = new Set();\nfor (const item of items) {\n  const codigo = String(item.json[\"Código Prestación\"] || \"\").trim().toUpperCase();\n  if (codigo && !CODIGOS_VALIDOS.has(codigo)) {\n    desconocidos.add(codigo);\n  }\n}\n\nif (desconocidos.size > 0) {\n  const lista = [...desconocidos].sort().join(\", \");\n  throw new Error(\n    `Códigos no encontrados en Listado de Precios: ${lista}. ` +\n    `Actualizar el Listado de Precios y regenerar los nodos.`\n  );\n}\n\n// Todos válidos → agregar flags\nreturn items.map(item => {\n  const row = item.json || {};\n  const codigo = String(row[\"Código Prestación\"] || \"\").trim().toUpperCase();\n  return {\n    json: {\n      ...row,\n      computaImporte: !noComputaImporte.has(codigo),\n      computaCantidad: !noComputaCantidad.has(codigo),\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2064,
+        -176
+      ],
+      "id": "ea696d6e-fcb5-4d32-ae9a-78e49aad7989",
+      "name": "Filtro"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Subclasifica códigos de ortodoncia en AJUSTE / RETIRO / COMBO.\n// Códigos no-ortodoncia reciben clase = \"OTRO\".\n// Agrega cantidadComputable basado en Computa para Planilla Cantidad.\n\nconst CLASES_ORTODONCIA = {\n  AJUSTE:[\n    \"OA001\",\"OA002\",\"OA003\",\"OA004\",\"OA005\",\"OA006\",\"OA007\",\"OA008\",\"OA009\",\"OA010\",\"OA011\",\n    \"OA012\",\"OA013\",\"OA014\",\"OA015\",\"OA016\",\"OA017\",\"OA018\",\"OA019\",\"OA020\",\"OA021\",\"OA022\",\n    \"OA023\",\"OA024\",\"OA025\",\"OA026\",\"OA027\",\"OA028\",\"OA029\",\"OA030\",\"OA031\",\"OA032\",\"OA033\",\n    \"OA034\",\"OA035\",\"OA036\",\"OA037\",\"OA038\",\"OA039\",\"OA040\",\"OA041\",\"OA042\",\"OA043\",\"OA044\",\n    \"OA045\",\"OA046\",\"OA047\",\"OA048\",\"OA100\",\"OA101\",\"OA102\",\"OA103\",\"OA104\",\"OA105\",\"OA106\",\n    \"OA107\",\"OA108\",\"OA109\",\"OA110\",\"OA111\",\"OA200\",\"OA201\",\"OA202\",\"OA203\",\"OA204\",\"OA205\",\n    \"OA206\",\"OA207\",\"OA208\",\"OA300\",\"OA301\",\"OA302\",\"OA600\",\"OA601\",\"OA602\",\"OA603\",\"OA604\",\n    \"OA605\",\"OA606\",\"OA607\",\"OA608\",\"OA609\",\"OA700\",\"OA701\",\"OA702\",\"OA703\",\"OA704\",\"OA800\",\n    \"OA801\",\"OO001\",\"OO002\",\"OO003\",\"OO004\",\"OO005\",\"OO006\",\"OO100\",\"OO101\",\"OO102\",\"OO200\"\n  ],\n  RETIRO:[\n    \"OR001\",\"OR002\",\"OR003\",\"OR004\",\"OR005\",\"OR006\",\"OR007\",\"OR008\",\"OR009\",\"OR010\",\"OR011\",\n    \"OR012\",\"OR020\",\"OR021\",\"OR022\"\n  ],\n  COMBO:[\n    \"OR013\",\"OR014\",\"OR016\",\"OR017\",\"OR018\",\"OR019\",\"OR100\",\"OR101\",\"OR102\",\"OR103\",\"OR104\",\n    \"OR105\",\"OR106\",\"OR107\",\"OR108\",\"OR109\",\"OR110\",\"OR111\",\"OR112\",\"OR113\",\"OR114\",\"OR115\",\n    \"OR116\",\"OR117\",\"OR118\",\"OR119\",\"OR120\",\"OR121\",\"OR122\",\"OR123\",\"OR124\",\"OR125\",\"OR126\",\n    \"OR200\",\"OR201\",\"OR202\"\n  ],\n};\n\n// Códigos que NO suman para cantidad (Computa para Planilla Cantidad = NO)\nconst noSumanCantidad = new Set([\n  \"00001\",\"OA600\",\"OA601\",\"OA602\",\"OA603\",\"OA604\",\"OA605\",\"OA606\",\"OA607\",\"OA608\",\"OA609\",\n  \"OA700\",\"OA701\",\"OA702\",\"OA703\",\"OA704\",\"OA800\",\"OA801\",\"OO001\",\"OO002\",\"OO003\",\"OO004\",\n  \"OO005\",\"OO006\",\"OO100\",\"OO101\",\"OO102\",\"OO200\",\"OR008\",\"OR009\",\"OR010\",\"OR011\",\"OR012\",\n  \"OR013\",\"OR014\",\"OR016\",\"OR017\",\"OR018\",\"OR019\",\"OR020\",\"OR021\",\"OR022\"\n]);\n\nreturn items.map(item => {\n  const row = item.json || {};\n  const codigo = String(row[\"Código Prestación\"] || \"\").trim().toUpperCase();\n  let clase = \"OTRO\";\n\n  for (const [nombreClase, codigos] of Object.entries(CLASES_ORTODONCIA)) {\n    if (codigos.includes(codigo)) {\n      clase = nombreClase;\n      break;\n    }\n  }\n\n  return {\n    json: {\n      ...row,\n      Clase: clase,\n      cantidadComputable: noSumanCantidad.has(codigo) ? 0 : 1,\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1840,
+        -64
+      ],
+      "id": "fc7852d4-9417-41a4-99d7-392abb12becd",
+      "name": "Clase"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Asigna categoría a cada item basándose en el código de prestación.\n// Fuente de verdad: columna Rubro del Listado de Precios.\n// 12 Rubros → 10 categorías de display + OTRO.\n\nconst CODIGO_A_CATEGORIA = {\n  // ALINEADORES (9 códigos)\n  \"A0000\":\"ALINEADORES\",\n  \"A0001\":\"ALINEADORES\",\n  \"A0002\":\"ALINEADORES\",\n  \"A0003\":\"ALINEADORES\",\n  \"A0004\":\"ALINEADORES\",\n  \"A0005\":\"ALINEADORES\",\n  \"A0007\":\"ALINEADORES\",\n  \"A0008\":\"ALINEADORES\",\n  \"A0009\":\"ALINEADORES\",\n  // CIRUGIA (23 códigos)\n  \"C0000\":\"CIRUGIA\",\n  \"C0001\":\"CIRUGIA\",\n  \"C0002\":\"CIRUGIA\",\n  \"C0003\":\"CIRUGIA\",\n  \"C0004\":\"CIRUGIA\",\n  \"C0005\":\"CIRUGIA\",\n  \"C0006\":\"CIRUGIA\",\n  \"C0007\":\"CIRUGIA\",\n  \"C0008\":\"CIRUGIA\",\n  \"C0009\":\"CIRUGIA\",\n  \"C0010\":\"CIRUGIA\",\n  \"C0011\":\"CIRUGIA\",\n  \"C0012\":\"CIRUGIA\",\n  \"C0013\":\"CIRUGIA\",\n  \"C0014\":\"CIRUGIA\",\n  \"C0015\":\"CIRUGIA\",\n  \"C0050\":\"CIRUGIA\",\n  \"C0051\":\"CIRUGIA\",\n  \"C0052\":\"CIRUGIA\",\n  \"C0053\":\"CIRUGIA\",\n  \"C0054\":\"CIRUGIA\",\n  \"C0055\":\"CIRUGIA\",\n  \"C0056\":\"CIRUGIA\",\n  \"C0057\":\"CIRUGIA\",\n  // ENDODONCIA (11 códigos)\n  \"E0001\":\"ENDODONCIA\",\n  \"E0002\":\"ENDODONCIA\",\n  \"E0003\":\"ENDODONCIA\",\n  \"E0004\":\"ENDODONCIA\",\n  \"E0005\":\"ENDODONCIA\",\n  \"E0006\":\"ENDODONCIA\",\n  \"E0007\":\"ENDODONCIA\",\n  \"E0008\":\"ENDODONCIA\",\n  \"E0050\":\"ENDODONCIA\",\n  \"E0051\":\"ENDODONCIA\",\n  \"E0052\":\"ENDODONCIA\",\n  // GENERAL (50 códigos)\n  \"00001\":\"GENERAL\",\n  \"OG001\":\"GENERAL\",\n  \"OG002\":\"GENERAL\",\n  \"OG003\":\"GENERAL\",\n  \"OG004\":\"GENERAL\",\n  \"OG005\":\"GENERAL\",\n  \"OG006\":\"GENERAL\",\n  \"OG007\":\"GENERAL\",\n  \"OG020\":\"GENERAL\",\n  \"OG021\":\"GENERAL\",\n  \"OG022\":\"GENERAL\",\n  \"OG023\":\"GENERAL\",\n  \"OG024\":\"GENERAL\",\n  \"OG025\":\"GENERAL\",\n  \"OG026\":\"GENERAL\",\n  \"OG027\":\"GENERAL\",\n  \"OG028\":\"GENERAL\",\n  \"OG040\":\"GENERAL\",\n  \"OG041\":\"GENERAL\",\n  \"OG042\":\"GENERAL\",\n  \"OG043\":\"GENERAL\",\n  \"OG044\":\"GENERAL\",\n  \"OG045\":\"GENERAL\",\n  \"OG046\":\"GENERAL\",\n  \"OG047\":\"GENERAL\",\n  \"OG048\":\"GENERAL\",\n  \"OG049\":\"GENERAL\",\n  \"OG050\":\"GENERAL\",\n  \"OG051\":\"GENERAL\",\n  \"OG052\":\"GENERAL\",\n  \"OG060\":\"GENERAL\",\n  \"OG061\":\"GENERAL\",\n  \"OG062\":\"GENERAL\",\n  \"OG063\":\"GENERAL\",\n  \"OG064\":\"GENERAL\",\n  \"OG065\":\"GENERAL\",\n  \"OG066\":\"GENERAL\",\n  \"OG067\":\"GENERAL\",\n  \"OG068\":\"GENERAL\",\n  \"OG070\":\"GENERAL\",\n  \"OG071\":\"GENERAL\",\n  \"OG072\":\"GENERAL\",\n  \"OG073\":\"GENERAL\",\n  \"OG074\":\"GENERAL\",\n  \"OG075\":\"GENERAL\",\n  \"OG076\":\"GENERAL\",\n  \"OG077\":\"GENERAL\",\n  \"OG080\":\"GENERAL\",\n  \"OG081\":\"GENERAL\",\n  \"OG082\":\"GENERAL\",\n  // ORTODONCIA (150 códigos)\n  \"OA001\":\"ORTODONCIA\",\n  \"OA002\":\"ORTODONCIA\",\n  \"OA003\":\"ORTODONCIA\",\n  \"OA004\":\"ORTODONCIA\",\n  \"OA005\":\"ORTODONCIA\",\n  \"OA006\":\"ORTODONCIA\",\n  \"OA007\":\"ORTODONCIA\",\n  \"OA008\":\"ORTODONCIA\",\n  \"OA009\":\"ORTODONCIA\",\n  \"OA010\":\"ORTODONCIA\",\n  \"OA011\":\"ORTODONCIA\",\n  \"OA012\":\"ORTODONCIA\",\n  \"OA013\":\"ORTODONCIA\",\n  \"OA014\":\"ORTODONCIA\",\n  \"OA015\":\"ORTODONCIA\",\n  \"OA016\":\"ORTODONCIA\",\n  \"OA017\":\"ORTODONCIA\",\n  \"OA018\":\"ORTODONCIA\",\n  \"OA019\":\"ORTODONCIA\",\n  \"OA020\":\"ORTODONCIA\",\n  \"OA021\":\"ORTODONCIA\",\n  \"OA022\":\"ORTODONCIA\",\n  \"OA023\":\"ORTODONCIA\",\n  \"OA024\":\"ORTODONCIA\",\n  \"OA025\":\"ORTODONCIA\",\n  \"OA026\":\"ORTODONCIA\",\n  \"OA027\":\"ORTODONCIA\",\n  \"OA028\":\"ORTODONCIA\",\n  \"OA029\":\"ORTODONCIA\",\n  \"OA030\":\"ORTODONCIA\",\n  \"OA031\":\"ORTODONCIA\",\n  \"OA032\":\"ORTODONCIA\",\n  \"OA033\":\"ORTODONCIA\",\n  \"OA034\":\"ORTODONCIA\",\n  \"OA035\":\"ORTODONCIA\",\n  \"OA036\":\"ORTODONCIA\",\n  \"OA037\":\"ORTODONCIA\",\n  \"OA038\":\"ORTODONCIA\",\n  \"OA039\":\"ORTODONCIA\",\n  \"OA040\":\"ORTODONCIA\",\n  \"OA041\":\"ORTODONCIA\",\n  \"OA042\":\"ORTODONCIA\",\n  \"OA043\":\"ORTODONCIA\",\n  \"OA044\":\"ORTODONCIA\",\n  \"OA045\":\"ORTODONCIA\",\n  \"OA046\":\"ORTODONCIA\",\n  \"OA047\":\"ORTODONCIA\",\n  \"OA048\":\"ORTODONCIA\",\n  \"OA100\":\"ORTODONCIA\",\n  \"OA101\":\"ORTODONCIA\",\n  \"OA102\":\"ORTODONCIA\",\n  \"OA103\":\"ORTODONCIA\",\n  \"OA104\":\"ORTODONCIA\",\n  \"OA105\":\"ORTODONCIA\",\n  \"OA106\":\"ORTODONCIA\",\n  \"OA107\":\"ORTODONCIA\",\n  \"OA108\":\"ORTODONCIA\",\n  \"OA109\":\"ORTODONCIA\",\n  \"OA110\":\"ORTODONCIA\",\n  \"OA111\":\"ORTODONCIA\",\n  \"OA200\":\"ORTODONCIA\",\n  \"OA201\":\"ORTODONCIA\",\n  \"OA202\":\"ORTODONCIA\",\n  \"OA203\":\"ORTODONCIA\",\n  \"OA204\":\"ORTODONCIA\",\n  \"OA205\":\"ORTODONCIA\",\n  \"OA206\":\"ORTODONCIA\",\n  \"OA207\":\"ORTODONCIA\",\n  \"OA208\":\"ORTODONCIA\",\n  \"OA300\":\"ORTODONCIA\",\n  \"OA301\":\"ORTODONCIA\",\n  \"OA302\":\"ORTODONCIA\",\n  \"OA600\":\"ORTODONCIA\",\n  \"OA601\":\"ORTODONCIA\",\n  \"OA602\":\"ORTODONCIA\",\n  \"OA603\":\"ORTODONCIA\",\n  \"OA604\":\"ORTODONCIA\",\n  \"OA605\":\"ORTODONCIA\",\n  \"OA606\":\"ORTODONCIA\",\n  \"OA607\":\"ORTODONCIA\",\n  \"OA608\":\"ORTODONCIA\",\n  \"OA609\":\"ORTODONCIA\",\n  \"OA700\":\"ORTODONCIA\",\n  \"OA701\":\"ORTODONCIA\",\n  \"OA702\":\"ORTODONCIA\",\n  \"OA703\":\"ORTODONCIA\",\n  \"OA704\":\"ORTODONCIA\",\n  \"OA800\":\"ORTODONCIA\",\n  \"OA801\":\"ORTODONCIA\",\n  \"OO001\":\"ORTODONCIA\",\n  \"OO002\":\"ORTODONCIA\",\n  \"OO003\":\"ORTODONCIA\",\n  \"OO004\":\"ORTODONCIA\",\n  \"OO005\":\"ORTODONCIA\",\n  \"OO006\":\"ORTODONCIA\",\n  \"OO100\":\"ORTODONCIA\",\n  \"OO101\":\"ORTODONCIA\",\n  \"OO102\":\"ORTODONCIA\",\n  \"OO200\":\"ORTODONCIA\",\n  \"OR001\":\"ORTODONCIA\",\n  \"OR002\":\"ORTODONCIA\",\n  \"OR003\":\"ORTODONCIA\",\n  \"OR004\":\"ORTODONCIA\",\n  \"OR005\":\"ORTODONCIA\",\n  \"OR006\":\"ORTODONCIA\",\n  \"OR007\":\"ORTODONCIA\",\n  \"OR008\":\"ORTODONCIA\",\n  \"OR009\":\"ORTODONCIA\",\n  \"OR010\":\"ORTODONCIA\",\n  \"OR011\":\"ORTODONCIA\",\n  \"OR012\":\"ORTODONCIA\",\n  \"OR013\":\"ORTODONCIA\",\n  \"OR014\":\"ORTODONCIA\",\n  \"OR016\":\"ORTODONCIA\",\n  \"OR017\":\"ORTODONCIA\",\n  \"OR018\":\"ORTODONCIA\",\n  \"OR019\":\"ORTODONCIA\",\n  \"OR020\":\"ORTODONCIA\",\n  \"OR021\":\"ORTODONCIA\",\n  \"OR022\":\"ORTODONCIA\",\n  \"OR100\":\"ORTODONCIA\",\n  \"OR101\":\"ORTODONCIA\",\n  \"OR102\":\"ORTODONCIA\",\n  \"OR103\":\"ORTODONCIA\",\n  \"OR104\":\"ORTODONCIA\",\n  \"OR105\":\"ORTODONCIA\",\n  \"OR106\":\"ORTODONCIA\",\n  \"OR107\":\"ORTODONCIA\",\n  \"OR108\":\"ORTODONCIA\",\n  \"OR109\":\"ORTODONCIA\",\n  \"OR110\":\"ORTODONCIA\",\n  \"OR111\":\"ORTODONCIA\",\n  \"OR112\":\"ORTODONCIA\",\n  \"OR113\":\"ORTODONCIA\",\n  \"OR114\":\"ORTODONCIA\",\n  \"OR115\":\"ORTODONCIA\",\n  \"OR116\":\"ORTODONCIA\",\n  \"OR117\":\"ORTODONCIA\",\n  \"OR118\":\"ORTODONCIA\",\n  \"OR119\":\"ORTODONCIA\",\n  \"OR120\":\"ORTODONCIA\",\n  \"OR121\":\"ORTODONCIA\",\n  \"OR122\":\"ORTODONCIA\",\n  \"OR123\":\"ORTODONCIA\",\n  \"OR124\":\"ORTODONCIA\",\n  \"OR125\":\"ORTODONCIA\",\n  \"OR126\":\"ORTODONCIA\",\n  \"OR200\":\"ORTODONCIA\",\n  \"OR201\":\"ORTODONCIA\",\n  \"OR202\":\"ORTODONCIA\",\n  // ORTOPEDIA (28 códigos)\n  \"OP000\":\"ORTOPEDIA\",\n  \"OP001\":\"ORTOPEDIA\",\n  \"OP100\":\"ORTOPEDIA\",\n  \"OP101\":\"ORTOPEDIA\",\n  \"OP102\":\"ORTOPEDIA\",\n  \"OP103\":\"ORTOPEDIA\",\n  \"OP104\":\"ORTOPEDIA\",\n  \"OP105\":\"ORTOPEDIA\",\n  \"OP106\":\"ORTOPEDIA\",\n  \"OP107\":\"ORTOPEDIA\",\n  \"OP108\":\"ORTOPEDIA\",\n  \"OP109\":\"ORTOPEDIA\",\n  \"OP110\":\"ORTOPEDIA\",\n  \"OP111\":\"ORTOPEDIA\",\n  \"OP112\":\"ORTOPEDIA\",\n  \"OP113\":\"ORTOPEDIA\",\n  \"OP114\":\"ORTOPEDIA\",\n  \"OP115\":\"ORTOPEDIA\",\n  \"OP116\":\"ORTOPEDIA\",\n  \"OP117\":\"ORTOPEDIA\",\n  \"OP118\":\"ORTOPEDIA\",\n  \"OP119\":\"ORTOPEDIA\",\n  \"OP200\":\"ORTOPEDIA\",\n  \"OP201\":\"ORTOPEDIA\",\n  \"OP202\":\"ORTOPEDIA\",\n  \"OP203\":\"ORTOPEDIA\",\n  \"OP204\":\"ORTOPEDIA\",\n  \"OP205\":\"ORTOPEDIA\",\n  // PERIODONCIA (3 códigos)\n  \"P1005\":\"PERIODONCIA\",\n  \"P1006\":\"PERIODONCIA\",\n  \"P1007\":\"PERIODONCIA\",\n  // PRODUCTOS HIGIENE BUCAL (8 códigos)\n  \"HB000\":\"PRODUCTOS HIGIENE BUCAL\",\n  \"HB001\":\"PRODUCTOS HIGIENE BUCAL\",\n  \"HB002\":\"PRODUCTOS HIGIENE BUCAL\",\n  \"HB003\":\"PRODUCTOS HIGIENE BUCAL\",\n  \"HB004\":\"PRODUCTOS HIGIENE BUCAL\",\n  \"HB005\":\"PRODUCTOS HIGIENE BUCAL\",\n  \"HB006\":\"PRODUCTOS HIGIENE BUCAL\",\n  \"HB007\":\"PRODUCTOS HIGIENE BUCAL\",\n  // PROTESIS (27 códigos)\n  \"P0001\":\"PROTESIS\",\n  \"P0002\":\"PROTESIS\",\n  \"P0003\":\"PROTESIS\",\n  \"P0004\":\"PROTESIS\",\n  \"P0005\":\"PROTESIS\",\n  \"P0006\":\"PROTESIS\",\n  \"P0007\":\"PROTESIS\",\n  \"P0008\":\"PROTESIS\",\n  \"P0009\":\"PROTESIS\",\n  \"P0010\":\"PROTESIS\",\n  \"P0011\":\"PROTESIS\",\n  \"P2003\":\"PROTESIS\",\n  \"P2004\":\"PROTESIS\",\n  \"P2005\":\"PROTESIS\",\n  \"P2006\":\"PROTESIS\",\n  \"P2007\":\"PROTESIS\",\n  \"P2008\":\"PROTESIS\",\n  \"P2009\":\"PROTESIS\",\n  \"P3000\":\"PROTESIS\",\n  \"P3001\":\"PROTESIS\",\n  \"P3002\":\"PROTESIS\",\n  \"P3003\":\"PROTESIS\",\n  \"P3004\":\"PROTESIS\",\n  \"P3005\":\"PROTESIS\",\n  \"P3006\":\"PROTESIS\",\n  \"P3007\":\"PROTESIS\",\n  \"P3008\":\"PROTESIS\",\n  // RADIOLOGIA (8 códigos)\n  \"RD000\":\"RADIOLOGIA\",\n  \"RD001\":\"RADIOLOGIA\",\n  \"RD002\":\"RADIOLOGIA\",\n  \"RD003\":\"RADIOLOGIA\",\n  \"RD004\":\"RADIOLOGIA\",\n  \"RD005\":\"RADIOLOGIA\",\n  \"RD006\":\"RADIOLOGIA\",\n  \"RD007\":\"RADIOLOGIA\",\n};\n\n// Códigos ambiguos: aparecen en más de un Rubro con categorías diferentes.\n// Se resuelven con el campo \"Categoria\" (Nombre categoría del Sheet).\nconst CODIGOS_AMBIGUOS = new Set([\n  \"P0000\",\"P1000\",\"P1001\",\"P1002\",\"P1003\",\"P1004\",\"P2000\",\"P2001\",\"P2002\"\n]);\n\nfunction resolverAmbiguo(nombreCat) {\n  const n = nombreCat.normalize(\"NFD\").replace(/[\\u0300-\\u036f]/g, \"\").toUpperCase().trim();\n    if (n.includes(\"PERIODONCIA\")) return \"PERIODONCIA\";\n    if (n.includes(\"REHABILITACION CON PROTESIS\")) return \"PROTESIS\";\n  return \"OTRO\";\n}\n\nreturn items.map(item => {\n  const row = item.json || {};\n  const codigo = String(row[\"Código Prestación\"] || \"\").trim().toUpperCase();\n\n  let categoria = CODIGO_A_CATEGORIA[codigo] || \"OTRO\";\n\n  // Código ambiguo → resolver por Nombre categoría del Sheet\n  if (CODIGOS_AMBIGUOS.has(codigo)) {\n    categoria = resolverAmbiguo(row[\"Categoria\"] || \"\");\n  }\n\n  return {\n    json: {\n      ...row,\n      Categoria: categoria,\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1840,
+        -288
+      ],
+      "id": "33a8f6de-3742-4086-be4e-f392bf7c5bae",
+      "name": "Categoria"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "Pagado Prestación"
+            },
+            {
+              "aggregation": "sum",
+              "field": "Abono Libre"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "Categoria, Sucursal, Semana",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        -1616,
+        -288
+      ],
+      "id": "fcbc52f6-30b0-464a-b016-4f124d026e2b",
+      "name": "Pagado Semana"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "Pagado Prestación"
+            },
+            {
+              "aggregation": "sum",
+              "field": "cantidadComputable"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "Clase, Semana, Sucursal",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        -1616,
+        -64
+      ],
+      "id": "6744a371-fabb-49ad-941f-f6cd2e6053fb",
+      "name": "Pagado y Cantidad Semana"
+    },
+    {
+      "parameters": {
+        "jsCode": "{\n  // n8n Code node (JS)\n  // Agrupa por Semana + Sucursal y pivotea Categoria -> sum_<CATEGORIA> (sumando valores)\n\n  const rows = $input.all().map(i => i.json);\n\n  const normalizeKey = (s) =>\n    String(s ?? '')\n      .trim()\n      .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '') // quita acentos\n      .replace(/[^\\w]+/g, '_')                         // espacios y símbolos -> _\n      .replace(/^_+|_+$/g, '')                         // recorta _\n      .replace(/_+/g, '_')                             // colapsa __\n      .toUpperCase();\n\n  const toNumber = (v) => {\n    const n = Number(v);\n    return Number.isFinite(n) ? n : 0;\n  };\n\n  const groups = new Map();\n\n  for (const r of rows) {\n    const semana = r.Semana;\n    const sucursal = r.Sucursal;\n    const key = `${semana}||${sucursal}`;\n\n    if (!groups.has(key)) {\n      groups.set(key, {\n        Semana: semana,\n        Sucursal: sucursal,\n        sum_Abono_Libre: toNumber(r.sum_Abono_Libre ?? 0),\n      });\n    } else {\n      // Si viene repetido sum_Abono_Libre, lo acumulamos también\n      groups.get(key).sum_Abono_Libre += toNumber(r.sum_Abono_Libre ?? 0);\n    }\n\n    const g = groups.get(key);\n\n    const catKey = `sum_${normalizeKey(r.Categoria)}`;\n    g[catKey] = (g[catKey] ?? 0) + toNumber(r.sum_Pagado_Prestación ?? 0);\n  }\n\n  return Array.from(groups.values()).map(obj => ({ json: obj }));\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1392,
+        -288
+      ],
+      "id": "fe6ab83e-7835-4d9b-b0c8-a0c8049886bf",
+      "name": "Combinar categorías1"
+    },
+    {
+      "parameters": {
+        "jsCode": "{\n  const rows = $input.all().map(i => i.json);\n\n  const normalizeKey = (s) =>\n    String(s ?? '')\n      .trim()\n      .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')\n      .replace(/[^\\w]+/g, '_')\n      .replace(/^_+|_+$/g, '')\n      .replace(/_+/g, '_')\n      .toUpperCase();\n\n  const toNumber = (v) => {\n    const n = Number(v);\n    return Number.isFinite(n) ? n : 0;\n  };\n\n  const groups = new Map();\n\n  for (const r of rows) {\n    const semana = r.Semana;\n    const sucursal = r.Sucursal;\n    const key = `${semana}||${sucursal}`;\n\n    if (!groups.has(key)) {\n      groups.set(key, {\n        Semana: semana,\n        Sucursal: sucursal,\n      });\n    }\n\n    const g = groups.get(key);\n    const clase = normalizeKey(r.Clase);\n\n    g[`pagado${clase}`] = (g[`pagado${clase}`] ?? 0) + toNumber(r.sum_Pagado_Prestación);\n    g[`cantidad${clase}`] = (g[`cantidad${clase}`] ?? 0) + toNumber(r.sum_cantidadComputable);\n  }\n\n  return Array.from(groups.values()).map(obj => ({ json: obj }));\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1392,
+        -64
+      ],
+      "id": "8a559b52-bd4c-4f43-9175-5995492817d3",
+      "name": "Combinar categorías4"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2960,
+        -176
+      ],
+      "id": "b761adcb-d5fd-4120-bc3a-176c2924b013",
+      "name": "Trigger Reporte Semanal"
+    },
+    {
+      "parameters": {
+        "jsCode": "const allItems = $input.all().map(i => i.json);\n\nconst fmt = n => '$' + Number(n || 0).toLocaleString('es-UY', { minimumFractionDigits: 0 });\n\nconst ORDEN_SUCS = ['suy 1', 'suy 2', 'suy 3', 'suy 4'];\nconst sortSuc = (a, b) => {\n  const ia = ORDEN_SUCS.findIndex(s => a.toLowerCase().includes(s));\n  const ib = ORDEN_SUCS.findIndex(s => b.toLowerCase().includes(s));\n  return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);\n};\n\nconst CATEGORIAS = [\n  { key: 'sum_ORTODONCIA',            label: 'ORTODONCIA' },\n  { key: 'sum_GENERAL',               label: 'GENERAL' },\n  { key: 'sum_PROTESIS',              label: 'PRÓTESIS' },\n  { key: 'sum_ENDODONCIA',            label: 'ENDODONCIA' },\n  { key: 'sum_CIRUGIA',               label: 'CIRUGÍA' },\n  { key: 'sum_ORTOPEDIA',             label: 'ORTOPEDIA' },\n  { key: 'sum_PERIODONCIA',           label: 'PERIODONCIA' },\n  { key: 'sum_RADIOLOGIA',            label: 'RADIOLOGÍA' },\n  { key: 'sum_PRODUCTOS_HIGIENE_BUCAL', label: 'HIGIENE BUCAL' },\n  { key: 'sum_ALINEADORES',           label: 'ALINEADORES' },\n];\n\nconst SUBCATS = [\n  { key: 'pagadoAJUSTE', label: 'Ajustes' },\n  { key: 'pagadoRETIRO', label: 'Retiros' },\n  { key: 'pagadoCOMBO',  label: 'Combos' },\n];\n\n// Agrupar y sumar por sucursal (por si hay múltiples semanas)\nconst porSucursal = {};\nfor (const item of allItems) {\n  const suc = item.Sucursal;\n  if (!porSucursal[suc]) {\n    porSucursal[suc] = {};\n    [...CATEGORIAS, ...SUBCATS].forEach(c => porSucursal[suc][c.key] = 0);\n  }\n  [...CATEGORIAS, ...SUBCATS].forEach(c => {\n    porSucursal[suc][c.key] += item[c.key] || 0;\n  });\n}\n\nconst sucursales = Object.keys(porSucursal).sort(sortSuc);\n\n// Secciones por sucursal\nconst secciones = sucursales.map(suc => {\n  const d = porSucursal[suc];\n\n  const filas = CATEGORIAS\n    .filter(c => d[c.key] > 0)\n    .sort((a, b) => d[b.key] - d[a.key])\n    .map((c, _, arr) => {\n      const isOrtodoncia = c.key === 'sum_ORTODONCIA';\n\n      const subcatRows = isOrtodoncia\n        ? SUBCATS\n            .filter(s => d[s.key] > 0)\n            .map((s, idx) => `\n              <tr>\n                <td style=\"padding:3px 0 3px 18px;color:#999;font-size:12px;\">${idx + 1}. ${s.label}</td>\n                <td style=\"padding:3px 0;text-align:right;color:#999;font-size:12px;\">${fmt(d[s.key])}</td>\n              </tr>`)\n            .join('')\n        : '';\n\n      return `\n        <tr>\n          <td style=\"padding:5px 0 ${isOrtodoncia ? '2px' : '5px'} 0;color:#555;font-size:14px;\">${c.label}</td>\n          <td style=\"padding:5px 0;text-align:right;color:#333;font-size:14px;\">${fmt(d[c.key])}</td>\n        </tr>\n        ${subcatRows}`;\n    }).join('');\n\n  const totalSuc = CATEGORIAS.reduce((acc, c) => acc + d[c.key], 0);\n\n  return `\n    <div style=\"margin-bottom:28px;\">\n      <div style=\"font-size:13px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;\">${suc}</div>\n      <table style=\"width:100%;border-collapse:collapse;\">\n        ${filas}\n        <tr style=\"border-top:1px solid #e0e0e0;\">\n          <td style=\"padding:7px 0;font-weight:700;color:#111;font-size:14px;\">Total</td>\n          <td style=\"padding:7px 0;text-align:right;font-weight:700;color:#111;font-size:15px;\">${fmt(totalSuc)}</td>\n        </tr>\n      </table>\n    </div>`;\n}).join('');\n\nconst totalGeneral = sucursales.reduce((acc, suc) =>\n  acc + CATEGORIAS.reduce((a, c) => a + porSucursal[suc][c.key], 0), 0);\n\nconst semanas = [...new Set(allItems.map(i => i.Semana))].sort();\nconst semanaLabel = semanas.length === 1\n  ? `Semana ${semanas[0]}`\n  : `Semanas ${semanas[0]} — ${semanas[semanas.length - 1]}`;\n\nconst html = `\n<div style=\"font-family:sans-serif;max-width:520px;color:#333;\">\n  <p style=\"font-size:13px;color:#999;margin:0 0 4px;\">Reporte semanal por categoría</p>\n  <h2 style=\"font-size:20px;margin:0 0 24px;color:#111;\">${semanaLabel}</h2>\n\n  ${secciones}\n\n  <div style=\"background:#f4f4f4;border-radius:6px;padding:12px 16px;\">\n    <table style=\"width:100%;border-collapse:collapse;\">\n      <tr>\n        <td style=\"font-weight:700;color:#111;font-size:14px;\">Total general</td>\n        <td style=\"text-align:right;font-weight:700;font-size:16px;color:#111;\">${fmt(totalGeneral)}</td>\n      </tr>\n    </table>\n  </div>\n</div>`;\n\nreturn [{ json: { html, totalGeneral, semanaLabel } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -944,
+        -160
+      ],
+      "id": "123f7fce-4936-4f4e-8968-5b92ccc8e7fd",
+      "name": "Preparar HTML 2"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token nsZXO2i9zjO9tYiqOxESqxVgsjpL3tTgQPdTQxti.NTb7Cg13dBRJrk27FXpLO1eSHeXdeOKtgVJ2Hl6e"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          },
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "nextURL": "={{ $response.body.links.next }}",
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !$response.body.links || !$response.body.links.next }}\n",
+              "limitPagesFetched": true,
+              "maxRequests": 10,
+              "requestInterval": 1000
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2288,
+        672
+      ],
+      "id": "b62fbe24-85c6-4534-8994-8d8868ad90ae",
+      "name": "Pagos2",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "monto_pago"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "nombre_sucursal, medio_pago",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        -1616,
+        576
+      ],
+      "id": "9d4c9111-4239-4c01-a056-ad48577badb8",
+      "name": "Summarize1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all().map(i => i.json);\n\n// Orden fijo de sucursales\nconst ORDEN_SUCURSALES = [\n  'SUY 1 Centro',\n  'SUY 2 Paso Molino',\n  'SUY 3 Las Piedras',\n  'SUY 4 Lagomar - Clínica del Lago'\n];\n\n// Agrupar por sucursal\nconst porSucursal = {};\nfor (const row of items) {\n  const suc = row.nombre_sucursal;\n  if (!porSucursal[suc]) porSucursal[suc] = [];\n  porSucursal[suc].push({ medio: row.medio_pago, monto: row.sum_monto_pago });\n}\n\n// Ordenar sucursales según orden fijo (las no listadas van al final)\nconst sucursalesOrdenadas = Object.keys(porSucursal).sort((a, b) => {\n  const ia = ORDEN_SUCURSALES.findIndex(s => a.toLowerCase().includes(s.toLowerCase().split(' ').slice(0,3).join(' ')));\n  const ib = ORDEN_SUCURSALES.findIndex(s => b.toLowerCase().includes(s.toLowerCase().split(' ').slice(0,3).join(' ')));\n  const rankA = ia === -1 ? 99 : ia;\n  const rankB = ib === -1 ? 99 : ib;\n  return rankA - rankB;\n});\n\nconst fmt = n => '$' + Number(n).toLocaleString('es-UY', { minimumFractionDigits: 0 });\n\nconst secciones = sucursalesOrdenadas.map(sucursal => {\n  const pagos = porSucursal[sucursal];\n  const total = pagos.reduce((acc, p) => acc + p.monto, 0);\n\n  const filas = pagos\n    .sort((a, b) => b.monto - a.monto)\n    .map(p => `\n      <tr>\n        <td style=\"padding:5px 0;color:#555;font-size:14px;\">${p.medio}</td>\n        <td style=\"padding:5px 0;text-align:right;color:#333;font-size:14px;\">${fmt(p.monto)}</td>\n      </tr>`)\n    .join('');\n\n  return `\n    <div style=\"margin-bottom:28px;\">\n      <div style=\"font-size:13px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;\">${sucursal}</div>\n      <table style=\"width:100%;border-collapse:collapse;\">\n        ${filas}\n        <tr style=\"border-top:1px solid #e0e0e0;\">\n          <td style=\"padding:7px 0;font-weight:700;color:#111;font-size:14px;\">Total</td>\n          <td style=\"padding:7px 0;text-align:right;font-weight:700;color:#111;font-size:15px;\">${fmt(total)}</td>\n        </tr>\n      </table>\n    </div>`;\n}).join('');\n\nconst totalGeneral = items.reduce((acc, r) => acc + r.sum_monto_pago, 0);\n\nconst fechaISO = $('fecha_hoy').first().json.fecha; // ej: \"2026-04-08\"\nconst hoyRaw = new Date(fechaISO + 'T12:00:00Z').toLocaleDateString('es-UY', {\n  timeZone: 'America/Montevideo',\n  weekday: 'long', day: 'numeric', month: 'long'\n});\nconst hoyCapitalizado = hoyRaw.charAt(0).toUpperCase() + hoyRaw.slice(1);\n\n\nconst html = `\n<div style=\"font-family:sans-serif;max-width:480px;color:#333;\">\n  <p style=\"font-size:13px;color:#999;margin:0 0 4px;\">Reporte de facturación</p>\n  <h2 style=\"font-size:20px;margin:0 0 24px;color:#111;\">${hoyCapitalizado}</h2>\n\n  ${secciones}\n\n  <div style=\"background:#f4f4f4;border-radius:6px;padding:12px 16px;\">\n    <table style=\"width:100%;border-collapse:collapse;\">\n      <tr>\n        <td style=\"font-weight:700;color:#111;font-size:14px;\">Total general</td>\n        <td style=\"text-align:right;font-weight:700;font-size:16px;color:#111;\">${fmt(totalGeneral)}</td>\n      </tr>\n    </table>\n  </div>\n</div>`;\n\nreturn [{ json: { html, total_general: totalGeneral, fecha: hoyCapitalizado } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1392,
+        576
+      ],
+      "id": "199418d8-6454-414e-8a91-a394636bfcb8",
+      "name": "Preparar HTML2"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "body.data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1840,
+        576
+      ],
+      "id": "8d95c24a-e748-4005-9352-4046ae0197fd",
+      "name": "Split Out1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Valida que cada código exista en el Listado de Precios.\n// Si hay códigos desconocidos → aborta el flujo con error.\n// Si todos son válidos → agrega flags computaImporte y computaCantidad.\n\nconst CODIGOS_VALIDOS = new Set([\n  \"00001\",\n\n  \"A0000\",\"A0001\",\"A0002\",\"A0003\",\"A0004\",\"A0005\",\"A0007\",\"A0008\",\"A0009\",\n\n  \"C0000\",\"C0001\",\"C0002\",\"C0003\",\"C0004\",\"C0005\",\"C0006\",\"C0007\",\"C0008\",\"C0009\",\"C0010\",\n  \"C0011\",\"C0012\",\"C0013\",\"C0014\",\"C0015\",\"C0050\",\"C0051\",\"C0052\",\"C0053\",\"C0054\",\"C0055\",\"C0056\",\n  \"C0057\",\n\n  \"E0001\",\"E0002\",\"E0003\",\"E0004\",\"E0005\",\"E0006\",\"E0007\",\"E0008\",\"E0050\",\"E0051\",\"E0052\",\n\n  \"HB000\",\"HB001\",\"HB002\",\"HB003\",\"HB004\",\"HB005\",\"HB006\",\"HB007\",\n\n  \"OA001\",\"OA002\",\"OA003\",\"OA004\",\"OA005\",\"OA006\",\"OA007\",\"OA008\",\"OA009\",\"OA010\",\"OA011\",\n  \"OA012\",\"OA013\",\"OA014\",\"OA015\",\"OA016\",\"OA017\",\"OA018\",\"OA019\",\"OA020\",\"OA021\",\"OA022\",\n  \"OA023\",\"OA024\",\"OA025\",\"OA026\",\"OA027\",\"OA028\",\"OA029\",\"OA030\",\"OA031\",\"OA032\",\"OA033\",\n  \"OA034\",\"OA035\",\"OA036\",\"OA037\",\"OA038\",\"OA039\",\"OA040\",\"OA041\",\"OA042\",\"OA043\",\"OA044\",\n  \"OA045\",\"OA046\",\"OA047\",\"OA048\",\"OA100\",\"OA101\",\"OA102\",\"OA103\",\"OA104\",\"OA105\",\"OA106\",\n  \"OA107\",\"OA108\",\"OA109\",\"OA110\",\"OA111\",\"OA200\",\"OA201\",\"OA202\",\"OA203\",\"OA204\",\"OA205\",\n  \"OA206\",\"OA207\",\"OA208\",\"OA300\",\"OA301\",\"OA302\",\"OA600\",\"OA601\",\"OA602\",\"OA603\",\"OA604\",\n  \"OA605\",\"OA606\",\"OA607\",\"OA608\",\"OA609\",\"OA700\",\"OA701\",\"OA702\",\"OA703\",\"OA704\",\"OA800\",\n  \"OA801\",\n\n  \"OG001\",\"OG002\",\"OG003\",\"OG004\",\"OG005\",\"OG006\",\"OG007\",\"OG020\",\"OG021\",\"OG022\",\"OG023\",\n  \"OG024\",\"OG025\",\"OG026\",\"OG027\",\"OG028\",\"OG040\",\"OG041\",\"OG042\",\"OG043\",\"OG044\",\"OG045\",\n  \"OG046\",\"OG047\",\"OG048\",\"OG049\",\"OG050\",\"OG051\",\"OG052\",\"OG060\",\"OG061\",\"OG062\",\"OG063\",\n  \"OG064\",\"OG065\",\"OG066\",\"OG067\",\"OG068\",\"OG070\",\"OG071\",\"OG072\",\"OG073\",\"OG074\",\"OG075\",\n  \"OG076\",\"OG077\",\"OG080\",\"OG081\",\"OG082\",\n\n  \"OO001\",\"OO002\",\"OO003\",\"OO004\",\"OO005\",\"OO006\",\"OO100\",\"OO101\",\"OO102\",\"OO200\",\n\n  \"OP000\",\"OP001\",\"OP100\",\"OP101\",\"OP102\",\"OP103\",\"OP104\",\"OP105\",\"OP106\",\"OP107\",\"OP108\",\n  \"OP109\",\"OP110\",\"OP111\",\"OP112\",\"OP113\",\"OP114\",\"OP115\",\"OP116\",\"OP117\",\"OP118\",\"OP119\",\n  \"OP200\",\"OP201\",\"OP202\",\"OP203\",\"OP204\",\"OP205\",\n\n  \"OR001\",\"OR002\",\"OR003\",\"OR004\",\"OR005\",\"OR006\",\"OR007\",\"OR008\",\"OR009\",\"OR010\",\"OR011\",\n  \"OR012\",\"OR013\",\"OR014\",\"OR016\",\"OR017\",\"OR018\",\"OR019\",\"OR020\",\"OR021\",\"OR022\",\"OR100\",\n  \"OR101\",\"OR102\",\"OR103\",\"OR104\",\"OR105\",\"OR106\",\"OR107\",\"OR108\",\"OR109\",\"OR110\",\"OR111\",\n  \"OR112\",\"OR113\",\"OR114\",\"OR115\",\"OR116\",\"OR117\",\"OR118\",\"OR119\",\"OR120\",\"OR121\",\"OR122\",\n  \"OR123\",\"OR124\",\"OR125\",\"OR126\",\"OR200\",\"OR201\",\"OR202\",\n\n  \"P0000\",\"P0001\",\"P0002\",\"P0003\",\"P0004\",\"P0005\",\"P0006\",\"P0007\",\"P0008\",\"P0009\",\"P0010\",\n  \"P0011\",\n\n  \"P1000\",\"P1001\",\"P1002\",\"P1003\",\"P1004\",\"P1005\",\"P1006\",\"P1007\",\n\n  \"P2000\",\"P2001\",\"P2002\",\"P2003\",\"P2004\",\"P2005\",\"P2006\",\"P2007\",\"P2008\",\"P2009\",\n\n  \"P3000\",\"P3001\",\"P3002\",\"P3003\",\"P3004\",\"P3005\",\"P3006\",\"P3007\",\"P3008\",\n\n  \"RD000\",\"RD001\",\"RD002\",\"RD003\",\"RD004\",\"RD005\",\"RD006\",\"RD007\",\n]);\n\n// Todos los códigos computan para importe\nconst noComputaImporte = new Set();\n\n// Códigos que NO computan para cantidad\nconst noComputaCantidad = new Set([\n  \"00001\",\"OA600\",\"OA601\",\"OA602\",\"OA603\",\"OA604\",\"OA605\",\"OA606\",\"OA607\",\"OA608\",\"OA609\",\n  \"OA700\",\"OA701\",\"OA702\",\"OA703\",\"OA704\",\"OA800\",\"OA801\",\"OO001\",\"OO002\",\"OO003\",\"OO004\",\n  \"OO005\",\"OO006\",\"OO100\",\"OO101\",\"OO102\",\"OO200\",\"OR008\",\"OR009\",\"OR010\",\"OR011\",\"OR012\",\n  \"OR013\",\"OR014\",\"OR016\",\"OR017\",\"OR018\",\"OR019\",\"OR020\",\"OR021\",\"OR022\"\n]);\n\n// Detectar códigos desconocidos\nconst desconocidos = new Set();\nfor (const item of items) {\n  const codigo = String(item.json[\"Código Prestación\"] || \"\").trim().toUpperCase();\n  if (codigo && !CODIGOS_VALIDOS.has(codigo)) {\n    desconocidos.add(codigo);\n  }\n}\n\nif (desconocidos.size > 0) {\n  const lista = [...desconocidos].sort().join(\", \");\n  throw new Error(\n    `Códigos no encontrados en Listado de Precios: ${lista}. ` +\n    `Actualizar el Listado de Precios y regenerar los nodos.`\n  );\n}\n\n// Todos válidos → agregar flags\nreturn items.map(item => {\n  const row = item.json || {};\n  const codigo = String(row[\"Código Prestación\"] || \"\").trim().toUpperCase();\n  return {\n    json: {\n      ...row,\n      computaImporte: !noComputaImporte.has(codigo),\n      computaCantidad: !noComputaCantidad.has(codigo),\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2064,
+        240
+      ],
+      "id": "3d7f2cf3-7dff-4973-9fb9-eb5341c81808",
+      "name": "Filtro3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Subclasifica códigos de ortodoncia en AJUSTE / RETIRO / COMBO.\n// Códigos no-ortodoncia reciben clase = \"OTRO\".\n// Agrega cantidadComputable basado en Computa para Planilla Cantidad.\n\nconst CLASES_ORTODONCIA = {\n  AJUSTE:[\n    \"OA001\",\"OA002\",\"OA003\",\"OA004\",\"OA005\",\"OA006\",\"OA007\",\"OA008\",\"OA009\",\"OA010\",\"OA011\",\n    \"OA012\",\"OA013\",\"OA014\",\"OA015\",\"OA016\",\"OA017\",\"OA018\",\"OA019\",\"OA020\",\"OA021\",\"OA022\",\n    \"OA023\",\"OA024\",\"OA025\",\"OA026\",\"OA027\",\"OA028\",\"OA029\",\"OA030\",\"OA031\",\"OA032\",\"OA033\",\n    \"OA034\",\"OA035\",\"OA036\",\"OA037\",\"OA038\",\"OA039\",\"OA040\",\"OA041\",\"OA042\",\"OA043\",\"OA044\",\n    \"OA045\",\"OA046\",\"OA047\",\"OA048\",\"OA100\",\"OA101\",\"OA102\",\"OA103\",\"OA104\",\"OA105\",\"OA106\",\n    \"OA107\",\"OA108\",\"OA109\",\"OA110\",\"OA111\",\"OA200\",\"OA201\",\"OA202\",\"OA203\",\"OA204\",\"OA205\",\n    \"OA206\",\"OA207\",\"OA208\",\"OA300\",\"OA301\",\"OA302\",\"OA600\",\"OA601\",\"OA602\",\"OA603\",\"OA604\",\n    \"OA605\",\"OA606\",\"OA607\",\"OA608\",\"OA609\",\"OA700\",\"OA701\",\"OA702\",\"OA703\",\"OA704\",\"OA800\",\n    \"OA801\",\"OO001\",\"OO002\",\"OO003\",\"OO004\",\"OO005\",\"OO006\",\"OO100\",\"OO101\",\"OO102\",\"OO200\"\n  ],\n  RETIRO:[\n    \"OR001\",\"OR002\",\"OR003\",\"OR004\",\"OR005\",\"OR006\",\"OR007\",\"OR008\",\"OR009\",\"OR010\",\"OR011\",\n    \"OR012\",\"OR020\",\"OR021\",\"OR022\"\n  ],\n  COMBO:[\n    \"OR013\",\"OR014\",\"OR016\",\"OR017\",\"OR018\",\"OR019\",\"OR100\",\"OR101\",\"OR102\",\"OR103\",\"OR104\",\n    \"OR105\",\"OR106\",\"OR107\",\"OR108\",\"OR109\",\"OR110\",\"OR111\",\"OR112\",\"OR113\",\"OR114\",\"OR115\",\n    \"OR116\",\"OR117\",\"OR118\",\"OR119\",\"OR120\",\"OR121\",\"OR122\",\"OR123\",\"OR124\",\"OR125\",\"OR126\",\n    \"OR200\",\"OR201\",\"OR202\"\n  ],\n};\n\n// Códigos que NO suman para cantidad (Computa para Planilla Cantidad = NO)\nconst noSumanCantidad = new Set([\n  \"00001\",\"OA600\",\"OA601\",\"OA602\",\"OA603\",\"OA604\",\"OA605\",\"OA606\",\"OA607\",\"OA608\",\"OA609\",\n  \"OA700\",\"OA701\",\"OA702\",\"OA703\",\"OA704\",\"OA800\",\"OA801\",\"OO001\",\"OO002\",\"OO003\",\"OO004\",\n  \"OO005\",\"OO006\",\"OO100\",\"OO101\",\"OO102\",\"OO200\",\"OR008\",\"OR009\",\"OR010\",\"OR011\",\"OR012\",\n  \"OR013\",\"OR014\",\"OR016\",\"OR017\",\"OR018\",\"OR019\",\"OR020\",\"OR021\",\"OR022\"\n]);\n\nreturn items.map(item => {\n  const row = item.json || {};\n  const codigo = String(row[\"Código Prestación\"] || \"\").trim().toUpperCase();\n  let clase = \"OTRO\";\n\n  for (const [nombreClase, codigos] of Object.entries(CLASES_ORTODONCIA)) {\n    if (codigos.includes(codigo)) {\n      clase = nombreClase;\n      break;\n    }\n  }\n\n  return {\n    json: {\n      ...row,\n      Clase: clase,\n      cantidadComputable: noSumanCantidad.has(codigo) ? 0 : 1,\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1840,
+        368
+      ],
+      "id": "b8b6209a-3f70-446b-846a-26d2106eafa2",
+      "name": "Clase1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Asigna categoría a cada item basándose en el código de prestación.\n// Fuente de verdad: columna Rubro del Listado de Precios.\n// 12 Rubros → 10 categorías de display + OTRO.\n\nconst CODIGO_A_CATEGORIA = {\n  // ALINEADORES (9 códigos)\n  \"A0000\":\"ALINEADORES\",\n  \"A0001\":\"ALINEADORES\",\n  \"A0002\":\"ALINEADORES\",\n  \"A0003\":\"ALINEADORES\",\n  \"A0004\":\"ALINEADORES\",\n  \"A0005\":\"ALINEADORES\",\n  \"A0007\":\"ALINEADORES\",\n  \"A0008\":\"ALINEADORES\",\n  \"A0009\":\"ALINEADORES\",\n  // CIRUGIA (23 códigos)\n  \"C0000\":\"CIRUGIA\",\n  \"C0001\":\"CIRUGIA\",\n  \"C0002\":\"CIRUGIA\",\n  \"C0003\":\"CIRUGIA\",\n  \"C0004\":\"CIRUGIA\",\n  \"C0005\":\"CIRUGIA\",\n  \"C0006\":\"CIRUGIA\",\n  \"C0007\":\"CIRUGIA\",\n  \"C0008\":\"CIRUGIA\",\n  \"C0009\":\"CIRUGIA\",\n  \"C0010\":\"CIRUGIA\",\n  \"C0011\":\"CIRUGIA\",\n  \"C0012\":\"CIRUGIA\",\n  \"C0013\":\"CIRUGIA\",\n  \"C0014\":\"CIRUGIA\",\n  \"C0015\":\"CIRUGIA\",\n  \"C0050\":\"CIRUGIA\",\n  \"C0051\":\"CIRUGIA\",\n  \"C0052\":\"CIRUGIA\",\n  \"C0053\":\"CIRUGIA\",\n  \"C0054\":\"CIRUGIA\",\n  \"C0055\":\"CIRUGIA\",\n  \"C0056\":\"CIRUGIA\",\n  \"C0057\":\"CIRUGIA\",\n  // ENDODONCIA (11 códigos)\n  \"E0001\":\"ENDODONCIA\",\n  \"E0002\":\"ENDODONCIA\",\n  \"E0003\":\"ENDODONCIA\",\n  \"E0004\":\"ENDODONCIA\",\n  \"E0005\":\"ENDODONCIA\",\n  \"E0006\":\"ENDODONCIA\",\n  \"E0007\":\"ENDODONCIA\",\n  \"E0008\":\"ENDODONCIA\",\n  \"E0050\":\"ENDODONCIA\",\n  \"E0051\":\"ENDODONCIA\",\n  \"E0052\":\"ENDODONCIA\",\n  // GENERAL (50 códigos)\n  \"00001\":\"GENERAL\",\n  \"OG001\":\"GENERAL\",\n  \"OG002\":\"GENERAL\",\n  \"OG003\":\"GENERAL\",\n  \"OG004\":\"GENERAL\",\n  \"OG005\":\"GENERAL\",\n  \"OG006\":\"GENERAL\",\n  \"OG007\":\"GENERAL\",\n  \"OG020\":\"GENERAL\",\n  \"OG021\":\"GENERAL\",\n  \"OG022\":\"GENERAL\",\n  \"OG023\":\"GENERAL\",\n  \"OG024\":\"GENERAL\",\n  \"OG025\":\"GENERAL\",\n  \"OG026\":\"GENERAL\",\n  \"OG027\":\"GENERAL\",\n  \"OG028\":\"GENERAL\",\n  \"OG040\":\"GENERAL\",\n  \"OG041\":\"GENERAL\",\n  \"OG042\":\"GENERAL\",\n  \"OG043\":\"GENERAL\",\n  \"OG044\":\"GENERAL\",\n  \"OG045\":\"GENERAL\",\n  \"OG046\":\"GENERAL\",\n  \"OG047\":\"GENERAL\",\n  \"OG048\":\"GENERAL\",\n  \"OG049\":\"GENERAL\",\n  \"OG050\":\"GENERAL\",\n  \"OG051\":\"GENERAL\",\n  \"OG052\":\"GENERAL\",\n  \"OG060\":\"GENERAL\",\n  \"OG061\":\"GENERAL\",\n  \"OG062\":\"GENERAL\",\n  \"OG063\":\"GENERAL\",\n  \"OG064\":\"GENERAL\",\n  \"OG065\":\"GENERAL\",\n  \"OG066\":\"GENERAL\",\n  \"OG067\":\"GENERAL\",\n  \"OG068\":\"GENERAL\",\n  \"OG070\":\"GENERAL\",\n  \"OG071\":\"GENERAL\",\n  \"OG072\":\"GENERAL\",\n  \"OG073\":\"GENERAL\",\n  \"OG074\":\"GENERAL\",\n  \"OG075\":\"GENERAL\",\n  \"OG076\":\"GENERAL\",\n  \"OG077\":\"GENERAL\",\n  \"OG080\":\"GENERAL\",\n  \"OG081\":\"GENERAL\",\n  \"OG082\":\"GENERAL\",\n  // ORTODONCIA (150 códigos)\n  \"OA001\":\"ORTODONCIA\",\n  \"OA002\":\"ORTODONCIA\",\n  \"OA003\":\"ORTODONCIA\",\n  \"OA004\":\"ORTODONCIA\",\n  \"OA005\":\"ORTODONCIA\",\n  \"OA006\":\"ORTODONCIA\",\n  \"OA007\":\"ORTODONCIA\",\n  \"OA008\":\"ORTODONCIA\",\n  \"OA009\":\"ORTODONCIA\",\n  \"OA010\":\"ORTODONCIA\",\n  \"OA011\":\"ORTODONCIA\",\n  \"OA012\":\"ORTODONCIA\",\n  \"OA013\":\"ORTODONCIA\",\n  \"OA014\":\"ORTODONCIA\",\n  \"OA015\":\"ORTODONCIA\",\n  \"OA016\":\"ORTODONCIA\",\n  \"OA017\":\"ORTODONCIA\",\n  \"OA018\":\"ORTODONCIA\",\n  \"OA019\":\"ORTODONCIA\",\n  \"OA020\":\"ORTODONCIA\",\n  \"OA021\":\"ORTODONCIA\",\n  \"OA022\":\"ORTODONCIA\",\n  \"OA023\":\"ORTODONCIA\",\n  \"OA024\":\"ORTODONCIA\",\n  \"OA025\":\"ORTODONCIA\",\n  \"OA026\":\"ORTODONCIA\",\n  \"OA027\":\"ORTODONCIA\",\n  \"OA028\":\"ORTODONCIA\",\n  \"OA029\":\"ORTODONCIA\",\n  \"OA030\":\"ORTODONCIA\",\n  \"OA031\":\"ORTODONCIA\",\n  \"OA032\":\"ORTODONCIA\",\n  \"OA033\":\"ORTODONCIA\",\n  \"OA034\":\"ORTODONCIA\",\n  \"OA035\":\"ORTODONCIA\",\n  \"OA036\":\"ORTODONCIA\",\n  \"OA037\":\"ORTODONCIA\",\n  \"OA038\":\"ORTODONCIA\",\n  \"OA039\":\"ORTODONCIA\",\n  \"OA040\":\"ORTODONCIA\",\n  \"OA041\":\"ORTODONCIA\",\n  \"OA042\":\"ORTODONCIA\",\n  \"OA043\":\"ORTODONCIA\",\n  \"OA044\":\"ORTODONCIA\",\n  \"OA045\":\"ORTODONCIA\",\n  \"OA046\":\"ORTODONCIA\",\n  \"OA047\":\"ORTODONCIA\",\n  \"OA048\":\"ORTODONCIA\",\n  \"OA100\":\"ORTODONCIA\",\n  \"OA101\":\"ORTODONCIA\",\n  \"OA102\":\"ORTODONCIA\",\n  \"OA103\":\"ORTODONCIA\",\n  \"OA104\":\"ORTODONCIA\",\n  \"OA105\":\"ORTODONCIA\",\n  \"OA106\":\"ORTODONCIA\",\n  \"OA107\":\"ORTODONCIA\",\n  \"OA108\":\"ORTODONCIA\",\n  \"OA109\":\"ORTODONCIA\",\n  \"OA110\":\"ORTODONCIA\",\n  \"OA111\":\"ORTODONCIA\",\n  \"OA200\":\"ORTODONCIA\",\n  \"OA201\":\"ORTODONCIA\",\n  \"OA202\":\"ORTODONCIA\",\n  \"OA203\":\"ORTODONCIA\",\n  \"OA204\":\"ORTODONCIA\",\n  \"OA205\":\"ORTODONCIA\",\n  \"OA206\":\"ORTODONCIA\",\n  \"OA207\":\"ORTODONCIA\",\n  \"OA208\":\"ORTODONCIA\",\n  \"OA300\":\"ORTODONCIA\",\n  \"OA301\":\"ORTODONCIA\",\n  \"OA302\":\"ORTODONCIA\",\n  \"OA600\":\"ORTODONCIA\",\n  \"OA601\":\"ORTODONCIA\",\n  \"OA602\":\"ORTODONCIA\",\n  \"OA603\":\"ORTODONCIA\",\n  \"OA604\":\"ORTODONCIA\",\n  \"OA605\":\"ORTODONCIA\",\n  \"OA606\":\"ORTODONCIA\",\n  \"OA607\":\"ORTODONCIA\",\n  \"OA608\":\"ORTODONCIA\",\n  \"OA609\":\"ORTODONCIA\",\n  \"OA700\":\"ORTODONCIA\",\n  \"OA701\":\"ORTODONCIA\",\n  \"OA702\":\"ORTODONCIA\",\n  \"OA703\":\"ORTODONCIA\",\n  \"OA704\":\"ORTODONCIA\",\n  \"OA800\":\"ORTODONCIA\",\n  \"OA801\":\"ORTODONCIA\",\n  \"OO001\":\"ORTODONCIA\",\n  \"OO002\":\"ORTODONCIA\",\n  \"OO003\":\"ORTODONCIA\",\n  \"OO004\":\"ORTODONCIA\",\n  \"OO005\":\"ORTODONCIA\",\n  \"OO006\":\"ORTODONCIA\",\n  \"OO100\":\"ORTODONCIA\",\n  \"OO101\":\"ORTODONCIA\",\n  \"OO102\":\"ORTODONCIA\",\n  \"OO200\":\"ORTODONCIA\",\n  \"OR001\":\"ORTODONCIA\",\n  \"OR002\":\"ORTODONCIA\",\n  \"OR003\":\"ORTODONCIA\",\n  \"OR004\":\"ORTODONCIA\",\n  \"OR005\":\"ORTODONCIA\",\n  \"OR006\":\"ORTODONCIA\",\n  \"OR007\":\"ORTODONCIA\",\n  \"OR008\":\"ORTODONCIA\",\n  \"OR009\":\"ORTODONCIA\",\n  \"OR010\":\"ORTODONCIA\",\n  \"OR011\":\"ORTODONCIA\",\n  \"OR012\":\"ORTODONCIA\",\n  \"OR013\":\"ORTODONCIA\",\n  \"OR014\":\"ORTODONCIA\",\n  \"OR016\":\"ORTODONCIA\",\n  \"OR017\":\"ORTODONCIA\",\n  \"OR018\":\"ORTODONCIA\",\n  \"OR019\":\"ORTODONCIA\",\n  \"OR020\":\"ORTODONCIA\",\n  \"OR021\":\"ORTODONCIA\",\n  \"OR022\":\"ORTODONCIA\",\n  \"OR100\":\"ORTODONCIA\",\n  \"OR101\":\"ORTODONCIA\",\n  \"OR102\":\"ORTODONCIA\",\n  \"OR103\":\"ORTODONCIA\",\n  \"OR104\":\"ORTODONCIA\",\n  \"OR105\":\"ORTODONCIA\",\n  \"OR106\":\"ORTODONCIA\",\n  \"OR107\":\"ORTODONCIA\",\n  \"OR108\":\"ORTODONCIA\",\n  \"OR109\":\"ORTODONCIA\",\n  \"OR110\":\"ORTODONCIA\",\n  \"OR111\":\"ORTODONCIA\",\n  \"OR112\":\"ORTODONCIA\",\n  \"OR113\":\"ORTODONCIA\",\n  \"OR114\":\"ORTODONCIA\",\n  \"OR115\":\"ORTODONCIA\",\n  \"OR116\":\"ORTODONCIA\",\n  \"OR117\":\"ORTODONCIA\",\n  \"OR118\":\"ORTODONCIA\",\n  \"OR119\":\"ORTODONCIA\",\n  \"OR120\":\"ORTODONCIA\",\n  \"OR121\":\"ORTODONCIA\",\n  \"OR122\":\"ORTODONCIA\",\n  \"OR123\":\"ORTODONCIA\",\n  \"OR124\":\"ORTODONCIA\",\n  \"OR125\":\"ORTODONCIA\",\n  \"OR126\":\"ORTODONCIA\",\n  \"OR200\":\"ORTODONCIA\",\n  \"OR201\":\"ORTODONCIA\",\n  \"OR202\":\"ORTODONCIA\",\n  // ORTOPEDIA (28 códigos)\n  \"OP000\":\"ORTOPEDIA\",\n  \"OP001\":\"ORTOPEDIA\",\n  \"OP100\":\"ORTOPEDIA\",\n  \"OP101\":\"ORTOPEDIA\",\n  \"OP102\":\"ORTOPEDIA\",\n  \"OP103\":\"ORTOPEDIA\",\n  \"OP104\":\"ORTOPEDIA\",\n  \"OP105\":\"ORTOPEDIA\",\n  \"OP106\":\"ORTOPEDIA\",\n  \"OP107\":\"ORTOPEDIA\",\n  \"OP108\":\"ORTOPEDIA\",\n  \"OP109\":\"ORTOPEDIA\",\n  \"OP110\":\"ORTOPEDIA\",\n  \"OP111\":\"ORTOPEDIA\",\n  \"OP112\":\"ORTOPEDIA\",\n  \"OP113\":\"ORTOPEDIA\",\n  \"OP114\":\"ORTOPEDIA\",\n  \"OP115\":\"ORTOPEDIA\",\n  \"OP116\":\"ORTOPEDIA\",\n  \"OP117\":\"ORTOPEDIA\",\n  \"OP118\":\"ORTOPEDIA\",\n  \"OP119\":\"ORTOPEDIA\",\n  \"OP200\":\"ORTOPEDIA\",\n  \"OP201\":\"ORTOPEDIA\",\n  \"OP202\":\"ORTOPEDIA\",\n  \"OP203\":\"ORTOPEDIA\",\n  \"OP204\":\"ORTOPEDIA\",\n  \"OP205\":\"ORTOPEDIA\",\n  // PERIODONCIA (3 códigos)\n  \"P1005\":\"PERIODONCIA\",\n  \"P1006\":\"PERIODONCIA\",\n  \"P1007\":\"PERIODONCIA\",\n  // PRODUCTOS HIGIENE BUCAL (8 códigos)\n  \"HB000\":\"PRODUCTOS HIGIENE BUCAL\",\n  \"HB001\":\"PRODUCTOS HIGIENE BUCAL\",\n  \"HB002\":\"PRODUCTOS HIGIENE BUCAL\",\n  \"HB003\":\"PRODUCTOS HIGIENE BUCAL\",\n  \"HB004\":\"PRODUCTOS HIGIENE BUCAL\",\n  \"HB005\":\"PRODUCTOS HIGIENE BUCAL\",\n  \"HB006\":\"PRODUCTOS HIGIENE BUCAL\",\n  \"HB007\":\"PRODUCTOS HIGIENE BUCAL\",\n  // PROTESIS (27 códigos)\n  \"P0001\":\"PROTESIS\",\n  \"P0002\":\"PROTESIS\",\n  \"P0003\":\"PROTESIS\",\n  \"P0004\":\"PROTESIS\",\n  \"P0005\":\"PROTESIS\",\n  \"P0006\":\"PROTESIS\",\n  \"P0007\":\"PROTESIS\",\n  \"P0008\":\"PROTESIS\",\n  \"P0009\":\"PROTESIS\",\n  \"P0010\":\"PROTESIS\",\n  \"P0011\":\"PROTESIS\",\n  \"P2003\":\"PROTESIS\",\n  \"P2004\":\"PROTESIS\",\n  \"P2005\":\"PROTESIS\",\n  \"P2006\":\"PROTESIS\",\n  \"P2007\":\"PROTESIS\",\n  \"P2008\":\"PROTESIS\",\n  \"P2009\":\"PROTESIS\",\n  \"P3000\":\"PROTESIS\",\n  \"P3001\":\"PROTESIS\",\n  \"P3002\":\"PROTESIS\",\n  \"P3003\":\"PROTESIS\",\n  \"P3004\":\"PROTESIS\",\n  \"P3005\":\"PROTESIS\",\n  \"P3006\":\"PROTESIS\",\n  \"P3007\":\"PROTESIS\",\n  \"P3008\":\"PROTESIS\",\n  // RADIOLOGIA (8 códigos)\n  \"RD000\":\"RADIOLOGIA\",\n  \"RD001\":\"RADIOLOGIA\",\n  \"RD002\":\"RADIOLOGIA\",\n  \"RD003\":\"RADIOLOGIA\",\n  \"RD004\":\"RADIOLOGIA\",\n  \"RD005\":\"RADIOLOGIA\",\n  \"RD006\":\"RADIOLOGIA\",\n  \"RD007\":\"RADIOLOGIA\",\n};\n\n// Códigos ambiguos: aparecen en más de un Rubro con categorías diferentes.\n// Se resuelven con el campo \"Categoria\" (Nombre categoría del Sheet).\nconst CODIGOS_AMBIGUOS = new Set([\n  \"P0000\",\"P1000\",\"P1001\",\"P1002\",\"P1003\",\"P1004\",\"P2000\",\"P2001\",\"P2002\"\n]);\n\nfunction resolverAmbiguo(nombreCat) {\n  const n = nombreCat.normalize(\"NFD\").replace(/[\\u0300-\\u036f]/g, \"\").toUpperCase().trim();\n    if (n.includes(\"PERIODONCIA\")) return \"PERIODONCIA\";\n    if (n.includes(\"REHABILITACION CON PROTESIS\")) return \"PROTESIS\";\n  return \"OTRO\";\n}\n\nreturn items.map(item => {\n  const row = item.json || {};\n  const codigo = String(row[\"Código Prestación\"] || \"\").trim().toUpperCase();\n\n  let categoria = CODIGO_A_CATEGORIA[codigo] || \"OTRO\";\n\n  // Código ambiguo → resolver por Nombre categoría del Sheet\n  if (CODIGOS_AMBIGUOS.has(codigo)) {\n    categoria = resolverAmbiguo(row[\"Categoria\"] || \"\");\n  }\n\n  return {\n    json: {\n      ...row,\n      Categoria: categoria,\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1840,
+        128
+      ],
+      "id": "80b105ff-6bdf-49d8-8564-d1c8a1dcb956",
+      "name": "Categoria1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const allItems = $input.all().map(i => i.json);\n\nconst fmt = n => '$' + Number(n || 0).toLocaleString('es-UY', { minimumFractionDigits: 0 });\n\nconst ORDEN_SUCS = ['suy 1', 'suy 2', 'suy 3', 'suy 4'];\nconst sortSuc = (a, b) => {\n  const ia = ORDEN_SUCS.findIndex(s => a.toLowerCase().includes(s));\n  const ib = ORDEN_SUCS.findIndex(s => b.toLowerCase().includes(s));\n  return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);\n};\n\nconst CATEGORIAS = [\n  { key: 'sum_ORTODONCIA',            label: 'ORTODONCIA' },\n  { key: 'sum_GENERAL',               label: 'GENERAL' },\n  { key: 'sum_PROTESIS',              label: 'PRÓTESIS' },\n  { key: 'sum_ENDODONCIA',            label: 'ENDODONCIA' },\n  { key: 'sum_CIRUGIA',               label: 'CIRUGÍA' },\n  { key: 'sum_ORTOPEDIA',             label: 'ORTOPEDIA' },\n  { key: 'sum_PERIODONCIA',           label: 'PERIODONCIA' },\n  { key: 'sum_RADIOLOGIA',            label: 'RADIOLOGÍA' },\n  { key: 'sum_PRODUCTOS_HIGIENE_BUCAL', label: 'HIGIENE BUCAL' },\n  { key: 'sum_ALINEADORES',           label: 'ALINEADORES' },\n];\n\nconst SUBCATS = [\n  { key: 'pagadoAJUSTE', label: 'Ajustes' },\n  { key: 'pagadoRETIRO', label: 'Retiros' },\n  { key: 'pagadoCOMBO',  label: 'Combos' },\n];\n\n// Agrupar y sumar por sucursal (por si hay múltiples semanas)\nconst porSucursal = {};\nfor (const item of allItems) {\n  const suc = item.Sucursal;\n  if (!porSucursal[suc]) {\n    porSucursal[suc] = {};\n    [...CATEGORIAS, ...SUBCATS].forEach(c => porSucursal[suc][c.key] = 0);\n  }\n  [...CATEGORIAS, ...SUBCATS].forEach(c => {\n    porSucursal[suc][c.key] += item[c.key] || 0;\n  });\n}\n\nconst sucursales = Object.keys(porSucursal).sort(sortSuc);\n\n// Secciones por sucursal\nconst secciones = sucursales.map(suc => {\n  const d = porSucursal[suc];\n\n  const filas = CATEGORIAS\n    .filter(c => d[c.key] > 0)\n    .sort((a, b) => d[b.key] - d[a.key])\n    .map((c, _, arr) => {\n      const isOrtodoncia = c.key === 'sum_ORTODONCIA';\n\n      const subcatRows = isOrtodoncia\n        ? SUBCATS\n            .filter(s => d[s.key] > 0)\n            .map((s, idx) => `\n              <tr>\n                <td style=\"padding:3px 0 3px 18px;color:#999;font-size:12px;\">${idx + 1}. ${s.label}</td>\n                <td style=\"padding:3px 0;text-align:right;color:#999;font-size:12px;\">${fmt(d[s.key])}</td>\n              </tr>`)\n            .join('')\n        : '';\n\n      return `\n        <tr>\n          <td style=\"padding:5px 0 ${isOrtodoncia ? '2px' : '5px'} 0;color:#555;font-size:14px;\">${c.label}</td>\n          <td style=\"padding:5px 0;text-align:right;color:#333;font-size:14px;\">${fmt(d[c.key])}</td>\n        </tr>\n        ${subcatRows}`;\n    }).join('');\n\n  const totalSuc = CATEGORIAS.reduce((acc, c) => acc + d[c.key], 0);\n\n  return `\n    <div style=\"margin-bottom:28px;\">\n      <div style=\"font-size:13px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;\">${suc}</div>\n      <table style=\"width:100%;border-collapse:collapse;\">\n        ${filas}\n        <tr style=\"border-top:1px solid #e0e0e0;\">\n          <td style=\"padding:7px 0;font-weight:700;color:#111;font-size:14px;\">Total</td>\n          <td style=\"padding:7px 0;text-align:right;font-weight:700;color:#111;font-size:15px;\">${fmt(totalSuc)}</td>\n        </tr>\n      </table>\n    </div>`;\n}).join('');\n\nconst totalGeneral = sucursales.reduce((acc, suc) =>\n  acc + CATEGORIAS.reduce((a, c) => a + porSucursal[suc][c.key], 0), 0);\n\nconst MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];\nconst ahora = new Date();\nconst mesLabel = `${MESES[ahora.getMonth()]} ${ahora.getFullYear()}`;\n\n\nconst html = `\n<div style=\"font-family:sans-serif;max-width:520px;color:#333;\">\n  <p style=\"font-size:13px;color:#999;margin:0 0 4px;\">Reporte Mensual por categoría</p>\n  <h2 style=\"font-size:20px;margin:0 0 24px;color:#111;\">${mesLabel}</h2>\n\n  ${secciones}\n\n  <div style=\"background:#f4f4f4;border-radius:6px;padding:12px 16px;\">\n    <table style=\"width:100%;border-collapse:collapse;\">\n      <tr>\n        <td style=\"font-weight:700;color:#111;font-size:14px;\">Total general</td>\n        <td style=\"text-align:right;font-weight:700;font-size:16px;color:#111;\">${fmt(totalGeneral)}</td>\n      </tr>\n    </table>\n  </div>\n</div>`;\n\nreturn [{ json: { html, totalGeneral, mesLabel } }];\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -944,
+        240
+      ],
+      "id": "93619e7a-0fc4-4cf9-9b87-6c3394128fc2",
+      "name": "Preparar HTML "
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "73603ace-bf94-4e11-beef-c16b05b2ed4e",
+              "leftValue": "={{ $json.Mes }}",
+              "rightValue": "={{ (() => { \n\n  const M = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']; \n\n  const n = DateTime.now().setZone('America/Montevideo'); \n\n  return M[n.month - 1].toString() })() \n\n}}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -2288,
+        240
+      ],
+      "id": "0e1315a5-48fc-4dc3-977d-d7573c907c72",
+      "name": "Filtro4"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "Pagado Prestación"
+            },
+            {
+              "aggregation": "sum",
+              "field": "Abono Libre"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "Categoria, Mes, Sucursal",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        -1616,
+        128
+      ],
+      "id": "63457c3a-86e7-41bc-8351-8ffedaec4916",
+      "name": "Pagado Mes"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "Pagado Prestación"
+            },
+            {
+              "aggregation": "sum",
+              "field": "cantidadComputable"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "Mes, Sucursal, Clase",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        -1616,
+        368
+      ],
+      "id": "55bd97fb-1cc3-4e79-a6fc-4105644da304",
+      "name": "Pagado y Cantidad Mes"
+    },
+    {
+      "parameters": {
+        "jsCode": "{\n  // n8n Code node (JS)\n  // Agrupa por Mes + Sucursal y pivotea Categoria -> sum_<CATEGORIA> (sumando valores)\n\n  const rows = $input.all().map(i => i.json);\n\n  const normalizeKey = (s) =>\n    String(s ?? '')\n      .trim()\n      .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '') // quita acentos\n      .replace(/[^\\w]+/g, '_')                         // espacios y símbolos -> _\n      .replace(/^_+|_+$/g, '')                         // recorta _\n      .replace(/_+/g, '_')                             // colapsa __\n      .toUpperCase();\n\n  const toNumber = (v) => {\n    const n = Number(v);\n    return Number.isFinite(n) ? n : 0;\n  };\n\n  const groups = new Map();\n\n  for (const r of rows) {\n    const mes = r.Mes;\n    const sucursal = r.Sucursal;\n    const key = `${mes}||${sucursal}`;\n\n    if (!groups.has(key)) {\n      groups.set(key, {\n        Mes: mes,\n        Sucursal: sucursal,\n        sum_Abono_Libre: toNumber(r.sum_Abono_Libre ?? 0),\n      });\n    } else {\n      // Si viene repetido sum_Abono_Libre, lo acumulamos también\n      groups.get(key).sum_Abono_Libre += toNumber(r.sum_Abono_Libre ?? 0);\n    }\n\n    const g = groups.get(key);\n\n    const catKey = `sum_${normalizeKey(r.Categoria)}`;\n    g[catKey] = (g[catKey] ?? 0) + toNumber(r.sum_Pagado_Prestación ?? 0);\n  }\n\n  return Array.from(groups.values()).map(obj => ({ json: obj }));\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1392,
+        128
+      ],
+      "id": "3fce4354-fa2c-4de0-b9d5-0019dd25695f",
+      "name": "Combinar categorías Mes"
+    },
+    {
+      "parameters": {
+        "jsCode": "{\n  // n8n Code node (JS)\n  // Agrupa por Mes + Sucursal y pivotea Clase -> { pagadoCLASE, cantidadCLASE }\n  // pagadoCLASE = suma(sum_Pagado_Prestación) para esa Clase\n  // cantidadCLASE = suma(sum_cantidadComputable) para esa Clase\n\n  const rows = $input.all().map(i => i.json);\n\n  const normalizeKey = (s) =>\n    String(s ?? '')\n      .trim()\n      .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')\n      .replace(/[^\\w]+/g, '_')\n      .replace(/^_+|_+$/g, '')\n      .replace(/_+/g, '_')\n      .toUpperCase();\n\n  const toNumber = (v) => {\n    const n = Number(v);\n    return Number.isFinite(n) ? n : 0;\n  };\n\n  const groups = new Map();\n\n  for (const r of rows) {\n    const mes = r.Mes;\n    const sucursal = r.Sucursal;\n    const key = `${mes}||${sucursal}`;\n\n    if (!groups.has(key)) {\n      groups.set(key, {\n        Mes: mes,\n        Sucursal: sucursal,\n      });\n    }\n\n    const g = groups.get(key);\n\n    const clase = normalizeKey(r.Clase);\n    const pagadoKey = `pagado${clase}`;\n    const cantidadKey = `cantidad${clase}`;\n\n    g[pagadoKey] = (g[pagadoKey] ?? 0) + toNumber(r.sum_Pagado_Prestación);\n    g[cantidadKey] = (g[cantidadKey] ?? 0) + toNumber(r.sum_cantidadComputable);\n  }\n\n  return Array.from(groups.values()).map(obj => ({ json: obj }));\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1392,
+        368
+      ],
+      "id": "f04076d2-68d3-4be8-8028-bc7be85aa5cf",
+      "name": "Combinar Orto Mes"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "Sucursal",
+        "joinMode": "keepEverything",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -1168,
+        240
+      ],
+      "id": "3a62750f-28ed-462d-9f7c-2f630643d9df",
+      "name": "Mes"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "Semana, Sucursal",
+        "joinMode": "keepEverything",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -1168,
+        -160
+      ],
+      "id": "7b8795a3-9cc3-409f-bdd5-0419835484ec",
+      "name": "Semana"
+    },
+    {
+      "parameters": {
+        "content": "## Correos\nadministracion@odontocenter.com.ar,jbatista@sonrisasargentinas.com,mmoscovich@suy.uy",
+        "width": 400,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -352,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "a851f3aa-c539-4b4d-9385-c1df979e3ab0",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1RnWwaqEnGlyuUNnG4HW8jl5WoxFB7ypEm-Ey67bQkO8",
+          "mode": "list",
+          "cachedResultName": "Ingreso datos | Sonrisas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RnWwaqEnGlyuUNnG4HW8jl5WoxFB7ypEm-Ey67bQkO8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Histórico",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2736,
+        240
+      ],
+      "id": "744be2d1-4705-496c-acbd-d3c216480ecc",
+      "name": "Get row(s) in sheet1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "91c3688d-b6f4-4038-93de-91519e7e63c0",
+              "name": "Abono Libre",
+              "value": "={{ $json['Abono Libre'] }}",
+              "type": "number"
+            },
+            {
+              "id": "cb7dbe17-34c5-46c2-b3c2-735d21cdcbc8",
+              "name": "Categoria",
+              "value": "={{ $json['Nombre categoría'] }}",
+              "type": "string"
+            },
+            {
+              "id": "d1c81239-d1e0-4782-92d0-93a1057846d9",
+              "name": "Mes",
+              "value": "={{ $json['Mes de recepción del pago'] }}",
+              "type": "string"
+            },
+            {
+              "id": "0cff9990-9f14-475c-86a5-078a3cd135ce",
+              "name": "Semana",
+              "value": "={{\n(() => {\n  const tz = 'America/Montevideo';\n\n  // Parse explícito del formato YYYY-MM-DD\n  const dt = DateTime\n    .fromFormat($json['Fecha de recepción del pago'], 'yyyy-MM-dd', { zone: tz })\n    .startOf('day');\n\n  const jan1 = dt.startOf('year');\n\n  // weekday: 1 = lunes ... 7 = domingo\n  const daysToFirstSunday = (7 - jan1.weekday) % 7;\n  const firstSunday = jan1.plus({ days: daysToFirstSunday });\n\n  // Semana 1\n  if (dt <= firstSunday) return 'S1';\n\n  // Semana 2 empieza el lunes siguiente\n  const firstMonday = firstSunday.plus({ days: 1 });\n\n  const diffDays = Math.floor(dt.diff(firstMonday, 'days').days);\n  const week = 2 + Math.floor(diffDays / 7);\n\n  return 'S'+ week;\n})()\n}}",
+              "type": "string"
+            },
+            {
+              "id": "56fbe308-4dca-4b53-93ba-fa6e80639938",
+              "name": "Sucursal",
+              "value": "={{ $json['Nombre Sucursal'] }}",
+              "type": "string"
+            },
+            {
+              "id": "aea2ba7d-41aa-4e70-98b8-f7e93f123418",
+              "name": "Código Prestación",
+              "value": "={{ $json['Código Prestación'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "row_number, ['Pagado Prestación']",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2512,
+        240
+      ],
+      "id": "b5bbd824-9c21-4973-8c96-1e8d9c9460c5",
+      "name": "Filtro de campos1"
+    },
+    {
+      "parameters": {
+        "sendTo": "administracion@odontocenter.com.ar,jbatista@sonrisasargentinas.com,mmoscovich@suy.uy",
+        "subject": "=Facturación por categoría {{ $json.semanaLabel }} — ${{ $json.totalGeneral }}",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false,
+          "ccList": "mcgrottola@suy.uy",
+          "senderName": "Maria Cecilia Gróttola"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -720,
+        16
+      ],
+      "id": "a819de8f-4df2-4935-a721-4db13c201ce2",
+      "name": "Semanal",
+      "webhookId": "43471942-03b8-45fb-80a5-9c1c8dbd2947",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "sendTo": "[EMAIL-AGENCIA]",
+        "subject": "=Facturación por categoría {{ $json.mesLabel }} — ${{ $json.totalGeneral }}",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false,
+          "ccList": "mcgrottola@suy.uy",
+          "senderName": "Maria Cecilia Gróttola"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -720,
+        240
+      ],
+      "id": "4568c607-dca6-4898-af91-8e486f99cda9",
+      "name": "Mensual",
+      "webhookId": "43471942-03b8-45fb-80a5-9c1c8dbd2947",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "months",
+              "triggerAtDayOfMonth": "={{ new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2960,
+        240
+      ],
+      "id": "824ad36f-6bc6-43fe-9bb6-508e8aad9828",
+      "name": "Trigger Reporte Mensual"
+    },
+    {
+      "parameters": {
+        "sendTo": "administracion@odontocenter.com.ar, jbatista@sonrisasargentinas.com, mmoscovich@suy.uy",
+        "subject": "=Facturación {{ $json.fecha }} — ${{ $json.total_general.toLocaleString('es-UY') }}",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false,
+          "ccList": "mcgrottola@suy.uy, [EMAIL-AGENCIA]",
+          "senderName": "Maria Cecilia Gróttola"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -1168,
+        576
+      ],
+      "id": "c1b0117f-55ea-4604-aa61-99138d871d1d",
+      "name": "Diario",
+      "webhookId": "43471942-03b8-45fb-80a5-9c1c8dbd2947",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const TZ = 'America/Montevideo';\nconst fecha = new Date().toLocaleDateString('en-CA', { timeZone: TZ });\nconst q = encodeURIComponent(JSON.stringify({ fecha_recepcion: { eq: fecha } }));\nconst url = `https://api.dentalink.healthatom.com/api/v1/pagos?q=${q}`;\nreturn [{ json: { fecha, url } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2512,
+        672
+      ],
+      "id": "ee8b4bd3-153e-4b08-bbc1-2dcc9489ad8d",
+      "name": "fecha_hoy"
+    },
+    {
+      "parameters": {
+        "sendTo": "[EMAIL-AGENCIA]",
+        "subject": "=Facturación por categoría {{ $json.semanaLabel }} — ${{ $json.totalGeneral }}",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "María Cecilia Gróttola"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -720,
+        -160
+      ],
+      "id": "b60151bc-8a34-478b-9113-bf7582f00d2b",
+      "name": "la agencia (pruebas)",
+      "webhookId": "43471942-03b8-45fb-80a5-9c1c8dbd2947"
+    },
+    {
+      "parameters": {
+        "sendTo": "[EMAIL-AGENCIA]",
+        "subject": "=Facturación por categoría {{ $json.mesLabel }} — ${{ $json.totalGeneral }}",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Maria Cecilia Gróttola"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -720,
+        432
+      ],
+      "id": "1ee7b783-ead0-4b21-87b4-ba9a3743916a",
+      "name": "la agencia (pruebas)1",
+      "webhookId": "43471942-03b8-45fb-80a5-9c1c8dbd2947"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1afd71da-2272-45d3-85cf-05cb9f59153d",
+              "leftValue": "={{ $json['Day of week'] }}",
+              "rightValue": "Sunday",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2736,
+        672
+      ],
+      "id": "643771d2-352f-4240-af0f-97cc24e7a70d",
+      "name": "Filtro Domingos"
+    },
+    {
+      "parameters": {
+        "chatId": "6390727286",
+        "text": "=*⭕ Reconectar Credencial Google*\n\n{{ $workflow.name }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -944,
+        576
+      ],
+      "id": "4ad01095-af3f-4064-93df-085d4dc15969",
+      "name": "Notificación1",
+      "webhookId": "a06bf8ec-7fa5-4572-bd8d-916bc1676c33"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f5f2f9ee-30f7-40ca-b377-00f4abd36541",
+              "leftValue": "={{ $json.body.data }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2064,
+        672
+      ],
+      "id": "ccf6f4df-f577-4bf2-9763-d8c92f88eed4",
+      "name": "hay pagos"
+    },
+    {
+      "parameters": {
+        "jsCode": "const TZ = 'America/Montevideo';\nconst pad = n => String(n).padStart(2, '0');\n\n// Fecha inicio fija\nconst inicio = new Date(Date.UTC(2026, 2, 10)); // 10 mar, medianoche UTC\n\n// Hoy en Montevideo con en-CA → formato YYYY-MM-DD confiable\nconst hoyStrMVD = new Date().toLocaleDateString('en-CA', { timeZone: TZ });\nconst [y, m, d] = hoyStrMVD.split('-').map(Number);\nconst ayer = new Date(Date.UTC(y, m - 1, d - 1)); // ayer, medianoche UTC\n\nconst items = [];\nconst cursor = new Date(inicio);\n\nwhile (cursor <= ayer) {\n  const diaSemana = cursor.getUTCDay(); // 0 = domingo\n\n  if (diaSemana !== 0) {\n    const yyyy = cursor.getUTCFullYear();\n    const mm = pad(cursor.getUTCMonth() + 1);\n    const dd = pad(cursor.getUTCDate());\n    const fecha = `${yyyy}-${mm}-${dd}`;\n\n    const url = \"https://api.dentalink.healthatom.com/api/v1/pagos?q=\"\n      + encodeURIComponent('{\"fecha_recepcion\":{\"eq\":\"' + fecha + '\"}}');\n\n    // Usar mediodía UTC para el display evita cualquier ambigüedad de timezone\n    const fechaDisplayRaw = new Date(fecha + 'T12:00:00Z').toLocaleDateString('es-UY', {\n      timeZone: TZ, weekday: 'long', day: 'numeric', month: 'long'\n    });\n    const fechaDisplay = fechaDisplayRaw.charAt(0).toUpperCase() + fechaDisplayRaw.slice(1);\n\n    items.push({ json: { fecha, url, fechaDisplay } });\n  }\n\n  cursor.setUTCDate(cursor.getUTCDate() + 1);\n}\n\nreturn items;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -352,
+        352
+      ],
+      "id": "7836a9ad-355b-43e2-910d-c6a3b77d3d14",
+      "name": "Generar Fechas Backfill (ajustar fechas)"
+    },
+    {
+      "parameters": {
+        "chatId": "6390727286",
+        "text": "=🚨 ERROR: {{ $workflow.name }}\n\nEjecución diaria no trajo datos.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1840,
+        768
+      ],
+      "id": "50080ba9-68f6-4ff6-9786-c012c4e9d37e",
+      "name": "Error",
+      "webhookId": "a06bf8ec-7fa5-4572-bd8d-916bc1676c33"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "73603ace-bf94-4e11-beef-c16b05b2ed4e",
+              "leftValue": "={{ $json.Semana }}",
+              "rightValue": "={{ (() => { const tz = 'America/Montevideo'; const now = DateTime.now().setZone(tz); const jsDow = now.toJSDate().getDay(); const lastSat = now.minus({ days: (jsDow + 1) % 7 }).startOf('day'); const jan1 = lastSat.startOf('year'); const daysToFirstSunday = (7 - jan1.weekday) % 7; const firstSunday = jan1.plus({ days: daysToFirstSunday }); if (+lastSat <= +firstSunday) return 'S1'; const firstMonday = firstSunday.plus({ days: 1 }); const diffDays = Math.floor(lastSat.diff(firstMonday, 'days').days); return 'S' + (2 + Math.floor(diffDays / 7)); })() }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -2288,
+        -176
+      ],
+      "id": "64b404fa-e65f-47b9-bf57-81d1bdc6766e",
+      "name": "Filtro7"
+    }
+  ],
+  "tags": [],
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "parentFolderId": null
+}

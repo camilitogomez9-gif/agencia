@@ -1,0 +1,192 @@
+/* =====================================================================
+   LA AGENCIA.AI — DESIGN TOKENS
+   Paleta, tipografía, espacios, sombras, radios y gradientes.
+   Importa este archivo en cualquier artefacto del sistema.
+   ===================================================================== */
+
+:root {
+  /* ---------- CORE PALETTE ---------- */
+  --nex-ink:            #000000;  /* Ink — texto primario / fondos oscuros */
+  --nex-snow:           #FFFFFF;  /* Snow — fondos claros / texto sobre ink */
+  --nex-fog:            #949798;  /* Fog  — texto secundario, bordes, estados inactivos */
+
+  /* ---------- PURPLE RAMP (primary hue) ---------- */
+  --nex-purple-900:     #3A1270;  /* ink-side anchor (derived) */
+  --nex-purple-800:     #6024AD;  /* deep purple */
+  --nex-purple-700:     #8943E3;  /* Purple Glitter — PRIMARY BRAND COLOR */
+  --nex-purple-500:     #A46BED;  /* mid */
+  --nex-purple-300:     #C9A4F7;  /* lilac */
+  --nex-purple-100:     #EADBFC;  /* tint (derived) */
+
+  /* ---------- ACCENT ---------- */
+  --nex-pink:           #F239FF;  /* Highlighter Pink — acento, usar con moderación */
+
+  /* ---------- NEUTRAL RAMP (derived, warm-cool neutral) ---------- */
+  --nex-gray-950:       #0A0A0B;
+  --nex-gray-900:       #131316;
+  --nex-gray-800:       #1F1F24;
+  --nex-gray-700:       #2E2E34;
+  --nex-gray-600:       #4A4A52;
+  --nex-gray-500:       #6B6B73;
+  --nex-gray-400:       #949798;  /* = Fog */
+  --nex-gray-300:       #C4C6C7;
+  --nex-gray-200:       #E2E3E4;
+  --nex-gray-100:       #F1F2F2;
+  --nex-gray-50:        #F8F8F9;
+
+  /* ---------- SEMANTIC (light surface) ---------- */
+  --nex-bg:             var(--nex-snow);
+  --nex-bg-subtle:      var(--nex-gray-50);
+  --nex-surface:        var(--nex-snow);
+  --nex-border:         var(--nex-gray-200);
+  --nex-border-strong:  var(--nex-gray-300);
+  --nex-text:           var(--nex-ink);
+  --nex-text-muted:     var(--nex-gray-500);
+  --nex-text-subtle:    var(--nex-fog);
+  --nex-brand:          var(--nex-purple-700);
+  --nex-brand-hover:    var(--nex-purple-800);
+
+  /* ---------- SEMANTIC (dark surface, inverse) ---------- */
+  --nex-bg-inverse:         var(--nex-ink);
+  --nex-bg-inverse-subtle:  var(--nex-gray-950);
+  --nex-surface-inverse:    var(--nex-gray-900);
+  --nex-border-inverse:     var(--nex-gray-800);
+  --nex-text-inverse:       var(--nex-snow);
+  --nex-text-inverse-muted: var(--nex-gray-400);
+
+  /* ---------- SIGNATURE GRADIENTS ----------
+     Flujo de información. Dinamismo. Profundidad.
+     Usar como fondos completos, "hero surfaces", acentos destacados o text-clips.
+     Nombrados por recorrido cromático. */
+  --nex-grad-signal:       linear-gradient(135deg, #8943E3 0%, #F239FF 100%);
+  --nex-grad-signal-soft:  linear-gradient(135deg, #A46BED 0%, #F239FF 100%);
+  --nex-grad-pulse:        linear-gradient(135deg, #000000 0%, #8943E3 60%, #F239FF 100%);
+  --nex-grad-night:        linear-gradient(160deg, #000000 0%, #6024AD 100%);
+  --nex-grad-haze:         linear-gradient(135deg, #F239FF 0%, #949798 100%);
+  --nex-grad-aurora:       linear-gradient(135deg, #6024AD 0%, #8943E3 50%, #F239FF 100%);
+  --nex-grad-frost:        linear-gradient(135deg, #C9A4F7 0%, #F239FF 100%);
+  --nex-grad-void:         radial-gradient(ellipse at 30% 20%, #8943E3 0%, #000000 70%);
+  --nex-grad-mesh:
+    radial-gradient(at 15% 20%, #8943E3 0%, transparent 50%),
+    radial-gradient(at 80% 10%, #F239FF 0%, transparent 45%),
+    radial-gradient(at 70% 90%, #6024AD 0%, transparent 55%),
+    #000000;
+
+  /* ---------- TYPOGRAPHY ---------- */
+  /* Stack completo con fallbacks; Helvetica Neue resuelve nativamente en macOS/iOS
+     y Helvetica en Windows/Linux. Inter queda como último recurso web-safe con
+     métricas cercanas. */
+  --nex-font-sans: "Helvetica Neue", "HelveticaNeue", Helvetica, "Inter", "Arial", sans-serif;
+  --nex-font-mono: "JetBrains Mono", "SF Mono", "Menlo", "Consolas", ui-monospace, monospace;
+
+  /* Escalas tipográficas (valores en px; line-heights como ratio unitless) */
+  --nex-fs-display:  112px; --nex-lh-display:  1.0;   --nex-tr-display:  -0.045em;
+  --nex-fs-h1:        56px; --nex-lh-h1:       1.143; --nex-tr-h1:       -0.04em;
+  --nex-fs-h2:        40px; --nex-lh-h2:       1.20;  --nex-tr-h2:       -0.04em;
+  --nex-fs-h3:        36px; --nex-lh-h3:       1.167; --nex-tr-h3:       -0.04em;
+  --nex-fs-h4:        28px; --nex-lh-h4:       1.286; --nex-tr-h4:       -0.02em;
+  --nex-fs-sub:       24px; --nex-lh-sub:      1.333; --nex-tr-sub:      -0.04em;
+  --nex-fs-body-lg:   20px; --nex-lh-body-lg:  1.5;   --nex-tr-body-lg:  -0.01em;
+  --nex-fs-body:      16px; --nex-lh-body:     1.5;   --nex-tr-body:     -0.005em;
+  --nex-fs-sm:        14px; --nex-lh-sm:       1.429; --nex-tr-sm:       0;
+  --nex-fs-xs:        12px; --nex-lh-xs:       1.333; --nex-tr-xs:       0.02em;
+  --nex-fs-eyebrow:   12px; --nex-lh-eyebrow:  1.0;   --nex-tr-eyebrow:  0.16em;
+
+  /* Font weights available in Helvetica Neue (Medium & SemiBold per guidelines, plus Regular) */
+  --nex-fw-regular:  400;
+  --nex-fw-medium:   500;
+  --nex-fw-semibold: 600;
+
+  /* ---------- SPACING (4px base) ---------- */
+  --nex-s-0:   0;
+  --nex-s-1:   4px;
+  --nex-s-2:   8px;
+  --nex-s-3:   12px;
+  --nex-s-4:   16px;
+  --nex-s-5:   20px;
+  --nex-s-6:   24px;
+  --nex-s-8:   32px;
+  --nex-s-10:  40px;
+  --nex-s-12:  48px;
+  --nex-s-16:  64px;
+  --nex-s-20:  80px;
+  --nex-s-24:  96px;
+  --nex-s-32: 128px;
+  --nex-s-40: 160px;
+
+  /* ---------- RADII ---------- */
+  --nex-r-none: 0;
+  --nex-r-xs:   2px;
+  --nex-r-sm:   4px;
+  --nex-r-md:   8px;
+  --nex-r-lg:   12px;
+  --nex-r-xl:   16px;
+  --nex-r-2xl:  24px;
+  --nex-r-3xl:  32px;
+  --nex-r-pill: 999px;
+
+  /* ---------- SHADOWS (restrained; brand prefiere cleanliness) ---------- */
+  --nex-shadow-xs: 0 1px 2px rgba(0,0,0,.06);
+  --nex-shadow-sm: 0 2px 6px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --nex-shadow-md: 0 8px 24px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.04);
+  --nex-shadow-lg: 0 24px 48px rgba(0,0,0,.12), 0 4px 12px rgba(0,0,0,.05);
+  --nex-shadow-glow: 0 0 0 1px rgba(137,67,227,.12), 0 16px 48px -12px rgba(137,67,227,.45);
+  --nex-shadow-glow-pink: 0 0 0 1px rgba(242,57,255,.14), 0 16px 48px -12px rgba(242,57,255,.45);
+
+  /* ---------- MOTION ---------- */
+  --nex-ease:      cubic-bezier(.2, .7, .2, 1);
+  --nex-ease-out:  cubic-bezier(0, .7, .2, 1);
+  --nex-dur-1:     120ms;
+  --nex-dur-2:     220ms;
+  --nex-dur-3:     360ms;
+
+  /* ---------- LAYOUT ---------- */
+  --nex-maxw-text:   640px;
+  --nex-maxw-prose:  720px;
+  --nex-maxw-content: 1200px;
+  --nex-maxw-wide:   1440px;
+}
+
+/* =====================================================================
+   TYPOGRAPHY UTILITIES
+   ===================================================================== */
+
+html, body { font-family: var(--nex-font-sans); color: var(--nex-text); background: var(--nex-bg); }
+body { font-size: var(--nex-fs-body); line-height: var(--nex-lh-body); letter-spacing: var(--nex-tr-body); font-weight: var(--nex-fw-regular); -webkit-font-smoothing: antialiased; }
+
+.nex-display  { font-size: var(--nex-fs-display); line-height: var(--nex-lh-display); letter-spacing: var(--nex-tr-display); font-weight: var(--nex-fw-regular); }
+.nex-h1       { font-size: var(--nex-fs-h1); line-height: var(--nex-lh-h1); letter-spacing: var(--nex-tr-h1); font-weight: var(--nex-fw-regular); }
+.nex-h2       { font-size: var(--nex-fs-h2); line-height: var(--nex-lh-h2); letter-spacing: var(--nex-tr-h2); font-weight: var(--nex-fw-regular); }
+.nex-h3       { font-size: var(--nex-fs-h3); line-height: var(--nex-lh-h3); letter-spacing: var(--nex-tr-h3); font-weight: var(--nex-fw-medium); }
+.nex-h4       { font-size: var(--nex-fs-h4); line-height: var(--nex-lh-h4); letter-spacing: var(--nex-tr-h4); font-weight: var(--nex-fw-regular); }
+.nex-sub      { font-size: var(--nex-fs-sub); line-height: var(--nex-lh-sub); letter-spacing: var(--nex-tr-sub); font-weight: var(--nex-fw-regular); }
+.nex-body-lg  { font-size: var(--nex-fs-body-lg); line-height: var(--nex-lh-body-lg); letter-spacing: var(--nex-tr-body-lg); }
+.nex-body     { font-size: var(--nex-fs-body); line-height: var(--nex-lh-body); letter-spacing: var(--nex-tr-body); }
+.nex-sm       { font-size: var(--nex-fs-sm); line-height: var(--nex-lh-sm); }
+.nex-xs       { font-size: var(--nex-fs-xs); line-height: var(--nex-lh-xs); letter-spacing: var(--nex-tr-xs); }
+.nex-eyebrow  { font-size: var(--nex-fs-eyebrow); line-height: var(--nex-lh-eyebrow); letter-spacing: var(--nex-tr-eyebrow); text-transform: uppercase; font-weight: var(--nex-fw-medium); }
+
+.nex-regular  { font-weight: var(--nex-fw-regular); }
+.nex-medium   { font-weight: var(--nex-fw-medium); }
+.nex-semibold { font-weight: var(--nex-fw-semibold); }
+
+.nex-mono     { font-family: var(--nex-font-mono); }
+
+/* Gradient text clip */
+.nex-grad-text {
+  background: var(--nex-grad-signal);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+}
+
+/* =====================================================================
+   SURFACE UTILITIES
+   ===================================================================== */
+
+.nex-surface-dark   { background: var(--nex-ink); color: var(--nex-text-inverse); }
+.nex-surface-light  { background: var(--nex-snow); color: var(--nex-text); }
+.nex-surface-subtle { background: var(--nex-gray-50); color: var(--nex-text); }
+
+.nex-hr { height: 1px; background: var(--nex-border); border: 0; }
+.nex-hr-inverse { height: 1px; background: var(--nex-border-inverse); border: 0; }

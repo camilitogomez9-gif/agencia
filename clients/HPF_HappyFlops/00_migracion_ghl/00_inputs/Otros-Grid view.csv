@@ -1,0 +1,187 @@
+﻿productos,id,subcategoria,descripcion,archivo,URL,CURL,bot_id
+,,Accesorios,,,,,
+Colores de tintas 2025,1mVJRAVIE-Le_RkeJTLRP56DGc2Lb-la4,Accesorios,Aqui te muestro los *colores disponibles* para las *TINTAS*,COLORES DE TINTAS 2025 (2).jpeg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/P_zJo1Gq3vWeACbqu26A2w/zlPgwOdTX4iGpIVcWz1ZBQaeG3qv566IZa65Ia7LkJWPpDMsTRERejJHYWgFeuO-eCYl-77fZ6YByWOFYb2Ukct5Xu_xKuBzjTfbwO8oYSgGOkpVFfK4uVQbimCP37lRTJmR7QWnzVq9Gsl-WzpT1g2NTvdOO6iS7t2cnkgRwZU/gSntc-xcc93cDUzWvVbtf9T9bgjYMGzVCLnmLQRMBsY),https://i.ibb.co/rRVGZtqL/6843598253827.jpg,"curl 'https://amojo.kommo.com/v2/cfc7e714-80be-4fc3-b1d9-2a7c3fb252ce/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: befa9c05-c93a-44d9-845e-a8d45f2ee40e' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""141"", ""Not?A_Brand"";v=""8"", ""Chromium"";v=""141""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""19ab3b6b-ad17-4b0e-b2bc-763508b0bec5"",""group_id"":null,""text"":""Aqui te muestro los *colores disponibles* para las *TINTAS*"",""crm_dialog_id"":182513,""crm_contact_id"":23876071,""crm_account_id"":33068423,""crm_entity"":{""id"":21789041,""type"":2},""attachments"":[{""external_file_id"":""50f7c5fd-66fc-4e4d-afd1-37b89199c0b3"",""external_file_vers_id"":""740367e4-64ab-4700-b199-3c269fbaa0a6"",""type"":""picture""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60776
+Correas 15MM,1RSvV4pTwng5DJXvOhdfmOaLgegdgs8G0,Accesorios,CORREAS 15MM,CORREAS 15MM (2).jpg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/IClkqpJjk3y0dSlSSUovJA/AKwAI7jQxzMPijaFWYY-mp1w7oqc9fkD8vFzrLLMcyz8dd7VGxXER-ShxWRntvoI8yXd_w-2g9TKGs_L7YFJ5U3Y8kMu3jK9EI2Q7Za_TzX6t5XpISsxgrHJx9LbRM2a5SwfP7uMu5fMHhlJXR10U1TphFes-Z0JdgqSK5fJq6c/vnIFMT02yGQVhjOMepiVmhTTDMLFbayrNEuH6nuDPR8),https://i.ibb.co/bgGFrHcD/6843598e72a98.jpg,"curl 'https://amojo.kommo.com/v2/780187c1-40c3-4af3-b468-130d9ea7a2f3/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: 2f5df118-0600-42ec-9fbb-0b169e016bac' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""137"", ""Chromium"";v=""137"", ""Not/A)Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""4dbcac2a-c514-4d71-abc0-68f91ff42330"",""group_id"":null,""text"":""CORREAS dDE SUELA GRUESA"",""crm_dialog_id"":148248,""crm_contact_id"":22428677,""crm_account_id"":33068423,""crm_entity"":{""id"":20262327,""type"":2},""attachments"":[{""external_file_id"":""5dc696b8-4e60-41bd-af06-683d085244c4"",""external_file_vers_id"":""1e49dedd-d8e4-4603-8609-46b9cfc06594"",""type"":""picture""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60780
+Bolsa tipo shein de regalo,1skc7xng5ZIpx0yp3_dg0mj4U8hb8Yrj8,Accesorios,"De *REGALO* Cada par viene en *BOLSA TIPO SHEIN* para meter los tacones.
+Si quiere el *COSTALITO PERSONALIZADO $7C/U*",WhatsApp Image 2025-03-04 at 4.27.59 PM (1).jpeg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/FX0KMOtv1LMdbvLKjWhTaQ/6JRQwdwPESTEy94VkYI1CneI8-jB4dgAqA88GL2HvgGk-3a1yAyXwGhY7GrMFk282rflUpAt61rq-FTESUzsbgFdu5rJQizBBfSINCUyJjYfZvSlp9r3Amr230dRjcvcdY7QFL4Pq_lZUuQqg6PLlJnL8H1u0sqnm9lt7hFVbyofaeG7-MFj8ePnc9gTTl4y/qLnaoT5J9WsrdrId3Mu2jjaYBR_Xm0eu5-CUNhNjiyA),https://i.ibb.co/N696v1yV/6843596fd985c.jpg,"curl 'https://amojo.kommo.com/v2/780187c1-40c3-4af3-b468-130d9ea7a2f3/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: 2f5df118-0600-42ec-9fbb-0b169e016bac' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""137"", ""Chromium"";v=""137"", ""Not/A)Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""4dbcac2a-c514-4d71-abc0-68f91ff42330"",""group_id"":null,""text"":""De *REGALO* Cada par viene en *BOLSA TIPO SHEIN* para meter los tacones.\n\n*LA FRASE VIENE TAL CUAL COMO EN LA IMAGEN Y NO SE MODIFICA*\n\n*NO SE PERSONALIZA*\n\nSi quiere el *COSTALITO PERSONALIZADO $7C/U*"",""crm_dialog_id"":148248,""crm_contact_id"":22428677,""crm_account_id"":33068423,""crm_entity"":{""id"":20262327,""type"":2},""attachments"":[{""external_file_id"":""34a2d148-ac84-433a-8075-a082999ad908"",""external_file_vers_id"":""f444afb6-166e-4a10-8c6e-91773d250a5d"",""type"":""picture""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60784
+Correas 9MM,1VG8og0onNtvxOqlzd0mUAXiw80GbK85q,Accesorios,CORREAS 9MM,CORREAS 9MM (2).png (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/nIrFvvKAz0ILccp1w2bqSg/Hf-aArY0WOC6gYdScSO2HfMBJ0yGu9FkNw_6CdDnYLM51inNZ6Eqyi58mJyroz4_C04nSkWsuzepO7Ag8NzkPY-KTQRdFu_Y2NBKAgkAnXP7WLURimMjruU2XaBX2g5yuoXfDUyRf4xabVHntg_Nf_PxNR4bPX2AfE2fZm6QWfg/F4XKp4v6bsytS3SOitY3YvO-9kKmHEfrMbxG-JXgUQo),https://i.ibb.co/s9VcrD8n/684359a1847ef.jpg,"curl 'https://amojo.kommo.com/v2/780187c1-40c3-4af3-b468-130d9ea7a2f3/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: 2f5df118-0600-42ec-9fbb-0b169e016bac' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""137"", ""Chromium"";v=""137"", ""Not/A)Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""4dbcac2a-c514-4d71-abc0-68f91ff42330"",""group_id"":null,""text"":""CORREAS DE SUELA DELGADA"",""crm_dialog_id"":148248,""crm_contact_id"":22428677,""crm_account_id"":33068423,""crm_entity"":{""id"":20262327,""type"":2},""attachments"":[{""external_file_id"":""a7a45a1a-aa0a-421e-b6ee-f25f9ce53007"",""external_file_vers_id"":""9c018b00-ca9c-4de1-9a3b-457b0580ecf9"",""type"":""picture""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60786
+Tapas termos,1wfeba3EmNWB7kJ0Gq3l5EjzCqbVVn1aQ,Accesorios,Aqui te muestro las *tapas* de los *Termos*,TAPAS TERMOS (2).jpg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/weJGoS3Fu8CN0Ur9j-0FHw/Noi4fYI7DbK30e2vN5zxwRAQ6td3FdT_pphEQSclleDTaIr3slktBaB2adtwECNpnxQA-RIfGpusr14xhkaeaMFX4vdPALGJvFL5KZV272_i-boKuiOkj2e6WyT8Irkm6mrzHyN2gI7fN7t1TtKxtrykpzbMnIzCFybpDAK9fCc/JbFF_Z0dPnnWuBvgQOPQQFxKPy9mvUuYO3zO10__-VQ),https://i.ibb.co/5xBmhSdK/684359acdcdba.jpg,"curl 'https://amojo.kommo.com/v2/780187c1-40c3-4af3-b468-130d9ea7a2f3/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: 2f5df118-0600-42ec-9fbb-0b169e016bac' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""137"", ""Chromium"";v=""137"", ""Not/A)Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""4dbcac2a-c514-4d71-abc0-68f91ff42330"",""group_id"":null,""text"":""Colores de *tapas* disponibles, puede ir surtido en los *colores* que gustes"",""crm_dialog_id"":148248,""crm_contact_id"":22428677,""crm_account_id"":33068423,""crm_entity"":{""id"":20262327,""type"":2},""attachments"":[{""external_file_id"":""c85091cc-7656-454d-aeb4-323ca8d55c8e"",""external_file_vers_id"":""f7900469-e7d9-442c-9391-8b1d6a92fae8"",""type"":""picture""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60790
+Cilindros Info,C1,Producto Principal,,,,,61918
+Cilindros Catálogo 1 ,C2,Producto Principal,,,,,61920
+Cilindros Catálogo 2,C3,Producto Principal,,,,,61922
+Cilindros video,C4,Producto Principal,,,,,61880
+Kit Anticruda Info.,K1,Producto Principal,,,,,61916
+Catalogo de anticrudas,K2,Producto Principal,Te comparto el *catalogo de diseños* que tenemos para *ANTICRUDAS*,anticrudasXV.jpg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/DopWWj6lbHRc5wRXMMWtlQ/TZoyyKCOf9pmD8GKLG2FN9s-vjpVzs70lXAG0ZZpupbQ9AqeKdrdqKXYLiUlh0j8-4vo_VqhR1bE5Pz2QNXu0pjV_sXWA3V72ocERhjW3E-jRTtsUncxH6wpbgSMbzJuP96haXa_XwKg8uoerC_KOzJjW3N7wJjLkmJ9pr653Vk/InV1sE881khdtuD1O2fBglcurxIlu_O5uHMrLJGu0Eo),https://i.ibb.co/gb7dXwXg/4f105058be7c.jpg,"curl 'https://amojo.kommo.com/v2/f202389a-a729-4283-90e6-304e989a73bb/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: 59866b69-7ca8-45f3-9e08-6dfed18ea0cb' \
+  -H 'sec-ch-ua: ""Not;A=Brand"";v=""99"", ""Google Chrome"";v=""139"", ""Chromium"";v=""139""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""afebf778-943e-485a-a9d2-a77bd7a6f418"",""group_id"":null,""text"":""Te dejo el catalogo de frases que tenemos para los *ANTICRUDAS*"",""crm_dialog_id"":159636,""crm_contact_id"":23241591,""crm_account_id"":33068423,""crm_entity"":{""id"":21116147,""type"":2},""attachments"":[{""external_file_id"":""3f7cd8d4-7b5c-41bb-bc5b-47cd4c993723"",""external_file_vers_id"":""c1bfe482-99e1-42d1-8196-c0bffd9c0c5e"",""type"":""picture""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60804
+Kit anticruda Video,K3,Producto Principal,,,,,61882
+Pantuflas XV,P1,Producto Principal,"✨ Pantuflas de satín personalizadas
+💖 Un detalle elegante y cómodo para tu evento
+🥿 Suela y esponja más gruesa
+🎨 Personalizadas con nombre y fecha
+
+📏 Unitalla (les queda del 23 al 26)
+💰 Precio promo: $29 el par
+📦 Pedido mínimo de 50 pares
+
+🎁 Opción de bolsa:
+* Bolsa de tela personalizada (+$7 c/u)
+* Bolsa tipo SHEIN no personalizada (tal cual la imagen)",WhatsApp Image 2026-02-19 at 08.25.45.jpeg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/U06-jjIu3LOvC8RLMRdB0w/nZf3n4pHSSFle15doFuSuIYo0WudzNN2EB40veIr5N0fvzhPwucYT21ZfpSRzfaT5ygfrpKpScNcTdC9NhSEZNOKGPlrYeSjgUyuzEkpY6yn4P9WineprW7SkYCJQHARWj1Kx_5OX3kgmMpcnczEp2caQlnLUE6mfPXzYDQ88AxOYeU-2XMaUZBdglyVLzeD/AR_xceqVtnD4SNEcXW3ZRe6b-r2Ho2AaBvmVxabvWKE),,"curl 'https://amojo.kommo.com/v2/29ed740d-12e3-49fa-b8e0-5bc04e7a92d7/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36' \
+  -H 'X-Auth-Token: 34c860dd-1537-4fb1-a45b-588583165914' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""143"", ""Chromium"";v=""143"", ""Not A(Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?1' \
+  -H 'sec-ch-ua-platform: ""Android""' \
+  --data-raw '{""recipient_id"":""b38c8bd6-6ebc-407e-b11d-b85a26bf1461"",""group_id"":null,""text"":""✨ Pantuflas de satín personalizadas\n💖 Un detalle elegante y cómodo para tu evento\n🥿 Suela y esponja más gruesa\n🎨 Personalizadas con nombre y fecha\n\n📏 Unitalla (les queda del 23 al 26)\n💰 Precio promo: $30 el par\n📦 Pedido mínimo de 50 pares\n\n🎁 Opción de bolsa:\n* Bolsa de tela personalizada (+$7 c/u)\n* Bolsa tipo SHEIN no personalizada (tal cual la imagen)"",""crm_dialog_id"":222281,""crm_contact_id"":26966712,""crm_account_id"":33068423,""crm_entity"":{""id"":24953770,""type"":2},""attachments"":[{""external_file_id"":""0cec5978-256d-44bd-8f3f-140448de1679"",""external_file_vers_id"":""bfed4b6f-19f3-4888-8fe5-22eef73bf3d2"",""type"":""picture""}],""set_personalization"":false,""skip_link_shortener"":true,""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60818
+Catalogo pantuflas,P2,Producto Principal,,PANTUFLAS_EVENTOS_OTROS.pdf (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/AwO7-PFv9Tu1XYcLN253Vw/iaBWIAzh__FjRf0vo6OU0u_itUbD91-V12LxLvBL6bCrDvVP_qNfcMx9ZGLXZDvDJd_SWr9sQLfF0iLfEjXIfJEArk2yXTThoWuexHQTn508uFk5al9KHTwxkPPTfhXNPgok3cYCwnVBqglIhoW1hLX0UFtR0OYyWkkXoUFtHZQS7yF3N8G11hoMPmA8oVUs/Le-vMN6tWLdMCbq29-DTYs07N8Yzqy7is2silLdCefQ),,"curl 'https://amojo.kommo.com/v2/f202389a-a729-4283-90e6-304e989a73bb/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: fe663a92-bd23-4225-b005-5a73ad255d51' \
+  -H 'sec-ch-ua: ""Not)A;Brand"";v=""8"", ""Chromium"";v=""138"", ""Google Chrome"";v=""138""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""afebf778-943e-485a-a9d2-a77bd7a6f418"",""group_id"":null,""text"":"""",""crm_dialog_id"":159636,""crm_contact_id"":23241591,""crm_account_id"":33068423,""crm_entity"":{""id"":21116147,""type"":2},""attachments"":[{""external_file_id"":""72c1aa0b-d3e3-4bcf-b7a1-9d9b71009db1"",""external_file_vers_id"":""a783bb09-1595-4543-95e0-bba37b628541"",""type"":""file""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60806
+Pantuflas Video,P3,Producto Principal,,,,,61876
+Comparativa sandalias suelas delgadas y gruesas,S1,Producto Principal,"✨ Sandalias personalizadas
+💕 Un detalle que todos van a agradecer en tu evento
+👡 Súper cómodas y personalizadas
+
+💡 Disponibles en suela delgada ($24) o suela gruesa ($29), según la comodidad que estés buscando.
+📦 Pedido mínimo de 50 pares.",otro san.jpeg (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/6WmCB9aj7Fq8V4O6qQFKXw/ORnivEe9DT8BcxpcyLFqilOhw9FQ6B84XjPRWwOSWhXluVCLvdktTS5-W_UyHRG82Own1xthsCYCxeVLpjQMzFQOxQjAb9MLBVMthOECf-rG8R2b4FNHsJdAOPPa_rsZJe7UQK2R8k4O9324sqIDW7ckJCLR5Zjlwrl6HQ4a3r4/ffQQ7gsixenxljjV_hSFUJAOJFEcaw0O1pQV64mOG1E),,"curl 'https://amojo.kommo.com/v2/29ed740d-12e3-49fa-b8e0-5bc04e7a92d7/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36' \
+  -H 'X-Auth-Token: 34c860dd-1537-4fb1-a45b-588583165914' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""143"", ""Chromium"";v=""143"", ""Not A(Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?1' \
+  -H 'sec-ch-ua-platform: ""Android""' \
+  --data-raw '{""recipient_id"":""b38c8bd6-6ebc-407e-b11d-b85a26bf1461"",""group_id"":null,""text"":""✨ Sandalias personalizadas\n💕 Un detalle que todos van a agradecer en tu evento\n👡 Súper cómodas y personalizadas\n\n💡 Disponibles en suela delgada ($25) o suela gruesa ($30), según la comodidad que estés buscando.\n📦 Pedido mínimo de 50 pares."",""crm_dialog_id"":222281,""crm_contact_id"":26966712,""crm_account_id"":33068423,""crm_entity"":{""id"":24953770,""type"":2},""attachments"":[{""external_file_id"":""4b0e29be-f70e-4cc4-9692-64e02fc5f8ef"",""external_file_vers_id"":""efc55c4c-22ab-4944-ad06-5e17b842fbd4"",""type"":""picture""}],""set_personalization"":false,""skip_link_shortener"":true,""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60808
+Catalogo sandalias,S2,Producto Principal,,CATALOGO_SANDALIAS.pdf (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/_kHABWTF7zzvf8N8AO-EQg/z94pupfuQ09TOeF6xxwUk-rM_IU1HTBm0VEbBSgD0SBdwST9uiaTk7c9FWuKnByGeQr2D9PpVajJJN4OWPeeOk1W0hX0BndQ2vkFbIuYTb3w4dxPDeLb7FeOmYITT6OIjYX5ecVDsEhmUOnem5zpiyAfpVyvPsNKq9p9dKrHntc/3-os9atRfl3dKZHKmy3xs4Wjbj2Iel9k3n1jc6Dp8YI),,"curl 'https://amojo.kommo.com/v2/780187c1-40c3-4af3-b468-130d9ea7a2f3/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: 2f5df118-0600-42ec-9fbb-0b169e016bac' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""137"", ""Chromium"";v=""137"", ""Not/A)Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""4dbcac2a-c514-4d71-abc0-68f91ff42330"",""group_id"":null,""text"":"""",""crm_dialog_id"":148248,""crm_contact_id"":22428677,""crm_account_id"":33068423,""crm_entity"":{""id"":20262327,""type"":2},""attachments"":[{""external_file_id"":""da22bdfc-4a69-42ca-a67b-c3d5b52f56ac"",""external_file_vers_id"":""361ed130-a341-453b-ab66-a122c151c033"",""type"":""file""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60812
+Sandalias Video,S3,Producto Principal,,,,,61874

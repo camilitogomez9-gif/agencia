@@ -1,0 +1,224 @@
+{
+  "updatedAt": "2026-09-22T03:49:46.721Z",
+  "createdAt": "2026-09-22T03:49:46.721Z",
+  "id": "v9XkOfL9dQtY2wyv",
+  "name": "vtr-tool-elevar-ghl (invocable, OFF hasta cutover)",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\"contact_id\": \"abc\", \"user_id\": \"usr123\", \"resumen\": \"...\"}"
+      },
+      "id": "cb496941-48e9-4d2f-acbd-c1ef422b0ca6",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $json.contact_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={{ JSON.stringify({ \"dnd\": true }) }}",
+        "options": {}
+      },
+      "id": "b3ba1ba2-2f4c-4f73-8faa-9dd6dba19472",
+      "name": "1. PUT dnd:true (pausar bot)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YkVmaA4jlRbO1TQD",
+          "name": "GHL VTR (PIT)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $('When Executed by Another Workflow').first().json.contact_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={{ JSON.stringify({ \"assignedTo\": $('When Executed by Another Workflow').first().json.user_id }) }}",
+        "options": {}
+      },
+      "id": "c9038348-5176-4f74-8ce1-9ca417e93058",
+      "name": "2. PUT assignedTo (asignar userId)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YkVmaA4jlRbO1TQD",
+          "name": "GHL VTR (PIT)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "-4925599962",
+        "text": "=🚨 Lead elevado — VTR\n\nContact ID: `{{ $('When Executed by Another Workflow').first().json.contact_id }}`\nAsignado a userId: `{{ $('When Executed by Another Workflow').first().json.user_id }}`\n\nResumen:\n{{ $('When Executed by Another Workflow').first().json.resumen }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "e6fe6940-10ac-4cc6-92fe-9be14d61101b",
+      "name": "3. Telegram notify",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        660,
+        0
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "V5k84z3AjQc9Y5yg",
+          "name": "botla agencia"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "1. PUT dnd:true (pausar bot)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1. PUT dnd:true (pausar bot)": {
+      "main": [
+        [
+          {
+            "node": "2. PUT assignedTo (asignar userId)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2. PUT assignedTo (asignar userId)": {
+      "main": [
+        [
+          {
+            "node": "3. Telegram notify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "50488bae-1fc5-46bc-b706-7a846dea4ed0",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-09-22T03:49:46.765Z",
+      "createdAt": "2026-09-22T03:49:46.765Z",
+      "role": "workflow:owner",
+      "workflowId": "v9XkOfL9dQtY2wyv",
+      "projectId": "OZub3m3DGqbZefcZ",
+      "project": {
+        "updatedAt": "2025-02-10T13:18:00.403Z",
+        "createdAt": "2025-02-10T13:17:23.832Z",
+        "id": "OZub3m3DGqbZefcZ",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-02-10T13:17:23.833Z",
+            "createdAt": "2025-02-10T13:17:23.833Z",
+            "userId": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+            "projectId": "OZub3m3DGqbZefcZ",
+            "user": {
+              "updatedAt": "2026-09-22T15:36:40.000Z",
+              "createdAt": "2025-02-10T13:17:22.713Z",
+              "id": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "lastName": "AI",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-02-10T13:18:23.044Z",
+                "personalization_survey_n8n_version": "1.77.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "KFHNPOd9iRMDKpBc",
+                "userActivatedAt": 1739194255698,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1789467400717
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-21",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

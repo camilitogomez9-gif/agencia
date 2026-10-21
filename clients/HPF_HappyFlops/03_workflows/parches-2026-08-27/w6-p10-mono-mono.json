@@ -1,0 +1,76 @@
+{
+  "wf": "W6",
+  "descripcion": "P10 · Mono->Moño en el display del Recolector (W6). W4 ya soporta ambos.",
+  "ediciones": [
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "- Pantuflas Mono Satín: $30",
+      "reemplazo": "- Pantuflas Moño Satín: $30",
+      "motivo": "P10 reunión Oscar 2026-08-27: el producto se llama 'Moño' de cara al cliente, no 'Mono'. Cambio de display en el nombre que el bot MUESTRA (tablas de precio, listados, cotizaciones). W4 CALCULADORA ya canonicaliza 'mono' y 'moño' al mismo target ('Pantufla Moño Satin/Peluche') vía PRODUCT_ALIASES, así que el matching de la tool NO se rompe. No se tocan las líneas de reconocimiento del input del cliente ni la lógica interna (árbol normal/mono, tabla de mapeo)."
+    },
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "- Pantuflas Mono Peluche: $35",
+      "reemplazo": "- Pantuflas Moño Peluche: $35",
+      "motivo": "P10 reunión Oscar 2026-08-27: el producto se llama 'Moño' de cara al cliente, no 'Mono'. Cambio de display en el nombre que el bot MUESTRA (tablas de precio, listados, cotizaciones). W4 CALCULADORA ya canonicaliza 'mono' y 'moño' al mismo target ('Pantufla Moño Satin/Peluche') vía PRODUCT_ALIASES, así que el matching de la tool NO se rompe. No se tocan las líneas de reconocimiento del input del cliente ni la lógica interna (árbol normal/mono, tabla de mapeo)."
+    },
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "**Pantuflas Mono Satín** — $30",
+      "reemplazo": "**Pantuflas Moño Satín** — $30",
+      "motivo": "P10 reunión Oscar 2026-08-27: el producto se llama 'Moño' de cara al cliente, no 'Mono'. Cambio de display en el nombre que el bot MUESTRA (tablas de precio, listados, cotizaciones). W4 CALCULADORA ya canonicaliza 'mono' y 'moño' al mismo target ('Pantufla Moño Satin/Peluche') vía PRODUCT_ALIASES, así que el matching de la tool NO se rompe. No se tocan las líneas de reconocimiento del input del cliente ni la lógica interna (árbol normal/mono, tabla de mapeo)."
+    },
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "**Pantuflas Mono Peluche** — $35",
+      "reemplazo": "**Pantuflas Moño Peluche** — $35",
+      "motivo": "P10 reunión Oscar 2026-08-27: el producto se llama 'Moño' de cara al cliente, no 'Mono'. Cambio de display en el nombre que el bot MUESTRA (tablas de precio, listados, cotizaciones). W4 CALCULADORA ya canonicaliza 'mono' y 'moño' al mismo target ('Pantufla Moño Satin/Peluche') vía PRODUCT_ALIASES, así que el matching de la tool NO se rompe. No se tocan las líneas de reconocimiento del input del cliente ni la lógica interna (árbol normal/mono, tabla de mapeo)."
+    },
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "  6. Pantuflas Mono",
+      "reemplazo": "  6. Pantuflas Moño",
+      "motivo": "P10 reunión Oscar 2026-08-27: el producto se llama 'Moño' de cara al cliente, no 'Mono'. Cambio de display en el nombre que el bot MUESTRA (tablas de precio, listados, cotizaciones). W4 CALCULADORA ya canonicaliza 'mono' y 'moño' al mismo target ('Pantufla Moño Satin/Peluche') vía PRODUCT_ALIASES, así que el matching de la tool NO se rompe. No se tocan las líneas de reconocimiento del input del cliente ni la lógica interna (árbol normal/mono, tabla de mapeo)."
+    },
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "  5. Pantuflas Mono",
+      "reemplazo": "  5. Pantuflas Moño",
+      "motivo": "P10 reunión Oscar 2026-08-27: el producto se llama 'Moño' de cara al cliente, no 'Mono'. Cambio de display en el nombre que el bot MUESTRA (tablas de precio, listados, cotizaciones). W4 CALCULADORA ya canonicaliza 'mono' y 'moño' al mismo target ('Pantufla Moño Satin/Peluche') vía PRODUCT_ALIASES, así que el matching de la tool NO se rompe. No se tocan las líneas de reconocimiento del input del cliente ni la lógica interna (árbol normal/mono, tabla de mapeo)."
+    },
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "50 Pantuflas Mono Satín x $30 = $1,500",
+      "reemplazo": "50 Pantuflas Moño Satín x $30 = $1,500",
+      "motivo": "P10 reunión Oscar 2026-08-27: el producto se llama 'Moño' de cara al cliente, no 'Mono'. Cambio de display en el nombre que el bot MUESTRA (tablas de precio, listados, cotizaciones). W4 CALCULADORA ya canonicaliza 'mono' y 'moño' al mismo target ('Pantufla Moño Satin/Peluche') vía PRODUCT_ALIASES, así que el matching de la tool NO se rompe. No se tocan las líneas de reconocimiento del input del cliente ni la lógica interna (árbol normal/mono, tabla de mapeo)."
+    },
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "50 Pantuflas Mono Peluche x $35 = $1,750  \nEnvío: $300",
+      "reemplazo": "50 Pantuflas Moño Peluche x $35 = $1,750  \nEnvío: $300",
+      "motivo": "P10 reunión Oscar 2026-08-27: el producto se llama 'Moño' de cara al cliente, no 'Mono'. Cambio de display en el nombre que el bot MUESTRA (tablas de precio, listados, cotizaciones). W4 CALCULADORA ya canonicaliza 'mono' y 'moño' al mismo target ('Pantufla Moño Satin/Peluche') vía PRODUCT_ALIASES, así que el matching de la tool NO se rompe. No se tocan las líneas de reconocimiento del input del cliente ni la lógica interna (árbol normal/mono, tabla de mapeo)."
+    },
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "50 Pantuflas Mono Peluche x $35 = $1,750  \n50 Cilindros",
+      "reemplazo": "50 Pantuflas Moño Peluche x $35 = $1,750  \n50 Cilindros",
+      "motivo": "P10 reunión Oscar 2026-08-27: el producto se llama 'Moño' de cara al cliente, no 'Mono'. Cambio de display en el nombre que el bot MUESTRA (tablas de precio, listados, cotizaciones). W4 CALCULADORA ya canonicaliza 'mono' y 'moño' al mismo target ('Pantufla Moño Satin/Peluche') vía PRODUCT_ALIASES, así que el matching de la tool NO se rompe. No se tocan las líneas de reconocimiento del input del cliente ni la lógica interna (árbol normal/mono, tabla de mapeo)."
+    },
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "¿Las prefiere pantuflas normales o pantuflas mono (con moñito)? 😊",
+      "reemplazo": "¿Las prefiere pantuflas normales o pantuflas moño (con moñito)? 😊",
+      "motivo": "P10 reunión Oscar 2026-08-27: el producto se llama 'Moño' de cara al cliente, no 'Mono'. Cambio de display en el nombre que el bot MUESTRA (tablas de precio, listados, cotizaciones). W4 CALCULADORA ya canonicaliza 'mono' y 'moño' al mismo target ('Pantufla Moño Satin/Peluche') vía PRODUCT_ALIASES, así que el matching de la tool NO se rompe. No se tocan las líneas de reconocimiento del input del cliente ni la lógica interna (árbol normal/mono, tabla de mapeo)."
+    }
+  ]
+}

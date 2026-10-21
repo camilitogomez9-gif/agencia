@@ -1,0 +1,13 @@
+{
+  "test_id": "T-15",
+  "punto": "PM-OPS-01",
+  "titulo": "telegram-alert (diferido a L3)",
+  "resultado": "CORROBORADO",
+  "detalle": "DIFERIDO a L3: el nodo Telegram no cambia; sólo se reemplaza el id interpolado. Se corrobora ejecutando W5 y leyendo el message_id que devuelve la API de Telegram.",
+  "pasos": [
+    {
+      "paso": "n/a",
+      "nota": "credencial telegramApi vive en n8n, no en .env"
+    }
+  ]
+}

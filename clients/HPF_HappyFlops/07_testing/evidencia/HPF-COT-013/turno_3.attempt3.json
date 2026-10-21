@@ -1,0 +1,92 @@
+{
+  "probe_id": "sess_hpf_cot_013_1785957173#af7f600bfba0",
+  "session_id": "sess_hpf_cot_013_1785957173",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "50 piezas suela delgada, cp 61800",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 73.5,
+  "version_antes": "cff6a505-9b93-437e-8535-df2be25e399f",
+  "version_despues": "cff6a505-9b93-437e-8535-df2be25e399f",
+  "capturado_utc": "2026-08-05T19:16:40.221041+00:00",
+  "execution_id": "989898",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T19:15:22.604Z",
+  "stoppedAt": "2026-08-05T19:16:35.008Z",
+  "n_esperadas": 3,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Qué buena elección! Aquí tienes la cotización:\n⏳(7 DIAS DE PROMO)⏳\n50 Sandalias Delgadas x $25 = $1,250\nEnvío: $300\nTotal: $1,550\nAnticipo (50%): $775",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "*¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀\n \n1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO*\n2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños.\n3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir.\n4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️.\n5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️.\n6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸.\n7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días).",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 2,
+      "message_part": "Mira, ya que pides sandalias, le gustaría agregar cilindros para su evento? Son un hit en XV! ✨\nLe gustaría avanzar con el pedido? Así le paso los números de cuenta para que pague el anticipo",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 236,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2089,
+      "chat_id": 6390727286,
+      "texto_entregado": "Qué buena elección! Aquí tienes la cotización:\n⏳(7 DIAS DE PROMO)⏳\n50 Sandalias Delgadas x $25 = $1,250\nEnvío: $300\nTotal: $1,550\nAnticipo (50%): $775",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 189,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2090,
+      "chat_id": 6390727286,
+      "texto_entregado": "¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!🚀\n \n1. COTIZACION de los PRODUCTOS que requiere para su PEDIDO\n2. Se requiere del 50% de ANTICIPO para desarrollar los diseños.\n3. Elige tu DISEÑO favorito 🎨 y proporciona los DATOS que deseas incluir.\n4. Mandamos la MUESTRA DIGITAL para tu aprobación o cambios ✏️.\n5. Una vez AUTORIZADO, COMENZAMOS LA PRODUCCION, son 15 DIAS EN PRODUCCION. 🛠️.\n6. Al terminar, te enviamos una FOTO DEL PRODUCTO para que confirmes que todo está perfecto 📸.\n7. Hace el PAGO FINAL y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días).",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 2,
+      "ms": 233,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2091,
+      "chat_id": 6390727286,
+      "texto_entregado": "Mira, ya que pides sandalias, le gustaría agregar cilindros para su evento? Son un hit en XV! ✨\nLe gustaría avanzar con el pedido? Así le paso los números de cuenta para que pague el anticipo",
+      "error": null
+    }
+  ],
+  "n_entregadas": 3,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Qué buena elección! Aquí tienes la cotización:\n⏳(7 DIAS DE PROMO)⏳\n50 Sandalias Delgadas x $25 = $1,250\nEnvío: $300\nTotal: $1,550\nAnticipo (50%): $775\n\n*¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀\n\n1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO*\n2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños.\n3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir.\n4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️.\n5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️.\n6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸.\n7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días).\n\nMira, ya que pides sandalias, le gustaría agregar cilindros para su evento? Son un hit en XV! ✨\n\nLe gustaría avanzar con el pedido? Así le paso los números de cuenta para que pague el anticipo.",
+    "tools": [
+      "CALCULAR_ENVIO",
+      "COTIZADOR"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-COT-013"
+}

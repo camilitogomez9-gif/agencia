@@ -1,0 +1,38 @@
+{
+  "body": {
+    "triggerEvent": "BOOKING_CREATED",
+    "createdAt": "2026-06-10T14:00:00.000Z",
+    "payload": {
+      "uid": "test-create-001-abc",
+      "bookingId": 999001,
+      "iCalUID": "test-create-001-abc@cal.com",
+      "type": "instalacion-aire",
+      "title": "Instalación Aire — Juan Pérez con Collazo",
+      "description": "Quiero instalar un split de 12.000 BTU en el dormitorio. Edificio sin balcón.",
+      "startTime": "2026-06-12T13:00:00.000Z",
+      "endTime":   "2026-06-12T14:00:00.000Z",
+      "organizer": {
+        "email": "matias@collazo.uy",
+        "timeZone": "America/Montevideo"
+      },
+      "attendees": [
+        {
+          "email": "juanp@gmail.com",
+          "name": "Juan Pérez",
+          "timeZone": "America/Montevideo"
+        }
+      ],
+      "location": "Av. Italia 1234, Apto 502, Montevideo",
+      "eventTypeId": 200001,
+      "eventType": {
+        "slug": "instalacion-aire",
+        "title": "Instalación Aire"
+      },
+      "responses": {
+        "phone": "+598 99 123 456",
+        "notes": ""
+      },
+      "metadata": {}
+    }
+  }
+}

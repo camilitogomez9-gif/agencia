@@ -1,0 +1,1764 @@
+{
+  "name": "Sonrisas | Correos Reportes Facturación",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 21
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1168,
+        -784
+      ],
+      "id": "590a5ebe-a8d2-4c40-b89f-a94a7ba89195",
+      "name": "Trigger Reporte Diario"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1RnWwaqEnGlyuUNnG4HW8jl5WoxFB7ypEm-Ey67bQkO8",
+          "mode": "list",
+          "cachedResultName": "Ingreso datos | Sonrisas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RnWwaqEnGlyuUNnG4HW8jl5WoxFB7ypEm-Ey67bQkO8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Facturación",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RnWwaqEnGlyuUNnG4HW8jl5WoxFB7ypEm-Ey67bQkO8/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -944,
+        -1520
+      ],
+      "id": "f2211460-8b1c-463d-81d9-5c944e23a1b7",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "91c3688d-b6f4-4038-93de-91519e7e63c0",
+              "name": "Abono Libre",
+              "value": "={{ $json['Abono Libre'] }}",
+              "type": "number"
+            },
+            {
+              "id": "cb7dbe17-34c5-46c2-b3c2-735d21cdcbc8",
+              "name": "Categoria",
+              "value": "={{ $json['Nombre categoría'] }}",
+              "type": "string"
+            },
+            {
+              "id": "d1c81239-d1e0-4782-92d0-93a1057846d9",
+              "name": "Mes",
+              "value": "={{ $json['Mes de recepción del pago'] }}",
+              "type": "string"
+            },
+            {
+              "id": "0cff9990-9f14-475c-86a5-078a3cd135ce",
+              "name": "Semana",
+              "value": "={{\n(() => {\n  const tz = 'America/Montevideo';\n\n  // Parse explícito del formato YYYY-MM-DD\n  const dt = DateTime\n    .fromFormat($json['Fecha de recepción del pago'], 'yyyy-MM-dd', { zone: tz })\n    .startOf('day');\n\n  const jan1 = dt.startOf('year');\n\n  // weekday: 1 = lunes ... 7 = domingo\n  const daysToFirstSunday = (7 - jan1.weekday) % 7;\n  const firstSunday = jan1.plus({ days: daysToFirstSunday });\n\n  // Semana 1\n  if (dt <= firstSunday) return 'S1';\n\n  // Semana 2 empieza el lunes siguiente\n  const firstMonday = firstSunday.plus({ days: 1 });\n\n  const diffDays = Math.floor(dt.diff(firstMonday, 'days').days);\n  const week = 2 + Math.floor(diffDays / 7);\n\n  return 'S'+ week;\n})()\n}}",
+              "type": "string"
+            },
+            {
+              "id": "56fbe308-4dca-4b53-93ba-fa6e80639938",
+              "name": "Sucursal",
+              "value": "={{ $json['Nombre Sucursal'] }}",
+              "type": "string"
+            },
+            {
+              "id": "aea2ba7d-41aa-4e70-98b8-f7e93f123418",
+              "name": "Código Prestación",
+              "value": "={{ $json['Código Prestación'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "row_number, ['Pagado Prestación']",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -720,
+        -1520
+      ],
+      "id": "babbe8df-0fe8-4119-8138-97096e2e5c8a",
+      "name": "Filtro de campos"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Define aquí el arreglo de códigos válidos para contabilizar\nconst codigosValidos = [\n\n  \"00001\",\n\n  \"A0000\",\"A0001\",\"A0002\",\"A0003\",\"A0004\",\"A0005\",\"A0007\",\n\n  \"C0000\",\"C0001\",\"C0002\",\"C0003\",\"C0004\",\"C0005\",\"C0006\",\"C0007\",\"C0008\",\"C0009\",\"C0010\",\"C0011\",\"C0012\",\"C0013\",\"C0014\",\"C0050\",\"C0051\",\"C0052\",\"C0053\",\"C0054\",\"C0055\",\"C0056\",\"C0057\",\n\n  \"E0001\",\"E0002\",\"E0003\",\"E0004\",\"E0005\",\"E0006\",\"E0007\",\"E0008\",\"E0050\",\"E0051\",\"E0052\",\n\n  \"HB000\",\"HB001\",\"HB002\",\"HB003\",\"HB004\",\"HB005\",\"HB006\",\"HB007\",\n\n  \"OA001\",\"OA002\",\"OA003\",\"OA004\",\"OA005\",\"OA006\",\"OA007\",\"OA008\",\"OA009\",\"OA010\",\"OA011\",\"OA012\",\"OA013\",\"OA014\",\"OA015\",\"OA016\",\"OA017\",\"OA018\",\"OA019\",\"OA020\",\"OA021\",\"OA022\",\"OA023\",\"OA024\",\"OA025\",\"OA026\",\"OA027\",\"OA028\",\"OA029\",\"OA030\",\"OA031\",\"OA032\",\"OA033\",\"OA034\",\"OA035\",\"OA036\",\"OA037\",\"OA038\",\"OA039\",\"OA040\",\"OA041\",\"OA042\",\"OA043\",\"OA044\",\"OA045\",\"OA046\",\"OA047\",\"OA100\",\"OA101\",\"OA102\",\"OA103\",\"OA104\",\"OA105\",\"OA106\",\"OA107\",\"OA108\",\"OA109\",\"OA110\",\"OA111\",\"OA200\",\"OA201\",\"OA202\",\"OA203\",\"OA204\",\"OA205\",\"OA206\",\"OA207\",\"OA208\",\"OA300\",\"OA301\",\"OA302\",\"OA600\",\"OA601\",\"OA602\",\"OA603\",\"OA604\",\"OA605\",\"OA606\",\"OA607\",\"OA608\",\"OA609\",\"OA700\",\"OA701\",\"OA702\",\"OA703\",\"OA704\",\"OA800\",\"OA801\",\n\n  \"OG001\",\"OG002\",\"OG003\",\"OG004\",\"OG005\",\"OG006\",\"OG007\",\"OG020\",\"OG021\",\"OG022\",\"OG023\",\"OG024\",\"OG025\",\"OG026\",\"OG027\",\"OG028\",\"OG040\",\"OG041\",\"OG042\",\"OG043\",\"OG044\",\"OG045\",\"OG046\",\"OG047\",\"OG048\",\"OG049\",\"OG050\",\"OG051\",\"OG060\",\"OG061\",\"OG062\",\"OG063\",\"OG064\",\"OG065\",\"OG066\",\"OG067\",\"OG068\",\"OG070\",\"OG071\",\"OG072\",\"OG073\",\"OG074\",\"OG075\",\"OG080\",\"OG081\",\"OG082\",\n\n  \"OP000\",\"OP001\",\"OP100\",\"OP101\",\"OP102\",\"OP103\",\"OP104\",\"OP105\",\"OP106\",\"OP107\",\"OP108\",\"OP109\",\"OP110\",\"OP111\",\"OP112\",\"OP113\",\"OP114\",\"OP115\",\"OP116\",\"OP117\",\"OP118\",\"OP119\",\"OP200\",\"OP201\",\"OP202\",\"OP203\",\"OP204\",\"OP205\",\n\n  \"OR001\",\"OR002\",\"OR003\",\"OR004\",\"OR005\",\"OR006\",\"OR007\",\"OR008\",\"OR009\",\"OR010\",\"OR011\",\"OR012\",\"OR013\",\"OR014\",\"OR016\",\"OR017\",\"OR018\",\"OR019\",\"OR020\",\"OR021\",\"OR100\",\"OR101\",\"OR102\",\"OR103\",\"OR104\",\"OR105\",\"OR106\",\"OR107\",\"OR108\",\"OR109\",\"OR110\",\"OR111\",\"OR112\",\"OR113\",\"OR114\",\"OR115\",\"OR116\",\"OR117\",\"OR118\",\"OR119\",\"OR120\",\"OR121\",\"OR122\",\"OR123\",\"OR124\",\"OR125\",\"OR200\",\"OR201\",\"OR202\",\n\n  \"P0000\",\"P0001\",\"P0002\",\"P0003\",\"P0004\",\"P0005\",\"P0006\",\"P0007\",\"P0008\",\"P0009\",\"P0010\",\"P0011\",\"P1000\",\"P1001\",\"P1002\",\"P1003\",\"P1004\",\"P1005\",\"P2000\",\"P2001\",\"P2002\",\"P2003\",\"P2004\",\"P2005\",\"P2006\",\"P2007\",\"P2008\",\"P2009\",\"P3000\",\"P3001\",\"P3002\",\"P3003\",\"P3004\",\"P3005\",\"P3006\",\"P3007\",\"P3008\",\n\n  \"RD000\",\"RD001\",\"RD002\",\"RD003\",\"RD004\",\"RD005\",\"RD006\",\"RD007\"\n];\n\n// Filtra los items de entrada\nreturn items.filter(item => {\n  const codigo = String(item.json[\"Código Prestación\"] || \"\").trim().toUpperCase();\n  return codigosValidos.includes(codigo);\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -272,
+        -1424
+      ],
+      "id": "655a0f5f-de20-497f-80a1-abbbb281f0b1",
+      "name": "Filtro"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Clasifica según la clase\n\nconst clases = {\n  AJUSTE:[\"OA001\",\"OA002\",\"OA003\",\"OA004\",\"OA005\",\"OA006\",\"OA007\",\"OA008\",\"OA009\",\"OA010\",\"OA011\",\"OA012\",\"OA013\",\"OA014\",\"OA015\",\"OA016\",\"OA017\",\"OA018\",\"OA019\",\"OA020\",\"OA021\",\"OA022\",\"OA023\",\"OA024\",\"OA025\",\"OA026\",\"OA027\",\"OA028\",\"OA029\",\"OA030\",\"OA031\",\"OA032\",\"OA033\",\"OA034\",\"OA035\",\"OA036\",\"OA037\",\"OA038\",\"OA039\",\"OA040\",\"OA041\",\"OA042\",\"OA043\",\"OA044\",\"OA045\",\"OA046\",\"OA047\",\"OA100\",\"OA101\",\"OA102\",\"OA103\",\"OA104\",\"OA105\",\"OA106\",\"OA107\",\"OA108\",\"OA109\",\"OA110\",\"OA111\",\"OA200\",\"OA201\",\"OA202\",\"OA203\",\"OA204\",\"OA205\",\"OA206\",\"OA207\",\"OA208\",\"OA300\",\"OA301\",\"OA302\"],\n  COMBO:[\"OR100\",\"OR101\",\"OR102\",\"OR103\",\"OR104\",\"OR105\",\"OR106\",\"OR107\",\"OR108\",\"OR109\",\"OR110\",\"OR111\",\"OR112\",\"OR113\",\"OR114\",\"OR115\",\"OR116\",\"OR117\",\"OR118\",\"OR119\",\"OR120\",\"OR121\",\"OR122\",\"OR123\",\"OR124\",\"OR125\",\"OR200\",\"OR201\",\"OR202\"],\n  RETIRO:[\"OR001\",\"OR002\",\"OR003\",\"OR004\",\"OR005\",\"OR006\",\"OR007\"],\n};\n\nreturn items.map(item => {\n  const row = item.json || {};\n  const codigo = String(row[\"Código Prestación\"] || \"\").trim().toUpperCase();\n  let clase = \"OTRO\";\n\n  for (const [nombreClase, codigos] of Object.entries(clases)) {\n    if (codigos.includes(codigo)) {\n      clase = nombreClase;\n      break;\n    }\n  }\n\n  return {\n    json: {\n      ...row,\n      Clase: clase,\n    },\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        -1424
+      ],
+      "id": "a333bffd-be22-490e-aa91-2da68f1ca1e6",
+      "name": "Clase"
+    },
+    {
+      "parameters": {
+        "jsCode": "function normalize(str) {\n  return String(str || \"\")\n    .normalize(\"NFD\").replace(/[\\u0300-\\u036f]/g, \"\") // quita acentos\n    .toUpperCase().trim();\n}\n\nreturn items.map(item => {\n  const row = item.json || {};\n  const v = normalize(row[\"Categoria\"]);\n  let categoria = \"OTRO\";\n\n  if (v.includes(\"ENDODONCIA\")) {\n    categoria = \"ENDODONCIA\";\n  } else if (v.includes(\"CIRUGIA\")) {\n    categoria = \"CIRUGIA\";\n  } else if (v === \"ODONTOLOGIA GENERAL\") {\n    categoria = \"GENERAL\";\n  } else if (v.includes(\"PROTESIS\")) {\n    categoria = \"PROTESIS\";\n  } else if (v.includes(\"ORTOPEDIA\")) {\n    categoria = \"ORTOPEDIA\";\n  } else if (v.includes(\"ORTODONCIA\")) {\n    categoria = \"ORTODONCIA\";\n  } else if (v.includes(\"PERIODONCIA\")) {\n    categoria = \"PERIODONCIA\";\n  } else if (v === \"PRODUCTOS HIGIENE BUCAL\") {\n    categoria = \"PRODUCTOS HIGIENE BUCAL\";\n  } else if (v.includes(\"RADIOLOGIA\")) {\n    categoria = \"RADIOLOGIA\";\n  } else if (v.includes(\"ALINEADORES\")) {\n    categoria = \"ALINEADORES\";\n  } //else if (v == \"\" && $input.first().json['Abono Libre'] > 0) {\n    //categoria = \"ABONO LIBRE\";\n  //}\n  \n  return {\n    json: {\n      ...row,\n      Categoria: categoria,\n    },\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        -1616
+      ],
+      "id": "1579ebeb-2388-40a7-97fc-8c9aee201d0c",
+      "name": "Categoria"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "Pagado Prestación"
+            },
+            {
+              "aggregation": "sum",
+              "field": "Abono Libre"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "Categoria, Sucursal, Semana",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        176,
+        -1616
+      ],
+      "id": "ee5a362f-2123-4c96-a626-abe56de581ec",
+      "name": "Pagado Semana"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "field": "row_number"
+            },
+            {
+              "aggregation": "sum",
+              "field": "Pagado Prestación"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "Clase, Semana, Sucursal",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        176,
+        -1424
+      ],
+      "id": "d5004dc8-675e-4900-a829-1500b6d8fe57",
+      "name": "Pagado y Cantidad Semana"
+    },
+    {
+      "parameters": {
+        "jsCode": "{\n  // n8n Code node (JS)\n  // Agrupa por Semana + Sucursal y pivotea Categoria -> sum_<CATEGORIA> (sumando valores)\n\n  const rows = $input.all().map(i => i.json);\n\n  const normalizeKey = (s) =>\n    String(s ?? '')\n      .trim()\n      .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '') // quita acentos\n      .replace(/[^\\w]+/g, '_')                         // espacios y símbolos -> _\n      .replace(/^_+|_+$/g, '')                         // recorta _\n      .replace(/_+/g, '_')                             // colapsa __\n      .toUpperCase();\n\n  const toNumber = (v) => {\n    const n = Number(v);\n    return Number.isFinite(n) ? n : 0;\n  };\n\n  const groups = new Map();\n\n  for (const r of rows) {\n    const semana = r.Semana;\n    const sucursal = r.Sucursal;\n    const key = `${semana}||${sucursal}`;\n\n    if (!groups.has(key)) {\n      groups.set(key, {\n        Semana: semana,\n        Sucursal: sucursal,\n        sum_Abono_Libre: toNumber(r.sum_Abono_Libre ?? 0),\n      });\n    } else {\n      // Si viene repetido sum_Abono_Libre, lo acumulamos también\n      groups.get(key).sum_Abono_Libre += toNumber(r.sum_Abono_Libre ?? 0);\n    }\n\n    const g = groups.get(key);\n\n    const catKey = `sum_${normalizeKey(r.Categoria)}`;\n    g[catKey] = (g[catKey] ?? 0) + toNumber(r.sum_Pagado_Prestación ?? 0);\n  }\n\n  return Array.from(groups.values()).map(obj => ({ json: obj }));\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        -1616
+      ],
+      "id": "ab176d54-3e28-4dac-981d-f59d67e9a9c9",
+      "name": "Combinar categorías1"
+    },
+    {
+      "parameters": {
+        "jsCode": "{\n  // n8n Code node (JS)\n  // Agrupa por Semana + Sucursal y pivotea Clase -> { pagadoCLASE, cantidadCLASE }\n  // pagadoCLASE = suma(sum_Pagado_Prestación) para esa Clase\n  // cantidadCLASE = suma(count_row_number) para esa Clase\n\n  const rows = $input.all().map(i => i.json);\n\n  const normalizeKey = (s) =>\n    String(s ?? '')\n      .trim()\n      .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '') // quita acentos\n      .replace(/[^\\w]+/g, '_')                         // espacios/símbolos -> _\n      .replace(/^_+|_+$/g, '')\n      .replace(/_+/g, '_')\n      .toUpperCase();\n\n  const toNumber = (v) => {\n    const n = Number(v);\n    return Number.isFinite(n) ? n : 0;\n  };\n\n  const groups = new Map();\n\n  for (const r of rows) {\n    const semana = r.Semana;\n    const sucursal = r.Sucursal;\n    const key = `${semana}||${sucursal}`;\n\n    if (!groups.has(key)) {\n      groups.set(key, {\n        Semana: semana,\n        Sucursal: sucursal,\n      });\n    }\n\n    const g = groups.get(key);\n\n    const clase = normalizeKey(r.Clase);\n    const pagadoKey = `pagado${clase}`;\n    const cantidadKey = `cantidad${clase}`;\n\n    g[pagadoKey] = (g[pagadoKey] ?? 0) + toNumber(r.sum_Pagado_Prestación);\n    g[cantidadKey] = (g[cantidadKey] ?? 0) + toNumber(r.count_row_number);\n  }\n\n  return Array.from(groups.values()).map(obj => ({ json: obj }));\n}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        -1424
+      ],
+      "id": "ac7dbdf5-6382-4f5c-a5d0-05b4f14931cb",
+      "name": "Combinar categorías4"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1168,
+        -1520
+      ],
+      "id": "64b54654-567b-4ff1-9066-ac0d76b4e392",
+      "name": "Trigger Reporte Semanal"
+    },
+    {
+      "parameters": {
+        "jsCode": "const allItems = $input.all().map(i => i.json);\n\nconst fmt = n => '$' + Number(n || 0).toLocaleString('es-UY', { minimumFractionDigits: 0 });\n\nconst ORDEN_SUCS = ['suy 1', 'suy 2', 'suy 3', 'suy 4'];\nconst sortSuc = (a, b) => {\n  const ia = ORDEN_SUCS.findIndex(s => a.toLowerCase().includes(s));\n  const ib = ORDEN_SUCS.findIndex(s => b.toLowerCase().includes(s));\n  return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);\n};\n\nconst CATEGORIAS = [\n  { key: 'sum_ORTODONCIA',            label: 'ORTODONCIA' },\n  { key: 'sum_GENERAL',               label: 'GENERAL' },\n  { key: 'sum_PROTESIS',              label: 'PRÓTESIS' },\n  { key: 'sum_ENDODONCIA',            label: 'ENDODONCIA' },\n  { key: 'sum_CIRUGIA',               label: 'CIRUGÍA' },\n  { key: 'sum_ORTOPEDIA',             label: 'ORTOPEDIA' },\n  { key: 'sum_PERIODONCIA',           label: 'PERIODONCIA' },\n  { key: 'sum_RADIOLOGIA',            label: 'RADIOLOGÍA' },\n  { key: 'sum_PRODUCTOS_HIGIENE_BUCAL', label: 'HIGIENE BUCAL' },\n  { key: 'sum_ALINEADORES',           label: 'ALINEADORES' },\n];\n\nconst SUBCATS = [\n  { key: 'pagadoAJUSTE', label: 'Ajustes' },\n  { key: 'pagadoRETIRO', label: 'Retiros' },\n  { key: 'pagadoCOMBO',  label: 'Combos' },\n  { key: 'pagadoOTRO',   label: 'Otros' },\n];\n\n// Agrupar y sumar por sucursal (por si hay múltiples semanas)\nconst porSucursal = {};\nfor (const item of allItems) {\n  const suc = item.Sucursal;\n  if (!porSucursal[suc]) {\n    porSucursal[suc] = {};\n    [...CATEGORIAS, ...SUBCATS].forEach(c => porSucursal[suc][c.key] = 0);\n  }\n  [...CATEGORIAS, ...SUBCATS].forEach(c => {\n    porSucursal[suc][c.key] += item[c.key] || 0;\n  });\n}\n\nconst sucursales = Object.keys(porSucursal).sort(sortSuc);\n\n// Secciones por sucursal\nconst secciones = sucursales.map(suc => {\n  const d = porSucursal[suc];\n\n  const filas = CATEGORIAS\n    .filter(c => d[c.key] > 0)\n    .sort((a, b) => d[b.key] - d[a.key])\n    .map((c, _, arr) => {\n      const isOrtodoncia = c.key === 'sum_ORTODONCIA';\n\n      const subcatRows = isOrtodoncia\n        ? SUBCATS\n            .filter(s => d[s.key] > 0)\n            .map((s, idx) => `\n              <tr>\n                <td style=\"padding:3px 0 3px 18px;color:#999;font-size:12px;\">${idx + 1}. ${s.label}</td>\n                <td style=\"padding:3px 0;text-align:right;color:#999;font-size:12px;\">${fmt(d[s.key])}</td>\n              </tr>`)\n            .join('')\n        : '';\n\n      return `\n        <tr>\n          <td style=\"padding:5px 0 ${isOrtodoncia ? '2px' : '5px'} 0;color:#555;font-size:14px;\">${c.label}</td>\n          <td style=\"padding:5px 0;text-align:right;color:#333;font-size:14px;\">${fmt(d[c.key])}</td>\n        </tr>\n        ${subcatRows}`;\n    }).join('');\n\n  const totalSuc = CATEGORIAS.reduce((acc, c) => acc + d[c.key], 0);\n\n  return `\n    <div style=\"margin-bottom:28px;\">\n      <div style=\"font-size:13px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;\">${suc}</div>\n      <table style=\"width:100%;border-collapse:collapse;\">\n        ${filas}\n        <tr style=\"border-top:1px solid #e0e0e0;\">\n          <td style=\"padding:7px 0;font-weight:700;color:#111;font-size:14px;\">Total</td>\n          <td style=\"padding:7px 0;text-align:right;font-weight:700;color:#111;font-size:15px;\">${fmt(totalSuc)}</td>\n        </tr>\n      </table>\n    </div>`;\n}).join('');\n\nconst totalGeneral = sucursales.reduce((acc, suc) =>\n  acc + CATEGORIAS.reduce((a, c) => a + porSucursal[suc][c.key], 0), 0);\n\nconst semanas = [...new Set(allItems.map(i => i.Semana))].sort();\nconst semanaLabel = semanas.length === 1\n  ? `Semana ${semanas[0]}`\n  : `Semanas ${semanas[0]} — ${semanas[semanas.length - 1]}`;\n\nconst html = `\n<div style=\"font-family:sans-serif;max-width:520px;color:#333;\">\n  <p style=\"font-size:13px;color:#999;margin:0 0 4px;\">Reporte semanal por categoría</p>\n  <h2 style=\"font-size:20px;margin:0 0 24px;color:#111;\">${semanaLabel}</h2>\n\n  ${secciones}\n\n  <div style=\"background:#f4f4f4;border-radius:6px;padding:12px 16px;\">\n    <table style=\"width:100%;border-collapse:collapse;\">\n      <tr>\n        <td style=\"font-weight:700;color:#111;font-size:14px;\">Total general</td>\n        <td style=\"text-align:right;font-weight:700;font-size:16px;color:#111;\">${fmt(totalGeneral)}</td>\n      </tr>\n    </table>\n  </div>\n</div>`;\n\nreturn [{ json: { html, totalGeneral, semanaLabel } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        848,
+        -1520
+      ],
+      "id": "b7ca8bb3-db01-488f-8d74-50532f8d9805",
+      "name": "Preparar HTML 2"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token nsZXO2i9zjO9tYiqOxESqxVgsjpL3tTgQPdTQxti.NTb7Cg13dBRJrk27FXpLO1eSHeXdeOKtgVJ2Hl6e"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          },
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "nextURL": "={{ $response.body.links.next }}",
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !$response.body.links || !$response.body.links.next }}\n",
+              "limitPagesFetched": true,
+              "maxRequests": 10,
+              "requestInterval": 1000
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -512,
+        -784
+      ],
+      "id": "c2fe1f0c-4c5f-45ef-a016-1e1f40393655",
+      "name": "Pagos2",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "monto_pago"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "nombre_sucursal, medio_pago",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        -64,
+        -784
+      ],
+      "id": "622aca45-7c68-4b2f-a982-4b336fa40c9b",
+      "name": "Summarize1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all().map(i => i.json);\n\n// Orden fijo de sucursales\nconst ORDEN_SUCURSALES = [\n  'SUY 1 Centro',\n  'SUY 2 Paso Molino',\n  'SUY 3 Las Piedras',\n  'SUY 4 Lagomar - Clínica del Lago'\n];\n\n// Agrupar por sucursal\nconst porSucursal = {};\nfor (const row of items) {\n  const suc = row.nombre_sucursal;\n  if (!porSucursal[suc]) porSucursal[suc] = [];\n  porSucursal[suc].push({ medio: row.medio_pago, monto: row.sum_monto_pago });\n}\n\n// Ordenar sucursales según orden fijo (las no listadas van al final)\nconst sucursalesOrdenadas = Object.keys(porSucursal).sort((a, b) => {\n  const ia = ORDEN_SUCURSALES.findIndex(s => a.toLowerCase().includes(s.toLowerCase().split(' ').slice(0,3).join(' ')));\n  const ib = ORDEN_SUCURSALES.findIndex(s => b.toLowerCase().includes(s.toLowerCase().split(' ').slice(0,3).join(' ')));\n  const rankA = ia === -1 ? 99 : ia;\n  const rankB = ib === -1 ? 99 : ib;\n  return rankA - rankB;\n});\n\nconst fmt = n => '$' + Number(n).toLocaleString('es-UY', { minimumFractionDigits: 0 });\n\nconst secciones = sucursalesOrdenadas.map(sucursal => {\n  const pagos = porSucursal[sucursal];\n  const total = pagos.reduce((acc, p) => acc + p.monto, 0);\n\n  const filas = pagos\n    .sort((a, b) => b.monto - a.monto)\n    .map(p => `\n      <tr>\n        <td style=\"padding:5px 0;color:#555;font-size:14px;\">${p.medio}</td>\n        <td style=\"padding:5px 0;text-align:right;color:#333;font-size:14px;\">${fmt(p.monto)}</td>\n      </tr>`)\n    .join('');\n\n  return `\n    <div style=\"margin-bottom:28px;\">\n      <div style=\"font-size:13px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;\">${sucursal}</div>\n      <table style=\"width:100%;border-collapse:collapse;\">\n        ${filas}\n        <tr style=\"border-top:1px solid #e0e0e0;\">\n          <td style=\"padding:7px 0;font-weight:700;color:#111;font-size:14px;\">Total</td>\n          <td style=\"padding:7px 0;text-align:right;font-weight:700;color:#111;font-size:15px;\">${fmt(total)}</td>\n        </tr>\n      </table>\n    </div>`;\n}).join('');\n\nconst totalGeneral = items.reduce((acc, r) => acc + r.sum_monto_pago, 0);\n\nconst fechaISO = $('fecha_hoy').first().json.fecha; // ej: \"2026-04-08\"\nconst hoyRaw = new Date(fechaISO + 'T12:00:00Z').toLocaleDateString('es-UY', {\n  timeZone: 'America/Montevideo',\n  weekday: 'long', day: 'numeric', month: 'long'\n});\nconst hoyCapitalizado = hoyRaw.charAt(0).toUpperCase() + hoyRaw.slice(1);\n\n\nconst html = `\n<div style=\"font-family:sans-serif;max-width:480px;color:#333;\">\n  <p style=\"font-size:13px;color:#999;margin:0 0 4px;\">Reporte de facturación</p>\n  <h2 style=\"font-size:20px;margin:0 0 24px;color:#111;\">${hoyCapitalizado}</h2>\n\n  ${secciones}\n\n  <div style=\"background:#f4f4f4;border-radius:6px;padding:12px 16px;\">\n    <table style=\"width:100%;border-collapse:collapse;\">\n      <tr>\n        <td style=\"font-weight:700;color:#111;font-size:14px;\">Total general</td>\n        <td style=\"text-align:right;font-weight:700;font-size:16px;color:#111;\">${fmt(totalGeneral)}</td>\n      </tr>\n    </table>\n  </div>\n</div>`;\n\nreturn [{ json: { html, total_general: totalGeneral, fecha: hoyCapitalizado } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        -784
+      ],
+      "id": "ef776735-dbe5-4d63-8fbc-7e23b56a71c1",
+      "name": "Preparar HTML2"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "body.data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        -784
+      ],
+      "id": "f9ee8699-6834-4cec-969e-8dcdfa0ce0eb",
+      "name": "Split Out1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Define aquí el arreglo de códigos válidos para contabilizar\nconst codigosValidos = [\n\n  \"00001\",\n\n  \"A0000\",\"A0001\",\"A0002\",\"A0003\",\"A0004\",\"A0005\",\"A0007\",\n\n  \"C0000\",\"C0001\",\"C0002\",\"C0003\",\"C0004\",\"C0005\",\"C0006\",\"C0007\",\"C0008\",\"C0009\",\"C0010\",\"C0011\",\"C0012\",\"C0013\",\"C0014\",\"C0050\",\"C0051\",\"C0052\",\"C0053\",\"C0054\",\"C0055\",\"C0056\",\"C0057\",\n\n  \"E0001\",\"E0002\",\"E0003\",\"E0004\",\"E0005\",\"E0006\",\"E0007\",\"E0008\",\"E0050\",\"E0051\",\"E0052\",\n\n  \"HB000\",\"HB001\",\"HB002\",\"HB003\",\"HB004\",\"HB005\",\"HB006\",\"HB007\",\n\n  \"OA001\",\"OA002\",\"OA003\",\"OA004\",\"OA005\",\"OA006\",\"OA007\",\"OA008\",\"OA009\",\"OA010\",\"OA011\",\"OA012\",\"OA013\",\"OA014\",\"OA015\",\"OA016\",\"OA017\",\"OA018\",\"OA019\",\"OA020\",\"OA021\",\"OA022\",\"OA023\",\"OA024\",\"OA025\",\"OA026\",\"OA027\",\"OA028\",\"OA029\",\"OA030\",\"OA031\",\"OA032\",\"OA033\",\"OA034\",\"OA035\",\"OA036\",\"OA037\",\"OA038\",\"OA039\",\"OA040\",\"OA041\",\"OA042\",\"OA043\",\"OA044\",\"OA045\",\"OA046\",\"OA047\",\"OA100\",\"OA101\",\"OA102\",\"OA103\",\"OA104\",\"OA105\",\"OA106\",\"OA107\",\"OA108\",\"OA109\",\"OA110\",\"OA111\",\"OA200\",\"OA201\",\"OA202\",\"OA203\",\"OA204\",\"OA205\",\"OA206\",\"OA207\",\"OA208\",\"OA300\",\"OA301\",\"OA302\",\"OA600\",\"OA601\",\"OA602\",\"OA603\",\"OA604\",\"OA605\",\"OA606\",\"OA607\",\"OA608\",\"OA609\",\"OA700\",\"OA701\",\"OA702\",\"OA703\",\"OA704\",\"OA800\",\"OA801\",\n\n  \"OG001\",\"OG002\",\"OG003\",\"OG004\",\"OG005\",\"OG006\",\"OG007\",\"OG020\",\"OG021\",\"OG022\",\"OG023\",\"OG024\",\"OG025\",\"OG026\",\"OG027\",\"OG028\",\"OG040\",\"OG041\",\"OG042\",\"OG043\",\"OG044\",\"OG045\",\"OG046\",\"OG047\",\"OG048\",\"OG049\",\"OG050\",\"OG051\",\"OG060\",\"OG061\",\"OG062\",\"OG063\",\"OG064\",\"OG065\",\"OG066\",\"OG067\",\"OG068\",\"OG070\",\"OG071\",\"OG072\",\"OG073\",\"OG074\",\"OG075\",\"OG080\",\"OG081\",\"OG082\",\n\n  \"OP000\",\"OP001\",\"OP100\",\"OP101\",\"OP102\",\"OP103\",\"OP104\",\"OP105\",\"OP106\",\"OP107\",\"OP108\",\"OP109\",\"OP110\",\"OP111\",\"OP112\",\"OP113\",\"OP114\",\"OP115\",\"OP116\",\"OP117\",\"OP118\",\"OP119\",\"OP200\",\"OP201\",\"OP202\",\"OP203\",\"OP204\",\"OP205\",\n\n  \"OR001\",\"OR002\",\"OR003\",\"OR004\",\"OR005\",\"OR006\",\"OR007\",\"OR008\",\"OR009\",\"OR010\",\"OR011\",\"OR012\",\"OR013\",\"OR014\",\"OR016\",\"OR017\",\"OR018\",\"OR019\",\"OR020\",\"OR021\",\"OR100\",\"OR101\",\"OR102\",\"OR103\",\"OR104\",\"OR105\",\"OR106\",\"OR107\",\"OR108\",\"OR109\",\"OR110\",\"OR111\",\"OR112\",\"OR113\",\"OR114\",\"OR115\",\"OR116\",\"OR117\",\"OR118\",\"OR119\",\"OR120\",\"OR121\",\"OR122\",\"OR123\",\"OR124\",\"OR125\",\"OR200\",\"OR201\",\"OR202\",\n\n  \"P0000\",\"P0001\",\"P0002\",\"P0003\",\"P0004\",\"P0005\",\"P0006\",\"P0007\",\"P0008\",\"P0009\",\"P0010\",\"P0011\",\"P1000\",\"P1001\",\"P1002\",\"P1003\",\"P1004\",\"P1005\",\"P2000\",\"P2001\",\"P2002\",\"P2003\",\"P2004\",\"P2005\",\"P2006\",\"P2007\",\"P2008\",\"P2009\",\"P3000\",\"P3001\",\"P3002\",\"P3003\",\"P3004\",\"P3005\",\"P3006\",\"P3007\",\"P3008\",\n\n  \"RD000\",\"RD001\",\"RD002\",\"RD003\",\"RD004\",\"RD005\",\"RD006\",\"RD007\"\n];\n\n// Filtra los items de entrada\nreturn items.filter(item => {\n  const codigo = String(item.json[\"Código Prestación\"] || \"\").trim().toUpperCase();\n  return codigosValidos.includes(codigo);\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -272,
+        -1008
+      ],
+      "id": "7e5caff2-20c7-42d6-8ac7-fed1eca26651",
+      "name": "Filtro3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Clasifica según la clase\n\nconst clases = {\n  AJUSTE:[\"OA001\",\"OA002\",\"OA003\",\"OA004\",\"OA005\",\"OA006\",\"OA007\",\"OA008\",\"OA009\",\"OA010\",\"OA011\",\"OA012\",\"OA013\",\"OA014\",\"OA015\",\"OA016\",\"OA017\",\"OA018\",\"OA019\",\"OA020\",\"OA021\",\"OA022\",\"OA023\",\"OA024\",\"OA025\",\"OA026\",\"OA027\",\"OA028\",\"OA029\",\"OA030\",\"OA031\",\"OA032\",\"OA033\",\"OA034\",\"OA035\",\"OA036\",\"OA037\",\"OA038\",\"OA039\",\"OA040\",\"OA041\",\"OA042\",\"OA043\",\"OA044\",\"OA045\",\"OA046\",\"OA047\",\"OA100\",\"OA101\",\"OA102\",\"OA103\",\"OA104\",\"OA105\",\"OA106\",\"OA107\",\"OA108\",\"OA109\",\"OA110\",\"OA111\",\"OA200\",\"OA201\",\"OA202\",\"OA203\",\"OA204\",\"OA205\",\"OA206\",\"OA207\",\"OA208\",\"OA300\",\"OA301\",\"OA302\"],\n  COMBO:[\"OR100\",\"OR101\",\"OR102\",\"OR103\",\"OR104\",\"OR105\",\"OR106\",\"OR107\",\"OR108\",\"OR109\",\"OR110\",\"OR111\",\"OR112\",\"OR113\",\"OR114\",\"OR115\",\"OR116\",\"OR117\",\"OR118\",\"OR119\",\"OR120\",\"OR121\",\"OR122\",\"OR123\",\"OR124\",\"OR125\",\"OR200\",\"OR201\",\"OR202\"],\n  RETIRO:[\"OR001\",\"OR002\",\"OR003\",\"OR004\",\"OR005\",\"OR006\",\"OR007\"],\n};\n\nreturn items.map(item => {\n  const row = item.json || {};\n  const codigo = String(row[\"Código Prestación\"] || \"\").trim().toUpperCase();\n  let clase = \"OTRO\";\n\n  for (const [nombreClase, codigos] of Object.entries(clases)) {\n    if (codigos.includes(codigo)) {\n      clase = nombreClase;\n      break;\n    }\n  }\n\n  return {\n    json: {\n      ...row,\n      Clase: clase,\n    },\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        -1008
+      ],
+      "id": "c1a81845-575a-461c-98f1-fbcfad48b11c",
+      "name": "Clase1"
+    },
+    {
+      "parameters": {
+        "jsCode": "function normalize(str) {\n  return String(str || \"\")\n    .normalize(\"NFD\").replace(/[\\u0300-\\u036f]/g, \"\") // quita acentos\n    .toUpperCase().trim();\n}\n\nreturn items.map(item => {\n  const row = item.json || {};\n  const v = normalize(row[\"Categoria\"]);\n  let categoria = \"OTRO\";\n\n  if (v.includes(\"ENDODONCIA\")) {\n    categoria = \"ENDODONCIA\";\n  } else if (v.includes(\"CIRUGIA\")) {\n    categoria = \"CIRUGIA\";\n  } else if (v === \"ODONTOLOGIA GENERAL\") {\n    categoria = \"GENERAL\";\n  } else if (v.includes(\"PROTESIS\")) {\n    categoria = \"PROTESIS\";\n  } else if (v.includes(\"ORTOPEDIA\")) {\n    categoria = \"ORTOPEDIA\";\n  } else if (v.includes(\"ORTODONCIA\")) {\n    categoria = \"ORTODONCIA\";\n  } else if (v.includes(\"PERIODONCIA\")) {\n    categoria = \"PERIODONCIA\";\n  } else if (v === \"PRODUCTOS HIGIENE BUCAL\") {\n    categoria = \"PRODUCTOS HIGIENE BUCAL\";\n  } else if (v.includes(\"RADIOLOGIA\")) {\n    categoria = \"RADIOLOGIA\";\n  } else if (v.includes(\"ALINEADORES\")) {\n    categoria = \"ALINEADORES\";\n  } //else if (v == \"\" && $input.first().json['Abono Libre'] > 0) {\n    //categoria = \"ABONO LIBRE\";\n  //}\n  \n  return {\n    json: {\n      ...row,\n      Categoria: categoria,\n    },\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        -1200
+      ],
+      "id": "1578a6b8-2bdb-489e-94cc-62c0e8b4c663",
+      "name": "Categoria1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const allItems = $input.all().map(i => i.json);\n\nconst fmt = n => '$' + Number(n || 0).toLocaleString('es-UY', { minimumFractionDigits: 0 });\n\nconst ORDEN_SUCS = ['suy 1', 'suy 2', 'suy 3', 'suy 4'];\nconst sortSuc = (a, b) => {\n  const ia = ORDEN_SUCS.findIndex(s => a.toLowerCase().includes(s));\n  const ib = ORDEN_SUCS.findIndex(s => b.toLowerCase().includes(s));\n  return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);\n};\n\nconst CATEGORIAS = [\n  { key: 'sum_ORTODONCIA',            label: 'ORTODONCIA' },\n  { key: 'sum_GENERAL',               label: 'GENERAL' },\n  { key: 'sum_PROTESIS',              label: 'PRÓTESIS' },\n  { key: 'sum_ENDODONCIA',            label: 'ENDODONCIA' },\n  { key: 'sum_CIRUGIA',               label: 'CIRUGÍA' },\n  { key: 'sum_ORTOPEDIA',             label: 'ORTOPEDIA' },\n  { key: 'sum_PERIODONCIA',           label: 'PERIODONCIA' },\n  { key: 'sum_RADIOLOGIA',            label: 'RADIOLOGÍA' },\n  { key: 'sum_PRODUCTOS_HIGIENE_BUCAL', label: 'HIGIENE BUCAL' },\n  { key: 'sum_ALINEADORES',           label: 'ALINEADORES' },\n];\n\nconst SUBCATS = [\n  { key: 'pagadoAJUSTE', label: 'Ajustes' },\n  { key: 'pagadoRETIRO', label: 'Retiros' },\n  { key: 'pagadoCOMBO',  label: 'Combos' },\n  { key: 'pagadoOTRO',   label: 'Otros' },\n];\n\n// Agrupar y sumar por sucursal (por si hay múltiples semanas)\nconst porSucursal = {};\nfor (const item of allItems) {\n  const suc = item.Sucursal;\n  if (!porSucursal[suc]) {\n    porSucursal[suc] = {};\n    [...CATEGORIAS, ...SUBCATS].forEach(c => porSucursal[suc][c.key] = 0);\n  }\n  [...CATEGORIAS, ...SUBCATS].forEach(c => {\n    porSucursal[suc][c.key] += item[c.key] || 0;\n  });\n}\n\nconst sucursales = Object.keys(porSucursal).sort(sortSuc);\n\n// Secciones por sucursal\nconst secciones = sucursales.map(suc => {\n  const d = porSucursal[suc];\n\n  const filas = CATEGORIAS\n    .filter(c => d[c.key] > 0)\n    .sort((a, b) => d[b.key] - d[a.key])\n    .map((c, _, arr) => {\n      const isOrtodoncia = c.key === 'sum_ORTODONCIA';\n\n      const subcatRows = isOrtodoncia\n        ? SUBCATS\n            .filter(s => d[s.key] > 0)\n            .map((s, idx) => `\n              <tr>\n                <td style=\"padding:3px 0 3px 18px;color:#999;font-size:12px;\">${idx + 1}. ${s.label}</td>\n                <td style=\"padding:3px 0;text-align:right;color:#999;font-size:12px;\">${fmt(d[s.key])}</td>\n              </tr>`)\n            .join('')\n        : '';\n\n      return `\n        <tr>\n          <td style=\"padding:5px 0 ${isOrtodoncia ? '2px' : '5px'} 0;color:#555;font-size:14px;\">${c.label}</td>\n          <td style=\"padding:5px 0;text-align:right;color:#333;font-size:14px;\">${fmt(d[c.key])}</td>\n        </tr>\n        ${subcatRows}`;\n    }).join('');\n\n  const totalSuc = CATEGORIAS.reduce((acc, c) => acc + d[c.key], 0);\n\n  return `\n    <div style=\"margin-bottom:28px;\">\n      <div style=\"font-size:13px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;\">${suc}</div>\n      <table style=\"width:100%;border-collapse:collapse;\">\n        ${filas}\n        <tr style=\"border-top:1px solid #e0e0e0;\">\n          <td style=\"padding:7px 0;font-weight:700;color:#111;font-size:14px;\">Total</td>\n          <td style=\"padding:7px 0;text-align:right;font-weight:700;color:#111;font-size:15px;\">${fmt(totalSuc)}</td>\n        </tr>\n      </table>\n    </div>`;\n}).join('');\n\nconst totalGeneral = sucursales.reduce((acc, suc) =>\n  acc + CATEGORIAS.reduce((a, c) => a + porSucursal[suc][c.key], 0), 0);\n\nconst MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];\nconst ahora = new Date();\nconst mesLabel = `${MESES[ahora.getMonth()]} ${ahora.getFullYear()}`;\n\n\nconst html = `\n<div style=\"font-family:sans-serif;max-width:520px;color:#333;\">\n  <p style=\"font-size:13px;color:#999;margin:0 0 4px;\">Reporte Mensual por categoría</p>\n  <h2 style=\"font-size:20px;margin:0 0 24px;color:#111;\">${mesLabel}</h2>\n\n  ${secciones}\n\n  <div style=\"background:#f4f4f4;border-radius:6px;padding:12px 16px;\">\n    <table style=\"width:100%;border-collapse:collapse;\">\n      <tr>\n        <td style=\"font-weight:700;color:#111;font-size:14px;\">Total general</td>\n        <td style=\"text-align:right;font-weight:700;font-size:16px;color:#111;\">${fmt(totalGeneral)}</td>\n      </tr>\n    </table>\n  </div>\n</div>`;\n\nreturn [{ json: { html, totalGeneral, mesLabel } }];\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        848,
+        -1104
+      ],
+      "id": "8682c1fb-3273-4c51-9132-9372f0d3dda9",
+      "name": "Preparar HTML "
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "73603ace-bf94-4e11-beef-c16b05b2ed4e",
+              "leftValue": "={{ $json.Mes }}",
+              "rightValue": "={{ (() => { \n\n  const M = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']; \n\n  const n = DateTime.now().setZone('America/Montevideo'); \n\n  return M[n.month - 1].toString() })() \n\n}}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -272,
+        -1200
+      ],
+      "id": "6bbf23b8-c0ae-46d9-9d7b-fdaba3df5982",
+      "name": "Filtro4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "73603ace-bf94-4e11-beef-c16b05b2ed4e",
+              "leftValue": "={{ $json.Mes }}",
+              "rightValue": "={{ (() => { \n\n  const M = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']; \n\n  const n = DateTime.now().setZone('America/Montevideo'); \n\n  return M[n.month - 1].toString() })() \n\n}}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        -1008
+      ],
+      "id": "029e9936-5bb3-4910-9d22-d274390ef7d8",
+      "name": "Filtro5"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "Pagado Prestación"
+            },
+            {
+              "aggregation": "sum",
+              "field": "Abono Libre"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "Categoria, Sucursal",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        176,
+        -1200
+      ],
+      "id": "5d6c94ae-ef90-4801-be9f-76e5aca42d66",
+      "name": "Pagado Mes"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "field": "row_number"
+            },
+            {
+              "aggregation": "sum",
+              "field": "Pagado Prestación"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "Clase, Sucursal",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        176,
+        -1008
+      ],
+      "id": "5aff8c40-fb3d-47c5-94db-699d1f4d4a0a",
+      "name": "Pagado y Cantidad Mes"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json);\n\nconst normalizeKey = s =>\n  String(s ?? '').trim().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'')\n  .replace(/[^\\w]+/g,'_').replace(/^_+|_+$/g,'').replace(/_+/g,'_').toUpperCase();\n\nconst toNumber = v => { const n = Number(v); return Number.isFinite(n) ? n : 0; };\n\nconst groups = new Map();\nfor (const r of rows) {\n  const suc = r.Sucursal;\n  if (!groups.has(suc)) {\n    groups.set(suc, { Sucursal: suc, sum_Abono_Libre: toNumber(r.sum_Abono_Libre ?? 0) });\n  } else {\n    groups.get(suc).sum_Abono_Libre += toNumber(r.sum_Abono_Libre ?? 0);\n  }\n  const g = groups.get(suc);\n  const catKey = `sum_${normalizeKey(r.Categoria)}`;\n  g[catKey] = (g[catKey] ?? 0) + toNumber(r.sum_Pagado_Prestación ?? 0);\n}\n\nreturn [...groups.values()].map(obj => ({ json: obj }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        -1200
+      ],
+      "id": "829d0c67-06bb-4e71-a89b-05e023dcb95f",
+      "name": "Combinar categorías Mes"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json);\n\nconst normalizeKey = s =>\n  String(s ?? '').trim().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'')\n  .replace(/[^\\w]+/g,'_').replace(/^_+|_+$/g,'').replace(/_+/g,'_').toUpperCase();\n\nconst toNumber = v => { const n = Number(v); return Number.isFinite(n) ? n : 0; };\n\nconst groups = new Map();\nfor (const r of rows) {\n  const suc = r.Sucursal;\n  if (!groups.has(suc)) groups.set(suc, { Sucursal: suc });\n  const g = groups.get(suc);\n  const pagadoKey = `pagado${normalizeKey(r.Clase)}`;\n  const cantidadKey = `cantidad${normalizeKey(r.Clase)}`;\n  g[pagadoKey]   = (g[pagadoKey]   ?? 0) + toNumber(r.sum_Pagado_Prestación);\n  g[cantidadKey] = (g[cantidadKey] ?? 0) + toNumber(r.count_row_number);\n}\n\nreturn [...groups.values()].map(obj => ({ json: obj }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        -1008
+      ],
+      "id": "0cc68250-bf01-4646-87d2-2d89df95e50c",
+      "name": "Combinar Orto Mes"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "Sucursal",
+        "joinMode": "keepEverything",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        624,
+        -1104
+      ],
+      "id": "62515d70-34a5-474a-b033-13aae6c57e0a",
+      "name": "Mes"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "Semana, Sucursal",
+        "joinMode": "keepEverything",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        624,
+        -1520
+      ],
+      "id": "fdaa60f6-fc37-4ea6-aa19-3f0656cb6537",
+      "name": "Semana"
+    },
+    {
+      "parameters": {
+        "content": "## Correos\nadministracion@odontocenter.com.ar\njbatista@sonrisasargentinas.com\nmmoscovich@suy.uy",
+        "width": 400,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1440,
+        -1312
+      ],
+      "typeVersion": 1,
+      "id": "37e12121-a84c-4ece-8b08-89d46d3dbf96",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token nsZXO2i9zjO9tYiqOxESqxVgsjpL3tTgQPdTQxti.NTb7Cg13dBRJrk27FXpLO1eSHeXdeOKtgVJ2Hl6e"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          },
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "nextURL": "={{ $response.body.links.next }}",
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !$response.body.links || !$response.body.links.next }}\n",
+              "limitPagesFetched": true,
+              "maxRequests": 10,
+              "requestInterval": 1000
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -496,
+        -560
+      ],
+      "id": "fc03346c-678e-4ca8-9867-000b3360593b",
+      "name": "Pagos",
+      "notesInFlow": true,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "monto_pago"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "nombre_sucursal, medio_pago",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        -48,
+        -560
+      ],
+      "id": "05f2d786-3054-4605-b4a0-1965c2e0560b",
+      "name": "Summarize",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "sendTo": "administracion@odontocenter.com.ar, jbatista@sonrisasargentinas.com, mmoscovich@suy.uy",
+        "subject": "=Facturación {{ $json.fecha }} — ${{ $json.total_general.toLocaleString('es-UY') }}",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false,
+          "ccList": "mcgrottola@suy.uy",
+          "senderName": "Maria Cecilia Gróttola"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        400,
+        -560
+      ],
+      "id": "13ae5a59-9334-4586-8b55-fa7b83f36097",
+      "name": "Diario1",
+      "webhookId": "43471942-03b8-45fb-80a5-9c1c8dbd2947",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "5R0ScEVqcfjKYanp",
+          "name": "Gmail | la agencia®"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "body.data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        -560
+      ],
+      "id": "9becffef-ec54-4e46-b06a-08f77dbf3d10",
+      "name": "Split Out2",
+      "alwaysOutputData": true,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const TZ = 'America/Montevideo';\nconst pad = n => String(n).padStart(2, '0');\n\n// Fecha inicio fija\nconst inicio = new Date(Date.UTC(2026, 2, 10)); // 10 mar, medianoche UTC\n\n// Hoy en Montevideo con en-CA → formato YYYY-MM-DD confiable\nconst hoyStrMVD = new Date().toLocaleDateString('en-CA', { timeZone: TZ });\nconst [y, m, d] = hoyStrMVD.split('-').map(Number);\nconst ayer = new Date(Date.UTC(y, m - 1, d - 1)); // ayer, medianoche UTC\n\nconst items = [];\nconst cursor = new Date(inicio);\n\nwhile (cursor <= ayer) {\n  const diaSemana = cursor.getUTCDay(); // 0 = domingo\n\n  if (diaSemana !== 0) {\n    const yyyy = cursor.getUTCFullYear();\n    const mm = pad(cursor.getUTCMonth() + 1);\n    const dd = pad(cursor.getUTCDate());\n    const fecha = `${yyyy}-${mm}-${dd}`;\n\n    const url = \"https://api.dentalink.healthatom.com/api/v1/pagos?q=\"\n      + encodeURIComponent('{\"fecha_recepcion\":{\"eq\":\"' + fecha + '\"}}');\n\n    // Usar mediodía UTC para el display evita cualquier ambigüedad de timezone\n    const fechaDisplayRaw = new Date(fecha + 'T12:00:00Z').toLocaleDateString('es-UY', {\n      timeZone: TZ, weekday: 'long', day: 'numeric', month: 'long'\n    });\n    const fechaDisplay = fechaDisplayRaw.charAt(0).toUpperCase() + fechaDisplayRaw.slice(1);\n\n    items.push({ json: { fecha, url, fechaDisplay } });\n  }\n\n  cursor.setUTCDate(cursor.getUTCDate() + 1);\n}\n\nreturn items;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -944,
+        -496
+      ],
+      "id": "0e5790c3-ceb6-484d-bbb1-459fe715f53e",
+      "name": "Generar Fechas Backfill",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -720,
+        -496
+      ],
+      "id": "9b1b16a4-b769-4369-842d-17913e938c2d",
+      "name": "Loop Over Items1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all().map(i => i.json);\n\n// ← CAMBIO: fecha viene del item actual del loop, no de new Date()\nconst { fechaDisplay } = $('Loop Over Items1').first().json;\n\nconst ORDEN_SUCURSALES = [\n  'SUY 1 Centro',\n  'SUY 2 Paso Molino',\n  'SUY 3 Las Piedras',\n  'SUY 4 Lagomar - Clínica del Lago'\n];\n\nconst porSucursal = {};\nfor (const row of items) {\n  const suc = row.nombre_sucursal;\n  if (!porSucursal[suc]) porSucursal[suc] = [];\n  porSucursal[suc].push({ medio: row.medio_pago, monto: row.sum_monto_pago });\n}\n\nconst sucursalesOrdenadas = Object.keys(porSucursal).sort((a, b) => {\n  const ia = ORDEN_SUCURSALES.findIndex(s => a.toLowerCase().includes(s.toLowerCase().split(' ').slice(0,3).join(' ')));\n  const ib = ORDEN_SUCURSALES.findIndex(s => b.toLowerCase().includes(s.toLowerCase().split(' ').slice(0,3).join(' ')));\n  return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);\n});\n\nconst fmt = n => '$' + Number(n).toLocaleString('es-UY', { minimumFractionDigits: 0 });\n\nconst secciones = sucursalesOrdenadas.map(sucursal => {\n  const pagos = porSucursal[sucursal];\n  const total = pagos.reduce((acc, p) => acc + p.monto, 0);\n  const filas = pagos\n    .sort((a, b) => b.monto - a.monto)\n    .map(p => `\n      <tr>\n        <td style=\"padding:5px 0;color:#555;font-size:14px;\">${p.medio}</td>\n        <td style=\"padding:5px 0;text-align:right;color:#333;font-size:14px;\">${fmt(p.monto)}</td>\n      </tr>`)\n    .join('');\n\n  return `\n    <div style=\"margin-bottom:28px;\">\n      <div style=\"font-size:13px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;\">${sucursal}</div>\n      <table style=\"width:100%;border-collapse:collapse;\">\n        ${filas}\n        <tr style=\"border-top:1px solid #e0e0e0;\">\n          <td style=\"padding:7px 0;font-weight:700;color:#111;font-size:14px;\">Total</td>\n          <td style=\"padding:7px 0;text-align:right;font-weight:700;color:#111;font-size:15px;\">${fmt(total)}</td>\n        </tr>\n      </table>\n    </div>`;\n}).join('');\n\nconst totalGeneral = items.reduce((acc, r) => acc + r.sum_monto_pago, 0);\n\nconst html = `\n<div style=\"font-family:sans-serif;max-width:480px;color:#333;\">\n  <p style=\"font-size:13px;color:#999;margin:0 0 4px;\">Reporte de facturación</p>\n  <h2 style=\"font-size:20px;margin:0 0 24px;color:#111;\">${fechaDisplay}</h2>\n  ${secciones}\n  <div style=\"background:#f4f4f4;border-radius:6px;padding:12px 16px;\">\n    <table style=\"width:100%;border-collapse:collapse;\">\n      <tr>\n        <td style=\"font-weight:700;color:#111;font-size:14px;\">Total general</td>\n        <td style=\"text-align:right;font-weight:700;font-size:16px;color:#111;\">${fmt(totalGeneral)}</td>\n      </tr>\n    </table>\n  </div>\n</div>`;\n\nreturn [{ json: { html, total_general: totalGeneral, fecha: fechaDisplay } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        176,
+        -560
+      ],
+      "id": "e9a26697-3640-4a5e-ac24-8a21ec71fe33",
+      "name": "Preparar HTML Backfill",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        624,
+        -496
+      ],
+      "id": "b850c15e-1d56-4c4c-9eab-eb601f1f00d4",
+      "name": "Wait",
+      "webhookId": "cd80a5b1-4084-40c9-9ecc-876e85730c33",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1RnWwaqEnGlyuUNnG4HW8jl5WoxFB7ypEm-Ey67bQkO8",
+          "mode": "list",
+          "cachedResultName": "Ingreso datos | Sonrisas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RnWwaqEnGlyuUNnG4HW8jl5WoxFB7ypEm-Ey67bQkO8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Facturación",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RnWwaqEnGlyuUNnG4HW8jl5WoxFB7ypEm-Ey67bQkO8/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -944,
+        -1104
+      ],
+      "id": "683fb56a-7090-47eb-a0fe-d7e5250195eb",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "91c3688d-b6f4-4038-93de-91519e7e63c0",
+              "name": "Abono Libre",
+              "value": "={{ $json['Abono Libre'] }}",
+              "type": "number"
+            },
+            {
+              "id": "cb7dbe17-34c5-46c2-b3c2-735d21cdcbc8",
+              "name": "Categoria",
+              "value": "={{ $json['Nombre categoría'] }}",
+              "type": "string"
+            },
+            {
+              "id": "d1c81239-d1e0-4782-92d0-93a1057846d9",
+              "name": "Mes",
+              "value": "={{ $json['Mes de recepción del pago'] }}",
+              "type": "string"
+            },
+            {
+              "id": "0cff9990-9f14-475c-86a5-078a3cd135ce",
+              "name": "Semana",
+              "value": "={{\n(() => {\n  const tz = 'America/Montevideo';\n\n  // Parse explícito del formato YYYY-MM-DD\n  const dt = DateTime\n    .fromFormat($json['Fecha de recepción del pago'], 'yyyy-MM-dd', { zone: tz })\n    .startOf('day');\n\n  const jan1 = dt.startOf('year');\n\n  // weekday: 1 = lunes ... 7 = domingo\n  const daysToFirstSunday = (7 - jan1.weekday) % 7;\n  const firstSunday = jan1.plus({ days: daysToFirstSunday });\n\n  // Semana 1\n  if (dt <= firstSunday) return 'S1';\n\n  // Semana 2 empieza el lunes siguiente\n  const firstMonday = firstSunday.plus({ days: 1 });\n\n  const diffDays = Math.floor(dt.diff(firstMonday, 'days').days);\n  const week = 2 + Math.floor(diffDays / 7);\n\n  return 'S'+ week;\n})()\n}}",
+              "type": "string"
+            },
+            {
+              "id": "56fbe308-4dca-4b53-93ba-fa6e80639938",
+              "name": "Sucursal",
+              "value": "={{ $json['Nombre Sucursal'] }}",
+              "type": "string"
+            },
+            {
+              "id": "aea2ba7d-41aa-4e70-98b8-f7e93f123418",
+              "name": "Código Prestación",
+              "value": "={{ $json['Código Prestación'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "row_number, ['Pagado Prestación']",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -720,
+        -1104
+      ],
+      "id": "6c81a8d7-721b-4038-8831-e3e50e3eeeb9",
+      "name": "Filtro de campos1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "73603ace-bf94-4e11-beef-c16b05b2ed4e",
+              "leftValue": "={{ $json.Semana }}",
+              "rightValue": "={{ (() => { const tz = 'America/Montevideo'; const now = DateTime.now().setZone(tz); const jsDow = now.toJSDate().getDay(); const lastSat = now.minus({ days: (jsDow + 1) % 7 }).startOf('day'); const jan1 = lastSat.startOf('year'); const daysToFirstSunday = (7 - jan1.weekday) % 7; const firstSunday = jan1.plus({ days: daysToFirstSunday }); if (+lastSat <= +firstSunday) return 'S1'; const firstMonday = firstSunday.plus({ days: 1 }); const diffDays = Math.floor(lastSat.diff(firstMonday, 'days').days); return 'S' + (2 + Math.floor(diffDays / 7)); })() }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        -1424
+      ],
+      "id": "7528f863-a909-47f3-8df5-496ec29458c5",
+      "name": "Filtro6"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "73603ace-bf94-4e11-beef-c16b05b2ed4e",
+              "leftValue": "={{ $json.Semana }}",
+              "rightValue": "={{ (() => { const tz = 'America/Montevideo'; const now = DateTime.now().setZone(tz); const jsDow = now.toJSDate().getDay(); const lastSat = now.minus({ days: (jsDow + 1) % 7 }).startOf('day'); const jan1 = lastSat.startOf('year'); const daysToFirstSunday = (7 - jan1.weekday) % 7; const firstSunday = jan1.plus({ days: daysToFirstSunday }); if (+lastSat <= +firstSunday) return 'S1'; const firstMonday = firstSunday.plus({ days: 1 }); const diffDays = Math.floor(lastSat.diff(firstMonday, 'days').days); return 'S' + (2 + Math.floor(diffDays / 7)); })() }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -272,
+        -1616
+      ],
+      "id": "1cc3ba79-68ba-401f-80d5-7095695ec5b1",
+      "name": "Filtro7"
+    },
+    {
+      "parameters": {
+        "sendTo": "[EMAIL-AGENCIA]",
+        "subject": "=Facturación por categoría {{ $json.semanaLabel }} — ${{ $json.totalGeneral }}",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false,
+          "ccList": "mcgrottola@suy.uy",
+          "senderName": "Maria Cecilia Gróttola"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1072,
+        -1520
+      ],
+      "id": "9650cef1-d9d7-41ec-b225-ce0bd1c1fefd",
+      "name": "Semanal",
+      "webhookId": "43471942-03b8-45fb-80a5-9c1c8dbd2947",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "5R0ScEVqcfjKYanp",
+          "name": "Gmail | la agencia®"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "[EMAIL-AGENCIA]",
+        "subject": "=Facturación por categoría {{ $json.mesLabel }} — ${{ $json.totalGeneral }}",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false,
+          "ccList": "mcgrottola@suy.uy",
+          "senderName": "Maria Cecilia Gróttola"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1072,
+        -1008
+      ],
+      "id": "37deec96-8aed-4cca-9219-23cecec1f994",
+      "name": "Mensual",
+      "webhookId": "43471942-03b8-45fb-80a5-9c1c8dbd2947",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "5R0ScEVqcfjKYanp",
+          "name": "Gmail | la agencia®"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "# Backfill",
+        "height": 320,
+        "width": 2112,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1248,
+        -592
+      ],
+      "typeVersion": 1,
+      "id": "46ea44bf-d499-4421-8110-dc9ba03d40a3",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "months",
+              "triggerAtDayOfMonth": "={{ new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1168,
+        -1104
+      ],
+      "id": "32a93f44-0524-45ed-a451-594e2bcb70a7",
+      "name": "Trigger Reporte Mensual"
+    },
+    {
+      "parameters": {
+        "chatId": "6390727286",
+        "text": "=FLUJO CORREO SEMANAL/MENSUAL\n\n{{ $workflow.name }}\n\nChequear ejecución y correr manual\n\n{{ $json.execution.url }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1136,
+        -1296
+      ],
+      "id": "7ca6704e-b594-4237-b005-d5d51ad6380a",
+      "name": "Notificación",
+      "webhookId": "a06bf8ec-7fa5-4572-bd8d-916bc1676c33",
+      "credentials": {
+        "telegramApi": {
+          "id": "FMRcLPf0ibseD1rC",
+          "name": "Video Prueba"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "administracion@odontocenter.com.ar, jbatista@sonrisasargentinas.com, mmoscovich@suy.uy",
+        "subject": "=Facturación {{ $json.fecha }} — ${{ $json.total_general.toLocaleString('es-UY') }}",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false,
+          "ccList": "mcgrottola@suy.uy, [EMAIL-AGENCIA]",
+          "senderName": "Maria Cecilia Gróttola"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        384,
+        -784
+      ],
+      "id": "0b5d202f-cb91-42d2-a21a-58cdd81d868c",
+      "name": "Diario",
+      "webhookId": "43471942-03b8-45fb-80a5-9c1c8dbd2947",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "5R0ScEVqcfjKYanp",
+          "name": "Gmail | la agencia®"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const TZ = 'America/Montevideo';\nconst fecha = new Date().toLocaleDateString('en-CA', { timeZone: TZ });\nconst q = encodeURIComponent(JSON.stringify({ fecha_recepcion: { eq: fecha } }));\nconst url = `https://api.dentalink.healthatom.com/api/v1/pagos?q=${q}`;\nreturn [{ json: { fecha, url } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -736,
+        -784
+      ],
+      "id": "424f221c-7c99-40bc-b173-a95a2b04a9d6",
+      "name": "fecha_hoy"
+    },
+    {
+      "parameters": {
+        "sendTo": "[EMAIL-AGENCIA]",
+        "subject": "=Facturación por categoría {{ $json.semanaLabel }} — ${{ $json.totalGeneral }}",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Maria Cecilia Gróttola"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1440,
+        -1120
+      ],
+      "id": "903442cb-fff1-427d-b7bd-b16642d5a6be",
+      "name": "la agencia (pruebas)",
+      "webhookId": "43471942-03b8-45fb-80a5-9c1c8dbd2947",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "5R0ScEVqcfjKYanp",
+          "name": "Gmail | la agencia®"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "[EMAIL-AGENCIA]",
+        "subject": "=Facturación por categoría {{ $json.mesLabel }} — ${{ $json.totalGeneral }}",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Maria Cecilia Gróttola"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1088,
+        -832
+      ],
+      "id": "7d66f7b3-1dc0-4f7f-b8bc-494c051bd517",
+      "name": "la agencia (pruebas)1",
+      "webhookId": "43471942-03b8-45fb-80a5-9c1c8dbd2947",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "5R0ScEVqcfjKYanp",
+          "name": "Gmail | la agencia®"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1afd71da-2272-45d3-85cf-05cb9f59153d",
+              "leftValue": "={{ $json['Day of week'] }}",
+              "rightValue": "Sunday",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -960,
+        -784
+      ],
+      "id": "c52ccfa4-3195-47e0-bc93-cfc514398709",
+      "name": "Filtro Domingos"
+    },
+    {
+      "parameters": {
+        "chatId": "6390727286",
+        "text": "=*⭕ Reconectar Credencial Google*\n\n{{ $workflow.name }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        608,
+        -768
+      ],
+      "id": "188a1c53-80bd-48d9-9deb-828c7651a951",
+      "name": "Notificación1",
+      "webhookId": "a06bf8ec-7fa5-4572-bd8d-916bc1676c33",
+      "credentials": {
+        "telegramApi": {
+          "id": "FMRcLPf0ibseD1rC",
+          "name": "Video Prueba"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Trigger Reporte Semanal": [
+      {
+        "json": {
+          "timestamp": "2026-04-12T00:00:25.058-03:00",
+          "Readable date": "April 12th 2026, 12:00:25 am",
+          "Readable time": "12:00:25 am",
+          "Day of week": "Sunday",
+          "Year": "2026",
+          "Month": "April",
+          "Day of month": "12",
+          "Hour": "00",
+          "Minute": "00",
+          "Second": "25",
+          "Timezone": "America/Argentina/Buenos_Aires (UTC-03:00)"
+        }
+      }
+    ],
+    "Trigger Reporte Diario": [
+      {
+        "json": {
+          "timestamp": "2026-04-22T21:00:29.012-03:00",
+          "Readable date": "April 22nd 2026, 9:00:29 pm",
+          "Readable time": "9:00:29 pm",
+          "Day of week": "Wednesday",
+          "Year": "2026",
+          "Month": "April",
+          "Day of month": "22",
+          "Hour": "21",
+          "Minute": "00",
+          "Second": "29",
+          "Timezone": "America/Argentina/Buenos_Aires (UTC-03:00)"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Trigger Reporte Diario": {
+      "main": [
+        [
+          {
+            "node": "Filtro Domingos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Filtro de campos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro de campos": {
+      "main": [
+        [
+          {
+            "node": "Filtro7",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Filtro6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro": {
+      "main": [
+        [
+          {
+            "node": "Clase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clase": {
+      "main": [
+        [
+          {
+            "node": "Pagado y Cantidad Semana",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Categoria": {
+      "main": [
+        [
+          {
+            "node": "Pagado Semana",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pagado Semana": {
+      "main": [
+        [
+          {
+            "node": "Combinar categorías1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pagado y Cantidad Semana": {
+      "main": [
+        [
+          {
+            "node": "Combinar categorías4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combinar categorías1": {
+      "main": [
+        [
+          {
+            "node": "Semana",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combinar categorías4": {
+      "main": [
+        [
+          {
+            "node": "Semana",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Trigger Reporte Semanal": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar HTML 2": {
+      "main": [
+        [
+          {
+            "node": "Semanal",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Notificación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pagos2": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize1": {
+      "main": [
+        [
+          {
+            "node": "Preparar HTML2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar HTML2": {
+      "main": [
+        [
+          {
+            "node": "Diario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Summarize1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro3": {
+      "main": [
+        [
+          {
+            "node": "Clase1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clase1": {
+      "main": [
+        [
+          {
+            "node": "Pagado y Cantidad Mes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Categoria1": {
+      "main": [
+        [
+          {
+            "node": "Pagado Mes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar HTML ": {
+      "main": [
+        [
+          {
+            "node": "Notificación",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Mensual",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "la agencia (pruebas)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro4": {
+      "main": [
+        [
+          {
+            "node": "Categoria1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro5": {
+      "main": [
+        [
+          {
+            "node": "Filtro3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pagado Mes": {
+      "main": [
+        [
+          {
+            "node": "Combinar categorías Mes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pagado y Cantidad Mes": {
+      "main": [
+        [
+          {
+            "node": "Combinar Orto Mes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combinar categorías Mes": {
+      "main": [
+        [
+          {
+            "node": "Mes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combinar Orto Mes": {
+      "main": [
+        [
+          {
+            "node": "Mes",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Mes": {
+      "main": [
+        [
+          {
+            "node": "Preparar HTML ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Semana": {
+      "main": [
+        [
+          {
+            "node": "Preparar HTML 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pagos": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Preparar HTML Backfill",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generar Fechas Backfill": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Pagos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar HTML Backfill": {
+      "main": [
+        [
+          {
+            "node": "Diario1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Diario1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Filtro de campos1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro de campos1": {
+      "main": [
+        [
+          {
+            "node": "Filtro4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Filtro5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro7": {
+      "main": [
+        [
+          {
+            "node": "Categoria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro6": {
+      "main": [
+        [
+          {
+            "node": "Filtro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Reporte Mensual": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fecha_hoy": {
+      "main": [
+        [
+          {
+            "node": "Pagos2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro Domingos": {
+      "main": [
+        [
+          {
+            "node": "fecha_hoy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Diario": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Notificación1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "errorWorkflow": "OBkUyb8fuo30DzA9"
+  },
+  "versionId": "1cf1ee16-d216-492f-9334-9635ad3a6778",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  },
+  "id": "AfOlO59HbeD3u1nq",
+  "tags": []
+}

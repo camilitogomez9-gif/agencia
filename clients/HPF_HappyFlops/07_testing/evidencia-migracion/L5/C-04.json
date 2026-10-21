@@ -1,0 +1,17 @@
+{
+  "caso": "C-04",
+  "titulo": "OR sobre varios productos (LIKE case-insensitive)",
+  "resultado": "CORROBORADO",
+  "detalle": "pedí ['sandalias', 'cilindros'] → cards=5 esperadas=5 iguales",
+  "pasos": [
+    {
+      "cards": [
+        "Cilindros de 500ml boda personalizados",
+        "Cilindros el catalogo boda",
+        "Cilindros video",
+        "Sandalias Video",
+        "Sandalias para boda personalizadas"
+      ]
+    }
+  ]
+}

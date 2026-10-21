@@ -1,0 +1,256 @@
+{
+  "name": "sys-seguimientos-leads-v2",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 11 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "b9d297b2-ef86-479d-86e3-c3c6b9b71420",
+      "name": "Schedule Trigger (Lun-Vie 11h ART)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-720, -16],
+      "notes": "Cron: 0 11 * * 1-5 (Lun-Vie a las 11 ART). Una sola corrida diaria — el toque es a los 4 días, no necesita alta frecuencia. Verificar timezone del workflow = America/Argentina/Buenos_Aires."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  session_id,\n  perfil,\n  etapa,\n  datos_capturados,\n  ultima_actividad,\n  seguimientos_enviados\nFROM sys_leads_para_seguimiento;",
+        "options": {}
+      },
+      "id": "dea795b8-9f04-44d9-b504-6cf2067e2872",
+      "name": "Get leads para seguir",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-496, -16],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "notes": "Lee la vista sys_leads_para_seguimiento (ver supabase-schema-v3-seguimientos.sql). Devuelve solo leads con ultima_actividad > 4 días y seguimientos_enviados = 0."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "has-rows",
+              "leftValue": "={{ $json.session_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "37de1473-3753-4d07-a90f-7e4abdd51def",
+      "name": "IF hay leads?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-272, -16]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [-48, -16],
+      "id": "5dd1f0f4-a1e8-4fd1-a885-eb69e89b2835",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "// v2 — sin LLM. Arma el mensaje fijo de Edgardo con el nombre del lead.\n// Si no hay nombre capturado, usa fallback genérico \"Hola, buen día.\".\nconst lead = $input.first().json;\nconst sessionId = String(lead.session_id || '');\nconst parts = sessionId.split('_');\nconst canal = parts[0] || 'unknown';\nconst subscriberId = parts.slice(1).join('_') || '';\n\nconst datos = lead.datos_capturados || {};\nconst nombreRaw = String(datos.nombre || '').trim();\n// Solo usa primer nombre, capitalizado, para evitar \"Hola, JUAN CARLOS DEL VALLE\".\nconst primerNombre = nombreRaw.split(/\\s+/)[0] || '';\nconst nombreFmt = primerNombre\n  ? primerNombre.charAt(0).toUpperCase() + primerNombre.slice(1).toLowerCase()\n  : '';\n\nconst saludo = nombreFmt\n  ? `Hola, ${nombreFmt}, buen día.`\n  : 'Hola, buen día.';\n\nconst mensaje = `${saludo} Quería dar seguimiento a nuestra última conversación y saber si te quedó alguna consulta pendiente. Si es así, avísame y nos ponemos en contacto de inmediato. ¡Saludos!`;\n\nreturn [{\n  json: {\n    session_id: sessionId,\n    subscriber_id: subscriberId,\n    canal,\n    nombre: nombreFmt,\n    ai_msg_1: mensaje,\n    ai_msg_2: '',\n    ai_msg_3: '',\n    ai_msg_count: 1\n  }\n}];"
+      },
+      "id": "ef68678a-f73c-4afb-a42c-b524d61a7e80",
+      "name": "Build mensaje fijo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [176, 0],
+      "notes": "v2 sin LLM. Template literal con primer nombre capitalizado o fallback genérico. Cero variabilidad — Edgardo pidió texto exacto."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/subscriber/setCustomFields",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  subscriber_id: $json.subscriber_id,\n  fields: [\n    { field_name: \"ai_msg_1\", field_value: $json.ai_msg_1 },\n    { field_name: \"ai_msg_2\", field_value: null },\n    { field_name: \"ai_msg_3\", field_value: null },\n    { field_name: \"ai_msg_count\", field_value: 1 }\n  ]\n}) }}",
+        "options": {}
+      },
+      "id": "0d04a881-f071-4224-920b-3e0e9796b147",
+      "name": "setCustomFields ManyChat",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [400, 0],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "E41Ucr4mYfSjuoxJ",
+          "name": "ManyChat - SYS"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  subscriber_id: $('Build mensaje fijo').item.json.subscriber_id,\n  flow_ns: \"content20260602201354_388410\"\n}) }}",
+        "options": {}
+      },
+      "id": "7a35a20d-d0eb-4ba1-8a48-bb2fe70ef71d",
+      "name": "sendFlow ManyChat (Responder Multi-parte)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [624, 0],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "E41Ucr4mYfSjuoxJ",
+          "name": "ManyChat - SYS"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "Usa el mismo flow_ns 'Responder Multi-parte' del main + del v1. Lee ai_msg_1 y lo envía como mensaje único."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE sys_session_state\nSET\n  seguimientos_enviados = 1,\n  ultima_actividad = NOW(),\n  etapa = 'cerrado'\nWHERE session_id = $1;",
+        "options": {
+          "queryReplacement": "={{ [$('Build mensaje fijo').item.json.session_id] }}"
+        }
+      },
+      "id": "5ed6f732-c5f3-4f9d-8f5b-d97afac60376",
+      "name": "Update tracking",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [848, 0],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "notes": "v2: marca seguimientos_enviados=1 y etapa='cerrado' (no hay segundo toque). ultima_actividad=NOW() para que no vuelva a entrar al cron. Si el lead responde, el main hace el upsert y resetea etapa='diagnostico'."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sys_tool_calls (session_id, tool_name, input_payload, output_payload, status, duration_ms)\nVALUES ($1, 'seguimiento_auto_4d', $2::jsonb, $3::jsonb, 'RESOLVED', 0);",
+        "options": {
+          "queryReplacement": "={{ [$('Build mensaje fijo').item.json.session_id, JSON.stringify({nombre: $('Build mensaje fijo').item.json.nombre, ultima_actividad_dias: 4}), JSON.stringify({ai_msg_1: $('Build mensaje fijo').item.json.ai_msg_1, subscriber_id: $('Build mensaje fijo').item.json.subscriber_id, canal: $('Build mensaje fijo').item.json.canal})] }}"
+        }
+      },
+      "id": "06f8de98-761c-4afc-874b-e9469ff4e6a6",
+      "name": "Log to sys_tool_calls",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [1072, 0],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "Audit log con tool_name='seguimiento_auto_4d'. Permite trackear cuántos seguimientos se enviaron."
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger (Lun-Vie 11h ART)": {
+      "main": [[{ "node": "Get leads para seguir", "type": "main", "index": 0 }]]
+    },
+    "Get leads para seguir": {
+      "main": [[{ "node": "IF hay leads?", "type": "main", "index": 0 }]]
+    },
+    "IF hay leads?": {
+      "main": [[{ "node": "Loop Over Items", "type": "main", "index": 0 }]]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [{ "node": "Build mensaje fijo", "type": "main", "index": 0 }]
+      ]
+    },
+    "Build mensaje fijo": {
+      "main": [[{ "node": "setCustomFields ManyChat", "type": "main", "index": 0 }]]
+    },
+    "setCustomFields ManyChat": {
+      "main": [[{ "node": "sendFlow ManyChat (Responder Multi-parte)", "type": "main", "index": 0 }]]
+    },
+    "sendFlow ManyChat (Responder Multi-parte)": {
+      "main": [[{ "node": "Update tracking", "type": "main", "index": 0 }]]
+    },
+    "Update tracking": {
+      "main": [[{ "node": "Log to sys_tool_calls", "type": "main", "index": 0 }]]
+    },
+    "Log to sys_tool_calls": {
+      "main": [[{ "node": "Loop Over Items", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1,
+    "availableInMCP": false
+  },
+  "versionId": "v2-seguimientos-4dias-fijo",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  },
+  "id": "8XkICVXpp7qnAfBX",
+  "tags": [
+    { "name": "SYS", "id": "frzN1ezwC8wCA6mR" },
+    { "name": "F8", "id": "tzCmkzx1SWzxOyKm" },
+    { "name": "seguimientos", "id": "XKP0LK8RtJvGi8XJ" },
+    { "name": "cron", "id": "herwqo0JJxIFYzZg" }
+  ]
+}

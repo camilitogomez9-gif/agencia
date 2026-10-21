@@ -1,0 +1,192 @@
+{
+  "name": "ManyChat Venttur — Export Snapshot",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "id": "mc-ven-00-trigger",
+      "name": "Trigger Manual"
+    },
+    {
+      "parameters": {
+        "url": "https://api.manychat.com/fb/page/getFlows",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Accept", "value": "application/json" },
+            { "name": "Authorization", "value": "Bearer 3256256:ecc8538e4caee488900c4a02f3170a0a" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [280, -300],
+      "id": "mc-ven-01-flows",
+      "name": "Fetch Flows",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "url": "https://api.manychat.com/fb/data/getTags",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Accept", "value": "application/json" },
+            { "name": "Authorization", "value": "Bearer 3256256:ecc8538e4caee488900c4a02f3170a0a" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [280, -100],
+      "id": "mc-ven-02-tags",
+      "name": "Fetch Tags",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "url": "https://api.manychat.com/fb/page/getInfo",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Accept", "value": "application/json" },
+            { "name": "Authorization", "value": "Bearer 3256256:ecc8538e4caee488900c4a02f3170a0a" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [280, 100],
+      "id": "mc-ven-03-info",
+      "name": "Fetch Page Info",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "url": "https://api.manychat.com/fb/page/getWidgets",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Accept", "value": "application/json" },
+            { "name": "Authorization", "value": "Bearer 3256256:ecc8538e4caee488900c4a02f3170a0a" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [280, 300],
+      "id": "mc-ven-04-widgets",
+      "name": "Fetch Widgets",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'flows';\nreturn [{ json: { section: SECTION, pages: $input.all().map(i => i.json) } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [560, -300],
+      "id": "mc-ven-05-pflows",
+      "name": "Pack Flows",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'tags';\nreturn [{ json: { section: SECTION, pages: $input.all().map(i => i.json) } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [560, -100],
+      "id": "mc-ven-06-ptags",
+      "name": "Pack Tags",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'page_info';\nreturn [{ json: { section: SECTION, pages: $input.all().map(i => i.json) } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [560, 100],
+      "id": "mc-ven-07-pinfo",
+      "name": "Pack Page Info",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const SECTION = 'widgets';\nreturn [{ json: { section: SECTION, pages: $input.all().map(i => i.json) } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [560, 300],
+      "id": "mc-ven-08-pwidgets",
+      "name": "Pack Widgets",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [840, 0],
+      "id": "mc-ven-09-merge",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "function readItems(n) {\n  try { return $(n).all().map(i => i.json); } catch(e) { return []; }\n}\nfunction extractData(items) {\n  return items.flatMap(function(item) {\n    var pages = item.pages || [item];\n    return pages.flatMap(function(p) {\n      var d = p.data !== undefined ? p.data : p;\n      return Array.isArray(d) ? d : (d && typeof d === 'object' ? [d] : []);\n    });\n  });\n}\n\nvar flows       = extractData(readItems('Pack Flows'));\nvar tags        = extractData(readItems('Pack Tags'));\nvar pageInfoArr = extractData(readItems('Pack Page Info'));\nvar widgets     = extractData(readItems('Pack Widgets'));\n\nreturn [{\n  json: {\n    page_info: pageInfoArr[0] || {},\n    flows:     flows,\n    tags:      tags,\n    widgets:   widgets,\n    _metadata: {\n      exported_at: new Date().toISOString(),\n      source: 'ManyChat API v2',\n      counts: {\n        flows:   flows.length,\n        tags:    tags.length,\n        widgets: widgets.length\n      }\n    }\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 0],
+      "id": "mc-ven-10-consolidate",
+      "name": "Consolidate Snapshot",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "var d    = $input.first().json;\nvar meta = d._metadata;\nvar pi   = d.page_info;\nvar SEP  = '─'.repeat(54);\nvar SEP2 = '═'.repeat(54);\nvar lines = [];\n\nlines.push(SEP2);\nlines.push('  MANYCHAT SNAPSHOT — VENTTUR');\nlines.push('  Exportado: ' + meta.exported_at);\nlines.push(SEP2);\nlines.push('');\n\nlines.push('RESUMEN');\nlines.push(SEP);\nlines.push('  flows:   ' + meta.counts.flows);\nlines.push('  tags:    ' + meta.counts.tags);\nlines.push('  widgets: ' + meta.counts.widgets);\nlines.push('');\n\nlines.push('CUENTA');\nlines.push(SEP);\nlines.push('  id:       ' + (pi.id || 'N/A'));\nlines.push('  name:     ' + (pi.name || 'N/A'));\nlines.push('  username: ' + (pi.username || 'N/A'));\nlines.push('  timezone: ' + (pi.timezone || 'N/A'));\nlines.push('');\n\nlines.push('FLOWS (' + d.flows.length + ')');\nlines.push(SEP);\nd.flows.forEach(function(f) {\n  lines.push('  ns:     ' + (f.ns || f.id || 'N/A'));\n  lines.push('  name:   ' + (f.name || '(sin nombre)'));\n  lines.push('  status: ' + (f.status || 'N/A'));\n  lines.push('');\n});\n\nlines.push('TAGS (' + d.tags.length + ')');\nlines.push(SEP);\nd.tags.forEach(function(t) {\n  lines.push('  [' + (t.id || 'N/A') + '] ' + (t.name || 'N/A'));\n});\nlines.push('');\n\nlines.push('WIDGETS / GROWTH TOOLS (' + d.widgets.length + ')');\nlines.push(SEP);\nd.widgets.forEach(function(w) {\n  lines.push('  [' + (w.id || 'N/A') + '] ' + (w.name || '(sin nombre)') + ' — ' + (w.type || 'N/A'));\n});\nlines.push('');\n\nlines.push(SEP2);\nlines.push('RAW JSON');\nlines.push(SEP2);\nlines.push(JSON.stringify(d, null, 2));\n\nvar txt = lines.join('\\n');\n\nconst binaryData = await this.helpers.prepareBinaryData(\n  Buffer.from(txt, 'utf-8'),\n  'manychat-venttur-snapshot.txt',\n  'text/plain'\n);\n\nreturn [{ json: { filename: 'manychat-venttur-snapshot.txt' }, binary: { data: binaryData } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1360, 0],
+      "id": "mc-ven-11-format",
+      "name": "Format TXT",
+      "executeOnce": true
+    }
+  ],
+  "connections": {
+    "Trigger Manual": {
+      "main": [[
+        { "node": "Fetch Flows",     "type": "main", "index": 0 },
+        { "node": "Fetch Tags",      "type": "main", "index": 0 },
+        { "node": "Fetch Page Info", "type": "main", "index": 0 },
+        { "node": "Fetch Widgets",   "type": "main", "index": 0 }
+      ]]
+    },
+    "Fetch Flows":     { "main": [[{ "node": "Pack Flows",     "type": "main", "index": 0 }]] },
+    "Fetch Tags":      { "main": [[{ "node": "Pack Tags",      "type": "main", "index": 0 }]] },
+    "Fetch Page Info": { "main": [[{ "node": "Pack Page Info", "type": "main", "index": 0 }]] },
+    "Fetch Widgets":   { "main": [[{ "node": "Pack Widgets",   "type": "main", "index": 0 }]] },
+    "Pack Flows":      { "main": [[{ "node": "Merge", "type": "main", "index": 0 }]] },
+    "Pack Tags":       { "main": [[{ "node": "Merge", "type": "main", "index": 1 }]] },
+    "Pack Page Info":  { "main": [[{ "node": "Merge", "type": "main", "index": 2 }]] },
+    "Pack Widgets":    { "main": [[{ "node": "Merge", "type": "main", "index": 3 }]] },
+    "Merge":                { "main": [[{ "node": "Consolidate Snapshot", "type": "main", "index": 0 }]] },
+    "Consolidate Snapshot": { "main": [[{ "node": "Format TXT",           "type": "main", "index": 0 }]] }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  }
+}

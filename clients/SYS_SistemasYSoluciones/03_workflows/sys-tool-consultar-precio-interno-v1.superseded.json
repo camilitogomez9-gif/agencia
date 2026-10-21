@@ -1,0 +1,185 @@
+{
+  "name": "sys-tool-consultar-precio-interno-v1",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"query\": \"\",\n  \"session_id\": \"\",\n  \"subscriber_id\": \"\"\n}"
+      },
+      "id": "trigger-001",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [-1600, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// v1 — guard de whitelist + normalización de query.\n// Whitelist hardcoded acá como defense in depth. La validación primaria\n// vive en el system prompt (modo interno se decide ahí según subscriber_id).\n// Si el agente invoca esta tool con un subscriber_id que NO está en la whitelist,\n// devuelve ERROR para evitar leaks de precios a leads externos.\n\nconst WHITELIST = (process.env.SYS_INTERNAL_SUBSCRIBERS || '').split(',').map(s => s.trim()).filter(Boolean);\n// Fallback hardcoded mientras no esté la env var configurada en n8n.\nconst WHITELIST_FALLBACK = [\n  '<<<SUBSCRIBER_ID_EDGARDO>>>',\n  '<<<SUBSCRIBER_ID_RODRI>>>',\n  '<<<SUBSCRIBER_ID_LA AGENCIA>>>'\n];\nconst allowed = WHITELIST.length > 0 ? WHITELIST : WHITELIST_FALLBACK;\n\nconst args = $input.first().json;\nconst subId = String(args.subscriber_id || '').trim();\nconst query = String(args.query || '').trim();\nconst sessionId = String(args.session_id || '').trim() || 'unknown';\n\nif (!query) {\n  return [{ json: { _skip: true, _reason: 'empty_query', status: 'ERROR', message_to_agent: 'Faltó el término de búsqueda. Pedí un modelo, marca o tecnología específica.' } }];\n}\n\nif (!subId || !allowed.includes(subId)) {\n  return [{ json: { _skip: true, _reason: 'not_whitelisted', status: 'ERROR', message_to_agent: 'Esta consulta es solo para uso interno del equipo. No puedo compartir precios por este canal — un comercial te va a contactar para pasarte el detalle.' } }];\n}\n\n// Normalizar query: minúsculas, sin acentos, sin caracteres no alfanuméricos extras\nconst normalized = query\n  .toLowerCase()\n  .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')\n  .replace(/[^a-z0-9 ]/g, ' ')\n  .replace(/\\s+/g, ' ')\n  .trim();\n\nconst keywords = normalized.split(' ').filter(k => k.length >= 2);\n\nreturn [{ json: { _skip: false, query, normalized, keywords, session_id: sessionId, subscriber_id: subId } }];"
+      },
+      "id": "validate-001",
+      "name": "Validate + Guard whitelist",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-1376, 0],
+      "notes": "Whitelist hardcoded de subscribers internos (Edgardo, Rodri, la agencia-la agencia). Si el subscriber_id no está, retorna ERROR. La whitelist se puede mover a env var SYS_INTERNAL_SUBSCRIBERS (CSV) cuando esté disponible."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 1 },
+          "conditions": [
+            {
+              "id": "skip-check",
+              "leftValue": "={{ $json._skip }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "true" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-skip-001",
+      "name": "IF skip?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-1152, 0]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ ({ status: $('Validate + Guard whitelist').first().json.status || 'ERROR', data: null, message_to_agent: $('Validate + Guard whitelist').first().json.message_to_agent, trace_id: $execution.id }) }}",
+        "options": {}
+      },
+      "id": "return-err-001",
+      "name": "Return ERROR (skip)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-928, -128]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "<<<SHEET_ID_PRECIOS_RODRI>>>",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "<<<TAB_NAME>>>",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "sheets-read-001",
+      "name": "Read precios (Google Sheets)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [-928, 80],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "2a5f0S7mTtvH5XH2",
+          "name": "la agencia"
+        }
+      },
+      "continueOnFail": true,
+      "notes": "REEMPLAZAR <<<SHEET_ID_PRECIOS_RODRI>>> con el ID del Google Sheet que mantiene Rodri y <<<TAB_NAME>>> con el nombre de la pestaña. Operation = read (todas las filas). El filtrado por keyword se hace en el siguiente nodo Code. Si Rodri cambia el spreadsheetId, también hay que reflejarlo acá."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Filtra filas por matching de keywords contra TODAS las columnas concatenadas.\n// No asume nombres de columna específicos — el sheet de Rodri puede tener\n// columnas distintas (modelo, marca, descripcion, precio, etc.) y este nodo\n// es robusto a esa variabilidad.\n\nconst rows = $input.all();\nconst ctx = $('Validate + Guard whitelist').first().json;\nconst keywords = ctx.keywords || [];\n\nfunction normalize(str) {\n  return String(str || '')\n    .toLowerCase()\n    .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')\n    .replace(/[^a-z0-9 ]/g, ' ')\n    .replace(/\\s+/g, ' ')\n    .trim();\n}\n\nconst matches = rows.filter(r => {\n  const concatenated = normalize(Object.values(r.json).join(' '));\n  // Match: TODAS las keywords aparecen en la fila (AND, no OR — más preciso)\n  return keywords.every(k => concatenated.includes(k));\n});\n\nif (matches.length === 0) {\n  return [{ json: {\n    status: 'NOT_FOUND',\n    data: { query: ctx.query, keywords, total_rows: rows.length, matches: 0 },\n    message_to_agent: `No encontré ningún equipo que matchee \"${ctx.query}\" en la planilla de precios. Verificá la grafía o probá con menos keywords.`,\n    trace_id: $execution.id\n  } }];\n}\n\n// Cap: máximo 5 matches para no inundar el chat ni el contexto del LLM\nconst topMatches = matches.slice(0, 5).map(r => r.json);\n\nreturn [{ json: {\n  status: matches.length > 5 ? 'AMBIGUOUS' : 'RESOLVED',\n  data: {\n    query: ctx.query,\n    total_matches: matches.length,\n    shown: topMatches.length,\n    items: topMatches\n  },\n  message_to_agent: matches.length > 5\n    ? `Encontré ${matches.length} matches para \"${ctx.query}\". Te paso los primeros 5 — pedile al usuario interno que afine la búsqueda si necesita ver más.`\n    : `Encontré ${matches.length} match(es) para \"${ctx.query}\". Pasale los datos al usuario interno tal cual aparecen en la planilla, sin redondear ni interpretar precios.`,\n  trace_id: $execution.id\n} }];"
+      },
+      "id": "filter-001",
+      "name": "Filter + Format Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-704, 80]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sys_tool_calls (session_id, tool_name, input_payload, output_payload, status, duration_ms)\nVALUES ($1, 'consultar-precio-interno', $2::jsonb, $3::jsonb, $4, $5)",
+        "options": {
+          "queryReplacement": "={{ [$('Execute Workflow Trigger').first().json.session_id || 'unknown', JSON.stringify($('Execute Workflow Trigger').first().json), JSON.stringify($json), $json.status || 'success', 0] }}"
+        }
+      },
+      "id": "log-001",
+      "name": "Log to sys_tool_calls",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-480, 0],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $('Return ERROR (skip)').isExecuted ? $('Return ERROR (skip)').first().json : $('Filter + Format Output').first().json }}",
+        "options": {}
+      },
+      "id": "return-001",
+      "name": "Return Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-256, 0]
+    }
+  ],
+  "pinData": {
+    "Execute Workflow Trigger": [
+      {
+        "json": {
+          "query": "DTF textil A3",
+          "session_id": "smoke_interno_001",
+          "subscriber_id": "<<<SUBSCRIBER_ID_EDGARDO>>>"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [[{ "node": "Validate + Guard whitelist", "type": "main", "index": 0 }]]
+    },
+    "Validate + Guard whitelist": {
+      "main": [[{ "node": "IF skip?", "type": "main", "index": 0 }]]
+    },
+    "IF skip?": {
+      "main": [
+        [{ "node": "Return ERROR (skip)", "type": "main", "index": 0 }],
+        [{ "node": "Read precios (Google Sheets)", "type": "main", "index": 0 }]
+      ]
+    },
+    "Return ERROR (skip)": {
+      "main": [[{ "node": "Log to sys_tool_calls", "type": "main", "index": 0 }]]
+    },
+    "Read precios (Google Sheets)": {
+      "main": [[{ "node": "Filter + Format Output", "type": "main", "index": 0 }]]
+    },
+    "Filter + Format Output": {
+      "main": [[{ "node": "Log to sys_tool_calls", "type": "main", "index": 0 }]]
+    },
+    "Log to sys_tool_calls": {
+      "main": [[{ "node": "Return Output", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "versionId": "v1-consultar-precio-interno-google-sheets",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  },
+  "id": "v1-consultar-precio-interno",
+  "tags": [
+    { "name": "SYS", "id": "frzN1ezwC8wCA6mR" },
+    { "name": "tool", "id": "K2c7bmHkgH9GCys0" },
+    { "name": "interno", "id": "interno-tag-001" }
+  ]
+}

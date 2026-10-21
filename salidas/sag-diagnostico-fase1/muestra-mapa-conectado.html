@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAG · Muestra — Mapa conectado (no carriles sueltos)</title>
+<style>
+:root{
+  --bg:#1a0e0f;
+  --text:#f6efe9; --text-muted:#b6a8a2; --text-dim:#83756f;
+  --sag-1:#ff8a3d; --sag-2:#ffc27a;
+  --warn:#ff8f6b; --warn-tint:rgba(255,143,107,.16);
+  --font:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;}
+body{margin:0;font-family:var(--font);color:var(--text);background:radial-gradient(1100px 700px at 15% -5%, rgba(255,138,61,.10), transparent 60%),var(--bg);padding:56px 0 90px;}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px;}
+.kick{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--sag-1);}
+h1{font-size:clamp(24px,3.6vw,34px);font-weight:600;letter-spacing:-.02em;margin:14px 0 10px;}
+.lede{color:var(--text-muted);font-size:16px;max-width:66ch;line-height:1.6;margin:0 0 8px;}
+.lede b{color:var(--text);}
+
+/* ---- el mapa: 1 sola pista, todo en un mismo lienzo con scroll ---- */
+.mapscroll{overflow-x:auto;margin:30px calc(50% - 50vw) 0;padding:10px max(28px, calc(50vw - 532px)) 20px;scrollbar-width:none;-ms-overflow-style:none;}
+.mapscroll::-webkit-scrollbar{display:none;height:0;}
+.mapcanvas{position:relative;width:1716px;height:684px;}
+.mapcanvas svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
+
+.lanetag{position:absolute;left:0;font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--text-dim);width:120px;line-height:1.3;transform:translateY(-50%);}
+
+.gnode{position:absolute;width:200px;min-height:92px;transform:translate(0,-50%);display:flex;flex-direction:column;justify-content:center;gap:4px;padding:14px 16px;border-radius:20px;background:linear-gradient(150deg,rgba(255,255,255,.13),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);box-shadow:inset 0 1px 1px rgba(255,255,255,.32),inset 0 -12px 18px rgba(0,0,0,.16),0 12px 28px -14px rgba(0,0,0,.6);z-index:2;}
+.gnode .ic{font-size:20px;line-height:1;}
+.gnode .nt{font-size:13.5px;font-weight:600;letter-spacing:-.005em;line-height:1.2;}
+.gnode .ns{font-size:11px;color:var(--text-muted);line-height:1.3;}
+.gnode.warn{background:linear-gradient(150deg,rgba(255,143,107,.22),rgba(255,255,255,.05));border-color:rgba(255,143,107,.4);}
+.gnode.isla{border-style:dashed;border-color:rgba(255,255,255,.22);opacity:.72;background:linear-gradient(150deg,rgba(255,255,255,.07),rgba(255,255,255,.02));}
+.gnode.isla .badge{position:absolute;top:-10px;right:14px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--warn);background:#1a0e0f;padding:2px 8px;border:1px solid rgba(255,143,107,.4);border-radius:99px;}
+
+.elbl{position:absolute;transform:translate(-50%,-50%);font-family:var(--mono);font-size:10px;letter-spacing:.03em;color:var(--text-muted);white-space:nowrap;padding:3px 9px;border-radius:999px;background:#1f1213;border:1px solid rgba(255,255,255,.14);z-index:3;}
+.elbl.warn{color:var(--warn);border-color:rgba(255,143,107,.34);background:#241514;}
+
+.legend{display:flex;gap:22px;flex-wrap:wrap;margin-top:8px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);font-family:var(--mono);font-size:10.5px;color:var(--text-dim);}
+.legend span{display:inline-flex;align-items:center;gap:7px;}
+.lgline{width:22px;height:0;border-top:2px solid var(--text-dim);}
+.lgline.warn{border-top:2px dashed var(--warn);}
+
+.note{margin-top:44px;padding:20px 22px;border-radius:18px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);color:var(--text-muted);font-size:13.5px;line-height:1.6;}
+.note b{color:var(--text);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kick">SAG × la agencia · Muestra de estructura</div>
+  <h1>El mapa, como un mapa: con cruces reales entre carriles.</h1>
+  <p class="lede">No son 4 flujos en paralelo que nunca se tocan: <b>hay 2 cruces reales</b> (donde un carril depende de otro) y <b>1 isla real</b> (donde no hay ninguna conexión). Eso es exactamente lo que pasa hoy en SAG.</p>
+
+  <div class="mapscroll">
+    <div class="mapcanvas">
+      <svg viewBox="0 0 1716 684" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="rgba(255,255,255,.5)"/>
+          </marker>
+          <marker id="ahw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#ff8f6b"/>
+          </marker>
+        </defs>
+
+        <!-- fila 1 · Operación (y=54) — líneas de borde a borde de tarjeta, nunca por debajo -->
+        <line x1="396" y1="54" x2="526" y2="54" stroke="rgba(255,255,255,.22)" stroke-width="2" marker-end="url(#ah)"/>
+        <line x1="726" y1="54" x2="856" y2="54" stroke="#ff8f6b" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#ahw)"/>
+        <line x1="1056" y1="54" x2="1186" y2="54" stroke="#ff8f6b" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#ahw)"/>
+
+        <!-- fila 2 · Dinero (y=246) -->
+        <line x1="396" y1="246" x2="526" y2="246" stroke="#ff8f6b" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#ahw)"/>
+        <line x1="726" y1="246" x2="856" y2="246" stroke="#ff8f6b" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#ahw)"/>
+        <line x1="1056" y1="246" x2="1186" y2="246" stroke="rgba(255,255,255,.22)" stroke-width="2" marker-end="url(#ah)"/>
+        <line x1="1386" y1="246" x2="1516" y2="246" stroke="#ff8f6b" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#ahw)"/>
+
+        <!-- fila 3 · Pago (y=438) -->
+        <line x1="396" y1="438" x2="526" y2="438" stroke="#ff8f6b" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#ahw)"/>
+        <line x1="726" y1="438" x2="856" y2="438" stroke="rgba(255,255,255,.22)" stroke-width="2" marker-end="url(#ah)"/>
+
+        <!-- CRUCE 1: Captura 17 drives (r1c2, centro 626,54) ↔ Boletas de papel (r2c1, centro 296,246) — borde inferior a borde superior -->
+        <line x1="626" y1="100" x2="296" y2="200" stroke="#ff8f6b" stroke-width="2" stroke-dasharray="3 5" marker-end="url(#ahw)" marker-start="url(#ahw)"/>
+
+        <!-- CRUCE 2 (el roto): CRM SAGxxx (r4c1, 296,630) ⇢ Pago Externos (r3c1, 296,438) — vertical, borde a borde -->
+        <line x1="296" y1="584" x2="296" y2="484" stroke="#ff8f6b" stroke-width="2.5" stroke-dasharray="2 7" marker-end="url(#ahw)"/>
+      </svg>
+
+      <div class="lanetag" style="top:54px">Operación · captura</div>
+      <div class="lanetag" style="top:246px">Dinero · cobro</div>
+      <div class="lanetag" style="top:438px">Pago a choferes</div>
+      <div class="lanetag" style="top:630px">Datos · adquisición</div>
+
+      <!-- fila 1 -->
+      <div class="gnode" style="left:196px;top:54px"><span class="ic">📱</span><div class="nt">Pedido por WhatsApp</div><div class="ns">~50 grupos, sin estructura</div></div>
+      <div class="gnode warn" style="left:526px;top:54px"><span class="ic">✍️</span><div class="nt">Captura en 17 drives</div><div class="ns">sin fórmulas, 8-10 capturistas</div></div>
+      <div class="gnode warn" style="left:856px;top:54px"><span class="ic">🖥️</span><div class="nt">Se recarga en la Plataforma</div><div class="ns">re-tecleo del proveedor</div></div>
+      <div class="gnode" style="left:1186px;top:54px"><span class="ic">⏳</span><div class="nt">Queda desfasada</div><div class="ns">2.000 vs 1.600 servicios</div></div>
+
+      <!-- fila 2 -->
+      <div class="gnode" style="left:196px;top:246px"><span class="ic">🧾</span><div class="nt">Boletas de papel</div><div class="ns">2.100+ por semana</div></div>
+      <div class="gnode warn" style="left:526px;top:246px"><span class="ic">📄</span><div class="nt">Consolidado</div><div class="ns">borrado a mano</div></div>
+      <div class="gnode warn" style="left:856px;top:246px"><span class="ic">📊</span><div class="nt">~15 reportes</div><div class="ns">uno por cliente</div></div>
+      <div class="gnode" style="left:1186px;top:246px"><span class="ic">🧷</span><div class="nt">Factura99</div><div class="ns">CFDI</div></div>
+      <div class="gnode warn" style="left:1516px;top:246px"><span class="ic">🏦</span><div class="nt">Banorte</div><div class="ns">cobranza a ciegas</div></div>
+
+      <!-- fila 3 -->
+      <div class="gnode warn" style="left:196px;top:438px"><span class="ic">📄</span><div class="nt">Pago Externos</div><div class="ns">~1.500 filas a mano</div></div>
+      <div class="gnode warn" style="left:526px;top:438px"><span class="ic">✍️</span><div class="nt">Excel de Juanjo</div><div class="ns">layout del despacho</div></div>
+      <div class="gnode" style="left:856px;top:438px"><span class="ic">🏦</span><div class="nt">Despacho bancario</div><div class="ns">dispersión electrónica</div></div>
+
+      <!-- fila 4 -->
+      <div class="gnode" style="left:196px;top:630px"><span class="ic">🪪</span><div class="nt">CRM de RR.HH.</div><div class="ns">tiene el código SAGxxx</div></div>
+      <div class="gnode warn isla" style="left:856px;top:630px"><span class="badge">isla</span><span class="ic">📢</span><div class="nt">Anuncios → WhatsApp</div><div class="ns">leads sin registrar, sin CRM</div></div>
+
+      <!-- etiquetas: puestas en el punto medio EXACTO del hueco visible entre tarjetas (borde a borde), nunca sobre ninguna -->
+      <div class="elbl" style="left:461px;top:54px">se teclea</div>
+      <div class="elbl warn" style="left:791px;top:54px">copy-paste, 1 día</div>
+      <div class="elbl warn" style="left:1121px;top:54px">1 día atrás</div>
+
+      <div class="elbl warn" style="left:461px;top:246px">cotejo a mano</div>
+      <div class="elbl warn" style="left:791px;top:246px">1 x cliente</div>
+      <div class="elbl" style="left:1121px;top:246px">factura</div>
+      <div class="elbl warn" style="left:1451px;top:246px">banco a mano</div>
+
+      <div class="elbl warn" style="left:461px;top:438px">dictado, 50 min</div>
+      <div class="elbl" style="left:791px;top:438px">dispersa</div>
+
+      <!-- etiquetas de los 2 cruces, en el punto medio de cada línea diagonal/vertical -->
+      <div class="elbl warn" style="left:461px;top:150px">se cruzan, a mano</div>
+      <div class="elbl warn" style="left:296px;top:534px">no viaja</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span><span class="lgline"></span> pasa solo / poco riesgo</span>
+    <span><span class="lgline warn"></span> a mano · manual · roto</span>
+    <span>▢ carril con borde punteado = isla, cero conexiones</span>
+  </div>
+
+  <div class="note"><b>Qué cambió vs. la versión de carriles:</b> antes eran 4 flujos horizontales que nunca se tocaban entre sí (leía como "4 diagramas pegados", no un mapa). Acá hay 2 cruces reales entre carriles — <b>Captura de drives ↔ Boletas de papel</b> (se cotejan a mano, ADM-01) y <b>CRM SAGxxx ⇢ Pago Externos</b> (el cruce que <i>debería</i> existir y no existe: "no viaja", el hallazgo central de toda esta sección) — y 1 nodo real sin ninguna conexión (<b>Anuncios → WhatsApp</b>, la isla). Las etiquetas ahora son cortas y están puestas en coordenadas fijas del lienzo, así nunca pisan una tarjeta vecina (el bug que marcaste). Todo vive en un solo lienzo con scroll horizontal, no 4 pistas independientes.</div>
+</div>
+</body>
+</html>

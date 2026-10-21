@@ -1,0 +1,122 @@
+{
+  "probe_id": "sess_hpf_can_025_1785954279#12047e4d512d",
+  "session_id": "sess_hpf_can_025_1785954279",
+  "contact_id": "KSLMGxHkYbEUEwfkFjdk",
+  "canal": "ghl",
+  "texto_enviado": "hola",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 12.5,
+  "version_antes": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "version_despues": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "capturado_utc": "2026-08-05T18:25:00.788103+00:00",
+  "execution_id": "989574",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T18:24:43.749Z",
+  "stoppedAt": "2026-08-05T18:24:55.957Z",
+  "n_esperadas": 3,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "Me podría decir de que es su evento? ",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 2,
+      "message_part": "🤵👰 - Boda\n🎂🥳 - XV Años\n👼🏢 - Otros",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send Message via GHL",
+      "run": 0,
+      "ms": 801,
+      "reintentos_posibles": false,
+      "canal": "ghl",
+      "entregado": true,
+      "message_id": "QpvTozJ2vljGS0H4ha7S",
+      "chat_id": "jrEzTusVDghOAJ7VXf60",
+      "texto_entregado": null,
+      "error": null
+    },
+    {
+      "emisor": "Send Message via GHL",
+      "run": 1,
+      "ms": 863,
+      "reintentos_posibles": false,
+      "canal": "ghl",
+      "entregado": true,
+      "message_id": "5HaZmc4zIb7eq7Fj9uWQ",
+      "chat_id": "jrEzTusVDghOAJ7VXf60",
+      "texto_entregado": null,
+      "error": null
+    },
+    {
+      "emisor": "Send Message via GHL",
+      "run": 2,
+      "ms": 1859,
+      "reintentos_posibles": false,
+      "canal": "ghl",
+      "entregado": true,
+      "message_id": "ug9Lc3EzeYklo2Q5kEws",
+      "chat_id": "jrEzTusVDghOAJ7VXf60",
+      "texto_entregado": null,
+      "error": null
+    }
+  ],
+  "n_entregadas": 3,
+  "partes_post": [
+    {
+      "emisor": "Send Imagen Principal",
+      "run": 0,
+      "ms": 667,
+      "reintentos_posibles": false,
+      "canal": "ghl",
+      "entregado": true,
+      "message_id": "wHYOQnbkNQdAesjtHtLu",
+      "chat_id": "jrEzTusVDghOAJ7VXf60",
+      "texto_entregado": null,
+      "error": null
+    },
+    {
+      "emisor": "Send Promo Evento",
+      "run": 0,
+      "ms": 572,
+      "reintentos_posibles": false,
+      "canal": "ghl",
+      "entregado": true,
+      "message_id": "vMQ7YoL6LfgGnQqwV0Ze",
+      "chat_id": "jrEzTusVDghOAJ7VXf60",
+      "texto_entregado": null,
+      "error": null
+    }
+  ],
+  "contexto_post": {
+    "currentEvento": "Boda",
+    "justSet": true,
+    "imagenUrl": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+  },
+  "textos_post": [
+    "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Mandiles para Boda*\n*Kit anti cruda*\n*Pantuflas*\n\nDime cuales te interesan, así te mostramos toda su información 😊",
+    "Qué padre! 😊  \n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\n*(Pedidos solo para eventos 2026 por tema de tiempos)*"
+  ],
+  "cero_partes": false,
+  "agente": {
+    "output": "Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\nMe podría decir de que es su evento?\n🤵👰 - Boda\n🎂🥳 - XV Años\n👼🏢 - Otros",
+    "tools": []
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-CAN-025"
+}

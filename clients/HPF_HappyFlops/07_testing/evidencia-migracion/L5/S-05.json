@@ -1,0 +1,13 @@
+{
+  "caso": "S-05",
+  "titulo": "falta contactId → rompe",
+  "resultado": "CORROBORADO",
+  "detalle": "http=500 · {\"message\": \"Workflow execution failed\"}",
+  "pasos": [
+    {
+      "resp": {
+        "message": "Workflow execution failed"
+      }
+    }
+  ]
+}

@@ -1,0 +1,312 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "updates": ["message"],
+        "additionalFields": {}
+      },
+      "id": "8daf3339-927e-4691-a33d-aa881f77c024",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [-656, -16],
+      "webhookId": "bot-ideas-webhook",
+      "credentials": {
+        "telegramApi": {
+          "id": "0aKSpmK6tq07Vh5E",
+          "name": "Bot Asistente Claude"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" },
+          "conditions": [
+            {
+              "id": "private-check",
+              "leftValue": "={{ $json.message.chat.type }}",
+              "rightValue": "private",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2d8da58f-372d-4201-8b4e-8c5fdd63ca30",
+      "name": "Solo privados",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-432, -16]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" },
+          "conditions": [
+            {
+              "id": "voice-check",
+              "leftValue": "={{ $json.message.voice }}",
+              "rightValue": "",
+              "operator": { "type": "object", "operation": "exists", "singleValue": true }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3730f402-d7c2-4dd9-8b83-31393e2d12d9",
+      "name": "¿Es voz?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-208, -16]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/bot[TELEGRAM_BOT_TOKEN]/getFile",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "file_id",
+              "value": "={{ $('Telegram Trigger').item.json.message.voice.file_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "01f50ed2-9330-4b5f-a18f-1e1e2465bdfe",
+      "name": "Obtener archivo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [16, -112]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/file/bot[TELEGRAM_BOT_TOKEN]/{{ $json.result.file_path }}",
+        "options": {
+          "response": {
+            "response": { "responseFormat": "file" }
+          }
+        }
+      },
+      "id": "99e8aef0-b618-4921-8e3c-d075c317d787",
+      "name": "Descargar audio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [240, -112]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.item;\nif (item.binary && item.binary.data) {\n  item.binary.data.fileName = 'audio.ogg';\n  item.binary.data.mimeType = 'audio/ogg';\n}\nreturn item;"
+      },
+      "id": "abd2b3e5-65eb-44d1-a607-2e3b14460451",
+      "name": "Fijar tipo de audio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [464, -112]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/audio/transcriptions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer [GROQ_API_KEY]" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            { "parameterType": "formBinaryData", "name": "file", "inputDataFieldName": "data" },
+            { "name": "model", "value": "whisper-large-v3-turbo" },
+            { "name": "language", "value": "es" },
+            { "name": "response_format", "value": "json" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f8f7a17c-f7b6-466b-83e7-7ebc9d1be2ba",
+      "name": "Transcribir",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [688, -112]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "set-text-voice", "name": "text", "value": "={{ $json.text }}", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "84dc0674-c3e8-46ac-8402-d7ad30f31528",
+      "name": "Set texto (voz)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [912, -112]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "set-text-msg", "name": "text", "value": "={{ $('Telegram Trigger').item.json.message.text }}", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fde05336-fd11-4b3b-8cd3-f074a1dd2933",
+      "name": "Set texto (msg)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [912, 80]
+    },
+    {
+      "parameters": {},
+      "id": "47f282a5-3018-4f02-b7ec-343fdcb8da80",
+      "name": "Unir ramas",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [1136, -16]
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $input.item.json.text || '';\n\nconst prompt = `Organizá este mensaje sobre una idea de video para Instagram en el siguiente JSON:\\n\\n- \"nombre\": título corto del video (máximo 8 palabras). Debe describir el tema, no la acción. Nunca empieces con verbos imperativos.\\n- \"idea\": la esencia del video. Eliminá frases de encuadre como \"hacé un reel de\", \"quiero un video sobre\". Arrancá directo con el tema. Mantené el resto lo más literal posible.\\n- \"script\": si el mensaje incluye guión, estructura o puntos, transcribirlo fielmente. Si no, dejarlo como \"\".\\n\\nRespondé ÚNICAMENTE con JSON válido, sin texto extra ni bloques de código.\\n\\nMensaje: ${text}`;\n\nreturn [{ json: { text, prompt } }];"
+      },
+      "id": "e9e04810-ef83-4f12-88ca-0567d88b0995",
+      "name": "Preparar request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1360, -16]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer [GROQ_API_KEY]" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ ({ model: 'llama-3.1-8b-instant', temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: 'Respondé en formato JSON con los campos nombre, idea y script. Mensaje: ' + $json.text }] }) }}",
+        "options": {}
+      },
+      "id": "5bd0acef-b392-44a6-9233-85f9ed7627b5",
+      "name": "Parsear idea",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1568, -16]
+    },
+    {
+      "parameters": {
+        "jsCode": "const content = $input.item.json.choices[0].message.content;\nconst data = JSON.parse(content);\n\nconst toStr = v => (Array.isArray(v) ? v.join('\\n') : String(v || ''));\n\nreturn [{\n  json: {\n    nombre: toStr(data.nombre).slice(0, 2000) || 'Sin título',\n    idea:   toStr(data.idea).slice(0, 2000),\n    script: toStr(data.script).slice(0, 2000)\n  }\n}];"
+      },
+      "id": "1d7e49c6-3229-49ea-9411-4378bffe845c",
+      "name": "Preparar Notion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1808, -16]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.notion.com/v1/pages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Notion-Version", "value": "2022-06-28" },
+            { "name": "Authorization", "value": "{{NOTION_API_TOKEN}}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ ({ parent: { database_id: '2ca27c52c2868015864cecfae6967a5a' }, properties: { Nombre: { title: [{ text: { content: $json.nombre } }] }, Idea: { rich_text: [{ text: { content: $json.idea } }] }, Script: { rich_text: [{ text: { content: $json.script } }] }, Finalizado: { checkbox: false } } }) }}",
+        "options": {}
+      },
+      "id": "6c1e6a80-63fb-4629-ba2c-d0649b6c5a8c",
+      "name": "Crear en Notion",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2032, -16]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Idea guardada ✅",
+        "additionalFields": { "appendAttribution": false }
+      },
+      "id": "0f1178a4-2052-4fbf-bf90-6e17c609d782",
+      "name": "Confirmar",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2256, -16],
+      "webhookId": "89442bb4-128a-4c45-939e-a9dc1870b877",
+      "credentials": {
+        "telegramApi": {
+          "id": "0aKSpmK6tq07Vh5E",
+          "name": "Bot Asistente Claude"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [[{ "node": "Solo privados", "type": "main", "index": 0 }]]
+    },
+    "Solo privados": {
+      "main": [[{ "node": "¿Es voz?", "type": "main", "index": 0 }], []]
+    },
+    "¿Es voz?": {
+      "main": [
+        [{ "node": "Obtener archivo", "type": "main", "index": 0 }],
+        [{ "node": "Set texto (msg)", "type": "main", "index": 0 }]
+      ]
+    },
+    "Obtener archivo": {
+      "main": [[{ "node": "Descargar audio", "type": "main", "index": 0 }]]
+    },
+    "Descargar audio": {
+      "main": [[{ "node": "Fijar tipo de audio", "type": "main", "index": 0 }]]
+    },
+    "Fijar tipo de audio": {
+      "main": [[{ "node": "Transcribir", "type": "main", "index": 0 }]]
+    },
+    "Transcribir": {
+      "main": [[{ "node": "Set texto (voz)", "type": "main", "index": 0 }]]
+    },
+    "Set texto (voz)": {
+      "main": [[{ "node": "Unir ramas", "type": "main", "index": 0 }]]
+    },
+    "Set texto (msg)": {
+      "main": [[{ "node": "Unir ramas", "type": "main", "index": 1 }]]
+    },
+    "Unir ramas": {
+      "main": [[{ "node": "Preparar request", "type": "main", "index": 0 }]]
+    },
+    "Preparar request": {
+      "main": [[{ "node": "Parsear idea", "type": "main", "index": 0 }]]
+    },
+    "Parsear idea": {
+      "main": [[{ "node": "Preparar Notion", "type": "main", "index": 0 }]]
+    },
+    "Preparar Notion": {
+      "main": [[{ "node": "Crear en Notion", "type": "main", "index": 0 }]]
+    },
+    "Crear en Notion": {
+      "main": [[{ "node": "Confirmar", "type": "main", "index": 0 }]]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  }
+}

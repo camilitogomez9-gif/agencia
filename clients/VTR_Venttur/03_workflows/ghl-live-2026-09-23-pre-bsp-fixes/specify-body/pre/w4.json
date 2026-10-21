@@ -1,0 +1,330 @@
+{
+ "updatedAt": "2026-09-23T21:07:44.000Z",
+ "createdAt": "2026-09-22T05:12:00.502Z",
+ "id": "LhPSfMYtQbNcEK32",
+ "name": "W4 · Formulario landing → Contact GHL - Venttur (OFF)",
+ "description": null,
+ "active": true,
+ "isArchived": false,
+ "nodes": [
+  {
+   "parameters": {
+    "httpMethod": "POST",
+    "path": "vtr-form-landing-ghl-08d86c06",
+    "responseMode": "responseNode",
+    "options": {}
+   },
+   "id": "e2e6a242-0d77-4200-ac8e-739045597f84",
+   "name": "Webhook",
+   "type": "n8n-nodes-base.webhook",
+   "typeVersion": 2,
+   "position": [
+    0,
+    0
+   ],
+   "webhookId": "5a4300dd-40e0-4e38-b544-b7d086b4d0bd"
+  },
+  {
+   "parameters": {
+    "jsCode": "\n// W4 · Normalize landing payload → GHL upsert body\nconst body = $json.body || $json;\n\nfunction canonMX(raw){\n  let d=(raw||'').toString().replace(/[^0-9]/g,'');\n  if(!d) return null;\n  if(d.length===10) d='521'+d;                                   // local 10 → 521+10\n  else if(d.length===12 && d.startsWith('52')) d='521'+d.slice(2); // 52+10 → 521+10\n  else if(d.length===11 && d.startsWith('52')) d='521'+d.slice(2); // 52+9 (best effort)\n  // 13 dígitos empezando 521 → se deja\n  return '+'+d;\n}\nfunction canonPrograma(raw){\n  const r=(raw||'').toString().toLowerCase();\n  if(/internado|boarding/.test(r)) return 'Internados';\n  if(/intercambio|familia|acad[eé]mico|\\baa\\b|a[nñ]o acad/.test(r)) return 'Intercambio académico con familias';\n  if(/campamento|summer/.test(r)) return 'Campamentos de verano';\n  if(/pathway/.test(r)) return 'Pathway Alemania';\n  if(/gap|estudia|estudio y trabajo|trabajar/.test(r)) return 'Gap Year / Estudia y Trabaja';\n  if(/viaje/.test(r)) return 'Viajes educativos';\n  if(/superior/.test(r)) return 'Educación superior';\n  if(/idioma/.test(r)) return 'Cursos de idiomas en el extranjero';\n  return null; // desconocido → no se escribe programa_interes (SINGLE_OPTIONS)\n}\n\nconst phone = canonMX(body.telefono);\nconst programa = canonPrograma(body.programa);\nconst programa_raw = (body.programa||'').toString();\nconst fbclid = body.fbclid_completo || body.fbclid || null;\nconst atribuida = (body.atribuida_a||'').toString();\nconst folio = (body.folio||'').toString();\n\nconst CF = {\"programa_interes\": \"xK2NFqtz1DYUw3gYdn8I\", \"atribuida_a\": \"yEgBeLQNnCPkTTv8OvfX\", \"link_enviado\": \"rHzGNiesWuESPmSZyviJ\", \"folio\": \"S80aYglwiVLkMsf95Ddz\", \"fbclid\": \"8REOsOHYC3boWRY74Rx5\", \"ad_name\": \"McKjVHiSyU1IU3G1PpN1\", \"platform\": \"ffxBAFkCuCgBI1vo8PmS\", \"grado_escolar\": \"HjNeRtIv6XHHMgFbtsaR\", \"inicio_deseado\": \"dUvMI4NaamfRPOF1p95q\", \"nivel_ingles\": \"uOecQsOv9i3uwMeSgEkX\", \"fuente_lead\": \"2hv0GovhSzZO3hj9cFqm\", \"tipo_contacto\": \"4sj9sWAen1PvGCkn9eCN\", \"origen\": \"BEhJWnXS9SQovJTLSA2W\", \"toques_enviados\": \"ez934lu03v7nC4ZRS7LJ\", \"outreach_enviado\": \"wFD12kJI9fCufQmvHAGc\", \"touch1_programado_at\": \"95bG6wvWFk2ma17T4NuE\"};\nconst customFields = [];\nif(folio)     customFields.push({id: CF.folio, value: folio});\nif(programa)  customFields.push({id: CF.programa_interes, value: programa});\nif(atribuida) customFields.push({id: CF.atribuida_a, value: atribuida});\nif(fbclid)    customFields.push({id: CF.fbclid, value: fbclid});\n\nconst tags = ['Form Landing'];\nif(programa) tags.push(programa); else if(programa_raw) tags.push(programa_raw);\n\nconst ghl_body = {\n  locationId: '7aXb4JCKsWV5nUyBXeSF',\n  phone: phone || undefined,\n  firstName: (body.nombre||'').toString(),\n  lastName: (body.apellidos||body.apellido||'').toString(),\n  email: (body.email||'').toString() || undefined,\n  customFields,\n  tags\n};\n\nreturn [{ json: { ghl_body, _debug: { phone, programa, programa_raw } } }];\n"
+   },
+   "id": "3b86b71c-4602-40fa-8579-67069196e361",
+   "name": "Normalize (build GHL body)",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    220,
+    0
+   ]
+  },
+  {
+   "parameters": {
+    "method": "POST",
+    "url": "https://services.leadconnectorhq.com/contacts/upsert",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Version",
+       "value": "2021-07-28"
+      },
+      {
+       "name": "LocationId",
+       "value": "7aXb4JCKsWV5nUyBXeSF"
+      }
+     ]
+    },
+    "sendBody": true,
+    "contentType": "json",
+    "jsonBody": "={{ JSON.stringify($json.ghl_body) }}",
+    "options": {}
+   },
+   "id": "9ba160fd-d0fb-4e25-8f6d-47f04b95265a",
+   "name": "POST /contacts/upsert",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    440,
+    0
+   ],
+   "credentials": {
+    "httpHeaderAuth": {
+     "id": "YkVmaA4jlRbO1TQD",
+     "name": "GHL VTR (PIT)"
+    }
+   }
+  },
+  {
+   "parameters": {
+    "respondWith": "json",
+    "responseBody": "={\"ok\": true, \"contactId\": \"{{ $json.contact ? $json.contact.id : ($json.id || \"\") }}\"}",
+    "options": {}
+   },
+   "id": "65a0e664-f88e-40c1-b30d-92f056e24a62",
+   "name": "Responder OK",
+   "type": "n8n-nodes-base.respondToWebhook",
+   "typeVersion": 1.1,
+   "position": [
+    660,
+    0
+   ]
+  }
+ ],
+ "connections": {
+  "Webhook": {
+   "main": [
+    [
+     {
+      "node": "Normalize (build GHL body)",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Normalize (build GHL body)": {
+   "main": [
+    [
+     {
+      "node": "POST /contacts/upsert",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "POST /contacts/upsert": {
+   "main": [
+    [
+     {
+      "node": "Responder OK",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  }
+ },
+ "settings": {
+  "executionOrder": "v1",
+  "callerPolicy": "workflowsFromSameOwner",
+  "availableInMCP": false
+ },
+ "staticData": null,
+ "meta": null,
+ "pinData": null,
+ "versionId": "5c9a287b-faad-4e93-a7bd-f239cd7b6ca9",
+ "activeVersionId": "5c9a287b-faad-4e93-a7bd-f239cd7b6ca9",
+ "versionCounter": 5,
+ "triggerCount": 1,
+ "shared": [
+  {
+   "updatedAt": "2026-09-22T05:12:00.509Z",
+   "createdAt": "2026-09-22T05:12:00.509Z",
+   "role": "workflow:owner",
+   "workflowId": "LhPSfMYtQbNcEK32",
+   "projectId": "OZub3m3DGqbZefcZ",
+   "project": {
+    "updatedAt": "2025-02-10T13:18:00.403Z",
+    "createdAt": "2025-02-10T13:17:23.832Z",
+    "id": "OZub3m3DGqbZefcZ",
+    "name": "la agencia <[EMAIL-AGENCIA]>",
+    "type": "personal",
+    "icon": null,
+    "description": null,
+    "projectRelations": [
+     {
+      "updatedAt": "2025-02-10T13:17:23.833Z",
+      "createdAt": "2025-02-10T13:17:23.833Z",
+      "userId": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+      "projectId": "OZub3m3DGqbZefcZ",
+      "user": {
+       "updatedAt": "2026-09-23T21:06:24.000Z",
+       "createdAt": "2025-02-10T13:17:22.713Z",
+       "id": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+       "email": "[EMAIL-AGENCIA]",
+       "firstName": "la agencia",
+       "lastName": "AI",
+       "personalizationAnswers": {
+        "version": "v4",
+        "personalization_survey_submitted_at": "2025-02-10T13:18:23.044Z",
+        "personalization_survey_n8n_version": "1.77.3",
+        "companySize": "<20",
+        "companyType": "digital-agency",
+        "role": "business-owner",
+        "reportedSource": "youtube"
+       },
+       "settings": {
+        "userActivated": true,
+        "easyAIWorkflowOnboarded": true,
+        "firstSuccessfulWorkflowId": "KFHNPOd9iRMDKpBc",
+        "userActivatedAt": 1739194255698,
+        "npsSurvey": {
+         "responded": true,
+         "lastShownAt": 1790197346912
+        }
+       },
+       "disabled": false,
+       "mfaEnabled": false,
+       "lastActiveAt": "2026-09-23",
+       "isPending": false
+      }
+     }
+    ]
+   }
+  }
+ ],
+ "tags": [],
+ "activeVersion": {
+  "updatedAt": "2026-09-22T05:12:00.521Z",
+  "createdAt": "2026-09-22T05:12:00.521Z",
+  "versionId": "5c9a287b-faad-4e93-a7bd-f239cd7b6ca9",
+  "workflowId": "LhPSfMYtQbNcEK32",
+  "nodes": [
+   {
+    "parameters": {
+     "httpMethod": "POST",
+     "path": "vtr-form-landing-ghl-08d86c06",
+     "responseMode": "responseNode",
+     "options": {}
+    },
+    "id": "e2e6a242-0d77-4200-ac8e-739045597f84",
+    "name": "Webhook",
+    "type": "n8n-nodes-base.webhook",
+    "typeVersion": 2,
+    "position": [
+     0,
+     0
+    ],
+    "webhookId": "5a4300dd-40e0-4e38-b544-b7d086b4d0bd"
+   },
+   {
+    "parameters": {
+     "jsCode": "\n// W4 · Normalize landing payload → GHL upsert body\nconst body = $json.body || $json;\n\nfunction canonMX(raw){\n  let d=(raw||'').toString().replace(/[^0-9]/g,'');\n  if(!d) return null;\n  if(d.length===10) d='521'+d;                                   // local 10 → 521+10\n  else if(d.length===12 && d.startsWith('52')) d='521'+d.slice(2); // 52+10 → 521+10\n  else if(d.length===11 && d.startsWith('52')) d='521'+d.slice(2); // 52+9 (best effort)\n  // 13 dígitos empezando 521 → se deja\n  return '+'+d;\n}\nfunction canonPrograma(raw){\n  const r=(raw||'').toString().toLowerCase();\n  if(/internado|boarding/.test(r)) return 'Internados';\n  if(/intercambio|familia|acad[eé]mico|\\baa\\b|a[nñ]o acad/.test(r)) return 'Intercambio académico con familias';\n  if(/campamento|summer/.test(r)) return 'Campamentos de verano';\n  if(/pathway/.test(r)) return 'Pathway Alemania';\n  if(/gap|estudia|estudio y trabajo|trabajar/.test(r)) return 'Gap Year / Estudia y Trabaja';\n  if(/viaje/.test(r)) return 'Viajes educativos';\n  if(/superior/.test(r)) return 'Educación superior';\n  if(/idioma/.test(r)) return 'Cursos de idiomas en el extranjero';\n  return null; // desconocido → no se escribe programa_interes (SINGLE_OPTIONS)\n}\n\nconst phone = canonMX(body.telefono);\nconst programa = canonPrograma(body.programa);\nconst programa_raw = (body.programa||'').toString();\nconst fbclid = body.fbclid_completo || body.fbclid || null;\nconst atribuida = (body.atribuida_a||'').toString();\nconst folio = (body.folio||'').toString();\n\nconst CF = {\"programa_interes\": \"xK2NFqtz1DYUw3gYdn8I\", \"atribuida_a\": \"yEgBeLQNnCPkTTv8OvfX\", \"link_enviado\": \"rHzGNiesWuESPmSZyviJ\", \"folio\": \"S80aYglwiVLkMsf95Ddz\", \"fbclid\": \"8REOsOHYC3boWRY74Rx5\", \"ad_name\": \"McKjVHiSyU1IU3G1PpN1\", \"platform\": \"ffxBAFkCuCgBI1vo8PmS\", \"grado_escolar\": \"HjNeRtIv6XHHMgFbtsaR\", \"inicio_deseado\": \"dUvMI4NaamfRPOF1p95q\", \"nivel_ingles\": \"uOecQsOv9i3uwMeSgEkX\", \"fuente_lead\": \"2hv0GovhSzZO3hj9cFqm\", \"tipo_contacto\": \"4sj9sWAen1PvGCkn9eCN\", \"origen\": \"BEhJWnXS9SQovJTLSA2W\", \"toques_enviados\": \"ez934lu03v7nC4ZRS7LJ\", \"outreach_enviado\": \"wFD12kJI9fCufQmvHAGc\", \"touch1_programado_at\": \"95bG6wvWFk2ma17T4NuE\"};\nconst customFields = [];\nif(folio)     customFields.push({id: CF.folio, value: folio});\nif(programa)  customFields.push({id: CF.programa_interes, value: programa});\nif(atribuida) customFields.push({id: CF.atribuida_a, value: atribuida});\nif(fbclid)    customFields.push({id: CF.fbclid, value: fbclid});\n\nconst tags = ['Form Landing'];\nif(programa) tags.push(programa); else if(programa_raw) tags.push(programa_raw);\n\nconst ghl_body = {\n  locationId: '7aXb4JCKsWV5nUyBXeSF',\n  phone: phone || undefined,\n  firstName: (body.nombre||'').toString(),\n  lastName: (body.apellidos||body.apellido||'').toString(),\n  email: (body.email||'').toString() || undefined,\n  customFields,\n  tags\n};\n\nreturn [{ json: { ghl_body, _debug: { phone, programa, programa_raw } } }];\n"
+    },
+    "id": "3b86b71c-4602-40fa-8579-67069196e361",
+    "name": "Normalize (build GHL body)",
+    "type": "n8n-nodes-base.code",
+    "typeVersion": 2,
+    "position": [
+     220,
+     0
+    ]
+   },
+   {
+    "parameters": {
+     "method": "POST",
+     "url": "https://services.leadconnectorhq.com/contacts/upsert",
+     "authentication": "genericCredentialType",
+     "genericAuthType": "httpHeaderAuth",
+     "sendHeaders": true,
+     "headerParameters": {
+      "parameters": [
+       {
+        "name": "Version",
+        "value": "2021-07-28"
+       },
+       {
+        "name": "LocationId",
+        "value": "7aXb4JCKsWV5nUyBXeSF"
+       }
+      ]
+     },
+     "sendBody": true,
+     "contentType": "json",
+     "jsonBody": "={{ JSON.stringify($json.ghl_body) }}",
+     "options": {}
+    },
+    "id": "9ba160fd-d0fb-4e25-8f6d-47f04b95265a",
+    "name": "POST /contacts/upsert",
+    "type": "n8n-nodes-base.httpRequest",
+    "typeVersion": 4.2,
+    "position": [
+     440,
+     0
+    ],
+    "credentials": {
+     "httpHeaderAuth": {
+      "id": "YkVmaA4jlRbO1TQD",
+      "name": "GHL VTR (PIT)"
+     }
+    }
+   },
+   {
+    "parameters": {
+     "respondWith": "json",
+     "responseBody": "={\"ok\": true, \"contactId\": \"{{ $json.contact ? $json.contact.id : ($json.id || \"\") }}\"}",
+     "options": {}
+    },
+    "id": "65a0e664-f88e-40c1-b30d-92f056e24a62",
+    "name": "Responder OK",
+    "type": "n8n-nodes-base.respondToWebhook",
+    "typeVersion": 1.1,
+    "position": [
+     660,
+     0
+    ]
+   }
+  ],
+  "connections": {
+   "Webhook": {
+    "main": [
+     [
+      {
+       "node": "Normalize (build GHL body)",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   },
+   "Normalize (build GHL body)": {
+    "main": [
+     [
+      {
+       "node": "POST /contacts/upsert",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   },
+   "POST /contacts/upsert": {
+    "main": [
+     [
+      {
+       "node": "Responder OK",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   }
+  },
+  "authors": "la agencia",
+  "name": null,
+  "description": null
+ }
+}

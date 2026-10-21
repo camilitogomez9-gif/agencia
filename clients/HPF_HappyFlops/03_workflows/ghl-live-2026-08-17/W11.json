@@ -1,0 +1,679 @@
+{
+  "updatedAt": "2026-08-14T16:57:07.077Z",
+  "createdAt": "2026-08-14T07:14:32.353Z",
+  "id": "aPZ71r7IVZTJ0iP5",
+  "name": "HPF·GHL · W11 Puente Telegram",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "id": "w11-472239961699",
+      "name": "Telegram Trigger",
+      "position": [
+        -720,
+        0
+      ],
+      "webhookId": "7c1f0a94-9d3e-4f52-b6a8-2e5c1d0b3a77",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Telegram → el shape que espera W6.\n// sessionId: se usa el chat id crudo. NO se le pone prefijo a propósito — así la\n// conversación de Telegram y la del webhook de prueba comparten memoria y se puede\n// comparar lo que ve el tester con lo que miden los scripts.\nconst j = $input.first().json || {};\nconst msg = j.message || j;\nconst chat = msg.chat || {};\nconst from = msg.from || {};\nconst chatId = String(chat.id ?? from.id ?? '');\nif (!chatId) throw new Error('W11: mensaje de Telegram sin chat id');\n\nconst texto = String(msg.text || msg.caption || '').trim();\nif (!texto) {\n  // audio/foto/sticker: W6 sólo entiende texto. Se avisa y se corta, en vez de mandarle\n  // una cadena vacía y que conteste cualquier cosa.\n  return [{ json: { chatId, _sin_texto: true,\n    aviso: 'Por ahora este canal de prueba sólo procesa texto.' } }];\n}\nreturn [{ json: {\n  chatId,\n  sessionId: chatId,\n  texto,\n  contactId: null,\n  opportunityId: null,\n  // primer_contacto lo resuelve W6 contando turnos humanos en la memoria; acá se manda\n  // false y se deja que él decida, que es como entra desde W1.\n  primer_contacto: false,\n} }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "id": "w11-915762929776",
+      "name": "Normalizar Telegram",
+      "position": [
+        -496,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "version": 2,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json._sin_texto }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEquals"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "id": "w11-551647166313",
+      "name": "¿Trae texto?",
+      "position": [
+        -304,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "cNmJCP2qVhdtfCH0",
+          "mode": "id",
+          "cachedResultName": "HPF·GHL · W6 Conversación"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "sessionId": "={{ $json.sessionId }}",
+            "contactId": "={{ $json.contactId }}",
+            "opportunityId": "={{ $json.opportunityId }}",
+            "texto": "={{ $json.texto }}",
+            "primer_contacto": "={{ $json.primer_contacto }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "sessionId",
+              "displayName": "sessionId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "contactId",
+              "displayName": "contactId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "opportunityId",
+              "displayName": "opportunityId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "texto",
+              "displayName": "texto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "evento",
+              "displayName": "evento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "primer_contacto",
+              "displayName": "primer_contacto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "boolean"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "id": "w11-418837756918",
+      "name": "W6 · conversación",
+      "position": [
+        -80,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aplana la respuesta de W6 a una lista de envíos para Telegram.\nconst chatId = $('Normalizar Telegram').first().json.chatId;\nconst r = $input.first().json || {};\nconst partes = r.partes || [];\nif (!partes.length) {\n  return [{ json: { chatId, tipo: 'texto', texto: 'Déjame revisar eso y te confirmo.' } }];\n}\n// El tipo de envío se decide por la extensión del asset, igual que en el handler viejo:\n// una foto mandada como documento le llega al lead como archivo adjunto, no como imagen.\nconst tipoDe = (url) => {\n  const u = String(url).toLowerCase().split('?')[0];\n  if (/\\.(jpe?g|png|webp|gif)$/.test(u)) return 'foto';\n  if (/\\.(mp4|mov|m4v)$/.test(u)) return 'video';\n  return 'documento';\n};\nconst out = [];\nfor (const p of partes) {\n  const texto = String(p.texto || '').trim();\n  const adj = p.adjuntos || [];\n  if (!adj.length) {\n    if (texto) out.push({ chatId, tipo: 'texto', texto });\n    continue;\n  }\n  // el texto viaja como caption del primer adjunto, así llegan juntos\n  adj.forEach((url, i) => out.push({\n    chatId, tipo: tipoDe(url), url,\n    texto: i === 0 ? texto : '',\n  }));\n}\nreturn out.map(json => ({ json }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "id": "w11-699133894122",
+      "name": "Aplanar burbujas",
+      "position": [
+        144,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "id": "w11-779146485023",
+      "name": "Recorrer envíos",
+      "position": [
+        368,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "tipo-texto",
+                    "leftValue": "={{ $json.tipo }}",
+                    "rightValue": "texto",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "texto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "tipo-foto",
+                    "leftValue": "={{ $json.tipo }}",
+                    "rightValue": "foto",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "foto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "tipo-video",
+                    "leftValue": "={{ $json.tipo }}",
+                    "rightValue": "video",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "video"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "version": 2,
+                  "typeValidation": "loose"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "tipo-documento",
+                    "leftValue": "={{ $json.tipo }}",
+                    "rightValue": "documento",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "documento"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "id": "w11-743325470619",
+      "name": "Ruteo por tipo",
+      "position": [
+        592,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.texto }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "id": "w11-956053799053",
+      "name": "Enviar texto",
+      "position": [
+        832,
+        -128
+      ],
+      "webhookId": "42dd9ca8-b56e-44ac-88e1-d692fb46a8da",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $json.chatId }}",
+        "file": "={{ $json.url }}",
+        "additionalFields": {
+          "caption": "={{ $json.texto }}"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "id": "w11-843599805594",
+      "name": "Enviar foto",
+      "position": [
+        832,
+        32
+      ],
+      "webhookId": "ceae78c3-4ff1-45f5-8050-8e5d2963dde3",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendVideo",
+        "chatId": "={{ $json.chatId }}",
+        "file": "={{ $json.url }}",
+        "additionalFields": {
+          "caption": "={{ $json.texto }}"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "id": "w11-320022734295",
+      "name": "Enviar video",
+      "position": [
+        832,
+        160
+      ],
+      "webhookId": "08e1271c-ab29-4fd4-aef5-d5f34fe47f3c",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendDocument",
+        "chatId": "={{ $json.chatId }}",
+        "file": "={{ $json.url }}",
+        "additionalFields": {
+          "caption": "={{ $json.texto }}"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "id": "w11-822159069704",
+      "name": "Enviar documento",
+      "position": [
+        832,
+        304
+      ],
+      "webhookId": "3805b6a6-9895-440e-9eae-5e7b85fa7336",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "id": "w11-920248431472",
+      "name": "Pausa entre burbujas",
+      "position": [
+        1072,
+        64
+      ],
+      "webhookId": "w11-wait-0001"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.aviso }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "id": "w11-731236830056",
+      "name": "Avisar sin texto",
+      "position": [
+        -80,
+        144
+      ],
+      "webhookId": "6f92deb2-2ee5-4d26-b98d-a2a54f5fd038",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Normalizar Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar Telegram": {
+      "main": [
+        [
+          {
+            "node": "¿Trae texto?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Trae texto?": {
+      "main": [
+        [
+          {
+            "node": "W6 · conversación",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Avisar sin texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "W6 · conversación": {
+      "main": [
+        [
+          {
+            "node": "Aplanar burbujas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aplanar burbujas": {
+      "main": [
+        [
+          {
+            "node": "Recorrer envíos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recorrer envíos": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Ruteo por tipo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ruteo por tipo": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar foto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar documento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar texto": {
+      "main": [
+        [
+          {
+            "node": "Pausa entre burbujas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar foto": {
+      "main": [
+        [
+          {
+            "node": "Pausa entre burbujas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar video": {
+      "main": [
+        [
+          {
+            "node": "Pausa entre burbujas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar documento": {
+      "main": [
+        [
+          {
+            "node": "Pausa entre burbujas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pausa entre burbujas": {
+      "main": [
+        [
+          {
+            "node": "Recorrer envíos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "0fa998ab-ea33-4de6-a372-2cecf988bfb7",
+  "activeVersionId": null,
+  "versionCounter": 13,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-08-14T07:14:32.353Z",
+      "createdAt": "2026-08-14T07:14:32.353Z",
+      "role": "workflow:owner",
+      "workflowId": "aPZ71r7IVZTJ0iP5",
+      "projectId": "g2TpxqLMiC0UsUBj",
+      "project": {
+        "updatedAt": "2025-05-10T12:26:37.475Z",
+        "createdAt": "2025-05-10T12:24:10.921Z",
+        "id": "g2TpxqLMiC0UsUBj",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-05-10T12:24:10.921Z",
+            "createdAt": "2025-05-10T12:24:10.921Z",
+            "userId": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+            "projectId": "g2TpxqLMiC0UsUBj",
+            "user": {
+              "updatedAt": "2026-08-17T12:42:15.750Z",
+              "createdAt": "2025-05-10T12:24:07.518Z",
+              "id": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "lastName": "AI",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-05-10T12:26:59.729Z",
+                "personalization_survey_n8n_version": "1.91.3",
+                "companySize": "<20",
+                "companyType": "systems-integrator",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "6fpcC3iGwfEYO3Eu",
+                "userActivatedAt": 1757033385622,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1773184568459
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "aiAgentStarterCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-08-17",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

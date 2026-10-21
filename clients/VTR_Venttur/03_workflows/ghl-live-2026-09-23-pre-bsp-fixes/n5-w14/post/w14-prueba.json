@@ -1,0 +1,482 @@
+{
+ "updatedAt": "2026-09-23T22:55:29.553Z",
+ "createdAt": "2026-09-21T08:17:34.791Z",
+ "id": "OaOyHA2tfjMtuWTk",
+ "name": "Venttur | Correo Semanal (GHL)",
+ "description": null,
+ "active": true,
+ "isArchived": false,
+ "nodes": [
+  {
+   "parameters": {
+    "rule": {
+     "interval": [
+      {
+       "field": "cronExpression",
+       "expression": "58 0 * * *"
+      }
+     ]
+    }
+   },
+   "id": "w14-sched",
+   "name": "Schedule Trigger",
+   "type": "n8n-nodes-base.scheduleTrigger",
+   "typeVersion": 1.3,
+   "position": [
+    0,
+    0
+   ]
+  },
+  {
+   "parameters": {
+    "jsCode": "// W14 · cuenta CITAS AGENDADAS en la semana (creadas en los últimos 7 días, no canceladas).  N5-0923\n// Fuente: API de calendarios de GHL (antes contaba oportunidades de OP·Bot, que nadie crea).\nconst PRUEBA = [\"YIv9OmbKw2vtXHdX9OOO\", \"8m2b1HHEgoEf2hy5X6CA\"];\nconst now = Date.now(); const WEEK = 7*864e5;\nconst cals = $('Calendarios').all().map(i => i.json);\nconst res = $input.all();\nconst vistos = new Set(); const porPrograma = {};\nres.forEach((it, idx) => {\n  const programa = (cals[idx] || {}).programa || 'Otro';\n  for (const e of ((it.json && it.json.events) || [])) {\n    if (!e || vistos.has(e.id)) continue;\n    if (e.deleted || /cancel|invalid/i.test(e.appointmentStatus || '')) continue;\n    if (PRUEBA.includes(e.contactId)) continue;\n    const creada = Date.parse(e.dateAdded || '');\n    if (!creada || now - creada > WEEK) continue;\n    vistos.add(e.id); porPrograma[programa] = (porPrograma[programa] || 0) + 1;\n  }\n});\nconst n = vistos.size;\nconst d0 = new Date(now - WEEK).toISOString().slice(0,10);\nconst d1 = new Date(now).toISOString().slice(0,10);\nconst semana = d0 + ' → ' + d1;\nconst filas = Object.entries(porPrograma).sort((a,b) => b[1]-a[1])\n  .map(([k,v]) => `<tr><td style=\"padding:6px 0;color:#333;font-size:14px\">${k}</td><td style=\"padding:6px 0;text-align:right;font-weight:700;color:#0d0a1f\">${v}</td></tr>`).join('');\nconst html = `<!DOCTYPE html><html><body style=\"margin:0;font-family:Arial,Helvetica,sans-serif;background:#0d0a1f;padding:24px\"><div style=\"max-width:520px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden\"><div style=\"height:6px;background:#7c3aed\"></div><div style=\"padding:28px\"><h2 style=\"color:#0d0a1f;margin:0 0 4px\">Resumen semanal Venttur</h2><p style=\"color:#888;margin:0 0 20px;font-size:13px\">Semana ${semana}</p><div style=\"background:#f5f3ff;border-radius:10px;padding:24px;text-align:center\"><div style=\"font-size:46px;font-weight:800;color:#7c3aed;line-height:1\">${n}</div><div style=\"color:#333;font-size:15px;margin-top:4px\">citas agendadas</div></div>${filas ? `<table style=\"width:100%;margin-top:18px;border-collapse:collapse\">${filas}</table>` : ''}</div><div style=\"background:#0d0a1f;color:#a78bfa;padding:14px;text-align:center;font-size:12px\">la agencia</div></div></body></html>`;\nreturn [{ json: { citas_agendadas: n, por_programa: porPrograma, semana, html, subject: `📊 Resumen semanal Venttur — ${n} citas agendadas` } }];"
+   },
+   "id": "w14-count",
+   "name": "Contar citas",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    448,
+    0
+   ]
+  },
+  {
+   "parameters": {
+    "sendTo": "camilitogomez9@gmail.com",
+    "subject": "={{ $json.subject }}",
+    "message": "={{ $json.html }}",
+    "options": {
+     "appendAttribution": false
+    }
+   },
+   "id": "w14-gmail",
+   "name": "Send a message",
+   "type": "n8n-nodes-base.gmail",
+   "typeVersion": 2.1,
+   "position": [
+    672,
+    0
+   ],
+   "webhookId": "77255ba3-0834-4ec3-a510-87a4cf65615d",
+   "credentials": {
+    "gmailOAuth2": {
+     "id": "5R0ScEVqcfjKYanp",
+     "name": "Gmail | la agencia®"
+    }
+   }
+  },
+  {
+   "parameters": {
+    "content": "## W14 Correo semanal (GHL)\n- Métrica (D6): citas creadas en los últimos 7 días en los 10 calendarios de leads, no canceladas, sin contactos de prueba. Fuente: API de calendarios (N5, 23/9).\n- Destinatario: administracion@venttur.com (CCO Camilo).",
+    "height": 220,
+    "width": 420
+   },
+   "id": "w14-note",
+   "name": "Sticky Note",
+   "type": "n8n-nodes-base.stickyNote",
+   "typeVersion": 1,
+   "position": [
+    0,
+    192
+   ]
+  },
+  {
+   "parameters": {
+    "jsCode": "// W14 · un item por calendario de leads (N5-0923)\nconst CALS = {\"CIxOV100yyRFqPoa6LdK\": \"Internados\", \"SiAPsk27X5yilff5bSS5\": \"Intercambio académico con familias\", \"981EzNS7jf9HhJNkL41W\": \"Campamentos de verano\", \"oNN7oLWsNhQlWi7q7pDX\": \"Pathway Alemania\", \"Omgde6Ko8TGKYMtiUb1x\": \"Gap Year / Estudia y Trabaja\", \"5PxslDhdQxZeDcKmLYNq\": \"Cursos de idiomas\", \"RUjWx74NPK77FPUcs5ME\": \"Educación superior\", \"j0jcAdaieJXaoPZBempp\": \"Viajes educativos\", \"QJQyabdWhBgYtjeGcEKZ\": \"Asesoría con Juan José Alfaro\", \"fOsl9U4b40ulCczFwf69\": \"Asesoría con Niza Valeriano\"};\nconst now = Date.now();\nreturn Object.entries(CALS).map(([calendarId, programa]) => ({ json: { calendarId, programa,\n  startTime: String(now - 7*864e5), endTime: String(now + 120*864e5) } }));"
+   },
+   "name": "Calendarios",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    224,
+    0
+   ],
+   "id": "85e96531-e7f2-42da-9caf-b27d23b9fa86"
+  },
+  {
+   "parameters": {
+    "method": "GET",
+    "url": "https://services.leadconnectorhq.com/calendars/events",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Version",
+       "value": "2021-04-15"
+      }
+     ]
+    },
+    "options": {
+     "batching": {
+      "batch": {
+       "batchSize": 1,
+       "batchInterval": 500
+      }
+     }
+    },
+    "sendQuery": true,
+    "queryParameters": {
+     "parameters": [
+      {
+       "name": "locationId",
+       "value": "7aXb4JCKsWV5nUyBXeSF"
+      },
+      {
+       "name": "calendarId",
+       "value": "={{ $json.calendarId }}"
+      },
+      {
+       "name": "startTime",
+       "value": "={{ $json.startTime }}"
+      },
+      {
+       "name": "endTime",
+       "value": "={{ $json.endTime }}"
+      }
+     ]
+    }
+   },
+   "name": "GHL citas por calendario",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    424,
+    0
+   ],
+   "id": "3e88053c-e09b-4711-afff-ed51b18cad87",
+   "credentials": {
+    "httpHeaderAuth": {
+     "id": "YkVmaA4jlRbO1TQD",
+     "name": "GHL VTR (PIT)"
+    }
+   },
+   "onError": "continueRegularOutput"
+  }
+ ],
+ "connections": {
+  "Schedule Trigger": {
+   "main": [
+    [
+     {
+      "node": "Calendarios",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Contar citas": {
+   "main": [
+    [
+     {
+      "node": "Send a message",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Calendarios": {
+   "main": [
+    [
+     {
+      "node": "GHL citas por calendario",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "GHL citas por calendario": {
+   "main": [
+    [
+     {
+      "node": "Contar citas",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  }
+ },
+ "settings": {
+  "executionOrder": "v1",
+  "callerPolicy": "workflowsFromSameOwner",
+  "availableInMCP": false
+ },
+ "staticData": {
+  "node:Schedule Trigger": {
+   "recurrenceRules": []
+  }
+ },
+ "meta": null,
+ "pinData": {},
+ "versionId": "8111188a-9c24-4b0b-9f23-31fe9cff6395",
+ "activeVersionId": "8111188a-9c24-4b0b-9f23-31fe9cff6395",
+ "versionCounter": 17,
+ "triggerCount": 1,
+ "shared": [
+  {
+   "updatedAt": "2026-09-21T08:17:34.805Z",
+   "createdAt": "2026-09-21T08:17:34.805Z",
+   "role": "workflow:owner",
+   "workflowId": "OaOyHA2tfjMtuWTk",
+   "projectId": "OZub3m3DGqbZefcZ",
+   "project": {
+    "updatedAt": "2025-02-10T13:18:00.403Z",
+    "createdAt": "2025-02-10T13:17:23.832Z",
+    "id": "OZub3m3DGqbZefcZ",
+    "name": "la agencia <[EMAIL-AGENCIA]>",
+    "type": "personal",
+    "icon": null,
+    "description": null,
+    "projectRelations": [
+     {
+      "updatedAt": "2025-02-10T13:17:23.833Z",
+      "createdAt": "2025-02-10T13:17:23.833Z",
+      "userId": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+      "projectId": "OZub3m3DGqbZefcZ",
+      "user": {
+       "updatedAt": "2026-09-23T22:02:31.000Z",
+       "createdAt": "2025-02-10T13:17:22.713Z",
+       "id": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+       "email": "[EMAIL-AGENCIA]",
+       "firstName": "la agencia",
+       "lastName": "AI",
+       "personalizationAnswers": {
+        "version": "v4",
+        "personalization_survey_submitted_at": "2025-02-10T13:18:23.044Z",
+        "personalization_survey_n8n_version": "1.77.3",
+        "companySize": "<20",
+        "companyType": "digital-agency",
+        "role": "business-owner",
+        "reportedSource": "youtube"
+       },
+       "settings": {
+        "userActivated": true,
+        "easyAIWorkflowOnboarded": true,
+        "firstSuccessfulWorkflowId": "KFHNPOd9iRMDKpBc",
+        "userActivatedAt": 1739194255698,
+        "npsSurvey": {
+         "responded": true,
+         "lastShownAt": 1790197346912
+        }
+       },
+       "disabled": false,
+       "mfaEnabled": false,
+       "lastActiveAt": "2026-09-23",
+       "isPending": false
+      }
+     }
+    ]
+   }
+  }
+ ],
+ "tags": [],
+ "activeVersion": {
+  "updatedAt": "2026-09-23T22:55:29.539Z",
+  "createdAt": "2026-09-23T22:55:29.539Z",
+  "versionId": "8111188a-9c24-4b0b-9f23-31fe9cff6395",
+  "workflowId": "OaOyHA2tfjMtuWTk",
+  "nodes": [
+   {
+    "parameters": {
+     "rule": {
+      "interval": [
+       {
+        "field": "cronExpression",
+        "expression": "58 0 * * *"
+       }
+      ]
+     }
+    },
+    "id": "w14-sched",
+    "name": "Schedule Trigger",
+    "type": "n8n-nodes-base.scheduleTrigger",
+    "typeVersion": 1.3,
+    "position": [
+     0,
+     0
+    ]
+   },
+   {
+    "parameters": {
+     "jsCode": "// W14 · cuenta CITAS AGENDADAS en la semana (creadas en los últimos 7 días, no canceladas).  N5-0923\n// Fuente: API de calendarios de GHL (antes contaba oportunidades de OP·Bot, que nadie crea).\nconst PRUEBA = [\"YIv9OmbKw2vtXHdX9OOO\", \"8m2b1HHEgoEf2hy5X6CA\"];\nconst now = Date.now(); const WEEK = 7*864e5;\nconst cals = $('Calendarios').all().map(i => i.json);\nconst res = $input.all();\nconst vistos = new Set(); const porPrograma = {};\nres.forEach((it, idx) => {\n  const programa = (cals[idx] || {}).programa || 'Otro';\n  for (const e of ((it.json && it.json.events) || [])) {\n    if (!e || vistos.has(e.id)) continue;\n    if (e.deleted || /cancel|invalid/i.test(e.appointmentStatus || '')) continue;\n    if (PRUEBA.includes(e.contactId)) continue;\n    const creada = Date.parse(e.dateAdded || '');\n    if (!creada || now - creada > WEEK) continue;\n    vistos.add(e.id); porPrograma[programa] = (porPrograma[programa] || 0) + 1;\n  }\n});\nconst n = vistos.size;\nconst d0 = new Date(now - WEEK).toISOString().slice(0,10);\nconst d1 = new Date(now).toISOString().slice(0,10);\nconst semana = d0 + ' → ' + d1;\nconst filas = Object.entries(porPrograma).sort((a,b) => b[1]-a[1])\n  .map(([k,v]) => `<tr><td style=\"padding:6px 0;color:#333;font-size:14px\">${k}</td><td style=\"padding:6px 0;text-align:right;font-weight:700;color:#0d0a1f\">${v}</td></tr>`).join('');\nconst html = `<!DOCTYPE html><html><body style=\"margin:0;font-family:Arial,Helvetica,sans-serif;background:#0d0a1f;padding:24px\"><div style=\"max-width:520px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden\"><div style=\"height:6px;background:#7c3aed\"></div><div style=\"padding:28px\"><h2 style=\"color:#0d0a1f;margin:0 0 4px\">Resumen semanal Venttur</h2><p style=\"color:#888;margin:0 0 20px;font-size:13px\">Semana ${semana}</p><div style=\"background:#f5f3ff;border-radius:10px;padding:24px;text-align:center\"><div style=\"font-size:46px;font-weight:800;color:#7c3aed;line-height:1\">${n}</div><div style=\"color:#333;font-size:15px;margin-top:4px\">citas agendadas</div></div>${filas ? `<table style=\"width:100%;margin-top:18px;border-collapse:collapse\">${filas}</table>` : ''}</div><div style=\"background:#0d0a1f;color:#a78bfa;padding:14px;text-align:center;font-size:12px\">la agencia</div></div></body></html>`;\nreturn [{ json: { citas_agendadas: n, por_programa: porPrograma, semana, html, subject: `📊 Resumen semanal Venttur — ${n} citas agendadas` } }];"
+    },
+    "id": "w14-count",
+    "name": "Contar citas",
+    "type": "n8n-nodes-base.code",
+    "typeVersion": 2,
+    "position": [
+     448,
+     0
+    ]
+   },
+   {
+    "parameters": {
+     "sendTo": "camilitogomez9@gmail.com",
+     "subject": "={{ $json.subject }}",
+     "message": "={{ $json.html }}",
+     "options": {
+      "appendAttribution": false
+     }
+    },
+    "id": "w14-gmail",
+    "name": "Send a message",
+    "type": "n8n-nodes-base.gmail",
+    "typeVersion": 2.1,
+    "position": [
+     672,
+     0
+    ],
+    "webhookId": "77255ba3-0834-4ec3-a510-87a4cf65615d",
+    "credentials": {
+     "gmailOAuth2": {
+      "id": "5R0ScEVqcfjKYanp",
+      "name": "Gmail | la agencia®"
+     }
+    }
+   },
+   {
+    "parameters": {
+     "content": "## W14 Correo semanal (GHL)\n- Métrica (D6): citas creadas en los últimos 7 días en los 10 calendarios de leads, no canceladas, sin contactos de prueba. Fuente: API de calendarios (N5, 23/9).\n- Destinatario: administracion@venttur.com (CCO Camilo).",
+     "height": 220,
+     "width": 420
+    },
+    "id": "w14-note",
+    "name": "Sticky Note",
+    "type": "n8n-nodes-base.stickyNote",
+    "typeVersion": 1,
+    "position": [
+     0,
+     192
+    ]
+   },
+   {
+    "parameters": {
+     "jsCode": "// W14 · un item por calendario de leads (N5-0923)\nconst CALS = {\"CIxOV100yyRFqPoa6LdK\": \"Internados\", \"SiAPsk27X5yilff5bSS5\": \"Intercambio académico con familias\", \"981EzNS7jf9HhJNkL41W\": \"Campamentos de verano\", \"oNN7oLWsNhQlWi7q7pDX\": \"Pathway Alemania\", \"Omgde6Ko8TGKYMtiUb1x\": \"Gap Year / Estudia y Trabaja\", \"5PxslDhdQxZeDcKmLYNq\": \"Cursos de idiomas\", \"RUjWx74NPK77FPUcs5ME\": \"Educación superior\", \"j0jcAdaieJXaoPZBempp\": \"Viajes educativos\", \"QJQyabdWhBgYtjeGcEKZ\": \"Asesoría con Juan José Alfaro\", \"fOsl9U4b40ulCczFwf69\": \"Asesoría con Niza Valeriano\"};\nconst now = Date.now();\nreturn Object.entries(CALS).map(([calendarId, programa]) => ({ json: { calendarId, programa,\n  startTime: String(now - 7*864e5), endTime: String(now + 120*864e5) } }));"
+    },
+    "name": "Calendarios",
+    "type": "n8n-nodes-base.code",
+    "typeVersion": 2,
+    "position": [
+     224,
+     0
+    ],
+    "id": "85e96531-e7f2-42da-9caf-b27d23b9fa86"
+   },
+   {
+    "parameters": {
+     "method": "GET",
+     "url": "https://services.leadconnectorhq.com/calendars/events",
+     "authentication": "genericCredentialType",
+     "genericAuthType": "httpHeaderAuth",
+     "sendHeaders": true,
+     "headerParameters": {
+      "parameters": [
+       {
+        "name": "Version",
+        "value": "2021-04-15"
+       }
+      ]
+     },
+     "options": {
+      "batching": {
+       "batch": {
+        "batchSize": 1,
+        "batchInterval": 500
+       }
+      }
+     },
+     "sendQuery": true,
+     "queryParameters": {
+      "parameters": [
+       {
+        "name": "locationId",
+        "value": "7aXb4JCKsWV5nUyBXeSF"
+       },
+       {
+        "name": "calendarId",
+        "value": "={{ $json.calendarId }}"
+       },
+       {
+        "name": "startTime",
+        "value": "={{ $json.startTime }}"
+       },
+       {
+        "name": "endTime",
+        "value": "={{ $json.endTime }}"
+       }
+      ]
+     }
+    },
+    "name": "GHL citas por calendario",
+    "type": "n8n-nodes-base.httpRequest",
+    "typeVersion": 4.2,
+    "position": [
+     424,
+     0
+    ],
+    "id": "3e88053c-e09b-4711-afff-ed51b18cad87",
+    "credentials": {
+     "httpHeaderAuth": {
+      "id": "YkVmaA4jlRbO1TQD",
+      "name": "GHL VTR (PIT)"
+     }
+    },
+    "onError": "continueRegularOutput"
+   }
+  ],
+  "connections": {
+   "Schedule Trigger": {
+    "main": [
+     [
+      {
+       "node": "Calendarios",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   },
+   "Contar citas": {
+    "main": [
+     [
+      {
+       "node": "Send a message",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   },
+   "Calendarios": {
+    "main": [
+     [
+      {
+       "node": "GHL citas por calendario",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   },
+   "GHL citas por calendario": {
+    "main": [
+     [
+      {
+       "node": "Contar citas",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   }
+  },
+  "authors": "la agencia",
+  "name": null,
+  "description": null
+ }
+}

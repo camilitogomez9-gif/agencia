@@ -1,0 +1,589 @@
+
+──────────────────────────────────────────────────────────────────────
+NODO: Filtro  (pegar en Filtro1 del Reporte + Filtro y Filtro3 del Correo)
+──────────────────────────────────────────────────────────────────────
+// Valida que cada código exista en el Listado de Precios y que la fecha sea
+// parseable (flag _fechaValida lo setea 'Parsear y validar fecha' aguas arriba).
+// Si hay códigos desconocidos o fechas inválidas → emite 1 item con _error:true
+// para que el IF 'Códigos inválidos?' downstream branchee a 'Respond Error'.
+// Si todos son válidos → agrega flags computaImporte y computaCantidad.
+
+const CODIGOS_VALIDOS = new Set([
+  "00001",
+
+  "A0000","A0001","A0002","A0003","A0004","A0005","A0007","A0008","A0009",
+
+  "C0000","C0001","C0002","C0003","C0004","C0005","C0006","C0007","C0008","C0009","C0010",
+  "C0011","C0012","C0013","C0014","C0015","C0016","C0050","C0051","C0052","C0053","C0054",
+  "C0055","C0056","C0057",
+
+  "E0001","E0002","E0003","E0004","E0005","E0006","E0007","E0008","E0050","E0051","E0052",
+
+  "HB000","HB001","HB002","HB003","HB004","HB005","HB006","HB007",
+
+  "OA001","OA002","OA003","OA004","OA005","OA006","OA007","OA008","OA009","OA010","OA011",
+  "OA012","OA013","OA014","OA015","OA016","OA017","OA018","OA019","OA020","OA021","OA022",
+  "OA023","OA024","OA025","OA026","OA027","OA028","OA029","OA030","OA031","OA032","OA033",
+  "OA034","OA035","OA036","OA037","OA038","OA039","OA040","OA041","OA042","OA043","OA044",
+  "OA045","OA046","OA047","OA048","OA049","OA100","OA101","OA102","OA103","OA104","OA105",
+  "OA106","OA107","OA108","OA109","OA110","OA111","OA200","OA201","OA202","OA203","OA204",
+  "OA205","OA206","OA207","OA208","OA300","OA301","OA302","OA600","OA601","OA602","OA603",
+  "OA604","OA605","OA606","OA607","OA608","OA609","OA700","OA701","OA702","OA703","OA704",
+  "OA800","OA801",
+
+  "OG001","OG002","OG003","OG004","OG005","OG006","OG007","OG020","OG021","OG022","OG023",
+  "OG024","OG025","OG026","OG027","OG028","OG040","OG041","OG042","OG043","OG044","OG045",
+  "OG046","OG047","OG048","OG049","OG050","OG051","OG052","OG060","OG061","OG062","OG063",
+  "OG064","OG065","OG066","OG067","OG068","OG070","OG071","OG072","OG073","OG074","OG075",
+  "OG076","OG077","OG080","OG081","OG082",
+
+  "OO001","OO002","OO003","OO004","OO005","OO006","OO100","OO101","OO102","OO200",
+
+  "OP000","OP001","OP100","OP101","OP102","OP103","OP104","OP105","OP106","OP107","OP108",
+  "OP109","OP110","OP111","OP112","OP113","OP114","OP115","OP116","OP117","OP118","OP119",
+  "OP200","OP201","OP202","OP203","OP204","OP205",
+
+  "OR001","OR002","OR003","OR004","OR005","OR006","OR007","OR008","OR009","OR010","OR011",
+  "OR012","OR013","OR014","OR016","OR017","OR018","OR019","OR020","OR021","OR022","OR100",
+  "OR101","OR102","OR103","OR104","OR105","OR106","OR107","OR108","OR109","OR110","OR111",
+  "OR112","OR113","OR114","OR115","OR116","OR117","OR118","OR119","OR120","OR121","OR122",
+  "OR123","OR124","OR125","OR126","OR127","OR200","OR201","OR202",
+
+  "P0000","P0001","P0002","P0003","P0004","P0005","P0006","P0007","P0008","P0009","P0010",
+  "P0011",
+
+  "P1000","P1001","P1002","P1003","P1004",
+
+  "P2000","P2001","P2002","P2003","P2004","P2005","P2006","P2007","P2008","P2009",
+
+  "P3000","P3001","P3002","P3003","P3004","P3005","P3006","P3007","P3008",
+
+  "RD000","RD001","RD002","RD003","RD004","RD005","RD006","RD007","RD008",
+
+  "PE0000","PE1000","PE1001","PE1002","PE1003","PE1004","PE1005","PE1006","PE1007","PE2000",
+  "PE2001","PE2002",
+]);
+
+// Todos los códigos computan para importe
+const noComputaImporte = new Set();
+
+// Códigos que NO computan para cantidad
+const noComputaCantidad = new Set([
+  "00001","OA600","OA601","OA602","OA603","OA604","OA605","OA606","OA607","OA608","OA609",
+  "OA700","OA701","OA702","OA703","OA704","OA800","OA801","OO001","OO002","OO003","OO004",
+  "OO005","OO006","OO100","OO101","OO102","OO200","OR008","OR009","OR010","OR011","OR012",
+  "OR013","OR014","OR016","OR017","OR018","OR019","OR020","OR021","OR022"
+]);
+
+// Detectar códigos desconocidos
+const desconocidos = new Set();
+for (const item of items) {
+  const codigo = String(item.json["Código Prestación"] || "").trim().toUpperCase();
+  if (codigo && !CODIGOS_VALIDOS.has(codigo)) {
+    desconocidos.add(codigo);
+  }
+}
+
+// Detectar filas con fecha no parseable (vienen marcadas por 'Parsear y validar fecha')
+const fechasInvalidas = [];
+for (const item of items) {
+  const r = item.json || {};
+  const cod = String(r["Código Prestación"] || "").trim();
+  const pg = Number(r["Pagado Prestación"]);
+  const tieneContenido = cod !== "" || (Number.isFinite(pg) && pg !== 0);
+  if (tieneContenido && r._fechaValida === false) {
+    const fechaCruda = r["Fecha_de_recepcion_del_pago"] ?? r["Fecha de recepción del pago"];
+    const idFila = r.id ?? r.row_number;
+    fechasInvalidas.push((idFila != null ? ("fila " + idFila + " ") : "") + "cod=" + cod + " fecha='" + String(fechaCruda ?? "") + "'");
+  }
+}
+
+if (desconocidos.size > 0 || fechasInvalidas.length > 0) {
+  const lista = [...desconocidos].sort().join(", ");
+  return [{ json: { _error: true, codigos: lista, fechas_invalidas: fechasInvalidas } }];
+}
+
+// Todos válidos → agregar flags
+return items.map(item => {
+  const row = item.json || {};
+  const codigo = String(row["Código Prestación"] || "").trim().toUpperCase();
+  return {
+    json: {
+      ...row,
+      _error: false,
+      computaImporte: !noComputaImporte.has(codigo),
+      computaCantidad: !noComputaCantidad.has(codigo),
+    },
+  };
+});
+
+──────────────────────────────────────────────────────────────────────
+NODO: Categoria  (pegar en Categoria del Reporte + Categoria y Categoria1 del Correo)
+──────────────────────────────────────────────────────────────────────
+// Asigna categoría a cada item basándose ÚNICAMENTE en el código de prestación.
+// Fuente de verdad: columna Rubro del Listado de Precios (códigos únicos garantizados).
+// El nodo Filtro1 emite _error:true ante un código desconocido (el IF 'Códigos
+// inválidos?' branchea a Respond Error), así que acá todos los items mapean.
+
+const CODIGO_A_CATEGORIA = {
+  // ALINEADORES (9 códigos)
+  "A0000":"ALINEADORES",
+  "A0001":"ALINEADORES",
+  "A0002":"ALINEADORES",
+  "A0003":"ALINEADORES",
+  "A0004":"ALINEADORES",
+  "A0005":"ALINEADORES",
+  "A0007":"ALINEADORES",
+  "A0008":"ALINEADORES",
+  "A0009":"ALINEADORES",
+  // CIRUGIA (25 códigos)
+  "C0000":"CIRUGIA",
+  "C0001":"CIRUGIA",
+  "C0002":"CIRUGIA",
+  "C0003":"CIRUGIA",
+  "C0004":"CIRUGIA",
+  "C0005":"CIRUGIA",
+  "C0006":"CIRUGIA",
+  "C0007":"CIRUGIA",
+  "C0008":"CIRUGIA",
+  "C0009":"CIRUGIA",
+  "C0010":"CIRUGIA",
+  "C0011":"CIRUGIA",
+  "C0012":"CIRUGIA",
+  "C0013":"CIRUGIA",
+  "C0014":"CIRUGIA",
+  "C0015":"CIRUGIA",
+  "C0016":"CIRUGIA",
+  "C0050":"CIRUGIA",
+  "C0051":"CIRUGIA",
+  "C0052":"CIRUGIA",
+  "C0053":"CIRUGIA",
+  "C0054":"CIRUGIA",
+  "C0055":"CIRUGIA",
+  "C0056":"CIRUGIA",
+  "C0057":"CIRUGIA",
+  // ENDODONCIA (11 códigos)
+  "E0001":"ENDODONCIA",
+  "E0002":"ENDODONCIA",
+  "E0003":"ENDODONCIA",
+  "E0004":"ENDODONCIA",
+  "E0005":"ENDODONCIA",
+  "E0006":"ENDODONCIA",
+  "E0007":"ENDODONCIA",
+  "E0008":"ENDODONCIA",
+  "E0050":"ENDODONCIA",
+  "E0051":"ENDODONCIA",
+  "E0052":"ENDODONCIA",
+  // GENERAL (50 códigos)
+  "00001":"GENERAL",
+  "OG001":"GENERAL",
+  "OG002":"GENERAL",
+  "OG003":"GENERAL",
+  "OG004":"GENERAL",
+  "OG005":"GENERAL",
+  "OG006":"GENERAL",
+  "OG007":"GENERAL",
+  "OG020":"GENERAL",
+  "OG021":"GENERAL",
+  "OG022":"GENERAL",
+  "OG023":"GENERAL",
+  "OG024":"GENERAL",
+  "OG025":"GENERAL",
+  "OG026":"GENERAL",
+  "OG027":"GENERAL",
+  "OG028":"GENERAL",
+  "OG040":"GENERAL",
+  "OG041":"GENERAL",
+  "OG042":"GENERAL",
+  "OG043":"GENERAL",
+  "OG044":"GENERAL",
+  "OG045":"GENERAL",
+  "OG046":"GENERAL",
+  "OG047":"GENERAL",
+  "OG048":"GENERAL",
+  "OG049":"GENERAL",
+  "OG050":"GENERAL",
+  "OG051":"GENERAL",
+  "OG052":"GENERAL",
+  "OG060":"GENERAL",
+  "OG061":"GENERAL",
+  "OG062":"GENERAL",
+  "OG063":"GENERAL",
+  "OG064":"GENERAL",
+  "OG065":"GENERAL",
+  "OG066":"GENERAL",
+  "OG067":"GENERAL",
+  "OG068":"GENERAL",
+  "OG070":"GENERAL",
+  "OG071":"GENERAL",
+  "OG072":"GENERAL",
+  "OG073":"GENERAL",
+  "OG074":"GENERAL",
+  "OG075":"GENERAL",
+  "OG076":"GENERAL",
+  "OG077":"GENERAL",
+  "OG080":"GENERAL",
+  "OG081":"GENERAL",
+  "OG082":"GENERAL",
+  // ORTODONCIA (152 códigos)
+  "OA001":"ORTODONCIA",
+  "OA002":"ORTODONCIA",
+  "OA003":"ORTODONCIA",
+  "OA004":"ORTODONCIA",
+  "OA005":"ORTODONCIA",
+  "OA006":"ORTODONCIA",
+  "OA007":"ORTODONCIA",
+  "OA008":"ORTODONCIA",
+  "OA009":"ORTODONCIA",
+  "OA010":"ORTODONCIA",
+  "OA011":"ORTODONCIA",
+  "OA012":"ORTODONCIA",
+  "OA013":"ORTODONCIA",
+  "OA014":"ORTODONCIA",
+  "OA015":"ORTODONCIA",
+  "OA016":"ORTODONCIA",
+  "OA017":"ORTODONCIA",
+  "OA018":"ORTODONCIA",
+  "OA019":"ORTODONCIA",
+  "OA020":"ORTODONCIA",
+  "OA021":"ORTODONCIA",
+  "OA022":"ORTODONCIA",
+  "OA023":"ORTODONCIA",
+  "OA024":"ORTODONCIA",
+  "OA025":"ORTODONCIA",
+  "OA026":"ORTODONCIA",
+  "OA027":"ORTODONCIA",
+  "OA028":"ORTODONCIA",
+  "OA029":"ORTODONCIA",
+  "OA030":"ORTODONCIA",
+  "OA031":"ORTODONCIA",
+  "OA032":"ORTODONCIA",
+  "OA033":"ORTODONCIA",
+  "OA034":"ORTODONCIA",
+  "OA035":"ORTODONCIA",
+  "OA036":"ORTODONCIA",
+  "OA037":"ORTODONCIA",
+  "OA038":"ORTODONCIA",
+  "OA039":"ORTODONCIA",
+  "OA040":"ORTODONCIA",
+  "OA041":"ORTODONCIA",
+  "OA042":"ORTODONCIA",
+  "OA043":"ORTODONCIA",
+  "OA044":"ORTODONCIA",
+  "OA045":"ORTODONCIA",
+  "OA046":"ORTODONCIA",
+  "OA047":"ORTODONCIA",
+  "OA048":"ORTODONCIA",
+  "OA049":"ORTODONCIA",
+  "OA100":"ORTODONCIA",
+  "OA101":"ORTODONCIA",
+  "OA102":"ORTODONCIA",
+  "OA103":"ORTODONCIA",
+  "OA104":"ORTODONCIA",
+  "OA105":"ORTODONCIA",
+  "OA106":"ORTODONCIA",
+  "OA107":"ORTODONCIA",
+  "OA108":"ORTODONCIA",
+  "OA109":"ORTODONCIA",
+  "OA110":"ORTODONCIA",
+  "OA111":"ORTODONCIA",
+  "OA200":"ORTODONCIA",
+  "OA201":"ORTODONCIA",
+  "OA202":"ORTODONCIA",
+  "OA203":"ORTODONCIA",
+  "OA204":"ORTODONCIA",
+  "OA205":"ORTODONCIA",
+  "OA206":"ORTODONCIA",
+  "OA207":"ORTODONCIA",
+  "OA208":"ORTODONCIA",
+  "OA300":"ORTODONCIA",
+  "OA301":"ORTODONCIA",
+  "OA302":"ORTODONCIA",
+  "OA600":"ORTODONCIA",
+  "OA601":"ORTODONCIA",
+  "OA602":"ORTODONCIA",
+  "OA603":"ORTODONCIA",
+  "OA604":"ORTODONCIA",
+  "OA605":"ORTODONCIA",
+  "OA606":"ORTODONCIA",
+  "OA607":"ORTODONCIA",
+  "OA608":"ORTODONCIA",
+  "OA609":"ORTODONCIA",
+  "OA700":"ORTODONCIA",
+  "OA701":"ORTODONCIA",
+  "OA702":"ORTODONCIA",
+  "OA703":"ORTODONCIA",
+  "OA704":"ORTODONCIA",
+  "OA800":"ORTODONCIA",
+  "OA801":"ORTODONCIA",
+  "OO001":"ORTODONCIA",
+  "OO002":"ORTODONCIA",
+  "OO003":"ORTODONCIA",
+  "OO004":"ORTODONCIA",
+  "OO005":"ORTODONCIA",
+  "OO006":"ORTODONCIA",
+  "OO100":"ORTODONCIA",
+  "OO101":"ORTODONCIA",
+  "OO102":"ORTODONCIA",
+  "OO200":"ORTODONCIA",
+  "OR001":"ORTODONCIA",
+  "OR002":"ORTODONCIA",
+  "OR003":"ORTODONCIA",
+  "OR004":"ORTODONCIA",
+  "OR005":"ORTODONCIA",
+  "OR006":"ORTODONCIA",
+  "OR007":"ORTODONCIA",
+  "OR008":"ORTODONCIA",
+  "OR009":"ORTODONCIA",
+  "OR010":"ORTODONCIA",
+  "OR011":"ORTODONCIA",
+  "OR012":"ORTODONCIA",
+  "OR013":"ORTODONCIA",
+  "OR014":"ORTODONCIA",
+  "OR016":"ORTODONCIA",
+  "OR017":"ORTODONCIA",
+  "OR018":"ORTODONCIA",
+  "OR019":"ORTODONCIA",
+  "OR020":"ORTODONCIA",
+  "OR021":"ORTODONCIA",
+  "OR022":"ORTODONCIA",
+  "OR100":"ORTODONCIA",
+  "OR101":"ORTODONCIA",
+  "OR102":"ORTODONCIA",
+  "OR103":"ORTODONCIA",
+  "OR104":"ORTODONCIA",
+  "OR105":"ORTODONCIA",
+  "OR106":"ORTODONCIA",
+  "OR107":"ORTODONCIA",
+  "OR108":"ORTODONCIA",
+  "OR109":"ORTODONCIA",
+  "OR110":"ORTODONCIA",
+  "OR111":"ORTODONCIA",
+  "OR112":"ORTODONCIA",
+  "OR113":"ORTODONCIA",
+  "OR114":"ORTODONCIA",
+  "OR115":"ORTODONCIA",
+  "OR116":"ORTODONCIA",
+  "OR117":"ORTODONCIA",
+  "OR118":"ORTODONCIA",
+  "OR119":"ORTODONCIA",
+  "OR120":"ORTODONCIA",
+  "OR121":"ORTODONCIA",
+  "OR122":"ORTODONCIA",
+  "OR123":"ORTODONCIA",
+  "OR124":"ORTODONCIA",
+  "OR125":"ORTODONCIA",
+  "OR126":"ORTODONCIA",
+  "OR127":"ORTODONCIA",
+  "OR200":"ORTODONCIA",
+  "OR201":"ORTODONCIA",
+  "OR202":"ORTODONCIA",
+  // ORTOPEDIA (28 códigos)
+  "OP000":"ORTOPEDIA",
+  "OP001":"ORTOPEDIA",
+  "OP100":"ORTOPEDIA",
+  "OP101":"ORTOPEDIA",
+  "OP102":"ORTOPEDIA",
+  "OP103":"ORTOPEDIA",
+  "OP104":"ORTOPEDIA",
+  "OP105":"ORTOPEDIA",
+  "OP106":"ORTOPEDIA",
+  "OP107":"ORTOPEDIA",
+  "OP108":"ORTOPEDIA",
+  "OP109":"ORTOPEDIA",
+  "OP110":"ORTOPEDIA",
+  "OP111":"ORTOPEDIA",
+  "OP112":"ORTOPEDIA",
+  "OP113":"ORTOPEDIA",
+  "OP114":"ORTOPEDIA",
+  "OP115":"ORTOPEDIA",
+  "OP116":"ORTOPEDIA",
+  "OP117":"ORTOPEDIA",
+  "OP118":"ORTOPEDIA",
+  "OP119":"ORTOPEDIA",
+  "OP200":"ORTOPEDIA",
+  "OP201":"ORTOPEDIA",
+  "OP202":"ORTOPEDIA",
+  "OP203":"ORTOPEDIA",
+  "OP204":"ORTOPEDIA",
+  "OP205":"ORTOPEDIA",
+  // PERIODONCIA (12 códigos)
+  "PE0000":"PERIODONCIA",
+  "PE1000":"PERIODONCIA",
+  "PE1001":"PERIODONCIA",
+  "PE1002":"PERIODONCIA",
+  "PE1003":"PERIODONCIA",
+  "PE1004":"PERIODONCIA",
+  "PE1005":"PERIODONCIA",
+  "PE1006":"PERIODONCIA",
+  "PE1007":"PERIODONCIA",
+  "PE2000":"PERIODONCIA",
+  "PE2001":"PERIODONCIA",
+  "PE2002":"PERIODONCIA",
+  // PRODUCTOS HIGIENE BUCAL (8 códigos)
+  "HB000":"PRODUCTOS HIGIENE BUCAL",
+  "HB001":"PRODUCTOS HIGIENE BUCAL",
+  "HB002":"PRODUCTOS HIGIENE BUCAL",
+  "HB003":"PRODUCTOS HIGIENE BUCAL",
+  "HB004":"PRODUCTOS HIGIENE BUCAL",
+  "HB005":"PRODUCTOS HIGIENE BUCAL",
+  "HB006":"PRODUCTOS HIGIENE BUCAL",
+  "HB007":"PRODUCTOS HIGIENE BUCAL",
+  // PROTESIS (36 códigos)
+  "P0000":"PROTESIS",
+  "P0001":"PROTESIS",
+  "P0002":"PROTESIS",
+  "P0003":"PROTESIS",
+  "P0004":"PROTESIS",
+  "P0005":"PROTESIS",
+  "P0006":"PROTESIS",
+  "P0007":"PROTESIS",
+  "P0008":"PROTESIS",
+  "P0009":"PROTESIS",
+  "P0010":"PROTESIS",
+  "P0011":"PROTESIS",
+  "P1000":"PROTESIS",
+  "P1001":"PROTESIS",
+  "P1002":"PROTESIS",
+  "P1003":"PROTESIS",
+  "P1004":"PROTESIS",
+  "P2000":"PROTESIS",
+  "P2001":"PROTESIS",
+  "P2002":"PROTESIS",
+  "P2003":"PROTESIS",
+  "P2004":"PROTESIS",
+  "P2005":"PROTESIS",
+  "P2006":"PROTESIS",
+  "P2007":"PROTESIS",
+  "P2008":"PROTESIS",
+  "P2009":"PROTESIS",
+  "P3000":"PROTESIS",
+  "P3001":"PROTESIS",
+  "P3002":"PROTESIS",
+  "P3003":"PROTESIS",
+  "P3004":"PROTESIS",
+  "P3005":"PROTESIS",
+  "P3006":"PROTESIS",
+  "P3007":"PROTESIS",
+  "P3008":"PROTESIS",
+  // RADIOLOGIA (9 códigos)
+  "RD000":"RADIOLOGIA",
+  "RD001":"RADIOLOGIA",
+  "RD002":"RADIOLOGIA",
+  "RD003":"RADIOLOGIA",
+  "RD004":"RADIOLOGIA",
+  "RD005":"RADIOLOGIA",
+  "RD006":"RADIOLOGIA",
+  "RD007":"RADIOLOGIA",
+  "RD008":"RADIOLOGIA",
+};
+
+return items.map(item => {
+  const row = item.json || {};
+  const codigo = String(row["Código Prestación"] || "").trim().toUpperCase();
+  const categoria = CODIGO_A_CATEGORIA[codigo] || "OTRO";
+  return {
+    json: {
+      ...row,
+      Categoria: categoria,
+    },
+  };
+});
+
+──────────────────────────────────────────────────────────────────────
+NODO: Clase  (pegar en Clase1 del Reporte + Clase y Clase1 del Correo)
+──────────────────────────────────────────────────────────────────────
+// Subclasifica códigos de ORTODONCIA en AJUSTE / RETIRO / COMBO.
+// SOLO ortodoncia: las filas no-ortodoncia se DESCARTAN de este bloque
+// (siguen visibles en el bloque Categoría). Por eso el bloque Clase no produce OTRO.
+// Agrega cantidadComputable basado en Computa para Planilla Cantidad.
+
+const CLASES_ORTODONCIA = {
+  AJUSTE:[
+    "OA001","OA002","OA003","OA004","OA005","OA006","OA007","OA008","OA009","OA010","OA011",
+    "OA012","OA013","OA014","OA015","OA016","OA017","OA018","OA019","OA020","OA021","OA022",
+    "OA023","OA024","OA025","OA026","OA027","OA028","OA029","OA030","OA031","OA032","OA033",
+    "OA034","OA035","OA036","OA037","OA038","OA039","OA040","OA041","OA042","OA043","OA044",
+    "OA045","OA046","OA047","OA048","OA049","OA100","OA101","OA102","OA103","OA104","OA105",
+    "OA106","OA107","OA108","OA109","OA110","OA111","OA200","OA201","OA202","OA203","OA204",
+    "OA205","OA206","OA207","OA208","OA300","OA301","OA302","OA600","OA601","OA602","OA603",
+    "OA604","OA605","OA606","OA607","OA608","OA609","OA700","OA701","OA702","OA703","OA704",
+    "OA800","OA801","OO001","OO002","OO003","OO004","OO005","OO006","OO100","OO101","OO102",
+    "OO200"
+  ],
+  RETIRO:[
+    "OR001","OR002","OR003","OR004","OR005","OR006","OR007","OR008","OR009","OR010","OR011",
+    "OR012","OR020","OR021","OR022"
+  ],
+  COMBO:[
+    "OR013","OR014","OR016","OR017","OR018","OR019","OR100","OR101","OR102","OR103","OR104",
+    "OR105","OR106","OR107","OR108","OR109","OR110","OR111","OR112","OR113","OR114","OR115",
+    "OR116","OR117","OR118","OR119","OR120","OR121","OR122","OR123","OR124","OR125","OR126",
+    "OR127","OR200","OR201","OR202"
+  ],
+};
+
+// Códigos que NO suman para cantidad (Computa para Planilla Cantidad = NO)
+const noSumanCantidad = new Set([
+  "00001","OA600","OA601","OA602","OA603","OA604","OA605","OA606","OA607","OA608","OA609",
+  "OA700","OA701","OA702","OA703","OA704","OA800","OA801","OO001","OO002","OO003","OO004",
+  "OO005","OO006","OO100","OO101","OO102","OO200","OR008","OR009","OR010","OR011","OR012",
+  "OR013","OR014","OR016","OR017","OR018","OR019","OR020","OR021","OR022"
+]);
+
+// SOLO ortodoncia: descartar filas no-ortodoncia (se contabilizan en el bloque Categoría).
+const out = [];
+for (const item of items) {
+  const row = item.json || {};
+  const codigo = String(row["Código Prestación"] || "").trim().toUpperCase();
+
+  let clase = null;
+  for (const [nombreClase, codigos] of Object.entries(CLASES_ORTODONCIA)) {
+    if (codigos.includes(codigo)) {
+      clase = nombreClase;
+      break;
+    }
+  }
+
+  if (clase === null) continue; // no-ortodoncia → fuera del bloque Clase
+
+  out.push({
+    json: {
+      ...row,
+      Clase: clase,
+      cantidadComputable: noSumanCantidad.has(codigo) ? 0 : 1,
+    },
+  });
+}
+return out;
+
+──────────────────────────────────────────────────────────────────────
+RESUMEN
+──────────────────────────────────────────────────────────────────────
+  Códigos válidos (Filtro):     340 (todos únicos ✓)
+  No computan importe:          0
+  No computan cantidad:         42
+  Categorías mapeadas:          340 (100% por código)
+  Clase AJUSTE:                 100 códigos
+  Clase RETIRO:                 15 códigos
+  Clase COMBO:                  37 códigos
+  (resto → sin clase, fuera del bloque Clase)
+  Categorías:
+    ALINEADORES                      9 códigos
+    CIRUGIA                         25 códigos
+    ENDODONCIA                      11 códigos
+    GENERAL                         50 códigos
+    ORTODONCIA                     152 códigos
+    ORTOPEDIA                       28 códigos
+    PERIODONCIA                     12 códigos
+    PRODUCTOS HIGIENE BUCAL          8 códigos
+    PROTESIS                        36 códigos
+    RADIOLOGIA                       9 códigos
+──────────────────────────────────────────────────────────────────────
+  SNAPSHOT (cutoff pruning: 2026-05-01)
+    Path:                       /Users/camilo/Downloads/camilo-workspace/clients/SNR_Sonrisas/_snapshots/codigos-historico.json
+    Del xlsx actual:            340 códigos
+    Nuevos esta corrida:        0 códigos
+    Solo en snapshot (legacy):  0 códigos
+    Prunneados (>2 meses):      0 códigos
+──────────────────────────────────────────────────────────────────────

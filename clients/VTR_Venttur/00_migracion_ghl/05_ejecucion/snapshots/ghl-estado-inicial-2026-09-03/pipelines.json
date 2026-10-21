@@ -1,0 +1,72 @@
+{
+  "status": 200,
+  "params": {
+    "locationId": "7aXb4JCKsWV5nUyBXeSF"
+  },
+  "data": {
+    "pipelines": [
+      {
+        "id": "81AsypQlo1iM4t0yZztM",
+        "name": "Marketing Pipeline",
+        "showInFunnel": true,
+        "showInPieChart": true,
+        "useOpportunityProbability": false,
+        "dateAdded": "2026-09-02T17:15:10.904Z",
+        "dateUpdated": "2026-09-02T17:15:10.904Z",
+        "stages": [
+          {
+            "id": "df21794e-c1d3-4d3c-8af1-111046e1e9c7",
+            "name": "New Lead",
+            "showInFunnel": true,
+            "showInPieChart": true,
+            "position": 0,
+            "stageWinProbability": 14.29
+          },
+          {
+            "id": "c95e3890-98cb-4615-b524-66ef90b7f47d",
+            "name": "Contacted",
+            "showInFunnel": true,
+            "showInPieChart": true,
+            "position": 1,
+            "stageWinProbability": 28.57
+          },
+          {
+            "id": "afaaa543-56f9-485f-80dd-8303827c0f41",
+            "name": "Qualified",
+            "showInFunnel": true,
+            "showInPieChart": true,
+            "position": 2,
+            "stageWinProbability": 42.86
+          },
+          {
+            "id": "a4a62ed8-d73c-402c-9216-4283ef2c86bd",
+            "name": "Proposal Sent",
+            "showInFunnel": true,
+            "showInPieChart": true,
+            "position": 3,
+            "stageWinProbability": 57.14
+          },
+          {
+            "id": "1493eeb8-2c68-4109-9c14-1fbaf427df60",
+            "name": "Negotiation",
+            "showInFunnel": true,
+            "showInPieChart": true,
+            "position": 4,
+            "stageWinProbability": 71.43
+          },
+          {
+            "id": "3fd11a89-2107-49cf-98e6-c091015a686a",
+            "name": "Closed",
+            "showInFunnel": true,
+            "showInPieChart": true,
+            "position": 5,
+            "stageWinProbability": 85.71
+          }
+        ],
+        "locationId": "7aXb4JCKsWV5nUyBXeSF",
+        "position": "a1BiX4K"
+      }
+    ],
+    "traceId": "a0310f62-cf9c-4661-a448-214938bfe796"
+  }
+}

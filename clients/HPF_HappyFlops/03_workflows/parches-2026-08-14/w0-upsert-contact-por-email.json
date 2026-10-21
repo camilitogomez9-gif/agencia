@@ -1,0 +1,12 @@
+{
+  "wf": "W0",
+  "descripcion": "upsert_contact acepta email además de phone. Hace falta para los testers de Telegram: no tienen teléfono, y fabricarles uno no sirve porque GHL valida el código de país (+999 devuelve HTTP 400 'Invalid country calling code'). Compatible hacia atrás: quien mande phone sigue funcionando igual.",
+  "ediciones": [
+    {
+      "nodo": "Construir request",
+      "campo": "parameters.jsCode",
+      "anchor": "  upsert_contact: () => {\n    exigir(['phone']);\n    return { method: 'POST', path: '/contacts/upsert', body: {\n      locationId: LOC, phone: args.phone,\n      firstName: args.firstName, lastName: args.lastName, name: args.name,\n      tags: args.tags, source: args.source || 'hpf-n8n' } };\n  },",
+      "reemplazo": "  upsert_contact: () => {\n    // phone O email: GHL acepta cualquiera de los dos como clave de upsert.\n    //\n    // El email hace falta para los testers de Telegram, que no tienen teléfono.\n    // Fabricarles uno NO sirve: GHL valida el código de país y devuelve HTTP 400\n    // \"Invalid country calling code\" ante un prefijo libre como +999 (medido el 14/08).\n    // El teléfono sintético se sigue usando, pero sólo puertas adentro — como clave de\n    // `hpf_identity` y para que W2 sepa por qué canal contestar; a GHL no llega.\n    if (!args.phone && !args.email) {\n      throw new Error('W0 upsert_contact: hace falta \"phone\" o \"email\"');\n    }\n    return { method: 'POST', path: '/contacts/upsert', body: {\n      locationId: LOC, phone: args.phone, email: args.email,\n      firstName: args.firstName, lastName: args.lastName, name: args.name,\n      tags: args.tags, source: args.source || 'hpf-n8n' } };\n  },"
+    }
+  ]
+}

@@ -1,0 +1,997 @@
+[
+ {
+  "path": "/EstudiaryTrabajar_Agendar",
+  "target": "https://promo.venttur.com/EstudiaryTrabajar-Agendar",
+  "motivo": "URL original con guion bajo → step GHL con guion medio"
+ },
+ {
+  "path": "/PW_Alemania_Agendar",
+  "target": "https://promo.venttur.com/PW-Alemania-Agendar",
+  "motivo": "URL original con guion bajo → step GHL con guion medio"
+ },
+ {
+  "path": "/AAFAMILIA-2026-GENERAL",
+  "target": "https://promo.venttur.com/AAFamilia-Agendar",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/AAFRNACIA-2026-ECONO",
+  "target": "https://promo.venttur.com/AAFamilia-Agendar",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/AAFRNACIA-2026-EXPERIENCIA1",
+  "target": "https://promo.venttur.com/AAFamilia-Agendar",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/AAFRNACIA-2026-IDIOMA1",
+  "target": "https://promo.venttur.com/AAFamilia-Agendar",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/Australia-bienvenida",
+  "target": "https://promo.venttur.com/Estudiar-y-Trabajar-en-Australia",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/Australia-registro-online",
+  "target": "https://promo.venttur.com/Estudiar-y-Trabajar-en-Australia",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/ChatHistoria",
+  "target": "https://web-production-574701.up.railway.app",
+  "motivo": "embebía algo externo → directo a eso"
+ },
+ {
+  "path": "/GapyearAustralia",
+  "target": "https://promo.venttur.com/Estudiar-y-Trabajar-en-Australia",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/IBsinFronteras_CVH",
+  "target": "https://promo.venttur.com/agendar-ema",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/IntercambioFrancia",
+  "target": "https://promo.venttur.com/AAFamilia-Agendar",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/IntercambioFrancia-2-170616",
+  "target": "https://promo.venttur.com/AAFamilia-Agendar",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/IntercambioFrancia-3-170618",
+  "target": "https://promo.venttur.com/AAFamilia-Agendar",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/PW_Alemania_QuickElegibilityForm",
+  "target": "https://promo.venttur.com/PW-Alemania-Agendar",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/PW_info_elegibility",
+  "target": "https://promo.venttur.com/PW-Alemania-Agendar",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/RegistroGapyearAustralia",
+  "target": "https://promo.venttur.com/Estudiar-y-Trabajar-en-Australia",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/Registro_Australia_Feria",
+  "target": "https://promo.venttur.com/Estudiar-y-Trabajar-en-Australia",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/agendar-AnaGo-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=AnaGo",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-AnaGo-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=AnaGo",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-AnaGo-internado",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=AnaGo",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-AnaGo-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=AnaGo",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-AnaGo-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=AnaGo",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-DiegoG-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=DiegoG",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-DiegoG-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=DiegoG",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-DiegoG-internado",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=DiegoG",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-DiegoG-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=DiegoG",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-DiegoG-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=DiegoG",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-DorianaVe-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=DorianaVe",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-DorianaVe-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=DorianaVe",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-DorianaVe-internado",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=DorianaVe",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-DorianaVe-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=DorianaVe",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-DorianaVe-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=DorianaVe",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-EdnaPer-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=EdnaPe",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-EdnaPer-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=EdnaPe",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-EdnaPer-internado",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=EdnaPe",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-EdnaPer-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=EdnaPe",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-EdnaPer-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=EdnaPe",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-GraHernandez-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=GracielaH",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-GraHernandez-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=GracielaH",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-GraHernandez-internado",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=GracielaH",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-GraHernandez-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=GracielaH",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-GraHernandez-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=GracielaH",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-JacquelineMarie-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=JacquieMarie",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-JacquelineMarie-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=JacquieMarie",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-JacquelineMarie-internado",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=JacquieMarie",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-JacquelineMarie-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=JacquieMarie",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-JacquelineMarie-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=JacquieMarie",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-KAsaam-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=KarlaAsaam",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-KAssam-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=KarlaAsaam",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-KAssam-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=KarlaAsaam",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-Kassam-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=KarlaAsaam",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-Kassam-internados",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=KarlaAsaam",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-LuipitaRoch-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=LuipitaRoch",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-LuipitaRoch-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=LuipitaRoch",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-LuipitaRoch-internado",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=LuipitaRoch",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-LuipitaRoch-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=LuipitaRoch",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-LuipitaRoch-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=LuipitaRoch",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-MarianaVa-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=MarianaVa",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-MarianaVa-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=MarianaVa",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-MarianaVa-internado",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=MarianaVa",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-MarianaVa-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=MarianaVa",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-MarianaVa-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=MarianaVa",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-Marissa-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=Marissa",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-Marissa-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=Marissa",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-Marissa-internado",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=Marissa",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-Marissa-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=Marissa",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-Marissa-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=Marissa",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-Miabarba-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=MiaBarba",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-Miabarba-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=MiaBarba",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-Miabarba-gapyear-Australia",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=MiaBarba",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-Miabarba-internado",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=MiaBarba",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-Miabarba-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=MiaBarba",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-Miabarba-summercamp-",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=MiaBarba",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-MishelleZ-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=MishelleZ",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-MishelleZ-gapyear-",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=MishelleZ",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-MishelleZ-internado",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=MishelleZ",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-MishelleZ-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=MishelleZ",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-MishelleZ-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=MishelleZ",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-PauNoreen-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=PauNoreen",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-PauNoreen-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=PauNoreen",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-PauNoreen-internado",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=PauNoreen",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-PauNoreen-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=PauNoreen",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-PauNoreen-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=PauNoreen",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-SoniaFr-internado",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=SoniaFrias",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-SoniaFri-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=SoniaFrias",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-SoniaFri-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=SoniaFrias",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-SoniaFri-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=SoniaFrias",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-SoniaFri-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=SoniaFrias",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-abuendia-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=AlinaBuendia",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-abuendia-gapid",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=AlinaBuendia",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-abuendia-internados",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=AlinaBuendia",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-abuendia-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=AlinaBuendia",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-abuendia-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=AlinaBuendia",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-aramirez",
+  "target": "https://promo.venttur.com/SPEagendar?atribuida_a=aramirez",
+  "motivo": "SPE agendamiento por aventurera"
+ },
+ {
+  "path": "/agendar-aramos-Afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=AlondraRamos",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-aramos-SummerC",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=AlondraRamos",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-aramos-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=AlondraRamos",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-aramos-internado",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=AlondraRamos",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-aramos-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=AlondraRamos",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-ayanez-Internados",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=ayanez",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-ayanez-SummerC",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=ayanez",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-ayanez-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=ayanez",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-ayanez-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=ayanez",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-ayanez-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=ayanez",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-bgalvan-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=BarbaraGalvan",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-bgalvan-gapid",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=BarbaraGalvan",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-bgalvan-internados",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=BarbaraGalvan",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-bgalvan-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=BarbaraGalvan",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-bgalvan-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=BarbaraGalvan",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-carol",
+  "target": "https://promo.venttur.com/SPEagendar?atribuida_a=carol",
+  "motivo": "SPE agendamiento por aventurera"
+ },
+ {
+  "path": "/agendar-cdiaz-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=CeciDiaz",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-cdiaz-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=CeciDiaz",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-cdiaz-internado",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=CeciDiaz",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-cdiaz-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=CeciDiaz",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-cdiaz-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=CeciDiaz",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-cgonzalez-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=CeciGonzalez",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-cgonzalez-gapid",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=CeciGonzalez",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-cgonzalez-internado",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=CeciGonzalez",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-cgonzalez-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=CeciGonzalez",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-cgonzalez-summer",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=CeciGonzalez",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-chuerta",
+  "target": "https://promo.venttur.com/SPEagendar?atribuida_a=chuerta",
+  "motivo": "SPE agendamiento por aventurera"
+ },
+ {
+  "path": "/agendar-egrapain-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=ErnestoGrapain",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-egrapain-gapid",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=ErnestoGrapain",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-egrapain-internado",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=ErnestoGrapain",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-egrapain-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=ErnestoGrapain",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-egrapain-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=ErnestoGrapain",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-ezamudio-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=EstherZamudio",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-ezamudio-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=EstherZamudio",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-ezamudio-internados",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=EstherZamudio",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-ezamudio-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=EstherZamudio",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-ezamudio-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=EstherZamudio",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-ganaya-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=GabyAnaya",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-ganaya-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=GabyAnaya",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-ganaya-internados",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=GabyAnaya",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-ganaya-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=GabyAnaya",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-ganaya-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=GabyAnaya",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-iperez-Afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=ItzaPerez",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-iperez-SummerC",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=ItzaPerez",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-iperez-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=ItzaPerez",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-iperez-internados",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=ItzaPerez",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-iperez-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=ItzaPerez",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-lgalindo-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=LucyGalindo",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-lgalindo-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=LucyGalindo",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-lgalindo-internado",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=LucyGalindo",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-lgalindo-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=LucyGalindo",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-lgalindo-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=LucyGalindo",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-mgomez",
+  "target": "https://promo.venttur.com/SPEagendar?atribuida_a=mgomez",
+  "motivo": "SPE agendamiento por aventurera"
+ },
+ {
+  "path": "/agendar-mgomez-presencial",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=mgomez",
+  "motivo": "sub-landing aventurera (handle sin madre)"
+ },
+ {
+  "path": "/agendar-mzuniga-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=MontseZuniga",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-mzuniga-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=MontseZuniga",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-mzuniga-internados",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=MontseZuniga",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-mzuniga-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=MontseZuniga",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-mzuniga-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=MontseZuniga",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-pgomez",
+  "target": "https://promo.venttur.com/SPEagendar?atribuida_a=pgomez",
+  "motivo": "SPE agendamiento por aventurera"
+ },
+ {
+  "path": "/agendar-vcampos-afamilia",
+  "target": "https://promo.venttur.com/Intercambio-Calendario?atribuida_a=VeroCampos",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-vcampos-gapyear",
+  "target": "https://promo.venttur.com/GapYear-Calendario?atribuida_a=VeroCampos",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-vcampos-internados",
+  "target": "https://promo.venttur.com/Internados-Calendario?atribuida_a=VeroCampos",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-vcampos-pathway",
+  "target": "https://promo.venttur.com/PathwayAlemania-Calendario?atribuida_a=VeroCampos",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/agendar-vcampos-summercamp",
+  "target": "https://promo.venttur.com/Campamentos-Calendario?atribuida_a=VeroCampos",
+  "motivo": "sub-landing aventurera"
+ },
+ {
+  "path": "/alemaniapathway",
+  "target": "https://promo.venttur.com/PW-Alemania-Agendar",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/alemaniapathway-copy-171503",
+  "target": "https://promo.venttur.com/PW-Alemania-Agendar",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/alemaniapathway-padres",
+  "target": "https://promo.venttur.com/PW-Alemania-Agendar",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/alemaniapathway-padres-copy-171504",
+  "target": "https://promo.venttur.com/PW-Alemania-Agendar",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/australia",
+  "target": "https://promo.venttur.com/Estudiar-y-Trabajar-en-Australia",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/australia-gracias",
+  "target": "https://promo.venttur.com/Estudiar-y-Trabajar-en-Australia",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/australia-registro-presencial",
+  "target": "https://promo.venttur.com/Estudiar-y-Trabajar-en-Australia",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/boarding-2026-deportes1",
+  "target": "https://promo.venttur.com/agendar-ema",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/boarding-2026-deportes2",
+  "target": "https://promo.venttur.com/agendar-ema",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/boarding-2026-prestigio1",
+  "target": "https://promo.venttur.com/agendar-ema",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/boarding-2026-prestigio2",
+  "target": "https://promo.venttur.com/agendar-ema",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/boarding1-2026-girls",
+  "target": "https://promo.venttur.com/agendar-ema",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/boarding2-2026-girls",
+  "target": "https://promo.venttur.com/agendar-ema",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/ema",
+  "target": "https://promo.venttur.com/agendar-ema",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/ema-2",
+  "target": "https://promo.venttur.com/agendar-ema",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/ema-MX-pers",
+  "target": "https://promo.venttur.com/agendar-ema",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/formularioref",
+  "target": "https://docs.google.com/forms/d/e/1FAIpQLSf3MEYt45eryHVuEa-GVuWaW5dEOgfFFNCw-Z5OtHVAtsF9_A/viewform",
+  "motivo": "embebía algo externo → directo a eso"
+ },
+ {
+  "path": "/lagarenne-CDMX",
+  "target": "https://promo.venttur.com/agendar-ema",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/lagarenne-CDMX-carol",
+  "target": "https://promo.venttur.com/agendar-ema?atribuida_a=carol",
+  "motivo": "campaña con aventurera"
+ },
+ {
+  "path": "/lagarenne-CDMX-lucy",
+  "target": "https://promo.venttur.com/agendar-ema?atribuida_a=lucy",
+  "motivo": "campaña con aventurera"
+ },
+ {
+  "path": "/lagarenne-CDMX-marissa",
+  "target": "https://promo.venttur.com/agendar-ema?atribuida_a=Marissa",
+  "motivo": "campaña con aventurera"
+ },
+ {
+  "path": "/lagarenne-GDL",
+  "target": "https://promo.venttur.com/agendar-ema",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/lagarenne-GDL-andy",
+  "target": "https://promo.venttur.com/agendar-ema?atribuida_a=andy",
+  "motivo": "campaña con aventurera"
+ },
+ {
+  "path": "/lagarenne-GDL-itza",
+  "target": "https://promo.venttur.com/agendar-ema?atribuida_a=itza",
+  "motivo": "campaña con aventurera"
+ },
+ {
+  "path": "/lagarenne-GDL-marissa",
+  "target": "https://promo.venttur.com/agendar-ema?atribuida_a=Marissa",
+  "motivo": "campaña con aventurera"
+ },
+ {
+  "path": "/lagarenne-LEON",
+  "target": "https://promo.venttur.com/agendar-ema",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/lagarenne-LEON-anacristina",
+  "target": "https://promo.venttur.com/agendar-ema?atribuida_a=anacristina",
+  "motivo": "campaña con aventurera"
+ },
+ {
+  "path": "/lagarenne-LEON-anayanez",
+  "target": "https://promo.venttur.com/agendar-ema?atribuida_a=anayanez",
+  "motivo": "campaña con aventurera"
+ },
+ {
+  "path": "/luminos",
+  "target": "https://promo.venttur.com/agendar-ema",
+  "motivo": "campaña/evento → form del programa"
+ },
+ {
+  "path": "/video-ema-MontseZ",
+  "target": "https://promo.venttur.com/entrenamientospe?atribuida_a=MontseZ",
+  "motivo": "campaña con aventurera"
+ },
+ {
+  "path": "/video-ema-aramirez",
+  "target": "https://promo.venttur.com/entrenamientospe?atribuida_a=aramirez",
+  "motivo": "campaña con aventurera"
+ },
+ {
+  "path": "/video-ema-aramos",
+  "target": "https://promo.venttur.com/entrenamientospe?atribuida_a=AlondraRamos",
+  "motivo": "campaña con aventurera"
+ },
+ {
+  "path": "/video-ema-ayanez",
+  "target": "https://promo.venttur.com/entrenamientospe?atribuida_a=ayanez",
+  "motivo": "campaña con aventurera"
+ },
+ {
+  "path": "/video-ema-carol",
+  "target": "https://promo.venttur.com/entrenamientospe?atribuida_a=carol",
+  "motivo": "campaña con aventurera"
+ },
+ {
+  "path": "/video-ema-cdiaz",
+  "target": "https://promo.venttur.com/entrenamientospe?atribuida_a=CeciDiaz",
+  "motivo": "campaña con aventurera"
+ },
+ {
+  "path": "/video-ema-chuerta",
+  "target": "https://promo.venttur.com/entrenamientospe?atribuida_a=chuerta",
+  "motivo": "campaña con aventurera"
+ },
+ {
+  "path": "/video-ema-lgalindo",
+  "target": "https://promo.venttur.com/entrenamientospe?atribuida_a=LucyGalindo",
+  "motivo": "campaña con aventurera"
+ },
+ {
+  "path": "/video-ema-mgomez",
+  "target": "https://promo.venttur.com/entrenamientospe?atribuida_a=mgomez",
+  "motivo": "campaña con aventurera"
+ },
+ {
+  "path": "/video-ema-pgomez",
+  "target": "https://promo.venttur.com/entrenamientospe?atribuida_a=pgomez",
+  "motivo": "campaña con aventurera"
+ }
+]

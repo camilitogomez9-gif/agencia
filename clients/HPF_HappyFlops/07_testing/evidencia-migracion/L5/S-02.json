@@ -1,0 +1,43 @@
+{
+  "caso": "S-02",
+  "titulo": "parte con adjunto → send_media (adjunto suelto se envuelve)",
+  "resultado": "CORROBORADO",
+  "detalle": "http=200 attachments=['https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg']",
+  "pasos": [
+    {
+      "req": [
+        {
+          "texto": "S02-texto-1786059339"
+        },
+        {
+          "texto": "S02-media-1786059339",
+          "adjuntos": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+        }
+      ],
+      "resp": {
+        "ok": true,
+        "partes_enviadas": 2,
+        "enviados": [
+          {
+            "seq": 1,
+            "body": "S02-texto-1786059339",
+            "attachments": [],
+            "ghl_message_id": "aA9CXmbfLCXKljVz4Khm",
+            "ghl_conversation_id": "44tBzIqK9ODLJ7Jr9Lco",
+            "http_status": 201
+          },
+          {
+            "seq": 2,
+            "body": "S02-media-1786059339",
+            "attachments": [
+              "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+            ],
+            "ghl_message_id": "J6DSgxlfABQcJ4gpGMFb",
+            "ghl_conversation_id": "44tBzIqK9ODLJ7Jr9Lco",
+            "http_status": 201
+          }
+        ]
+      }
+    }
+  ]
+}

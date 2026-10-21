@@ -1,0 +1,246 @@
+{
+  "name": "TFO | Listar disponibilidad v3",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "fecha"
+            }
+          ]
+        }
+      },
+      "id": "f7ebcc29-d349-4ff9-b23a-16fe8eeab220",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -720,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// Validar día — TFO Listar disponibilidad día v1\n// ------------------------------------------------------------\n// Input: { fecha } — 'YYYY-MM-DD' o ISO completo (se toma la fecha, zona CDMX).\n// Reglas (America/Mexico_City):\n//   - Fecha parseable\n//   - No anterior a hoy (día pasado -> fecha_pasada)\n//   - Lunes a Viernes (weekday 1..5)\n// Si falla -> shape final NO_VALIDO listo para el agente.\n// Si pasa   -> fecha_dia_inicio / fecha_dia_fin (ISO CDMX) para el nodo Calendar.\n// ============================================================\n\nconst TZ = 'America/Mexico_City';\nconst inp = $input.first().json;\nconst fechaRaw = (inp.fecha || '').toString().trim();\n\nconst makeFail = (motivo, mensaje) => [{\n  json: {\n    valid: false,\n    status: 'NO_VALIDO',\n    motivo,\n    mensaje,\n    slots_libres: [],\n    fecha: fechaRaw\n  }\n}];\n\nif (!fechaRaw) {\n  return makeFail(\n    'formato_invalido',\n    'No me pasaron la fecha del día a consultar. Pedile al lead que indique el día (ej: \"el viernes\").'\n  );\n}\n\n// Parseo ISO en CDMX; fallback a solo la parte de fecha\nlet dt = DateTime.fromISO(fechaRaw, { zone: TZ });\nif (!dt.isValid) {\n  dt = DateTime.fromISO(fechaRaw.substring(0, 10), { zone: TZ });\n}\nif (!dt.isValid) {\n  return makeFail(\n    'formato_invalido',\n    'No pude entender la fecha. Pedile al lead que indique el día claramente (ej: \"el jueves\" o \"9 de julio\").'\n  );\n}\n\nconst dia = dt.startOf('day');\nconst hoy = DateTime.now().setZone(TZ).startOf('day');\n\n// Día anterior a hoy\nif (dia < hoy) {\n  return makeFail(\n    'fecha_pasada',\n    'Esa fecha ya pasó. Proponé un día futuro (lunes a viernes).'\n  );\n}\n\n// Lunes a Viernes\nif (dia.weekday > 5) {\n  return makeFail(\n    'no_laboral',\n    'Solo tomamos reuniones de lunes a viernes. Proponé un día hábil.'\n  );\n}\n\n// VÁLIDO\nreturn [{\n  json: {\n    valid: true,\n    fecha: dia.toISODate(),\n    dia_humano: dia.setLocale('es').toFormat(\"cccc d 'de' LLLL\"),\n    fecha_dia_inicio: dia.toISO(),\n    fecha_dia_fin: dia.endOf('day').toISO()\n  }\n}];\n"
+      },
+      "id": "3997b27d-b98b-477b-882c-860b8901a0ce",
+      "typeVersion": 2,
+      "name": "Validar día",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -496,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "valid-true",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5f03d16b-aa28-461f-940d-a8f68c65a1be",
+      "typeVersion": 2.2,
+      "name": "¿Día válido?",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -272,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "calendar",
+        "calendar": {
+          "__rl": true,
+          "value": "mauriciogarciadelav@gmail.com",
+          "mode": "list",
+          "cachedResultName": "mauriciogarciadelav@gmail.com"
+        },
+        "timeMin": "={{ $json.fecha_dia_inicio }}",
+        "timeMax": "={{ $json.fecha_dia_fin }}",
+        "options": {
+          "outputFormat": "bookedSlots",
+          "timezone": {
+            "__rl": true,
+            "value": "",
+            "mode": "list",
+            "cachedResultName": "",
+            "cachedResultUrl": ""
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -48,
+        0
+      ],
+      "id": "a153f62f-5210-4787-9847-09c395deda15",
+      "name": "Get availability in a calendar",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "z0IngCgigP1wgAux",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "out-nv-1",
+              "name": "status",
+              "value": "NO_VALIDO",
+              "type": "string"
+            },
+            {
+              "id": "out-nv-2",
+              "name": "motivo",
+              "value": "={{ $json.motivo }}",
+              "type": "string"
+            },
+            {
+              "id": "out-nv-3",
+              "name": "mensaje",
+              "value": "={{ $json.mensaje }}",
+              "type": "string"
+            },
+            {
+              "id": "out-nv-4",
+              "name": "slots_libres",
+              "value": "={{ [] }}",
+              "type": "array"
+            },
+            {
+              "id": "out-nv-5",
+              "name": "fecha",
+              "value": "={{ $json.fecha }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -48,
+        192
+      ],
+      "id": "b8cba28c-79a7-4c3e-8217-80bfa38a87fc",
+      "name": "Respond NO VÁLIDO"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// Calcular slots libres — TFO Listar disponibilidad día v2\n// ------------------------------------------------------------\n// Cruza los 9 slots canónicos CDMX contra los bookedSlots del calendar.\n// - bookedSlots vienen como items {start, end} (ISO). Si el día está vacío,\n//   $input.all() puede venir vacío o con un item sin start/end (alwaysOutputData).\n// - Si el día consultado es HOY, descarta slots que ya pasaron (< ahora CDMX).\n// v2 — extensión de agenda por instrucción Mauricio 1/7/26 (antes: 10:00-12:30 = 6 slots).\n// SINCRONIZADO con Chequear disponibilidad v7 (rango [09:30, 13:30] CDMX + 9 cupos).\n// Devuelve el shape final para el agente: {status, fecha, dia_humano, slots_libres, mensaje}\n// ============================================================\n\nconst TZ = 'America/Mexico_City';\nconst val = $('Validar día').first().json;\n\n// Los 9 slots canónicos en CDMX (en punto y y media). Cada reunión dura 30 min.\n// Última reunión empieza 13:30 y termina 14:00.\n// OJO: mantener sincronizado con la ventana que valida check_disponibilidad v7.\nconst SLOTS_CDMX = ['09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30'];\n\nconst dia = DateTime.fromISO(val.fecha_dia_inicio, { zone: TZ }).startOf('day');\nconst now = DateTime.now().setZone(TZ);\n\n// Slots ocupados desde el nodo Calendar (outputFormat bookedSlots -> {start, end})\nconst ocupados = $input.all()\n  .map(s => s.json)\n  .filter(s => s && s.start && s.end)\n  .map(s => ({\n    start: DateTime.fromISO(s.start, { zone: TZ }),\n    end: DateTime.fromISO(s.end, { zone: TZ })\n  }));\n\n// Solapamiento de intervalos [s1,e1) vs [s2,e2)\nconst solapa = (s1, e1, s2, e2) => s1 < e2 && s2 < e1;\n\nconst libres = [];\nfor (const hhmm of SLOTS_CDMX) {\n  const [h, m] = hhmm.split(':').map(Number);\n  const ini = dia.set({ hour: h, minute: m, second: 0, millisecond: 0 });\n  const fin = ini.plus({ minutes: 30 });\n  // Descartar slots que ya pasaron (solo aplica si el día es hoy)\n  if (ini <= now) continue;\n  const ocupado = ocupados.some(o => solapa(ini, fin, o.start, o.end));\n  if (!ocupado) libres.push(hhmm);\n}\n\nconst mensaje = libres.length > 0\n  ? `Slots libres para ${val.dia_humano} (hora México, CDMX): ${libres.join(', ')}.`\n  : `No hay cupos disponibles para ${val.dia_humano}. Proponé otro día hábil (lunes a viernes).`;\n\nreturn [{\n  json: {\n    status: 'OK',\n    fecha: val.fecha,\n    dia_humano: val.dia_humano,\n    slots_libres: libres,\n    mensaje\n  }\n}];\n"
+      },
+      "id": "d75ea4f0-9f0c-4a5c-b72e-54ae123d9bde",
+      "typeVersion": 2,
+      "name": "Calcular slots libres",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        176,
+        0
+      ]
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "fecha": "2026-07-17"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Validar día",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar día": {
+      "main": [
+        [
+          {
+            "node": "¿Día válido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Día válido?": {
+      "main": [
+        [
+          {
+            "node": "Get availability in a calendar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond NO VÁLIDO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get availability in a calendar": {
+      "main": [
+        [
+          {
+            "node": "Calcular slots libres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "any"
+  },
+  "versionId": "c4d1db9b-d127-494d-aa59-385f9914139b",
+  "meta": {
+    "instanceId": "c1ba6feaa6a193d007ad82da6440581c8d7568c90e248228239c4fc34db48d20"
+  },
+  "nodeGroups": [],
+  "id": "6HlqLSRlsR6FY6Dm",
+  "tags": []
+}

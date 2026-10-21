@@ -1,0 +1,749 @@
+{
+  "name": "Outreach Form Meta — Backfill (manual)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trg-0001-0000-0000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-128, 384]
+    },
+    {
+      "parameters": {
+        "content": "## 🔁 Backfill one-shot — Outreach Form Meta\n\nWorkflow MANUAL para recuperar los leads del sheet `Boarding_Schools_Venttur_2026-test-2` que tienen `lead_status = CREATED` (no procesados por v2 porque la conexión al Sheets Trigger se hizo después de la inserción).\n\n**Flujo:**\n1. Lee TODAS las filas del sheet\n2. Filtra `lead_status === 'CREATED'`\n3. Normaliza (mismo JS que v2)\n4. Por cada lead: upsert Airtable → createSubscriber ManyChat → sendFlow Touch 1 → Marcar Enviado → Sheet `lead_status` = `contacted`\n5. Wait 1.5s entre leads (rate limit ManyChat)\n\n**Errores no marcan el sheet** → re-correr es seguro (idempotente por Folio + id_2 + lookup id en sheet).\n\nLuego de correr este workflow, **v2 sigue siendo el camino oficial**. Touches 2 y 3 los maneja el cron del Flujo B del v2.\n\n**Trigger:** ManyChat `flow_ns = content20260612151152_969589` (template MARKETING `boarding_form_followup`)",
+        "height": 460,
+        "width": 460,
+        "color": 7
+      },
+      "id": "stk-0001-0000-0000-000000000001",
+      "name": "📘 Info Backfill",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-624, 64]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1HzJVMBwnGikiI_U805N7oqcXPYE7TjEFTL1rqdcCEIU",
+          "mode": "list",
+          "cachedResultName": "LEADS - FORMULARIO (VTR)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HzJVMBwnGikiI_U805N7oqcXPYE7TjEFTL1rqdcCEIU/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 160362675,
+          "mode": "list",
+          "cachedResultName": "Boarding_Schools_Venttur_2026-test-2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HzJVMBwnGikiI_U805N7oqcXPYE7TjEFTL1rqdcCEIU/edit#gid=160362675"
+        },
+        "options": {
+          "outputFormatting": {
+            "values": {
+              "general": "UNFORMATTED_VALUE",
+              "date": "FORMATTED_STRING"
+            }
+          }
+        }
+      },
+      "id": "shr-0001-0000-0000-000000000001",
+      "name": "Get All Sheet Rows",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [96, 384],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "__REEMPLAZAR_CREDENCIAL_SHEETS__",
+          "name": "Google Sheets - Venttur Meta Sync"
+        }
+      },
+      "notes": "Mismo sheet que el Sheets Trigger del v2. Lee TODAS las filas (sin filtro server-side) y filtra abajo para máxima robustez."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "filter-created",
+              "leftValue": "={{ ($json.lead_status || '').toString().trim().toUpperCase() }}",
+              "rightValue": "CREATED",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "flt-0001-0000-0000-000000000001",
+      "name": "Filter lead_status = CREATED",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [320, 384]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize Payload — versión BACKFILL\n// Mismo shape que v2 + _sheet_id preservado para Sheets Update.\n// Input: filas del sheet ya filtradas a lead_status = CREATED.\n\nconst items = $input.all();\nconst results = [];\n\n// --- Helpers (idénticos a v2) ---\n\nconst stripMetaPrefix = (v) => (v || '').toString().replace(/^[a-z]+:/, '').trim();\n\nconst titleCase = (s) => (s || '')\n  .toString()\n  .toLowerCase()\n  .replace(/(^|\\s|-)\\p{L}/gu, c => c.toUpperCase());\n\nconst splitName = (full) => {\n  const trimmed = (full || '').toString().trim();\n  if (!trimmed) return { nombre: 'Lead', apellido: '' };\n  const parts = trimmed.split(/\\s+/);\n  return {\n    nombre: titleCase(parts[0]),\n    apellido: parts.length > 1 ? titleCase(parts.slice(1).join(' ')) : ''\n  };\n};\n\nconst parsePhone = (raw) => {\n  if (raw === undefined || raw === null || raw === '') return { valid: false };\n  const cleaned = raw.toString().replace(/^p:\\+?/, '').replace(/[^0-9]/g, '');\n  if (cleaned.length < 10 || cleaned.length > 15) return { valid: false };\n  return { valid: true, phoneNoPlus: cleaned, phoneWithPlus: '+' + cleaned };\n};\n\nconst deriveTipo = (adName) => {\n  const upper = (adName || '').toString().toUpperCase();\n  if (upper.includes('PAPAS') || upper.includes('PAPÁS') ||\n      upper.includes('MAMAS') || upper.includes('MAMÁS')) return 'Padre/Madre';\n  return 'No especificado';\n};\n\nconst deriveFuente = (platform) => {\n  const p = (platform || '').toString().toLowerCase();\n  if (p === 'ig' || p === 'instagram') return 'Instagram';\n  if (p === 'fb' || p === 'facebook') return 'Facebook';\n  return 'Facebook - Instagram';\n};\n\nconst pick = (row, ...keys) => {\n  for (const k of keys) {\n    if (row[k] !== undefined && row[k] !== null && row[k] !== '') return row[k];\n  }\n  return '';\n};\n\n// --- Loop principal ---\n\nfor (const item of items) {\n  const row = item.json;\n\n  // Preservar campos necesarios para Sheets Update (match por `id` con prefijo l:)\n  const sheetId = (row.id || '').toString();\n  const rowNumber = row.row_number;\n\n  const gradoEscolar = pick(row, '¿qué_grado_escolar_cursa_actualmente_tu_hijo(a)?', 'grado_escolar');\n  const cuandoIniciar = pick(row, '¿cuándo_te_gustaría_que_iniciara_sus_estudios?', 'cuando_iniciar');\n  const nivelIngles = pick(row, '¿cuál_es_el_nivel_actual_de_inglés_de_tu_hijo(a)?', 'nivel_ingles');\n\n  let phoneResult = parsePhone(row.whatsapp);\n  if (!phoneResult.valid) phoneResult = parsePhone(row.phone_number);\n\n  if (!phoneResult.valid) {\n    results.push({\n      json: {\n        _error: true,\n        _error_reason: 'Phone inválido: whatsapp=\"' + (row.whatsapp || '') +\n                       '\" phone_number=\"' + (row.phone_number || '') + '\"',\n        _meta_lead_id: stripMetaPrefix(row.id),\n        _sheet_id: sheetId,\n        _row_number: rowNumber,\n        _raw_row: row\n      }\n    });\n    continue;\n  }\n\n  const { nombre, apellido } = splitName(row.full_name);\n\n  // Para backfill: Touch 1 programado AHORA (no +1h) porque enviamos en el momento.\n  // El cron de v2 calcula Touch 2 a +24h y Touch 3 a +72h DESDE Touch 1 programado at.\n  const touch1At = new Date().toISOString();\n\n  results.push({\n    json: {\n      _error: false,\n\n      // Identificación\n      meta_lead_id: stripMetaPrefix(row.id),\n      _sheet_id: sheetId,\n      _row_number: rowNumber,\n\n      // Datos del lead\n      telefono: phoneResult.phoneNoPlus,\n      telefono_con_plus: phoneResult.phoneWithPlus,\n      nombre,\n      apellido,\n      email: (row.email || '').toString().trim().toLowerCase(),\n\n      ad_name: (row.ad_name || '').toString(),\n      platform: (row.platform || '').toString().toLowerCase(),\n\n      grado_escolar: gradoEscolar.toString(),\n      inicio_deseado: cuandoIniciar.toString(),\n      nivel_ingles: nivelIngles.toString(),\n\n      tipo: deriveTipo(row.ad_name),\n      fuente_lead: deriveFuente(row.platform),\n\n      touch_1_programado_at: touch1At,\n\n      origen: 'Form Meta',\n      received_at: new Date().toISOString()\n    }\n  });\n}\n\nreturn results;\n"
+      },
+      "id": "nrm-0001-0000-0000-000000000001",
+      "name": "Normalize Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [544, 384]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "sib-0001-0000-0000-000000000001",
+      "name": "Split In Batches (1)",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [768, 384]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "err-check",
+              "leftValue": "={{ $json._error }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ife-0001-0000-0000-000000000001",
+      "name": "IF (_error?)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [992, 384]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OBkUyb8fuo30DzA9",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OBkUyb8fuo30DzA9",
+          "cachedResultName": "webapp_errors"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "workflow_id": "={{ $workflow.id }}",
+            "workflow_name": "={{ $workflow.name }}",
+            "execution_id": "={{ $execution.id }}",
+            "execution_url": "={{ 'https://[TU-INSTANCIA-N8N]/workflow/' + $workflow.id + '/executions/' + $execution.id }}",
+            "error_message": "={{ $json._error_reason }}",
+            "error_stack": "={{ JSON.stringify($json._raw_row, null, 2) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            { "id": "workflow_id", "displayName": "workflow_id", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "removed": false },
+            { "id": "workflow_name", "displayName": "workflow_name", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "removed": false },
+            { "id": "execution_id", "displayName": "execution_id", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "removed": false },
+            { "id": "execution_url", "displayName": "execution_url", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "removed": false },
+            { "id": "error_message", "displayName": "error_message", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "removed": false },
+            { "id": "error_stack", "displayName": "error_stack", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "removed": false }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "id": "ern-0001-0000-0000-000000000001",
+      "name": "Registrar Error Normalize",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [1216, 192]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]"
+        },
+        "table": {
+          "__rl": true,
+          "value": "[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "cachedResultName": "Leads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nombre": "={{ $json.nombre }}",
+            "Apellido": "={{ $json.apellido }}",
+            "Telefono": "={{ $json.telefono }}",
+            "Email": "={{ $json.email }}",
+            "Programa interés": "Boarding School",
+            "Origen": "Form Meta",
+            "Outreach Form Meta enviado": false,
+            "Contestan 1er mensaje": false,
+            "Folio": "={{ $json.meta_lead_id }}",
+            "Fuente lead": "={{ $json.fuente_lead }}",
+            "Tipo": "={{ $json.tipo }}",
+            "Ad Name": "={{ $json.ad_name }}",
+            "Platform": "={{ $json.platform }}",
+            "Grado Escolar": "={{ $json.grado_escolar }}",
+            "Inicio Deseado": "={{ $json.inicio_deseado }}",
+            "Nivel Inglés": "={{ $json.nivel_ingles }}",
+            "Toques enviados": 0,
+            "Touch 1 programado at": "={{ $json.touch_1_programado_at }}"
+          },
+          "matchingColumns": ["Folio"],
+          "schema": [
+            { "id": "Nombre", "displayName": "Nombre", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Apellido", "displayName": "Apellido", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Telefono", "displayName": "Telefono", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Email", "displayName": "Email", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Programa interés", "displayName": "Programa interés", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Origen", "displayName": "Origen", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Outreach Form Meta enviado", "displayName": "Outreach Form Meta enviado", "type": "boolean", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Contestan 1er mensaje", "displayName": "Contestan 1er mensaje", "type": "boolean", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Folio", "displayName": "Folio", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Fuente lead", "displayName": "Fuente lead", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Tipo", "displayName": "Tipo", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Ad Name", "displayName": "Ad Name", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Platform", "displayName": "Platform", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Grado Escolar", "displayName": "Grado Escolar", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Inicio Deseado", "displayName": "Inicio Deseado", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Nivel Inglés", "displayName": "Nivel Inglés", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Toques enviados", "displayName": "Toques enviados", "type": "number", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Touch 1 programado at", "displayName": "Touch 1 programado at", "type": "dateTime", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "id": "atu-0001-0000-0000-000000000001",
+      "name": "Airtable Upsert Lead",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [1216, 384],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      },
+      "notes": "Upsert por Folio = meta_lead_id. Crea si no existe (mayoría del backfill); actualiza inmutables si ya existe (idempotente)."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/subscriber/createSubscriber",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"whatsapp_phone\": \"+{{ $('Split In Batches (1)').item.json.telefono }}\",\n  \"first_name\": \"{{ $('Split In Batches (1)').item.json.nombre || 'Lead' }}\",\n  \"last_name\": \"{{ $('Split In Batches (1)').item.json.apellido || '' }}\",\n  \"consent_phrase\": \"Lead completó formulario Meta Lead Ads de Boarding School con checkbox de opt-in para recibir comunicaciones por WhatsApp\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "mcs-0001-0000-0000-000000000001",
+      "name": "createSubscriber ManyChat",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1440, 384],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9OZtsIsmuVEG9l6R",
+          "name": "Venttur Header Auth account"
+        }
+      },
+      "notes": "Mismo endpoint y consent_phrase que v2."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "subscriber-ok",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "success",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ifs-0001-0000-0000-000000000001",
+      "name": "¿Subscriber OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1664, 384]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Log de error createSubscriber para sub-flujo webapp_errors\nconst lead = $('Split In Batches (1)').item.json;\nconst manychatResponse = $input.first().json;\n\nconst error = {\n  timestamp: new Date().toISOString(),\n  meta_lead_id: lead.meta_lead_id,\n  telefono: lead.telefono,\n  nombre: lead.nombre,\n  manychat_status: manychatResponse.status || 'unknown',\n  manychat_message: manychatResponse.message || 'No message',\n  manychat_details: manychatResponse.details || manychatResponse,\n};\n\nconsole.log('[backfill-form-meta] createSubscriber FAIL:', JSON.stringify(error, null, 2));\nreturn [{ json: error }];"
+      },
+      "id": "lge-0001-0000-0000-000000000001",
+      "name": "Log Error createSubscriber",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1888, 576]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "OBkUyb8fuo30DzA9",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/OBkUyb8fuo30DzA9",
+          "cachedResultName": "webapp_errors"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "workflow_id": "={{ $workflow.id }}",
+            "workflow_name": "={{ $workflow.name }}",
+            "execution_id": "={{ $execution.id }}",
+            "execution_url": "={{ 'https://[TU-INSTANCIA-N8N]/workflow/' + $workflow.id + '/executions/' + $execution.id }}",
+            "error_message": "={{ $json.manychat_message }}",
+            "error_stack": "={{ JSON.stringify($json.manychat_details, null, 2) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            { "id": "workflow_id", "displayName": "workflow_id", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "removed": false },
+            { "id": "workflow_name", "displayName": "workflow_name", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "removed": false },
+            { "id": "execution_id", "displayName": "execution_id", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "removed": false },
+            { "id": "execution_url", "displayName": "execution_url", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "removed": false },
+            { "id": "error_message", "displayName": "error_message", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "removed": false },
+            { "id": "error_stack", "displayName": "error_stack", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "removed": false }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "id": "ers-0001-0000-0000-000000000001",
+      "name": "Registrar Error createSubscriber",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [2112, 576]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendFlow",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": \"{{ $('createSubscriber ManyChat').item.json.data.id }}\",\n  \"flow_ns\": \"content20260612151152_969589\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "mcf-0001-0000-0000-000000000001",
+      "name": "sendFlow Outreach Boarding Form",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1888, 288],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9OZtsIsmuVEG9l6R",
+          "name": "Venttur Header Auth account"
+        }
+      },
+      "notes": "Touch 1 — template MARKETING aprobado: boarding_form_followup (es_MX)."
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "[AIRTABLE_BASE_ID]",
+          "mode": "list",
+          "cachedResultName": "Venttur Dashboard",
+          "cachedResultUrl": "https://airtable.com/[AIRTABLE_BASE_ID]"
+        },
+        "table": {
+          "__rl": true,
+          "value": "[AIRTABLE_TABLE_ID]",
+          "mode": "list",
+          "cachedResultName": "Leads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_2": "={{ $('Airtable Upsert Lead').item.json.id_2 }}",
+            "Outreach Form Meta enviado": true,
+            "Outreach Form Meta enviado at": "={{ $('Airtable Upsert Lead').item.json['Outreach Form Meta enviado at'] || $now.toISO() }}",
+            "ID Manychat": "={{ $('createSubscriber ManyChat').item.json.data.id }}",
+            "Toques enviados": 1,
+            "Ultimo toque at": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": ["id_2"],
+          "schema": [
+            { "id": "id_2", "displayName": "id_2", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": true, "removed": false },
+            { "id": "Outreach Form Meta enviado", "displayName": "Outreach Form Meta enviado", "type": "boolean", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Outreach Form Meta enviado at", "displayName": "Outreach Form Meta enviado at", "type": "dateTime", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "ID Manychat", "displayName": "ID Manychat", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Toques enviados", "displayName": "Toques enviados", "type": "number", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false },
+            { "id": "Ultimo toque at", "displayName": "Ultimo toque at", "type": "dateTime", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "readOnly": false, "removed": false }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "id": "mar-0001-0000-0000-000000000001",
+      "name": "Marcar Enviado",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [2112, 288],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      },
+      "notes": "Setea Toques enviados=1 + Outreach Form Meta enviado=true + Ultimo toque at. v2's cron levanta este lead para Touch 2 (+24h) y Touch 3 (+72h)."
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1HzJVMBwnGikiI_U805N7oqcXPYE7TjEFTL1rqdcCEIU",
+          "mode": "list",
+          "cachedResultName": "LEADS - FORMULARIO (VTR)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HzJVMBwnGikiI_U805N7oqcXPYE7TjEFTL1rqdcCEIU/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 160362675,
+          "mode": "list",
+          "cachedResultName": "Boarding_Schools_Venttur_2026-test-2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HzJVMBwnGikiI_U805N7oqcXPYE7TjEFTL1rqdcCEIU/edit#gid=160362675"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Split In Batches (1)').item.json._sheet_id }}",
+            "lead_status": "contacted"
+          },
+          "matchingColumns": ["id"],
+          "schema": [
+            { "id": "id", "displayName": "id", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "removed": false },
+            { "id": "lead_status", "displayName": "lead_status", "type": "string", "display": true, "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "removed": false }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "shu-0001-0000-0000-000000000001",
+      "name": "Sheets: Marcar contacted",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2336, 288],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "__REEMPLAZAR_CREDENCIAL_SHEETS__",
+          "name": "Google Sheets - Venttur Meta Sync"
+        }
+      },
+      "notes": "Match por columna `id` del sheet (con prefijo l: original). v2 usa event=rowAdded — este update NO reactiva v2 (intencional según sticky note)."
+    },
+    {
+      "parameters": {
+        "amount": 1.5,
+        "unit": "seconds"
+      },
+      "id": "wai-0001-0000-0000-000000000001",
+      "name": "Wait 1.5s (rate limit)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [2560, 288],
+      "webhookId": "wait-backfill-rate-limit"
+    },
+    {
+      "parameters": {
+        "content": "## ⚠️ Antes de activar\n\n1. Reemplazar el id de credencial `Google Sheets - Venttur Meta Sync` en los 2 nodos Sheets (`Get All Sheet Rows` + `Sheets: Marcar contacted`). El placeholder es `__REEMPLAZAR_CREDENCIAL_SHEETS__` — usar la MISMA credencial que el Sheets Trigger del v2.\n2. Verificar que la columna `id` del sheet sigue siendo el matching column (la del meta_lead_id con prefijo `l:`).\n3. Smoke con **1 lead real** primero: Pin el output de `Filter` a un solo item antes de correr el loop.\n4. Cuando confirmado → quitar el Pin y ejecutar el batch completo.\n\n## Rate limit ManyChat\n\nWait 1.5s entre leads. Para 100 leads → ~3 min total. Para 500 leads → ~15 min.\n\n## Re-correr es seguro\n\nIdempotente por: Folio (Airtable upsert) + id_2 (Marcar Enviado) + id del sheet (lookup). Si una corrida falla a la mitad, re-ejecutar solo reprocesa los `CREATED` restantes.\n\n## Post-corrida\n\nNo hay nada que limpiar. v2 sigue siendo el camino oficial. Los Touches 2/3 los maneja el cron del Flujo B del v2 automáticamente sobre los leads que este workflow dejó con `Toques enviados=1`.",
+        "height": 540,
+        "width": 480,
+        "color": 5
+      },
+      "id": "stk-0002-0000-0000-000000000002",
+      "name": "📕 Pre-run checklist",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [2816, 64]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get All Sheet Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Sheet Rows": {
+      "main": [
+        [
+          {
+            "node": "Filter lead_status = CREATED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter lead_status = CREATED": {
+      "main": [
+        [
+          {
+            "node": "Normalize Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Payload": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split In Batches (1)": {
+      "main": [
+        [
+          {
+            "node": "IF (_error?)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF (_error?)": {
+      "main": [
+        [
+          {
+            "node": "Registrar Error Normalize",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Airtable Upsert Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar Error Normalize": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable Upsert Lead": {
+      "main": [
+        [
+          {
+            "node": "createSubscriber ManyChat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "createSubscriber ManyChat": {
+      "main": [
+        [
+          {
+            "node": "¿Subscriber OK?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Subscriber OK?": {
+      "main": [
+        [
+          {
+            "node": "sendFlow Outreach Boarding Form",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Error createSubscriber",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Error createSubscriber": {
+      "main": [
+        [
+          {
+            "node": "Registrar Error createSubscriber",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar Error createSubscriber": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sendFlow Outreach Boarding Form": {
+      "main": [
+        [
+          {
+            "node": "Marcar Enviado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marcar Enviado": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Marcar contacted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets: Marcar contacted": {
+      "main": [
+        [
+          {
+            "node": "Wait 1.5s (rate limit)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 1.5s (rate limit)": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches (1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "record": "6a750720e1739d785915e6d2",
+  "campo": "media_url",
+  "valor_anterior": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a6d2a32c4ee0386890ac8b4.jpeg",
+  "valor_nuevo": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/7db1ada3-376f-420e-889a-4880cd47bc8e.jpeg",
+  "nota": "Catálogo nuevo de mandiles que pasó Oscar (5 diseños numerados). El viejo mostraba 6, de los cuales sólo 2 siguen existiendo. Para revertir: PUT con valor_anterior + refrescar la caché de W3 con ttl_seg=0."
+}

@@ -1,0 +1,47 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/subscriber/createSubscriber",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"whatsapp_phone\": \"{{ $json.telefono }}\",\n  \"phone\": \"{{ $json.telefono }}\",\n  \"has_opt_in_sms\": false,\n  \"first_name\": \"{{ $json.nombre }}\",\n  \"last_name\": \"{{ $json.apellido }}\",\n  \"consent_phrase\": \"Cliente que contrato un servicio tecnico con Collazo Servicio Tecnico via cal.com y compartio su numero para la coordinacion de la visita\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "mcs-0001",
+      "name": "createSubscriber ManyChat",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -560,
+        300
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "vF5lC1UM2oXdatjQ",
+          "name": "CLZ Manychat API Header Auth"
+        }
+      },
+      "notes": "Se setea 'phone' ADEMAS de 'whatsapp_phone': findBySystemField solo busca por 'phone'/'email', y ese campo no se puebla solo al crear por WhatsApp. Sin esto un subscriber creado aca no se puede volver a resolver por API (rompe re-corridas y el dia 2). 'has_opt_in_sms' es OBLIGATORIO cuando se manda 'phone' -- va false: queremos el campo poblado para el lookup, no habilitar envio de SMS."
+    }
+  ],
+  "connections": {}
+}

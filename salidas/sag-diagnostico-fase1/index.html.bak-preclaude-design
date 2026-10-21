@@ -1,0 +1,1462 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagnóstico Operativo SAG · Fase 1 — SAG Logística × la agencia</title>
+<style>
+:root{
+  --bg:#1a0e0f; --bg-2:#150b0c; --surface:#241517; --surface-2:#2f1c1f;
+  --border:rgba(255,255,255,.09); --border-strong:rgba(255,255,255,.16);
+  --text:#f3ece8; --text-muted:#ab9d99; --text-dim:#7d716e;
+  --sag-1:#ff6b00; --sag-2:#ffb347; --la agencia-1:#8943e3; --la agencia-2:#f239ff;
+  --amber:#fbbf24; --ok:#34d399; --pending:#fb923c; --blocked:#f87171;
+  --font-display:'Geist Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-mono:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-display);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+h1,h2,h3,h4{font-weight:600;text-wrap:balance;margin:0;letter-spacing:-.01em;}
+p{margin:0;} a{color:inherit;text-decoration:none;}
+::selection{background:var(--sag-1);color:#1a0e0f;}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}*{animation-duration:.001ms!important;transition-duration:.001ms!important;}.glow{display:none;}}
+.glow{position:fixed;inset:0;z-index:0;pointer-events:none;filter:blur(70px);opacity:.5;transition:background 1.2s ease;}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px;position:relative;z-index:1;}
+.eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
+.grad-sag{background:linear-gradient(135deg,var(--sag-1),var(--sag-2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.mono{font-family:var(--font-mono);}
+/* nav */
+nav.topnav{position:sticky;top:0;z-index:50;background:rgba(21,11,12,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);}
+nav .inner{max-width:1120px;margin:0 auto;padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:20px;}
+.brandmark{display:flex;align-items:center;gap:11px;font-weight:600;font-size:15px;}
+.brandmark .x{color:var(--text-dim);font-weight:400;}
+.brandmark .sag{color:var(--sag-1);} .brandmark .nx{color:var(--la agencia-2);}
+.navlinks{display:flex;gap:26px;font-size:13px;color:var(--text-muted);}
+.navlinks a{transition:color .15s;} .navlinks a:hover{color:var(--text);}
+.nav-cta{font-family:var(--font-mono);font-size:12px;letter-spacing:.04em;padding:8px 15px;border-radius:999px;border:1px solid var(--border-strong);color:var(--text);}
+.nav-cta:hover{border-color:var(--sag-1);}
+@media (max-width:820px){.navlinks{display:none;}}
+/* hero */
+.hero{padding:120px 0 90px;min-height:86vh;display:flex;align-items:center;border-bottom:1px solid var(--border);}
+.hero-badges{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:30px;}
+.badge{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.05em;padding:6px 12px;border-radius:999px;border:1px solid var(--border-strong);color:var(--text-muted);}
+.hero h1{font-size:clamp(36px,6vw,66px);line-height:1.03;max-width:15ch;letter-spacing:-.03em;}
+.hero .sub{font-size:clamp(17px,2.2vw,21px);color:var(--text-muted);max-width:54ch;margin-top:26px;}
+.scrollhint{margin-top:56px;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;color:var(--text-dim);display:flex;align-items:center;gap:10px;}
+.scrollhint .line{width:34px;height:1px;background:var(--text-dim);position:relative;overflow:hidden;}
+.scrollhint .line::after{content:"";position:absolute;inset:0;background:var(--sag-1);animation:sweep 2.4s infinite;}
+@keyframes sweep{0%{transform:translateX(-100%)}60%,100%{transform:translateX(100%)}}
+/* section shell */
+.section{padding:70px 0;position:relative;}
+.section h2{font-size:clamp(26px,3.6vw,42px);max-width:22ch;}
+.lede{font-size:18px;color:var(--text-muted);max-width:60ch;margin-top:16px;}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);}
+.reveal.in{opacity:1;transform:none;}
+
+/* ---------- FLOW DIAGRAM (reusable, detailed) ---------- */
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:7px;margin-top:22px;}
+.fn{flex:0 1 auto;min-width:96px;max-width:168px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;}
+.fn .fi{font-size:15px;line-height:1;}
+.fn .ft{font-size:12.5px;font-weight:600;line-height:1.18;}
+.fn .fs{font-size:10.5px;color:var(--text-muted);line-height:1.32;}
+.fn .tool{align-self:flex-start;margin-top:2px;font-family:var(--font-mono);font-size:8.5px;letter-spacing:.04em;padding:1px 6px;border-radius:5px;background:#1d6f42;color:#d9ffe9;}
+.fn.bad{border-color:rgba(248,113,113,.42);background:linear-gradient(160deg,rgba(248,113,113,.1),var(--surface) 66%);}
+.fn.ok{border-color:rgba(52,211,153,.36);background:linear-gradient(160deg,rgba(52,211,153,.09),var(--surface) 66%);}
+.fa{align-self:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--text-dim);min-width:20px;}
+.fa .ah{font-size:15px;line-height:1;}
+.fa .al{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.02em;white-space:nowrap;text-align:center;max-width:78px;line-height:1.2;}
+.fa.manual{color:var(--blocked);} .fa.manual .ah{opacity:.9;}
+.fa.auto{color:var(--ok);}
+.flow-note{margin-top:14px;font-size:12.5px;color:var(--text-dim);display:flex;align-items:flex-start;gap:8px;}
+.flow-note b{color:var(--blocked);font-weight:600;}
+
+/* ---------- STANDARDIZED KPIs (fixed order + fixed sizes + justification) ---------- */
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start;}
+.kpi{border-radius:13px;padding:15px 16px;border:1px solid var(--border);}
+.kpi.wide{grid-column:1 / -1;}
+.kpi .k{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+.kpi .v{font-size:22px;font-weight:600;line-height:1.14;letter-spacing:-.01em;}
+.kpi .v small{font-size:13px;color:var(--text-muted);font-weight:400;letter-spacing:0;}
+.kpi .just{font-size:11px;color:var(--text-dim);margin-top:9px;padding-top:8px;border-top:1px solid var(--border);line-height:1.4;}
+.pk .kpi{border-color:rgba(248,113,113,.22);background:linear-gradient(160deg,rgba(248,113,113,.06),var(--surface) 74%);}
+.pk .kpi .k{color:var(--blocked);}
+.wk .kpi{border-color:rgba(52,211,153,.24);background:linear-gradient(160deg,rgba(52,211,153,.07),var(--surface) 74%);}
+.wk .kpi .k{color:var(--ok);}
+
+/* ---------- SYSTEM MAP (top, detailed) ---------- */
+.sysmap{margin-top:34px;border:1px solid var(--border);border-radius:16px;padding:22px 22px 18px;background:var(--bg-2);}
+.smrow{display:flex;flex-wrap:wrap;align-items:stretch;gap:7px;margin-bottom:8px;}
+.smrow:last-of-type{margin-bottom:0;}
+.smlane{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);align-self:center;min-width:96px;padding-right:6px;}
+.smlegend{display:flex;gap:20px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);font-family:var(--font-mono);font-size:10.5px;color:var(--text-dim);letter-spacing:.03em;}
+.smlegend span{display:inline-flex;align-items:center;gap:7px;}
+.lgm{width:20px;height:0;border-top:2px dashed var(--blocked);}
+.lga{width:20px;height:0;border-top:2px solid var(--text-dim);}
+
+/* narrative panels */
+.narrative-intro{padding:80px 0 10px;}
+.panel{min-height:auto;display:flex;align-items:center;padding:52px 0;}
+.panel .grid2{display:grid;grid-template-columns:1.08fr .92fr;gap:44px;align-items:center;width:100%;}
+@media (max-width:900px){.panel .grid2{grid-template-columns:1fr;gap:28px;}.kpis{grid-template-columns:1fr 1fr;}}
+@media (max-width:520px){.kpis{grid-template-columns:1fr;}}
+.pcode{font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;color:var(--text-dim);}
+.panel h3{font-size:clamp(23px,3vw,32px);margin-top:8px;line-height:1.12;}
+.panel .who{display:inline-flex;align-items:center;gap:7px;margin-top:18px;font-size:12.5px;color:var(--text-muted);font-family:var(--font-mono);border:1px solid var(--border);border-radius:999px;padding:5px 12px;}
+.panel .who b{color:var(--text);font-weight:600;}
+#procesos .pcode{color:var(--blocked);}
+#quickwins .pcode{color:var(--ok);}
+.solchip{display:inline-block;font-family:var(--font-mono);font-size:11px;color:var(--ok);border:1px solid rgba(52,211,153,.3);border-radius:6px;padding:2px 8px;margin-bottom:12px;}
+
+/* resumen */
+.resumen{border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:96px 0;background:linear-gradient(180deg,rgba(248,113,113,.05),transparent);}
+.rstats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-top:38px;}
+.rstat{background:var(--bg);padding:28px 24px;}
+.rstat .v{font-size:clamp(26px,3.4vw,38px);font-weight:600;line-height:1;color:var(--blocked);}
+.rstat .k{font-size:13px;color:var(--text-muted);margin-top:12px;line-height:1.45;}
+@media (max-width:820px){.rstats{grid-template-columns:1fr 1fr;}}
+
+/* gcard */
+.gcard{position:relative;border-radius:18px;padding:1px;background:linear-gradient(135deg,var(--sag-1),var(--sag-2) 45%,var(--la agencia-1));}
+.gcard>.inner{background:var(--surface);border-radius:17px;padding:34px 34px;height:100%;}
+/* plataforma */
+.platform{padding:120px 0;border-top:1px solid var(--border);background:radial-gradient(1200px 500px at 50% -10%,rgba(255,107,0,.14),transparent 60%),radial-gradient(900px 500px at 80% 110%,rgba(137,67,227,.1),transparent 55%);}
+.platform h2{font-size:clamp(30px,5vw,56px);max-width:16ch;line-height:1.04;}
+.roles{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:44px;}
+.role{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:26px 24px;}
+.role .rt{font-size:19px;font-weight:600;}
+.role .rd{font-size:14px;color:var(--text-muted);margin-top:12px;line-height:1.55;}
+.role ul{margin:14px 0 0;padding-left:18px;color:var(--text-muted);font-size:13.5px;line-height:1.7;}
+@media (max-width:820px){.roles{grid-template-columns:1fr;}}
+.sunk{margin-top:56px;}
+/* visitá */
+.visita{padding:110px 0;text-align:center;}
+.visita h2{font-size:clamp(28px,4vw,46px);max-width:20ch;margin:0 auto;}
+.visita .lede{margin:18px auto 0;text-align:center;}
+.btn-visita{margin-top:44px;display:inline-flex;align-items:center;gap:11px;font-family:var(--font-mono);font-size:15px;letter-spacing:.02em;padding:16px 30px;border-radius:999px;color:#1a0e0f;font-weight:600;background:linear-gradient(135deg,var(--sag-1),var(--sag-2));transition:transform .18s,box-shadow .18s;box-shadow:0 14px 40px -14px rgba(255,107,0,.6);}
+.btn-visita:hover{transform:translateY(-2px);box-shadow:0 20px 50px -14px rgba(255,107,0,.75);}
+.btn-visita .arr{transition:transform .18s;}.btn-visita:hover .arr{transform:translateX(4px);}
+footer{border-top:1px solid var(--border);padding:44px 0;color:var(--text-dim);font-size:13px;}
+footer .inner{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;}
+footer .tag{color:var(--la agencia-2);font-weight:500;}
+/* ---------- MERMAID diagram containers (estructura real de los flujos mapeados) ---------- */
+.mmwrap{margin-top:22px;border:1px solid var(--border);border-radius:16px;padding:20px 16px;background:var(--bg-2);overflow-x:auto;}
+.mmwrap.big{padding:26px 20px;}
+.mermaid{margin:0;font-family:var(--font-mono);color:var(--text-dim);opacity:0;transition:opacity .4s;}
+.mermaid[data-processed="true"]{opacity:1;}
+.mermaid svg{max-width:none;height:auto;display:block;margin:0 auto;}
+.mmcaption{margin-top:14px;font-size:12.5px;color:var(--text-dim);line-height:1.5;display:flex;gap:8px;align-items:flex-start;}
+.mmcaption b{color:var(--text);font-weight:600;}
+/* panel con diagrama a lo ancho + KPIs en fila debajo */
+.panel.diag{display:block;padding:52px 0;}
+.panel.diag .phead{max-width:64ch;}
+.panel.diag .mmwrap{max-height:620px;overflow:auto;}
+.panel.diag .kpis{grid-template-columns:repeat(3,1fr);margin-top:22px;}
+@media (max-width:820px){.panel.diag .kpis{grid-template-columns:1fr 1fr;}}
+@media (max-width:520px){.panel.diag .kpis{grid-template-columns:1fr;}}
+
+/* ===== nav: fit more links ===== */
+.navlinks{gap:18px;font-size:12.5px;overflow-x:auto;max-width:64vw;scrollbar-width:none;}
+.navlinks::-webkit-scrollbar{display:none;}
+
+/* ===== §0 EXEC SUMMARY — numbers as heroes ===== */
+.exec{padding:88px 0 40px;border-bottom:1px solid var(--border);}
+.lede-lg{font-size:clamp(17px,2.2vw,21px);color:var(--text-muted);max-width:66ch;margin-top:20px;line-height:1.6;}
+.lede-lg b{color:var(--text);font-weight:600;}
+.peakfig{margin-top:42px;border:1px solid rgba(255,107,0,.3);border-radius:20px;padding:32px 34px;background:linear-gradient(160deg,rgba(255,107,0,.09),var(--surface) 72%);display:flex;align-items:baseline;gap:26px;flex-wrap:wrap;}
+.peakfig .big{font-size:clamp(48px,9.5vw,110px);font-weight:600;line-height:.86;letter-spacing:-.03em;}
+.peakfig .side{font-size:15.5px;color:var(--text-muted);max-width:38ch;line-height:1.55;}
+.peakfig .side b{color:var(--text);font-weight:600;}
+.heronums{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px;}
+.heronum{border:1px solid var(--border);border-radius:16px;padding:24px 22px;background:var(--surface);}
+.heronum .hs{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px;}
+.heronum .hn{font-size:clamp(26px,3.4vw,38px);font-weight:600;line-height:1;letter-spacing:-.02em;}
+.heronum .hl{font-size:12.5px;color:var(--text-muted);margin-top:12px;line-height:1.45;}
+@media (max-width:820px){.heronums{grid-template-columns:1fr 1fr;}}
+@media (max-width:520px){.heronums{grid-template-columns:1fr;}}
+.covered{display:flex;flex-wrap:wrap;gap:10px;margin-top:34px;}
+.covered .cchip{font-family:var(--font-mono);font-size:12px;letter-spacing:.02em;color:var(--text-muted);border:1px solid var(--border-strong);border-radius:999px;padding:8px 15px;}
+.covered .cchip b{color:var(--text);}
+
+/* ===== §2 PROCESS INDEX TABLES ===== */
+.areahead{display:flex;align-items:baseline;gap:12px;margin-top:44px;}
+.areahead h3{font-size:20px;}
+.areahead .count{font-family:var(--font-mono);font-size:12px;color:var(--text-dim);letter-spacing:.04em;}
+.tablewrap{margin-top:16px;border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+.tablescroll{overflow-x:auto;}
+table.proc{border-collapse:collapse;width:100%;min-width:660px;font-size:13.5px;}
+table.proc th,table.proc td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:top;}
+table.proc thead th{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);background:var(--bg-2);font-weight:400;}
+table.proc tbody tr:last-child td{border-bottom:none;}
+table.proc td.code{font-family:var(--font-mono);color:var(--sag-2);white-space:nowrap;font-size:12px;}
+table.proc td.name{font-weight:600;color:var(--text);}
+table.proc td.who{color:var(--text-muted);white-space:nowrap;font-size:12.5px;}
+table.proc td.pain{color:var(--text-muted);line-height:1.45;min-width:220px;}
+
+/* ===== §3 CHAINS + BOTTLENECKS ===== */
+.chains{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:28px;}
+.chain{border:1px solid var(--border);border-radius:14px;padding:18px 20px;background:var(--surface);}
+.chain .cn{font-family:var(--font-mono);font-size:11px;color:var(--sag-2);letter-spacing:.05em;text-transform:uppercase;}
+.chain .ct{font-weight:600;margin-top:9px;line-height:1.35;font-size:15px;}
+.chain .cp{font-family:var(--font-mono);font-size:12px;color:var(--text-dim);margin-top:8px;line-height:1.5;}
+.chain.key{grid-column:1 / -1;border-color:rgba(255,107,0,.38);background:linear-gradient(160deg,rgba(255,107,0,.09),var(--surface) 70%);}
+@media(max-width:720px){.chains{grid-template-columns:1fr;}.chain.key{grid-column:auto;}}
+.bottlenecks{margin-top:26px;display:flex;flex-direction:column;gap:10px;}
+.bn{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:baseline;border:1px solid var(--border);border-radius:12px;padding:15px 20px;background:var(--bg-2);}
+.bn .rank{font-family:var(--font-mono);font-size:22px;font-weight:600;color:var(--blocked);line-height:1;}
+.bn .bt{font-size:14.5px;color:var(--text-muted);line-height:1.5;}.bn .bt b{color:var(--text);font-weight:600;}
+.bn.top{border-color:rgba(248,113,113,.35);background:linear-gradient(160deg,rgba(248,113,113,.06),var(--bg-2) 74%);}
+
+/* ===== §4 UNDOCUMENTED RISK ===== */
+.risks{margin-top:26px;display:grid;grid-template-columns:1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+.risk{display:grid;grid-template-columns:150px 1.25fr 1fr;gap:20px;background:var(--bg);padding:16px 20px;align-items:start;}
+.risk .rc{font-family:var(--font-mono);font-size:12.5px;color:var(--pending);line-height:1.4;}
+.risk .rc span{display:block;color:var(--text-dim);font-size:11px;margin-top:3px;}
+.risk .rm{font-size:13.5px;color:var(--text);line-height:1.5;}
+.risk .rr{font-size:13px;color:var(--text-muted);line-height:1.5;}
+.risk.h{background:var(--bg-2);}
+.risk.h div{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);}
+@media(max-width:720px){.risk{grid-template-columns:1fr;gap:5px;}.risk .rc{color:var(--pending);}}
+
+/* ===== §5 PRIORITIZATION MATRIX (quadrant) ===== */
+.matrix{margin-top:38px;position:relative;padding-left:38px;padding-bottom:34px;}
+.matrix .yaxis{position:absolute;left:0;top:0;bottom:34px;display:flex;align-items:center;}
+.matrix .yaxis span{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);}
+.matrix .xaxis{position:absolute;left:38px;right:0;bottom:0;display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);}
+.qgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.quad{border:1px solid var(--border);border-radius:16px;padding:20px 22px;background:var(--surface);min-height:172px;}
+.quad .qh{font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;color:var(--text-dim);text-transform:uppercase;}
+.quad .qt{font-weight:600;margin-top:7px;font-size:16.5px;}
+.quad .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:15px;}
+.quad .sol{font-family:var(--font-mono);font-size:11px;padding:4px 9px;border-radius:7px;border:1px solid var(--border-strong);color:var(--text-muted);}
+.quad.win{border-color:rgba(52,211,153,.42);background:linear-gradient(160deg,rgba(52,211,153,.1),var(--surface) 66%);}
+.quad.win .qt{color:var(--ok);}.quad.win .sol{border-color:rgba(52,211,153,.4);color:#bff3da;}
+.quad.big{border-color:rgba(137,67,227,.34);}.quad.big .qt{color:#c9a6f5;}
+.matrix-notes{margin-top:18px;display:flex;flex-wrap:wrap;gap:14px 26px;font-size:12.5px;color:var(--text-dim);line-height:1.5;}
+.matrix-notes b{color:var(--text-muted);font-weight:600;}
+@media(max-width:720px){.qgrid{grid-template-columns:1fr;}.matrix{padding-left:0;}.matrix .yaxis{display:none;}.matrix .xaxis{position:static;margin-top:14px;}}
+
+/* ===== §7 ROADMAP TIMELINE ===== */
+.phase1{border:1px solid rgba(52,211,153,.32);border-radius:18px;padding:26px 28px;background:linear-gradient(160deg,rgba(52,211,153,.08),var(--surface) 72%);margin-top:34px;}
+.phase1 .pl{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:var(--ok);text-transform:uppercase;}
+.phase1 h3{font-size:23px;margin-top:9px;}
+.phase1 p{color:var(--text-muted);font-size:14.5px;margin-top:12px;line-height:1.6;max-width:70ch;}
+.phase2head{margin-top:46px;}
+.phase2head .pl{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:var(--la agencia-2);text-transform:uppercase;}
+.phase2head h3{font-size:23px;margin-top:9px;}
+.phase2head p{color:var(--text-muted);font-size:14.5px;margin-top:12px;line-height:1.6;max-width:70ch;}
+.modules{display:flex;gap:0;margin-top:30px;overflow-x:auto;padding:4px 0 14px;}
+.mod{flex:0 0 254px;border:1px solid var(--border);border-radius:16px;padding:22px 22px;background:var(--surface);position:relative;margin-right:36px;}
+.mod:last-child{margin-right:0;}
+.mod::after{content:"→";position:absolute;right:-27px;top:52px;color:var(--text-dim);font-size:22px;}
+.mod:last-child::after{display:none;}
+.mod .ml{font-family:var(--font-mono);font-size:30px;font-weight:600;background:linear-gradient(135deg,var(--la agencia-1),var(--la agencia-2));-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1;}
+.mod .mt{font-weight:600;margin-top:12px;font-size:15px;line-height:1.3;}
+.mod .mc{font-size:12.5px;color:var(--text-muted);margin-top:11px;line-height:1.5;}
+.mod .mk{font-size:12px;color:var(--blocked);margin-top:13px;line-height:1.45;}
+.mod .md{font-family:var(--font-mono);font-size:10.5px;color:var(--text-dim);margin-top:13px;padding-top:11px;border-top:1px solid var(--border);}
+.roadnote{margin-top:20px;font-size:12.5px;color:var(--text-dim);line-height:1.55;display:flex;gap:8px;align-items:flex-start;}
+
+/* ===== §8 STACK ===== */
+.notecards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px;}
+.notecard{border:1px solid var(--border);border-radius:14px;padding:20px 22px;background:var(--surface);}
+.notecard .nt{font-weight:600;font-size:14.5px;}
+.notecard .nb{font-size:13px;color:var(--text-muted);margin-top:10px;line-height:1.55;}
+@media(max-width:820px){.notecards{grid-template-columns:1fr;}}
+
+/* ===== §9 BASELINE before/after ===== */
+.baseline{margin-top:28px;display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+.brow{display:grid;grid-template-columns:1.15fr 1fr 24px 1fr auto;gap:16px;align-items:center;background:var(--bg);padding:15px 20px;}
+.brow .kn{font-size:13.5px;color:var(--text);line-height:1.4;}
+.brow .now{font-size:13px;color:var(--blocked);line-height:1.4;}
+.brow .arrow{color:var(--text-dim);text-align:center;}
+.brow .goal{font-size:13px;color:var(--ok);line-height:1.4;}
+.brow .fase{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);border:1px solid var(--border-strong);border-radius:6px;padding:4px 8px;white-space:nowrap;justify-self:end;}
+.brow.head{background:var(--bg-2);}
+.brow.head div{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);}
+.brow.anchor{background:linear-gradient(160deg,rgba(255,107,0,.09),var(--bg) 72%);}
+.brow.anchor .kn{font-weight:600;}.brow.anchor .now{color:var(--sag-2);font-weight:600;}
+@media(max-width:820px){.brow{grid-template-columns:1fr;gap:5px;}.brow .arrow{display:none;}.brow .fase{justify-self:start;}}
+.baseline-note{margin-top:16px;font-size:12.5px;color:var(--text-dim);line-height:1.5;}
+
+/* ===== §10 INVESTMENT ===== */
+.invest{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px;}
+.icard{border:1px solid var(--border);border-radius:18px;padding:28px 30px;background:var(--surface);}
+.icard.f1{border-color:rgba(255,107,0,.42);background:linear-gradient(160deg,rgba(255,107,0,.1),var(--surface) 70%);}
+.icard .il{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);}
+.icard .iprice{font-size:clamp(34px,5vw,54px);font-weight:600;letter-spacing:-.02em;margin-top:14px;line-height:1;}
+.icard.f1 .iprice{color:var(--sag-2);}
+.icard .iprice small{font-size:15px;color:var(--text-muted);font-weight:400;letter-spacing:0;}
+.icard .iscope{font-size:13.5px;color:var(--text-muted);margin-top:18px;line-height:1.6;}
+@media(max-width:720px){.invest{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="glow" id="glow"></div>
+
+<nav class="topnav">
+  <div class="inner">
+    <div class="brandmark"><span class="sag">SAG</span> <span class="x">×</span> <span class="nx">la agencia</span></div>
+    <div class="navlinks">
+      <a href="#resumen-ej">Resumen</a>
+      <a href="#metodo">Método</a>
+      <a href="#catalogo">Procesos</a>
+      <a href="#prioridades">Prioridades</a>
+      <a href="#quickwins">Quick wins</a>
+      <a href="#hoja-de-ruta">Ruta</a>
+      <a href="#plataforma">Plataforma</a>
+      <a href="#inversion">Inversión</a>
+    </div>
+    <a class="nav-cta" href="#visitala">Visita el demo →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-badges reveal">
+      <span class="badge">Confidencial · Preparado para Ana Saucedo y Dirección de SAG</span>
+      <span class="badge">Diagnóstico · 3 áreas · 6 sesiones · 38 procesos</span>
+      <span class="badge">la agencia · 2026</span>
+    </div>
+    <h1 class="reveal">Hoy, tu operación vive <span class="grad-sag">repartida entre drives, Excel y papel.</span></h1>
+    <p class="sub reveal">Mapeamos cada uno de tus procesos, una por una las horas que se pierden y el dinero que se escapa. Ahora te mostramos cómo se resuelve, todo en un solo lugar.</p>
+    <div class="scrollhint reveal"><span class="line"></span> Desliza para ver tu operación</div>
+  </div>
+</header>
+
+<!-- 0 · RESUMEN EJECUTIVO -->
+<section class="section exec" id="resumen-ej">
+  <div class="wrap">
+    <div class="eyebrow grad-sag reveal"><span class="dot"></span> 0 · Resumen ejecutivo</div>
+    <h2 class="reveal">Creciste tanto que la operación ya no cabe en Excel.</h2>
+    <p class="lede-lg reveal">SAG opera hoy sobre una constelación de <b>~17 Drives + Excels dispersos + boletas de papel + la Plataforma SAG del proveedor + WhatsApp</b>, sin un identificador único que acompañe al chofer, al servicio o al pago de punta a punta. Esa es la <b>causa raíz común a las tres áreas</b>: como nada tiene un código estable, todo se empareja por el nombre escrito a mano — y ahí nacen el retrabajo, los descuadres y los errores de pago.</p>
+
+    <div class="peakfig reveal">
+      <div class="big grad-sag">~$40M</div>
+      <div class="side">MXN al año. Son <b>$773.810 MXN/semana</b> pagados a ~90 choferes externos, tecleando ~1.500 filas a mano: el flujo que hoy se mueve sin control.</div>
+    </div>
+
+    <div class="heronums reveal">
+      <div class="heronum"><div class="hs">Volumen semanal</div><div class="hn">2.100–2.300</div><div class="hl">boletas de papel/semana · ~100 servicios/día · ~300 unidades/día · ~50 grupos de WhatsApp</div></div>
+      <div class="heronum"><div class="hs">Incidencias</div><div class="hn">40–45%</div><div class="hl">de los servicios, sin canal ni costo cuantificado</div></div>
+      <div class="heronum"><div class="hs">Padrón</div><div class="hn">186 vs ~90</div><div class="hl">choferes en la lista de pago vs los que realmente cobran — bajas viejas sin depurar</div></div>
+      <div class="heronum"><div class="hs">Trabajo manual</div><div class="hn">6–8 h</div><div class="hl">por semana solo en consolidar drives · +1,5–2 h/día de cobranza · ~50 min de dictado del pago cada lunes</div></div>
+    </div>
+
+    <div class="covered reveal">
+      <span class="cchip"><b>3</b> áreas · Admin · Operaciones · RR.HH.</span>
+      <span class="cchip"><b>6</b> sesiones con los responsables</span>
+      <span class="cchip"><b>38</b> procesos mapeados</span>
+      <span class="cchip"><b>7</b> cuellos de botella transversales</span>
+      <span class="cchip"><b>27</b> oportunidades priorizadas</span>
+    </div>
+  </div>
+</section>
+
+<!-- 1 · CÓMO TRABAJAMOS -->
+<section class="section" id="metodo">
+  <div class="wrap">
+    <div class="eyebrow grad-sag reveal"><span class="dot"></span> 1 · Cómo trabajamos</div>
+    <h2 class="reveal">Una inmersión por área, sobre tus planillas reales.</h2>
+    <p class="lede reveal">No auditamos de escritorio: nos metimos en cada área, con quien ejecuta el proceso, sobre los archivos que SAG usa todos los días.</p>
+    <div class="roles reveal" style="margin-top:36px">
+      <div class="role">
+        <div class="rt">Inmersión por área</div>
+        <div class="rd">Una semana en cada una — Administración, Operaciones y RR.HH. — con un mínimo de dos reuniones por área con los responsables clave.</div>
+      </div>
+      <div class="role">
+        <div class="rt">Qué hicimos</div>
+        <div class="rd">Validamos cada proceso con quien lo ejecuta y analizamos muestras reales:</div>
+        <ul><li>Nóminas, boletas y tarifarios</li><li>Reportes por cliente y el CRM de choferes</li><li>Cómo viaja la información entre áreas</li><li>Los puntos de fricción y lo que no está escrito</li></ul>
+      </div>
+      <div class="role">
+        <div class="rt">Con quién</div>
+        <div class="rd">Los responsables de cada área: Dirección, Administración, Operaciones y RR.HH.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAPA DE PROCESOS (detallado) -->
+<section class="section" id="mapa">
+  <div class="wrap">
+    <div class="eyebrow grad-sag reveal"><span class="dot"></span> 2 · Mapa de procesos</div>
+    <h2 class="reveal">Así viaja hoy un servicio, de punta a punta.</h2>
+    <p class="lede reveal">Del pedido por WhatsApp hasta el cobro y el pago: media docena larga de herramientas distintas, el mismo dato tecleado de nuevo en cada salto, y un puente manual en cada conexión.</p>
+    <p class="lede reveal" style="color:var(--text);font-weight:600;margin-top:14px">Ni un solo dato —un chofer, un servicio, un pago— tiene un código único que lo acompañe de principio a fin. Todo se empareja por el nombre escrito a mano.</p>
+
+    <div class="mmwrap big reveal" role="img" aria-label="Diagrama del recorrido actual de un servicio, de punta a punta">
+<pre class="mermaid">
+flowchart TD
+  wa[/📱 WhatsApp ~50 grupos + correo/]
+  drive[(📄 Drives Operaciones · 17 Sheets)]
+  plat[(🖥 SAG SYSTEM · plataforma de Eduardo)]
+  boleta[/🧾 Boletas de papel/]
+  omar[(📄 3 Drives Omar + Excel Daniel)]
+  consol[(📄 Consolidado Excel · Admin)]
+  rep[(📄 ~15 Reportes por cliente)]
+  fact[/🔶 Factura99 · CFDI/]
+  banco[/🔶 Banorte · cobranza/]
+  pago[(📄 PAGO EXTERNOS Excel)]
+  crmrh[(📇 CRM RR.HH. · codigo SAGxxx)]
+  despacho[/🏦 Despacho bancario/]
+  ads[/📢 Meta ads → WhatsApp 844/]
+  at[/👤 1 persona responde/]
+  crmv[(📇 CRM Airtable · Oportunidades + Equipo)]
+  sp[(🔶 SharePoint · respaldo)]
+  pbi[/🔶 Power BI · KPIs/]
+
+  wa --> drive
+  drive -. copy-paste · desfase 1 dia .-> plat
+  drive --> consol
+  drive --> omar
+  drive -. 4 pestañas a mano .-> pbi
+  boleta -. cotejo a mano los lunes .-> consol
+  consol --> rep --> fact --> banco
+  consol --> pago
+  pago -. dictado oral Mario a Juanjo .-> despacho
+  crmrh -. el SAGxxx no viaja .-> pago
+  plat -. export desalineado .-> sp
+  ads --> at
+  at -. no queda en ningun CRM .-> crmv
+
+  classDef plataforma fill:#2a1d3d,stroke:#8943e3,color:#e8dcff
+  classDef roto fill:#2f1517,stroke:#f87171,color:#ffd9d9
+  class plat plataforma
+  class crmv,at roto
+</pre>
+    </div>
+    <div class="mmcaption reveal"><span>——</span><span><b>Flecha punteada = puente manual:</b> alguien copia, teclea, dicta o cruza a ojo. La operación se captura <b>dos veces</b> (Drive → Plataforma), el <b>SAGxxx no viaja</b> del CRM al pago, y adquisición es una <b>isla muerta</b> (rojo).</span></div>
+    <div class="flow-note reveal" style="margin-top:20px">→ <span>Cada <b>puente rojo</b> es una persona copiando a mano lo que la máquina debería pasar sola.</span></div>
+  </div>
+</section>
+
+<!-- 2 · ÍNDICE DE LOS 38 PROCESOS -->
+<section class="section" id="catalogo">
+  <div class="wrap">
+    <div class="eyebrow grad-sag reveal"><span class="dot"></span> El catálogo completo</div>
+    <h2 class="reveal">Los 38 procesos, por área.</h2>
+    <p class="lede reveal">Administración (8) · Operaciones (12) · Recursos Humanos (14) · Ventas (4). Cada uno con su responsable, sus herramientas y su punto de dolor. Los diagramas de flujo detallados de los más críticos vienen justo después.</p>
+
+    <div class="areahead reveal"><h3>Administración</h3><span class="count">8 procesos</span></div>
+    <div class="tablewrap reveal"><div class="tablescroll"><table class="proc">
+      <thead><tr><th>Código</th><th>Proceso</th><th>Responsable</th><th>Dolor principal</th></tr></thead>
+      <tbody>
+        <tr><td class="code">ADM-01</td><td class="name">Revisar boletas de papel contra el drive</td><td class="who">Gema · Andrea · Hortencia</td><td class="pain">El ciclo del dinero arranca en papel, cruzado a mano por nombre</td></tr>
+        <tr><td class="code">ADM-02</td><td class="name">Consolidar drives y borrar duplicados</td><td class="who">2 personas de Admin</td><td class="pain">Borrado fila por fila; si borran de más, “falta” un servicio</td></tr>
+        <tr><td class="code">ADM-03</td><td class="name">Armar el reporte semanal por cliente</td><td class="who">Administración</td><td class="pain">~15 formatos incompatibles a mano; tarifa “a fuego” en celdas</td></tr>
+        <tr><td class="code">ADM-04</td><td class="name">Emitir la factura con la razón social correcta</td><td class="who">Mario · Rubí</td><td class="pain">~17 mecánicas + 2 razones sociales; papeles que bloquean el cobro</td></tr>
+        <tr><td class="code">ADM-05</td><td class="name">Cobrar, conciliar el banco y reportar al SAT</td><td class="who">Mario</td><td class="pain">Saber si pagaron = entrar al banco a mano; 3 planillas que se descuadran</td></tr>
+        <tr><td class="code">ADM-06</td><td class="name">Mantener las tarifas de cobro y pago</td><td class="who">Ana/Mario/Rubí · Daniela</td><td class="pain">El mismo concepto con distinto precio según el archivo</td></tr>
+        <tr><td class="code">ADM-07</td><td class="name">Pagar a ~90 choferes externos por boletas</td><td class="who">1 llena · 3 validan</td><td class="pain">La llave es el nombre a mano; un acento rompe la tarifa</td></tr>
+        <tr><td class="code">ADM-08</td><td class="name">Calcular la ganancia/margen por ruta y cliente</td><td class="who">Ana/Mario/Rubí</td><td class="pain">Ganancia pegada como valor, no fórmula → no se recalcula</td></tr>
+      </tbody>
+    </table></div></div>
+
+    <div class="areahead reveal"><h3>Operaciones</h3><span class="count">12 procesos</span></div>
+    <div class="tablewrap reveal"><div class="tablescroll"><table class="proc">
+      <thead><tr><th>Código</th><th>Proceso</th><th>Responsable</th><th>Dolor principal</th></tr></thead>
+      <tbody>
+        <tr><td class="code">OP-01</td><td class="name">Recibir pedidos por WhatsApp y cargarlos al drive</td><td class="who">8-10 capturistas</td><td class="pain">Cero fórmulas + chofer sin código; el de mayor apalancamiento</td></tr>
+        <tr><td class="code">OP-02</td><td class="name">Armar rutas del día y asignar unidades</td><td class="who">Jefe de turno</td><td class="pain">Cálculo mental sin optimizador</td></tr>
+        <tr><td class="code">OP-03</td><td class="name">Confirmar, arrancar y seguir cada servicio</td><td class="who">Chofer · Operaciones</td><td class="pain">Seguimiento en chats; sin GPS en el 96% de la flota</td></tr>
+        <tr><td class="code">OP-04</td><td class="name">Cerrar la ruta y validar el estatus final</td><td class="who">Chofer · Operaciones</td><td class="pain">Error de captura (OK en la celda equivocada)</td></tr>
+        <tr><td class="code">OP-05</td><td class="name">Cruzar a mano WhatsApp y drive por errores</td><td class="who">Alejandro</td><td class="pain">100% manual y visual; sin export ni métrica</td></tr>
+        <tr><td class="code">OP-06</td><td class="name">Coordinar y validar al proveedor Omar</td><td class="who">Víctor Hugo · Daniel</td><td class="pain">Triangulación con pérdida de info; validación manual</td></tr>
+        <tr><td class="code">OP-07</td><td class="name">Cotizar ejecutivos/turismo/paquetería/renta</td><td class="who">Perla (sola)</td><td class="pain">Sin tabla maestra; ficha armada documento por documento</td></tr>
+        <tr><td class="code">OP-08</td><td class="name">Armar el reporte semanal de KPIs internos</td><td class="who">Víctor Hugo</td><td class="pain">Borra lo anterior cada semana → sin histórico</td></tr>
+        <tr><td class="code">OP-09</td><td class="name">Manejar incidencias operativas</td><td class="who">Víctor Hugo (por rebote)</td><td class="pain">40-45% de los servicios; sin canal ni categoría</td></tr>
+        <tr><td class="code">OP-10</td><td class="name">Registrar rutas caídas y penalizar al chofer</td><td class="who">Operaciones</td><td class="pain">Captura manual</td></tr>
+        <tr><td class="code">OP-11</td><td class="name">Alta de cliente nuevo copiando el formato</td><td class="who">Operaciones</td><td class="pain">Dolor bajo; formato replicable pero manual</td></tr>
+        <tr><td class="code">OP-12</td><td class="name">Copiar a mano los servicios del drive a la Plataforma SAG</td><td class="who">1-2 personas + Víctor Hugo</td><td class="pain">Retrabajo puro; desfase de 1 día; 2.000 vs 1.600 sin conciliar</td></tr>
+      </tbody>
+    </table></div></div>
+
+    <div class="areahead reveal"><h3>Recursos Humanos</h3><span class="count">14 procesos</span></div>
+    <div class="tablewrap reveal"><div class="tablescroll"><table class="proc">
+      <thead><tr><th>Código</th><th>Proceso</th><th>Responsable</th><th>Dolor principal</th></tr></thead>
+      <tbody>
+        <tr><td class="code">RH-01</td><td class="name">Alta de chofer y armado de expediente</td><td class="who">Dani · Juanjo</td><td class="pain">Doble almacenamiento (papel + digital); sin perfil único</td></tr>
+        <tr><td class="code">RH-02</td><td class="name">Seguir a los nuevos ingresos (retención)</td><td class="who">Juanjo · Dani</td><td class="pain">No hay baja formal ni métrica de rotación</td></tr>
+        <tr><td class="code">RH-03</td><td class="name">Dar de baja y depurar el padrón</td><td class="who">Juanjo · gerencia</td><td class="pain">186 vs ~90; el estado vive “de memoria”</td></tr>
+        <tr><td class="code">RH-04</td><td class="name">Definir dónde vive el dato (Drive vs SharePoint)</td><td class="who">Rubí · Admin · Juanjo</td><td class="pain">Doble fuente de verdad; prerequisito de todo</td></tr>
+        <tr><td class="code">RH-05</td><td class="name">Pagar externos vía dictado oral Mario→Juanjo</td><td class="who">Mario · Juanjo</td><td class="pain">El dictado nombre por nombre: fila equivocada → pago a otro</td></tr>
+        <tr><td class="code">RH-06</td><td class="name">Armar la nómina interna semanal</td><td class="who">Juanjo · gerencia · Rubí</td><td class="pain">100% manual; inputs por WhatsApp sin trazabilidad</td></tr>
+        <tr><td class="code">RH-07</td><td class="name">Descontar el seguro financiado (semanal)</td><td class="who">Juanjo · Mario</td><td class="pain">Deducción recurrente sin acumulado vs prima total</td></tr>
+        <tr><td class="code">RH-08</td><td class="name">Controlar y pagar el bono “recomienda y gana”</td><td class="who">Juanjo · Mario</td><td class="pain">Condición cruzada a mano</td></tr>
+        <tr><td class="code">RH-09</td><td class="name">Trámites fiscales del IMSS</td><td class="who">Juanjo · despacho</td><td class="pain">Múltiples layouts a mano; fórmulas rotas</td></tr>
+        <tr><td class="code">RH-10</td><td class="name">Control de asistencia de oficina (reloj checador)</td><td class="who">Juanjo</td><td class="pain">El reloj es “muy manipulable”</td></tr>
+        <tr><td class="code">RH-11</td><td class="name">Vigilar vencimientos de licencias y pólizas</td><td class="who">Juanjo</td><td class="pain">Revisión manual sin alertas → riesgo de siniestro</td></tr>
+        <tr><td class="code">RH-12</td><td class="name">Armar la ficha técnica de operador (2 plantas)</td><td class="who">Juanjo</td><td class="pain">Cobertura parcial; falta el insumo</td></tr>
+        <tr><td class="code">RH-13</td><td class="name">Avisar a choferes cuando cambian las tarifas</td><td class="who">Juanjo</td><td class="pain">Cada cliente/sector nuevo obliga a rehacer tarifas a mano</td></tr>
+        <tr><td class="code">RH-14</td><td class="name">App propia de RR.HH. en desarrollo (boceto de Juanjo)</td><td class="who">Juanjo · Dani</td><td class="pain">Boceto sin contenido real todavía</td></tr>
+      </tbody>
+    </table></div></div>
+
+    <div class="areahead reveal"><h3>Ventas</h3><span class="count">4 procesos</span></div>
+    <div class="tablewrap reveal"><div class="tablescroll"><table class="proc">
+      <thead><tr><th>Código</th><th>Proceso</th><th>Responsable</th><th>Dolor principal</th></tr></thead>
+      <tbody>
+        <tr><td class="code">VTA-01</td><td class="name">Buscar y calificar clientes nuevos</td><td class="who">Rubí · Ana</td><td class="pain">Sin criterio de calificación estructurado</td></tr>
+        <tr><td class="code">VTA-02</td><td class="name">Cotizar y cerrar una planta nueva</td><td class="who">Rubí · Ana</td><td class="pain">Tarifa dispersa; seguimientos vencidos desde marzo</td></tr>
+        <tr><td class="code">VTA-03</td><td class="name">CRM comercial de oportunidades (abandonado)</td><td class="who">Rubí · Ana</td><td class="pain">El CRM obsoleto no soportó el volumen; sin atribución</td></tr>
+        <tr><td class="code">VTA-04</td><td class="name">Captar leads por anuncios de Meta → WhatsApp</td><td class="who">Carlos · 1 persona</td><td class="pain">Los leads inbound se responden y no se registran</td></tr>
+      </tbody>
+    </table></div></div>
+  </div>
+</section>
+
+<!-- PROCESOS ACTUALES -->
+<div class="narrative-intro" id="procesos">
+  <div class="wrap">
+    <div class="eyebrow reveal" style="color:var(--blocked)"><span class="dot"></span> Tu operación hoy, proceso por proceso</div>
+    <h2 class="reveal">Cada proceso te cuesta tiempo y dinero, y te expone a errores.</h2>
+    <p class="lede reveal">Esto no es que trabajen mal: es que SAG creció tanto que la operación ya no cabe en Excel. Lo que te trajo hasta acá no te lleva al próximo nivel. No es teoría, son las horas y los números que relevamos en tus propias planillas: cada número trae, debajo, de dónde sale.</p>
+  </div>
+</div>
+
+<!-- P1 -->
+<section class="section panel diag"><div class="wrap reveal">
+  <div class="phead">
+    <div class="pcode">OP-01 · OP-12 · Operaciones</div>
+    <h3>Cada servicio se captura <span style="color:var(--blocked)">dos veces</span>.</h3>
+    <div class="who">Responsable · <b>Víctor Hugo + 8-10 capturistas</b></div>
+  </div>
+  <div class="mmwrap" role="img" aria-label="Flujo real de la doble captura Drive a Plataforma (OP-12)">
+<pre class="mermaid">
+flowchart TD
+  ini([Servicios del dia ya cargados en el Drive])
+  f1[/📄 Drives de Operaciones · Google Sheets 🔶/]
+  a1[Persona encargada baja lo del dia anterior&lt;br/&gt;2 personas · Hugo apoya]
+  a2[Copiar y pegar servicio por servicio&lt;br/&gt;a la Plataforma SAG]
+  f2[/🖥 Plataforma SAG · tercero Eduardo/]
+  d1{Programacion cambio algo hoy?}
+  a3[No se puede editar in-place · borrar y recargar&lt;br/&gt;desfase manda el servicio al chofer viejo]
+  a4[Exportar a Excel → respaldo SharePoint 🔶 · en la idea]
+  fin([■ 2.000 Drive vs 1.600 plataforma · retrabajo diario])
+  ini --> f1 --> a1 --> a2 --> f2 --> d1
+  d1 -->|si| a3 --> fin
+  d1 -->|no| a4 --> fin
+</pre>
+  </div>
+  <div class="kpis pk">
+    <div class="kpi wide"><div class="k">Retrabajo</div><div class="v">2 personas <small>casi a tiempo completo copiando y pegando</small></div><div class="just">El mismo servicio se carga en el Drive y se vuelve a teclear en la plataforma del tercero.</div></div>
+    <div class="kpi"><div class="k">Tiempo</div><div class="v">1 día <small>de desfase</small></div><div class="just">La plataforma va siempre 1 día atrás del Drive.</div></div>
+    <div class="kpi"><div class="k">Errores</div><div class="v">~400/sem <small>servicios perdidos</small></div><div class="just">2.000 en el Drive vs 1.600 en la plataforma.</div></div>
+  </div>
+</div></section>
+
+<!-- P2 -->
+<section class="section panel diag"><div class="wrap reveal">
+  <div class="phead">
+    <div class="pcode">ADM-02 · Administración</div>
+    <h3>Juntar los drives y borrar duplicados, <span style="color:var(--blocked)">a mano</span>.</h3>
+    <div class="who">Responsable · <b>2 personas de Admin</b></div>
+  </div>
+  <div class="mmwrap" role="img" aria-label="Flujo real del consolidado de drives (ADM-02)">
+<pre class="mermaid">
+flowchart TD
+  ini([Fin de semana - drives de la semana listos])
+  f1[/Drives de Operaciones · ~16 Google Sheets/]
+  a1[Copiar y pegar los 16 drives en una sola planilla]
+  f2[/Consolidado · Excel de trabajo de Admin 🔶/]
+  d1{Fila repetida por usuario?}
+  a2[Borrar a mano la fila duplicada&lt;br/&gt;⏱ 2 pers × 2-2.5h solo finde]
+  a3[Conservar la fila del servicio]
+  d2{Se borro de mas?}
+  a4[Volver al drive original a rechequear]
+  fin([Consolidado - 1 fila por servicio])
+  ini --> f1 --> a1 --> f2 --> d1
+  d1 -->|si| a2 --> d2
+  d1 -->|no| a3 --> fin
+  d2 -->|si| a4 --> fin
+  d2 -->|no| fin
+</pre>
+  </div>
+  <div class="kpis pk">
+    <div class="kpi wide"><div class="k">Horas-hombre</div><div class="v">6-8 h <small>por semana, solo el bloque de fin de semana</small></div><div class="just">2 personas × 2-2,5 h borrando duplicados fila por fila.</div></div>
+    <div class="kpi"><div class="k">Tiempo</div><div class="v">El fin de semana <small>del equipo</small></div><div class="just">La consolidación se come el sábado y el domingo.</div></div>
+    <div class="kpi"><div class="k">Errores</div><div class="v">Si borran de más, "falta" un servicio</div><div class="just">El error se propaga al cobro y al pago a la vez.</div></div>
+  </div>
+</div></section>
+
+<!-- P3 -->
+<section class="section panel diag"><div class="wrap reveal">
+  <div class="phead">
+    <div class="pcode">ADM-07 · RH-05 · Administración + RR.HH.</div>
+    <h3>El pago a 90 choferes se <span style="color:var(--blocked)">dicta nombre por nombre</span>.</h3>
+    <div class="who">Responsable · <b>Mario dicta · Juanjo transcribe</b></div>
+  </div>
+  <div class="mmwrap" role="img" aria-label="Flujo real del pago a externos + dispersión (ADM-07)">
+<pre class="mermaid">
+flowchart TD
+  ini([Lunes - cierre del boletaje semanal])
+  f1[/PAGO EXTERNOS Wxx.xlsx · hoja BOLETAS X CHOFER 🔶/]
+  a1[Tipear a mano ~1.500 filas&lt;br/&gt;dia · chofer · planta · nº boletas]
+  a2[Hoja PAGO X CHOFER · nº boletas × tarifa − deducciones]
+  d1{Celda de control da VERDADERO?}
+  a3[Cazar a mano el error&lt;br/&gt;no dice que chofer ni fila]
+  a4[Dispersion electronica a las tarjetas]
+  f2[/Hoja NOTA DE PAGO · imprimir y recortar ~90 recibos 🔶/]
+  fin([■ ~773.810 MXN/sem pagados a ~90 choferes])
+  ini --> f1 --> a1 --> a2 --> d1
+  d1 -->|no FALSO| a3 --> a2
+  d1 -->|si| a4 --> f2 --> fin
+</pre>
+  </div>
+  <div class="kpis pk">
+    <div class="kpi wide"><div class="k">Dinero</div><div class="v">$773.810 <small>MXN por semana, a mano</small></div><div class="just">Pago a ~90 choferes externos, tecleado fila por fila.</div></div>
+    <div class="kpi"><div class="k">Tiempo</div><div class="v">50 min <small>cada lunes</small></div><div class="just">Dictado nombre por nombre, 4:40 a 5:30 PM.</div></div>
+    <div class="kpi"><div class="k">Errores</div><div class="v">Pago a otra persona</div><div class="just">Una fila corrida: el total cuadra, pero le pagas a otro.</div></div>
+  </div>
+</div></section>
+
+<!-- P4 -->
+<section class="section panel diag"><div class="wrap reveal">
+  <div class="phead">
+    <div class="pcode">ADM-03 · Administración</div>
+    <h3>Un reporte de cobro distinto <span style="color:var(--blocked)">para cada cliente</span>.</h3>
+    <div class="who">Responsable · <b>Administración</b></div>
+  </div>
+  <div class="mmwrap" role="img" aria-label="Flujo real del reporte semanal por cliente (ADM-03)">
+<pre class="mermaid">
+flowchart TD
+  ini([Consolidado de la semana listo])
+  f1[/Consolidado + tarifa de cobro por planta/]
+  a1[Transcribir servicios al formato que exige cada cliente&lt;br/&gt;⏱ ~15 formatos a mano]
+  a2[Aplicar tarifa de cobro · agrupar · sumar · IVA 16%]
+  f2[/Reportes por cliente 🔶 · FLEX · UFI · MOTHERSON · MAGNA · ADIENT · DONG/]
+  a3[Enviar por correo o subir al portal del cliente]
+  d1{El cliente valida el reporte?}
+  a4[Corregir y reenviar]
+  fin([■ Reporte validado - habilita facturar])
+  ini --> f1 --> a1 --> a2 --> f2 --> a3 --> d1
+  d1 -->|si| fin
+  d1 -->|no / pide OC| a4 --> a3
+</pre>
+  </div>
+  <div class="kpis pk">
+    <div class="kpi"><div class="k">Horas-hombre</div><div class="v">~7,5 h <small>por semana</small></div><div class="just">~15 reportes × ~30 min cada uno.</div></div>
+    <div class="kpi"><div class="k">Retrabajo</div><div class="v">~15 formatos <small>distintos</small></div><div class="just">Cada planta exige su formato; todos calculan lo mismo.</div></div>
+    <div class="kpi wide"><div class="k">Errores</div><div class="v">Tarifa "a fuego" en celdas sueltas</div><div class="just">Cambiar una tarifa obliga a tocar muchos archivos.</div></div>
+  </div>
+</div></section>
+
+<!-- P5 -->
+<section class="section panel diag"><div class="wrap reveal">
+  <div class="phead">
+    <div class="pcode">ADM-05 · Administración</div>
+    <h3>La cobranza se lleva <span style="color:var(--blocked)">a ciegas</span>.</h3>
+    <div class="who">Responsable · <b>Mario</b></div>
+  </div>
+  <div class="mmwrap" role="img" aria-label="Flujo real de la cobranza y conciliación (ADM-05)">
+<pre class="mermaid">
+flowchart TD
+  ini([Factura emitida con credito 10-75 dias])
+  f1[/Banca Banorte · entrar a mano cada dia 🔶/]
+  d1{Cayo el deposito?}
+  a1[Seguir esperando · perseguir por correo]
+  a2[Conciliar monto al centavo vs facturas]
+  d2{Cuadra al centavo?}
+  a3[Marcar pagada en 3 Excel de Mario a mano 🔶&lt;br/&gt;⏱ ~1.5-2h/dia]
+  f2[/Factura99 · generar complemento de pago al SAT 🔶/]
+  fin([■ Cobro conciliado y reportado al SAT])
+  ini --> f1 --> d1
+  d1 -->|no| a1 --> f1
+  d1 -->|si| a2 --> d2
+  d2 -->|no| a1
+  d2 -->|si| a3 --> f2 --> fin
+</pre>
+  </div>
+  <div class="kpis pk">
+    <div class="kpi"><div class="k">Tiempo</div><div class="v">1,5-2 h <small>por día</small></div><div class="just">Entrar al banco a mano, todos los días.</div></div>
+    <div class="kpi"><div class="k">Errores</div><div class="v">3 planillas <small>que se descuadran</small></div><div class="just">El mismo dato replicado a mano en 3 Excel.</div></div>
+    <div class="kpi wide"><div class="k">Riesgo</div><div class="v">Cobrar tarde</div><div class="just">La única forma de saber si pagaron es entrar al banco: no hay aviso.</div></div>
+  </div>
+</div></section>
+
+<!-- P6 -->
+<section class="section panel diag"><div class="wrap reveal">
+  <div class="phead">
+    <div class="pcode">OP-09 · Operaciones</div>
+    <h3>Las incidencias se descubren <span style="color:var(--blocked)">"por rebote"</span>.</h3>
+    <div class="who">Responsable · <b>Víctor Hugo (por rebote)</b></div>
+  </div>
+  <div class="mmwrap" role="img" aria-label="Flujo real de las incidencias operativas (OP-09)">
+<pre class="mermaid">
+flowchart TD
+  ini([Retraso · ponchadura · accidente · protocolo no seguido])
+  f1[/📱 WhatsApp del cliente · 17 clientes x 2-3 grupos/]
+  a1[Victor se entera por rebote&lt;br/&gt;etiqueta de planta o pregunta de superior]
+  d1{Gravedad de&lt;br/&gt;la incidencia}
+  d2{Es de SAG&lt;br/&gt;o de Omar}
+  a2[SAG arma plan de accion de 5 puntos&lt;br/&gt;ej Planta Pura · paro de linea]
+  a3[Omar arma el plan · Victor cambia el nombre]
+  a4[Registrar informal · sin categoria]
+  fin([■ Costo del paro de linea sin cuantificar])
+  ini --> f1 --> a1 --> d1
+  d1 -->|grave| d2
+  d1 -->|leve| a4 --> fin
+  d2 -->|SAG| a2 --> fin
+  d2 -->|Omar| a3 --> fin
+</pre>
+  </div>
+  <div class="kpis pk">
+    <div class="kpi wide"><div class="k">Volumen</div><div class="v">40-45% <small>de los servicios</small></div><div class="just">Casi la mitad de los servicios tiene un problema que hoy nadie registra.</div></div>
+    <div class="kpi"><div class="k">Errores</div><div class="v">Sin registro</div><div class="just">No hay canal ni categorización de incidencias.</div></div>
+    <div class="kpi"><div class="k">Riesgo</div><div class="v">Paro de línea</div><div class="just">Su costo no se cuantifica; lo absorbe SAG.</div></div>
+  </div>
+</div></section>
+
+<!-- P7 -->
+<section class="section panel diag"><div class="wrap reveal">
+  <div class="phead">
+    <div class="pcode">OP-05 · Operaciones</div>
+    <h3>Auditar los grupos es <span style="color:var(--blocked)">"lo más tardado"</span>.</h3>
+    <div class="who">Responsable · <b>Alejandro</b></div>
+  </div>
+  <div class="mmwrap" role="img" aria-label="Flujo real de la auditoría de grupos (OP-05)">
+<pre class="mermaid">
+flowchart TD
+  ini([Miercoles y sabado · Alejandro audita])
+  f1[/📱 Grupo WA cliente/]
+  f2[/📱 Grupo WA choferes/]
+  f3[/📄 Drive del cliente/]
+  a1[Cruzar las 3 fuentes a ojo&lt;br/&gt;⏱ lo mas tardado del rol]
+  d1{Coincide lo&lt;br/&gt;capturado}
+  a2[Corregir · dice Juanito pero fue Alejandra]
+  a3[Avisar por el grupo interno de programacion]
+  fin([■ Drive corregido · sin metrica registrada])
+  ini --> f1 --> a1
+  ini --> f2 --> a1
+  ini --> f3 --> a1
+  a1 --> d1
+  d1 -->|no| a2 --> a3 --> fin
+  d1 -->|si| fin
+</pre>
+  </div>
+  <div class="kpis pk">
+    <div class="kpi wide"><div class="k">Tiempo</div><div class="v">"Lo más tardado" <small>del rol</small></div><div class="just">Miércoles y sábado, cruce a ojo de 3 fuentes de WhatsApp.</div></div>
+    <div class="kpi"><div class="k">Errores</div><div class="v">Cero métrica</div><div class="just">Nadie sabe si mejora o empeora mes a mes.</div></div>
+    <div class="kpi"><div class="k">Riesgo</div><div class="v">Origen invisible</div><div class="just">No se sabe qué planta o capturista genera más errores.</div></div>
+  </div>
+</div></section>
+
+<!-- P8 -->
+<section class="section panel diag"><div class="wrap reveal">
+  <div class="phead">
+    <div class="pcode">RH-01 · Recursos Humanos</div>
+    <h3>El expediente del chofer vive <span style="color:var(--blocked)">en papel y digital a la vez</span>.</h3>
+    <div class="who">Responsable · <b>Dani + Juanjo</b></div>
+  </div>
+  <div class="mmwrap" role="img" aria-label="Flujo real del alta de chofer y expediente (RH-01)">
+<pre class="mermaid">
+flowchart TD
+  ini([▶ Llega nuevo ingreso a la oficina])
+  a1[Dani explica tarifas y pide INE licencia domicilio poliza]
+  a2[Video induccion ~5 min + firma 8 hojas fisicas]
+  f1[/📄 Formulario Alta de colaborador · Claude · 4 secciones/]
+  a3[Juanjo crea usuario y contraseña + numero SAGxxx&lt;br/&gt;⏱ ~2h por persona]
+  d1{¿Trae CURP NSS y serie a mano?}
+  a4[Candado · accesos si · alta ante planta no hasta que los mande]
+  a5[Escanear documento por documento a mano + guardar papel]
+  f2[/📄 CRM Registro de Documentacion · Drive + carpeta + archivero fisico/]
+  fin([■ Alta registrada → RH-05 RH-09 RH-11 OP-01 ADM-07])
+  ini --> a1 --> a2 --> f1 --> a3 --> d1
+  d1 -->|no| a4 --> a5
+  d1 -->|si| a5
+  a5 --> f2 --> fin
+</pre>
+  </div>
+  <div class="kpis pk">
+    <div class="kpi"><div class="k">Tiempo</div><div class="v">~2 h <small>por alta</small></div><div class="just">Todo digitalizado a mano, documento por documento.</div></div>
+    <div class="kpi"><div class="k">Retrabajo</div><div class="v">Papel + digital</div><div class="just">Doble almacenamiento, sin un perfil único por chofer.</div></div>
+    <div class="kpi wide"><div class="k">Riesgo</div><div class="v">Despiertan a Juanjo a las 4 AM</div><div class="just">Operaciones no tiene acceso al expediente para ver una póliza.</div></div>
+  </div>
+</div></section>
+
+<!-- P9 -->
+<section class="section panel diag"><div class="wrap reveal">
+  <div class="phead">
+    <div class="pcode">RH-11 · Recursos Humanos</div>
+    <h3>Las licencias y pólizas <span style="color:var(--blocked)">no avisan cuando vencen</span>.</h3>
+    <div class="who">Responsable · <b>Juanjo</b></div>
+  </div>
+  <div class="mmwrap" role="img" aria-label="Flujo real del control de vencimientos (RH-11)">
+<pre class="mermaid">
+flowchart TD
+  ini([▶ Idea de chequeo el 1 y el 15 de cada mes · experimental])
+  f1[/📄 CRM · campos LICENCIA P1 y POLIZA P2/]
+  a1[Juanjo pregunta a Claude que licencias vencen este mes]
+  a2[Claude devuelve las proximas a vencer por campo de fecha]
+  d1{¿Avisar 2 meses antes?}
+  a3[Intenta OCR poliza por poliza]
+  d2{¿La foto es legible?}
+  a4[Falla · foto de la foto y bordes cortados]
+  f2[/📄 Drive de polizas · duplicado del CRM · acceso a 4/]
+  a5[Cada poliza se sube dos veces]
+  fin([■ Deteccion por fecha ok · OCR pendiente · alerta = quick win])
+  ini --> f1 --> a1 --> a2 --> d1
+  d1 -->|si| a3 --> d2
+  d2 -->|no| a4 --> fin
+  d2 -->|si| fin
+  f2 --> a5 --> fin
+</pre>
+  </div>
+  <div class="kpis pk">
+    <div class="kpi"><div class="k">Errores</div><div class="v">Sin alerta <small>automática</small></div><div class="just">La revisión de vigencias es manual y esporádica.</div></div>
+    <div class="kpi wide"><div class="k">Riesgo</div><div class="v">Chofer con póliza vencida</div><div class="just">Un siniestro sin cobertura, más la responsabilidad legal, puede costar más que todo el proyecto.</div></div>
+  </div>
+</div></section>
+
+<!-- 3 · FLUJOS ENTRE ÁREAS + CUELLOS -->
+<section class="section" id="cuellos">
+  <div class="wrap">
+    <div class="eyebrow reveal" style="color:var(--blocked)"><span class="dot"></span> 3 · Flujos entre áreas</div>
+    <h2 class="reveal">Cinco cadenas cruzan las áreas. Todas se rompen en el mismo punto.</h2>
+    <p class="lede reveal">El dato salta de un área a otra por puentes manuales. El punto de apalancamiento es la <b style="color:var(--text)">cadena del código único</b>: cuando el código viaja, las otras cuatro dejan de emparejarse por nombre.</p>
+    <div class="chains reveal">
+      <div class="chain"><div class="cn">Cadena 1 · el dinero / cobro</div><div class="ct">Captura → consolidado → reporte + factura → cobranza</div><div class="cp">OP-01 → ADM-01/02 → ADM-03/04 → ADM-05</div></div>
+      <div class="chain"><div class="cn">Cadena 2 · pago al chofer</div><div class="ct">Boleta → armado → dictado → despacho bancario</div><div class="cp">OP-04 → ADM-07 → RH-05</div></div>
+      <div class="chain"><div class="cn">Cadena 3 · boleta papel → digital</div><div class="ct">Papel → re-tecleo a la Plataforma SAG</div><div class="cp">ADM-01 → OP-12</div></div>
+      <div class="chain"><div class="cn">Cadena 4 · adquisición</div><div class="ct">Anuncios → WhatsApp → cotización → CRM</div><div class="cp">VTA-04 → VTA-01/02 → VTA-03</div></div>
+      <div class="chain key"><div class="cn">Cadena 5 · el código único · el apalancamiento</div><div class="ct">El número de empleado del chofer vive en el CRM de RR.HH., pero hoy no viaja: al pago y al servicio se los empareja por nombre a mano.</div><div class="cp">RH-01/03 — la llave que cose las otras cuatro</div></div>
+    </div>
+
+    <h3 class="reveal" style="margin-top:50px;font-size:22px">Los 7 cuellos de botella transversales, por impacto</h3>
+    <div class="bottlenecks reveal">
+      <div class="bn top"><div class="rank">1</div><div class="bt"><b>El dato nace sucio en Operaciones</b> (OP-01) — drives sin fórmulas, chofer sin código fijo. El de mayor apalancamiento.</div></div>
+      <div class="bn"><div class="rank">2</div><div class="bt"><b>El origen del ciclo del dinero es papel</b> (ADM-01).</div></div>
+      <div class="bn"><div class="rank">3</div><div class="bt"><b>Pago a externos por dictado oral</b> (RH-05 / ADM-07) — una fila equivocada paga a otra persona.</div></div>
+      <div class="bn"><div class="rank">4</div><div class="bt"><b>~17 formas distintas de facturar</b> (ADM-03/04) + 2 razones sociales + papeles que bloquean el cobro.</div></div>
+      <div class="bn"><div class="rank">5</div><div class="bt"><b>Cobranza a ciegas</b> (ADM-05) — la única forma de saber si pagaron es entrar al banco a mano.</div></div>
+      <div class="bn"><div class="rank">6</div><div class="bt"><b>Incidencias operativas al 40-45%</b> (OP-09) — sin canal ni costo cuantificado.</div></div>
+      <div class="bn"><div class="rank">7</div><div class="bt"><b>Fuente de verdad en movimiento</b> (RH-04) — Drive vs SharePoint sin definir; prerequisito de toda automatización de RR.HH.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- RESUMEN -->
+<section class="resumen">
+  <div class="wrap">
+    <div class="eyebrow reveal" style="color:var(--blocked)"><span class="dot"></span> El total, en números</div>
+    <h2 class="reveal">Suma todo lo anterior: esto es lo que la operación manual te cuesta hoy.</h2>
+    <p class="lede reveal" style="color:var(--text);font-size:clamp(20px,3vw,30px);font-weight:600;margin-top:18px">Son <span class="grad-sag">~$40 millones de pesos al año</span> moviéndose a mano y sin control.</p>
+    <div class="rstats reveal">
+      <div class="rstat"><div class="v">$773.810</div><div class="k">MXN por semana pagados tecleando a mano (≈ $40M al año)</div></div>
+      <div class="rstat"><div class="v">40-45%</div><div class="k">de los servicios con incidencias que nadie registra</div></div>
+      <div class="rstat"><div class="v">2×</div><div class="k">cada dato se captura dos veces, con 1 día de desfase</div></div>
+      <div class="rstat"><div class="v">0</div><div class="k">códigos únicos que viajen: todo se empareja por nombre a mano</div></div>
+    </div>
+    <p class="lede reveal">Y lo más caro no está acá: es el error que no se ve, el pago a la persona equivocada, la factura que sale tarde, el chofer sin póliza.</p>
+  </div>
+</section>
+
+<!-- 4 · PROCESOS NO DOCUMENTADOS -->
+<section class="section" id="nodocumentados">
+  <div class="wrap">
+    <div class="eyebrow reveal" style="color:var(--pending)"><span class="dot"></span> 4 · Procesos no documentados</div>
+    <h2 class="reveal">Y hay procesos que solo viven en la memoria de una persona.</h2>
+    <p class="lede reveal">No están escritos en ningún lado. Si esa persona falta, el proceso se cae. Es un riesgo de continuidad que hoy no se ve.</p>
+    <div class="risks reveal">
+      <div class="risk h"><div>Proceso</div><div>Qué vive “de memoria”</div><div>Riesgo</div></div>
+      <div class="risk"><div class="rc">OP-02<span>armar rutas</span></div><div class="rm">El cálculo de rutas es 100% mental</div><div class="rr">Solo el jefe de turno sabe enrutar</div></div>
+      <div class="risk"><div class="rc">OP-07<span>Perla</span></div><div class="rm">Rutinas fijas no escritas</div><div class="rr">Ejecutivos/turismo depende de una sola persona</div></div>
+      <div class="risk"><div class="rc">OP-09<span>incidencias</span></div><div class="rm">No existe canal ni categorización</div><div class="rr">40-45% de los servicios sin registro</div></div>
+      <div class="risk"><div class="rc">RH-02<span>seguimiento</span></div><div class="rm">No se ejecuta de forma sistemática</div><div class="rr">Rotación temprana sin métrica</div></div>
+      <div class="risk"><div class="rc">RH-03<span>bajas/padrón</span></div><div class="rm">El estado activo/inactivo vive en la memoria de Juanjo</div><div class="rr">Padrón sucio (186 vs 90)</div></div>
+      <div class="risk"><div class="rc">RH-06<span>nómina interna</span></div><div class="rm">Reglas de bono/descuento no documentadas</div><div class="rr">La nómina depende de que Juanjo las recuerde</div></div>
+      <div class="risk"><div class="rc">RH-11<span>vencimientos</span></div><div class="rm">Revisión aún experimental</div><div class="rr">Póliza vencida sin aviso</div></div>
+      <div class="risk"><div class="rc">ADM-04<span>facturación</span></div><div class="rm">No existe un proceso único</div><div class="rr">El cobro frena si falta Mario/Rubí</div></div>
+      <div class="risk"><div class="rc">ADM-07<span>pago externos</span></div><div class="rm">El Excel “lo diseñó un chico de Operaciones; si él no está, nadie lo arregla”</div><div class="rr">Pago de $773k/sem sin dueño claro</div></div>
+      <div class="risk"><div class="rc">VTA-01–04<span>ventas</span></div><div class="rm">Sin criterio de calificación; CRM abandonado; leads sin registrar</div><div class="rr">Pipeline comercial sin sistema</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 · MATRIZ DE PRIORIZACIÓN -->
+<section class="section" id="prioridades">
+  <div class="wrap">
+    <div class="eyebrow grad-sag reveal"><span class="dot"></span> 5 · Matriz de priorización</div>
+    <h2 class="reveal">27 soluciones, ordenadas por lo que desbloquea más, no por lo más fácil.</h2>
+    <p class="lede reveal">El código único y los drives estandarizados son la base de casi todo lo demás, y son baratos — por eso van primero. Es el mejor negocio del mapa.</p>
+
+    <div class="matrix reveal">
+      <div class="yaxis"><span>Impacto ↑</span></div>
+      <div class="qgrid">
+        <div class="quad win">
+          <div class="qh">P1 · alto impacto / bajo esfuerzo</div>
+          <div class="qt">Hacer ya</div>
+          <div class="chips"><span class="sol">Sol 3 · llave</span><span class="sol">Sol 12 · drives</span><span class="sol">Sol 1 · validador</span><span class="sol">Sol 2 · tarifa</span><span class="sol">Sol 4 · consolidado</span><span class="sol">Sol 18 · vencimientos</span><span class="sol">Sol 24 · respaldo</span><span class="sol">Sol 26 · leads</span><span class="sol">Sol 23 · captura*</span></div>
+        </div>
+        <div class="quad big">
+          <div class="qh">P2 · alto impacto / alto esfuerzo</div>
+          <div class="qt">Proyectos grandes</div>
+          <div class="chips"><span class="sol">Sol 9 · dispersión</span><span class="sol">Sol 7 · reportes</span><span class="sol">Sol 10 · facturación</span><span class="sol">Sol 5 · cobranza</span><span class="sol">Sol 19 · expediente</span><span class="sol">Sol 22 · plataforma RR.HH.</span></div>
+        </div>
+        <div class="quad">
+          <div class="qh">P3 · impacto medio / bajo esfuerzo</div>
+          <div class="qt">Oportunistas</div>
+          <div class="chips"><span class="sol">Sol 13</span><span class="sol">Sol 15</span><span class="sol">Sol 16</span><span class="sol">Sol 25</span><span class="sol">Sol 27</span></div>
+        </div>
+        <div class="quad">
+          <div class="qh">P2/P3 · impacto medio / esfuerzo medio</div>
+          <div class="qt">Planificar</div>
+          <div class="chips"><span class="sol">Sol 6</span><span class="sol">Sol 14</span><span class="sol">Sol 20</span><span class="sol">Sol 21</span></div>
+        </div>
+      </div>
+      <div class="xaxis"><span>Bajo esfuerzo</span><span>Alto esfuerzo →</span></div>
+    </div>
+    <div class="matrix-notes reveal">
+      <div><b>Salen solas (derivadas):</b> Sol 11 (ganancia por ruta) · Sol 17 (KPIs de Víctor Hugo) — emergen cuando los datos de abajo ya están limpios.</div>
+      <div><b>Fuera de alcance:</b> Sol 8 = la Plataforma SAG del proveedor (no la construimos; nos coordinamos con ella).</div>
+      <div>* Sol 23 y Sol 24: alto valor, condicionadas a que el proveedor exponga import/API/export.</div>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK WINS -->
+<div class="narrative-intro" id="quickwins">
+  <div class="wrap">
+    <div class="eyebrow reveal" style="color:var(--ok)"><span class="dot"></span> Lo que ya se puede resolver</div>
+    <h2 class="reveal">Cada dolor tiene una solución concreta, y varias son rápidas.</h2>
+    <p class="lede reveal">No es "algún día": son mejoras que se sienten desde el primer mes, la rampa de entrada a la plataforma, no un menú aparte. Cada una es más potente cuando después vive dentro de ella, y cada una muestra el proceso ya optimizado.</p>
+  </div>
+</div>
+
+<!-- QW1 -->
+<section class="section panel diag"><div class="wrap reveal">
+  <div class="phead">
+    <span class="solchip">Solución 3 · la llave</span>
+    <h3>Un <span style="color:var(--ok)">código único</span> que viaja por todo el ciclo.</h3>
+  </div>
+  <div class="mmwrap" role="img" aria-label="Flujo real de la Solución 3: lista única de choferes con código SAGxxx">
+<pre class="mermaid">
+flowchart LR
+  crm[/🟢 CRM Registro de Documentacion · codigo SAGxxx · 144/]
+  ref[/🟢 Hoja Referencias · 186 nombres/]
+  bajas[/🟢 bajas.csv · 85 bajas/]
+  n1{{n8n - cruza y marca activo por cobro reciente}}
+  ia[IA GPT-4o-mini · solo sugiere nombres parecidos · no decide]
+  hum[Confirmacion humana enriquece alias]
+  db[(Tabla CHOFERES · codigo fijo + alias + activo/inactivo)]
+  out([■ Lista depurada 186 a ~90 · base para Admin y Ops])
+  crm --> n1
+  ref --> n1
+  bajas --> n1
+  n1 --> ia --> hum --> db --> out
+  classDef sol fill:#14251b,stroke:#34d399,color:#c9f5df
+  class out,db sol
+</pre>
+  </div>
+  <div class="kpis wk">
+    <div class="kpi wide"><div class="k">Habilita</div><div class="v">Mata la causa raíz <small>del trabajo manual en las 3 áreas</small></div><div class="just">Una sola llave reemplaza el emparejamiento por nombre.</div></div>
+    <div class="kpi"><div class="k">Errores evitados</div><div class="v">Fin del matching a mano</div><div class="just">El nombre deja de ser la llave.</div></div>
+    <div class="kpi"><div class="k">Efecto</div><div class="v">Base de casi todo</div><div class="just">Desbloquea el resto de las soluciones.</div></div>
+  </div>
+</div></section>
+
+<!-- QW2 -->
+<section class="section panel diag"><div class="wrap reveal">
+  <div class="phead">
+    <span class="solchip">Solución 4 · consolidado</span>
+    <h3>Consolidado <span style="color:var(--ok)">automático</span> de drives, sin duplicados.</h3>
+  </div>
+  <div class="mmwrap" role="img" aria-label="Flujo real de la Solución 4: consolidado automático sin duplicados">
+<pre class="mermaid">
+flowchart LR
+  src[/🟢 17 Drives de Operaciones · con folio Sol 12/]
+  n1{{n8n - une por clave cliente + ruta + fecha + folio}}
+  d1{Fila duplicada}
+  drop[Descartar duplicado]
+  keep[Conservar fila unica]
+  db[(Consolidado unico · sin duplicados)]
+  out([■ Base semanal lista · reemplaza el borrado a mano sab+dom])
+  src --> n1 --> d1
+  d1 -->|si| drop
+  d1 -->|no| keep --> db --> out
+  classDef sol fill:#14251b,stroke:#34d399,color:#c9f5df
+  class out,db sol
+</pre>
+  </div>
+  <div class="kpis wk">
+    <div class="kpi wide"><div class="k">Horas recuperadas</div><div class="v">6-8 h <small>por semana</small></div><div class="just">Elimina el borrado de duplicados del fin de semana.</div></div>
+    <div class="kpi"><div class="k">Errores evitados</div><div class="v">Cero servicios <small>borrados de más</small></div><div class="just">La de-duplicación por clave no se equivoca.</div></div>
+    <div class="kpi"><div class="k">Efecto</div><div class="v">El equipo recupera su fin de semana</div><div class="just">La consolidación deja de comer el sábado y el domingo.</div></div>
+  </div>
+</div></section>
+
+<!-- QW3 -->
+<section class="section panel diag"><div class="wrap reveal">
+  <div class="phead">
+    <span class="solchip">Solución 9 + 1 · pago</span>
+    <h3><span style="color:var(--ok)">Generación automática</span> del armado de pagos.</h3>
+  </div>
+  <div class="mmwrap" role="img" aria-label="Flujo real de la Solución 9: motor de pago + dispersión + recibo">
+<pre class="mermaid">
+flowchart LR
+  src1[/🟢 Pago Externos · hoja NOTA DE PAGO 🔶/]
+  src2[/🟢 Excel de Juanjo · layout del despacho 🔶/]
+  db[(Airtable · CHOFERES + DEDUCCIONES con saldo)]
+  n1{{n8n - nodo: matchea monto final por llave estable}}
+  n2{{n8n - nodo: aplica deducciones seguro/prestamo/INFONAVIT}}
+  n3{{n8n - nodo: mapea Clave Banco vs directorio 116 bancos}}
+  cond{importe cuadra con el total}
+  out1([■ Layout del despacho listo para dispersar])
+  out2([■ Recibo PDF por chofer])
+  alert([■ Aviso Telegram · fila que no matchea])
+  src1 -->|monto con deducciones| n1
+  db -->|llave estable + saldo| n1
+  n1 --> n2 --> n3 --> cond
+  cond -->|si| out1 --> out2
+  cond -->|no| alert
+  src2 -.formato de salida.-> out1
+  classDef sol fill:#14251b,stroke:#34d399,color:#c9f5df
+  class out1,out2,db sol
+</pre>
+  </div>
+  <div class="kpis wk">
+    <div class="kpi"><div class="k">Tiempo recuperado</div><div class="v">~2 h <small>por semana</small></div><div class="just">Se acaba el dictado y la transcripción entre Mario y Juanjo.</div></div>
+    <div class="kpi"><div class="k">Errores evitados</div><div class="v">Pago a la persona correcta</div><div class="just">Se llavea por código, no por dictado: el error de fila desaparece.</div></div>
+    <div class="kpi wide"><div class="k">Sobre</div><div class="v">$773.810 <small>MXN/semana</small></div><div class="just">El flujo que hoy se mueve a ciegas queda blindado.</div></div>
+  </div>
+</div></section>
+
+<!-- QW4 -->
+<section class="section panel diag"><div class="wrap reveal">
+  <div class="phead">
+    <span class="solchip">Solución 18 · vencimientos</span>
+    <h3><span style="color:var(--ok)">Notificaciones automáticas</span> de vencimientos.</h3>
+  </div>
+  <div class="mmwrap" role="img" aria-label="Flujo real de la Solución 18: alerta automática de vencimientos">
+<pre class="mermaid">
+flowchart LR
+  cron{{n8n - cron: chequeo el 1 y el 15 de cada mes}}
+  db[(CRM · campos fecha LICENCIA y POLIZA · ya existen)]
+  d1{Vence en menos de 2 meses}
+  skip[Sin accion]
+  out([■ Alerta WhatsApp o Telegram a Juanjo · P1 licencia P2 poliza])
+  cron --> db --> d1
+  d1 -->|no| skip
+  d1 -->|si| out
+  classDef sol fill:#14251b,stroke:#34d399,color:#c9f5df
+  class out sol
+</pre>
+  </div>
+  <div class="kpis wk">
+    <div class="kpi wide"><div class="k">Riesgo evitado</div><div class="v">Cero choferes sin cobertura</div><div class="just">Un solo siniestro evitado ya paga la solución.</div></div>
+    <div class="kpi"><div class="k">Efecto</div><div class="v">Corre solo</div><div class="just">Avisa 2 meses antes, sin revisión manual.</div></div>
+    <div class="kpi"><div class="k">Errores evitados</div><div class="v">Nada se pasa</div><div class="just">El dato ya existe; solo faltaba que avisara.</div></div>
+  </div>
+</div></section>
+
+<!-- QW5 -->
+<section class="section panel diag"><div class="wrap reveal">
+  <div class="phead">
+    <span class="solchip">Solución 7 + 2 · reportes y tarifas</span>
+    <h3>Reportes de cobro <span style="color:var(--ok)">automáticos</span>, tarifa única.</h3>
+  </div>
+  <div class="mmwrap" role="img" aria-label="Flujo real de la Solución 7: generador de reportes por cliente">
+<pre class="mermaid">
+flowchart LR
+  src[/🟢 Drives estandarizados · servicios con folio/]
+  db[(Airtable · TARIFAS + CHOFERES)]
+  n1{{n8n - nodo: agrupa servicios por cliente + periodo}}
+  n2{{n8n - nodo: calcula importe con tarifa · reglas fijas}}
+  n3{{n8n - nodo: arma reporte con plantilla MOTHERSON}}
+  cond{cliente tiene formato propio}
+  out1([■ Reporte pre-factura estandar])
+  out2([■ Excel/PDF para portal del cliente 🔶])
+  src -->|servicios validados| n1
+  db -->|tarifa de cobro| n2
+  n1 --> n2 --> n3 --> cond
+  cond -->|si| out2
+  cond -->|no| out1
+  classDef sol fill:#14251b,stroke:#34d399,color:#c9f5df
+  class out1,out2,db sol
+</pre>
+  </div>
+  <div class="kpis wk">
+    <div class="kpi"><div class="k">Horas recuperadas</div><div class="v">~6 h <small>por semana</small></div><div class="just">Los ~15 formatos a mano pasan a generarse solos.</div></div>
+    <div class="kpi"><div class="k">Errores evitados</div><div class="v">Cero descuadres <small>de tarifa</small></div><div class="just">La tarifa vive en un solo lugar y se cambia una vez.</div></div>
+    <div class="kpi wide"><div class="k">Efecto</div><div class="v">Facturar bien y a tiempo</div><div class="just">Reporte correcto a la primera → se cobra antes.</div></div>
+  </div>
+</div></section>
+
+<!-- QW6 · ANUNCIOS (nueva) -->
+<section class="section panel diag"><div class="wrap reveal">
+  <div class="phead">
+    <span class="solchip">Solución 25-27 · adquisición</span>
+    <h3>Captación por <span style="color:var(--ok)">anuncios</span>, registrada y con seguimiento.</h3>
+  </div>
+  <div class="mmwrap" role="img" aria-label="Flujo real del loop de adquisición: Soluciones 25, 26 y 27">
+<pre class="mermaid">
+flowchart LR
+  ads[/📢 Meta ads → WhatsApp 🔶/]
+  outb[/🟢 Outbound Rubi y Ana/]
+  cap{{n8n - captura el lead + estampa origen/campana · Sol 25}}
+  crm[(Airtable · CRM de adquisicion · leads + pipeline)]
+  cron{{n8n - cron: seguimiento post-cotizacion · Sol 26}}
+  ia[IA GPT-4o-mini · personaliza el mensaje · no decide]
+  ch[/📱 WhatsApp o correo/]
+  d1{el lead responde}
+  stop([■ Freno del seguimiento])
+  rep([■ Reporte comercial · pipeline · win-rate · por origen])
+  d2{el lead convirtio · Sol 27}
+  ev{{n8n - arma el evento de conversion}}
+  meta[(🔶 Meta Conversions API · pixel)]
+  out([■ La pauta optimiza hacia leads que convierten])
+  ads --> cap
+  outb --> cap
+  cap --> crm
+  crm --> cron --> ia --> ch --> d1
+  d1 -->|si| stop
+  d1 -->|no| cron
+  crm --> rep
+  crm --> d2
+  d2 -->|si| ev --> meta --> out
+  d2 -->|aun no| crm
+  classDef sol fill:#14251b,stroke:#34d399,color:#c9f5df
+  class crm,stop,rep,out sol
+</pre>
+  </div>
+  <div class="kpis wk">
+    <div class="kpi wide"><div class="k">Errores evitados</div><div class="v">Cero leads perdidos</div><div class="just">Hoy los leads de ads se responden y no se registran en ningún lado.</div></div>
+    <div class="kpi"><div class="k">Efecto</div><div class="v">Medís la conversión</div><div class="just">Cada lead queda con su origen y campaña.</div></div>
+    <div class="kpi"><div class="k">Dinero</div><div class="v">Baja el costo por lead</div><div class="just">La pauta optimiza hacia lo que convierte (CAPI).</div></div>
+  </div>
+</div></section>
+
+<!-- 7 · HOJA DE RUTA -->
+<section class="section" id="hoja-de-ruta">
+  <div class="wrap">
+    <div class="eyebrow grad-sag reveal"><span class="dot"></span> 7 · Hoja de ruta</div>
+    <h2 class="reveal">Dos fases. La primera se aprueba para arrancar; la segunda se construye por módulos.</h2>
+
+    <div class="phase1 reveal">
+      <div class="pl">Fase 1 · ≈ 4 semanas</div>
+      <h3>Quick wins, sobre las herramientas actuales.</h3>
+      <p>Los 7 quick wins de arriba. Bajo riesgo, resultados medibles en un mes. Entregable visible: el padrón único con código + el consolidado automático + el validador de pago, funcionando.</p>
+    </div>
+
+    <div class="phase2head reveal">
+      <div class="pl">Fase 2 · por módulos</div>
+      <h3>La plataforma reemplaza gradualmente lo disperso de hoy.</h3>
+      <p>Una sola plataforma web (Admin/Ops/RR.HH./Dirección) + móvil (chofer), en 5 módulos ordenados por dependencia. Nada se apaga de golpe.</p>
+    </div>
+
+    <div class="modules reveal">
+      <div class="mod">
+        <div class="ml">A</div>
+        <div class="mt">Cimiento + Captura</div>
+        <div class="mc">Modelo de datos + roles + importación (siembra el código único) + Captura + PWA básica del chofer.</div>
+        <div class="mk">Mata: retrabajo copy-paste + desfase de 1 día + servicio no editable.</div>
+        <div class="md">Depende de: —</div>
+      </div>
+      <div class="mod">
+        <div class="ml">B</div>
+        <div class="mt">Boletas + Tarifas + Reportes</div>
+        <div class="mc">Boletas nativas + validación 2 niveles + tarifa única + reportes de cobro.</div>
+        <div class="mk">Mata: 1.5/doble a mano + tarifa dispersa + reportes a mano.</div>
+        <div class="md">Depende de: A</div>
+      </div>
+      <div class="mod">
+        <div class="ml">C</div>
+        <div class="mt">Plata</div>
+        <div class="mc">Pago + dispersión + facturación con semáforo + cobranza.</div>
+        <div class="mk">Mata: dictado oral (error de fila) + cobranza a ciegas.</div>
+        <div class="md">Depende de: B</div>
+      </div>
+      <div class="mod">
+        <div class="ml">D</div>
+        <div class="mt">RR.HH. + Chofer</div>
+        <div class="mc">Expediente único + vencimientos + nómina + PWA completa del chofer.</div>
+        <div class="mk">Mata: papel + pólizas inaccesibles + padrón sucio.</div>
+        <div class="md">Depende de: A (∥ B/C)</div>
+      </div>
+      <div class="mod">
+        <div class="ml">E</div>
+        <div class="mt">Dirección + Adquisición + Integraciones</div>
+        <div class="mc">Dashboards + CRM de adquisición + Omar + respaldos + integraciones.</div>
+        <div class="mk">Mata: “por experiencia, no por número” + sin respaldo.</div>
+        <div class="md">Depende de: B, C, D</div>
+      </div>
+    </div>
+    <div class="roadnote reveal">→ <span>El orden respeta la dependencia: primero la llave y la captura, al final los tableros — que salen solos. Es independiente del stack elegido.</span></div>
+  </div>
+</section>
+
+<!-- LA PLATAFORMA -->
+<section class="platform" id="plataforma">
+  <div class="wrap">
+    <div class="eyebrow grad-sag reveal"><span class="dot"></span> Y ahora, el paso grande</div>
+    <h2 class="reveal">No son 27 parches sueltos. Es <span class="grad-sag">una sola plataforma</span> donde vive toda tu operación.</h2>
+    <p class="lede reveal">Acceso web de escritorio para Administración, Operaciones y RR.HH., y desde el móvil para los choferes. Cada rol ve lo suyo; el dato se carga una vez y fluye.</p>
+
+    <div class="mmwrap big reveal" style="margin-top:40px" role="img" aria-label="Arquitectura propuesta: cómo se conectan todas las soluciones en un solo flujo">
+<pre class="mermaid">
+flowchart TD
+  ads[/📢 Meta ads → WhatsApp/]
+  drive[(📄 Drives · en transicion)]
+  plat[(🖥 SAG SYSTEM · captura unica · coordinada con Eduardo)]
+  n8n{{⚙ n8n · motor de integracion · la agencia}}
+  data[(🗄 Airtable / Supabase · CHOFERES SAGxxx + TARIFAS + estado)]
+  sp[(🔶 SharePoint · respaldo automatico)]
+  rep([Reportes por cliente · Sol 7])
+  cob([Cobranza · Sol 5])
+  facturas([Facturacion · Sol 10])
+  motorpago([Motor de pago + dispersion · Sol 9/1])
+  despacho[/🏦 Despacho bancario/]
+  banco[/🔶 Banorte/]
+  fact99[/🔶 Factura99/]
+  crmv[(📇 CRM adquisicion Airtable · Sol 25)]
+  seg([Seguimiento + reporte comercial · Sol 26])
+  capi([Meta Conversions API · Sol 27])
+  talento([Talento y Cultura SAG · Sol 22/19/20/18])
+  drive -. Sol 23 puente → captura unica .-> plat
+  plat &lt;--&gt; n8n
+  plat --> sp
+  n8n &lt;--&gt; data
+  data --> rep
+  data --> cob --> banco
+  data --> facturas --> fact99
+  data --> motorpago --> despacho
+  ads --> crmv
+  crmv &lt;--&gt; n8n
+  crmv --> seg --> capi --> ads
+  data --> talento
+  classDef la agencia fill:#14251b,stroke:#34d399,color:#c9f5df
+  classDef plataforma fill:#2a1d3d,stroke:#8943e3,color:#e8dcff
+  class n8n,data la agencia
+  class plat plataforma
+</pre>
+    </div>
+    <div class="mmcaption reveal"><span>——</span><span>El <b>SAGxxx</b> vive en la base compartida y cose pago, reportes y RR.HH. a la vez; la Plataforma queda como núcleo operativo y <b>n8n</b> es el motor que le devuelve lo que hoy no genera. <b>Adquisición</b> es un circuito propio. Casi no queda ningún puente manual.</span></div>
+
+    <div class="roles reveal">
+      <div class="role">
+        <div class="rt">Administración</div>
+        <div class="rd">Valida, tarifa, factura, cobra y paga desde un solo lugar.</div>
+        <ul><li>Pago y dispersión sin dictado</li><li>Facturación DESA/SAG con semáforo</li><li>Cobranza que avisa, no a ciegas</li></ul>
+      </div>
+      <div class="role">
+        <div class="rt">Operaciones</div>
+        <div class="rd">Captura una vez, arma rutas y sigue cada servicio.</div>
+        <ul><li>Se acabó el copy-paste</li><li>Boleta 1.5/doble con la cuenta hecha</li><li>Incidencias con canal y métrica</li></ul>
+      </div>
+      <div class="role">
+        <div class="rt">Choferes</div>
+        <div class="rd">Desde el celular, sin llamar a nadie.</div>
+        <ul><li>Confirmar el servicio + hora de llegada</li><li>Verificar que realizó el viaje</li><li>Ver sus boletas y su pago</li></ul>
+      </div>
+    </div>
+
+    <div class="sunk reveal">
+      <div class="gcard"><div class="inner">
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:start">
+          <div style="font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;color:var(--sag-2);border:1px solid var(--border-strong);border-radius:10px;padding:9px 13px;white-space:nowrap">Sobre lo que ya invertiste</div>
+          <p style="color:var(--text-muted);font-size:16px;line-height:1.65">No es borrón y cuenta nueva. <b style="color:var(--text)">Lo que ya construiste con tu proveedor actual no se tira:</b> se coordina, se absorbe o se reemplaza por partes, a tu ritmo. Es un proyecto separado, que arranca por donde más duele, la captura, y va sumando módulos. <b style="color:var(--text)">Nada se apaga de golpe.</b></p>
+        </div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 · STACK -->
+<section class="section" id="stack">
+  <div class="wrap">
+    <div class="eyebrow grad-sag reveal"><span class="dot"></span> 8 · Stack tecnológico recomendado</div>
+    <h2 class="reveal">Una combinación probada en producción, y portable.</h2>
+    <p class="lede reveal">El diseño de la plataforma es portable: sigue en pie si a futuro se elige otra combinación equivalente.</p>
+    <div class="tablewrap reveal" style="margin-top:26px"><div class="tablescroll"><table class="proc">
+      <thead><tr><th>Capa</th><th>Recomendación</th></tr></thead>
+      <tbody>
+        <tr><td class="name" style="white-space:nowrap">Base de datos</td><td class="pain">PostgreSQL (gestionado, vía Supabase) — integridad del dinero</td></tr>
+        <tr><td class="name" style="white-space:nowrap">Auth + permisos</td><td class="pain">Supabase Auth + permisos por fila/columna — 5 roles + PII (CURP/NSS/cuentas)</td></tr>
+        <tr><td class="name" style="white-space:nowrap">App web</td><td class="pain">Next.js + Vercel — Admin / Ops / RR.HH. / Dirección</td></tr>
+        <tr><td class="name" style="white-space:nowrap">App del chofer</td><td class="pain">PWA instalable (tolera red pobre)</td></tr>
+        <tr><td class="name" style="white-space:nowrap">Motor de automatización</td><td class="pain">n8n — alertas, dispersión, respaldos, integraciones</td></tr>
+        <tr><td class="name" style="white-space:nowrap">IA</td><td class="pain">Claude / GPT-4o-mini — solo extrae y redacta; <b style="color:var(--text)">nunca decide pagos, tarifas ni rutas</b></td></tr>
+      </tbody>
+    </table></div></div>
+    <div class="notecards reveal">
+      <div class="notecard"><div class="nt">Por qué este</div><div class="nb">Ya está probado en producción in-house (misma combinación), lo que baja el riesgo; n8n ya es el motor que dominamos; y la flexibilidad se mantiene.</div></div>
+      <div class="notecard"><div class="nt">Se integra, no reemplaza</div><div class="nb">Factura99, Banorte, SharePoint, Meta y la Plataforma SAG del proveedor. Tres escenarios de coexistencia: absorber / coordinar / <b style="color:var(--text)">reemplazo gradual (recomendado)</b>. Una capa de importación lee su export y lo normaliza.</div></div>
+      <div class="notecard"><div class="nt">Seguridad</div><div class="nb">Entornos separados, gestor de secretos (rotar el password en texto plano detectado), respaldos automáticos (hoy SAG no tiene respaldo), PII cifrada y enmascarada por rol.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 · LÍNEA BASE DE MÉTRICAS -->
+<section class="section" id="metricas">
+  <div class="wrap">
+    <div class="eyebrow grad-sag reveal"><span class="dot"></span> 9 · Línea base de métricas</div>
+    <h2 class="reveal">De dónde partimos, y a qué meta apunta cada mejora.</h2>
+    <p class="lede reveal">La foto medible del estado actual, para que el resultado de la Fase 2 se mida con números. Costo-hora: $12,5 USD/h (estimado); los ahorros de horas se expresan anualizados en USD.</p>
+    <div class="baseline reveal">
+      <div class="brow head"><div>KPI</div><div>Hoy</div><div></div><div>Meta</div><div>Fase</div></div>
+      <div class="brow"><div class="kn">Retrabajo de captura</div><div class="now">~2 personas casi full-time copiando</div><div class="arrow">→</div><div class="goal">0 · captura única</div><div class="fase">1→2</div></div>
+      <div class="brow"><div class="kn">Desfase Drive ↔ plataforma</div><div class="now">1 día</div><div class="arrow">→</div><div class="goal">tiempo real</div><div class="fase">2</div></div>
+      <div class="brow"><div class="kn">Servicios perdidos entre sistemas</div><div class="now">~400/sem (2.000 vs 1.600)</div><div class="arrow">→</div><div class="goal">~0</div><div class="fase">2</div></div>
+      <div class="brow"><div class="kn">Incidencias registradas</div><div class="now">0% (ocurren en 40-45%)</div><div class="arrow">→</div><div class="goal">100% con categoría</div><div class="fase">2</div></div>
+      <div class="brow"><div class="kn">Consolidación de drives</div><div class="now">6-8 h/sem (≈ $3.900-5.200 USD/año)</div><div class="arrow">→</div><div class="goal">~0 · automático</div><div class="fase">1</div></div>
+      <div class="brow"><div class="kn">Reportes de cobro</div><div class="now">~7,5 h/sem, ~15 formatos (≈ $4.900 USD/año)</div><div class="arrow">→</div><div class="goal">automático, 1 modelo</div><div class="fase">1→2</div></div>
+      <div class="brow"><div class="kn">Cobranza</div><div class="now">1,5-2 h/día, a ciegas</div><div class="arrow">→</div><div class="goal">con aviso automático</div><div class="fase">2</div></div>
+      <div class="brow"><div class="kn">Armado del pago externos</div><div class="now">50 min/sem dictado + error de fila</div><div class="arrow">→</div><div class="goal">automático, error ≈ 0</div><div class="fase">1→2</div></div>
+      <div class="brow"><div class="kn">Alta de chofer</div><div class="now">~2 h/alta, papel + digital</div><div class="arrow">→</div><div class="goal">perfil único digital</div><div class="fase">2</div></div>
+      <div class="brow"><div class="kn">Padrón depurado</div><div class="now">186 mezclados vs ~90 reales</div><div class="arrow">→</div><div class="goal">1 padrón único con código</div><div class="fase">1</div></div>
+      <div class="brow"><div class="kn">Alerta de vencimientos</div><div class="now">sin alerta</div><div class="arrow">→</div><div class="goal">aviso 2 meses antes, 0 vencidos</div><div class="fase">1</div></div>
+      <div class="brow"><div class="kn">Código único que viaja</div><div class="now">0</div><div class="arrow">→</div><div class="goal">100% de punta a punta</div><div class="fase">1→2</div></div>
+      <div class="brow"><div class="kn">Leads de anuncios registrados</div><div class="now">0%</div><div class="arrow">→</div><div class="goal">100% con origen</div><div class="fase">2</div></div>
+      <div class="brow anchor"><div class="kn">Ancla · dinero movido a mano sin control</div><div class="now">$773.810 MXN/sem ≈ $40M/año</div><div class="arrow">→</div><div class="goal">mismo flujo trazable, validado y llaveado por código</div><div class="fase">1→2</div></div>
+    </div>
+    <div class="baseline-note reveal">Pendiente de cuantificar en Fase 2: el costo económico del paro de línea por incidencia (OP-09), reconocido pero aún sin cifra.</div>
+  </div>
+</section>
+
+<!-- VISITÁ -->
+<section class="visita" id="visitala">
+  <div class="wrap">
+    <div class="eyebrow grad-sag reveal" style="justify-content:center"><span class="dot"></span> Pasemos de la teoría a la práctica</div>
+    <h2 class="reveal">No te lo contamos: te lo <span class="grad-sag">mostramos funcionando</span>.</h2>
+    <p class="lede reveal">Esto no es una maqueta: es una parte de tu plataforma, corriendo. Míralo, tócalo y compáralo con lo que usas hoy.</p>
+    <a class="btn-visita reveal" href="../sag-plataforma-dummy/index.html">Visita el demo <span class="arr">→</span></a>
+  </div>
+</section>
+
+<!-- CIERRE + ASK -->
+<section class="visita" id="cierre" style="padding-top:30px">
+  <div class="wrap">
+    <div class="eyebrow grad-sag reveal" style="justify-content:center"><span class="dot"></span> Cómo se ve el después</div>
+    <h2 class="reveal">Una operación que <span class="grad-sag">corre sola</span>, sin teclear dos veces.</h2>
+    <p class="lede reveal">El dato se carga una vez y viaja con su código de punta a punta. El pago, la cobranza y los reportes salen solos y sin errores de tecleo. Las alertas avisan antes de que algo venza, y las decisiones se toman con números en tiempo real, no de memoria. El equipo deja de transcribir y vuelve a operar.</p>
+
+    <div class="sunk reveal" style="margin-top:44px;text-align:left">
+      <div class="gcard"><div class="inner">
+        <div class="eyebrow grad-sag" style="margin-bottom:14px"><span class="dot"></span> Cómo arrancamos</div>
+        <p style="color:var(--text);font-size:clamp(18px,2.4vw,24px);font-weight:600;line-height:1.35">Empezamos por la Fase 1: los quick wins, sobre las herramientas que ya usas.</p>
+        <p style="color:var(--text-muted);font-size:16px;line-height:1.65;margin-top:14px">Bajo riesgo, en más o menos un mes, y con resultados que se miden. El código único empieza a viajar, el pago se blinda, los duplicados desaparecen y las pólizas avisan solas. De ahí sumamos la plataforma, módulo por módulo, a tu ritmo. Nada se apaga de golpe.</p>
+      </div></div>
+    </div>
+
+    <div class="sunk reveal" style="margin-top:40px;text-align:left">
+      <div class="gcard"><div class="inner">
+        <div class="eyebrow grad-sag" style="margin-bottom:18px"><span class="dot"></span> 10 · Inversión</div>
+        <div class="invest">
+          <div class="icard f1">
+            <div class="il">Fase 1 · Quick wins</div>
+            <div class="iprice">USD $4.000 <small>· ~4 semanas</small></div>
+            <div class="iscope">Código único + drives estandarizados + consolidado automático + validador de pago + tarifa única + alerta de vencimientos + seguimiento de leads. Sobre las herramientas que SAG ya usa.</div>
+          </div>
+          <div class="icard">
+            <div class="il">Fase 2 · Plataforma</div>
+            <div class="iprice" style="font-size:clamp(24px,3.2vw,32px)">Se cotiza</div>
+            <div class="iscope">La plataforma por módulos (A–E), con reemplazo gradual de lo disperso de hoy. Se cotiza al definir el alcance junto con SAG — nada se compromete a ciegas.</div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="sunk reveal" style="margin-top:40px;text-align:left">
+      <div class="gcard"><div class="inner">
+        <div class="eyebrow grad-sag" style="margin-bottom:14px"><span class="dot"></span> El próximo paso</div>
+        <p style="color:var(--text);font-size:clamp(18px,2.4vw,24px);font-weight:600;line-height:1.35">Aprobar el arranque de la Fase 1.</p>
+        <p style="color:var(--text-muted);font-size:16px;line-height:1.65;margin-top:14px">Lo coordinamos contigo directo por WhatsApp: definimos el set de quick wins con el que arrancamos, y en más o menos un mes ya hay resultados sobre la mesa. Sin compromisos grandes, sin apagar nada de golpe.</p>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap inner">
+    <div class="brandmark"><span class="sag">SAG</span> <span class="x">×</span> <span class="nx">la agencia</span></div>
+    <div>Diagnóstico + diseño de plataforma · <span class="tag">la agencia®</span> · 2026</div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    function loadMermaid(){
+      var s=document.createElement('script');
+      s.src='https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+      s.async=true;
+      s.onload=initMermaid;
+      s.onerror=function(){ console.warn('Mermaid CDN no disponible en este entorno; los diagramas se ver\u00e1n como texto.'); };
+      document.body.appendChild(s);
+    }
+    // Inject AFTER the window load event so a stalled CDN never blocks page readiness.
+    if(document.readyState==='complete') setTimeout(loadMermaid,0);
+    else window.addEventListener('load', function(){ setTimeout(loadMermaid,0); });
+  })();
+  function initMermaid(){
+  if(window.mermaid){
+    mermaid.initialize({
+      startOnLoad:false,
+      securityLevel:'loose',
+      theme:'base',
+      themeVariables:{
+        fontFamily:"'Geist Sans',-apple-system,sans-serif",
+        fontSize:'13px',
+        primaryColor:'#241517',
+        primaryBorderColor:'#5f4d42',
+        primaryTextColor:'#f3ece8',
+        secondaryColor:'#2f1c1f',
+        tertiaryColor:'#1a0e0f',
+        lineColor:'#9c8a80',
+        textColor:'#c9bdb8',
+        edgeLabelBackground:'#150b0c',
+        clusterBkg:'#150b0c',
+        clusterBorder:'#5f4d42'
+      },
+      flowchart:{ curve:'basis', nodeSpacing:34, rankSpacing:44, padding:10, useMaxWidth:false }
+    });
+    (function(){
+      var blocks = Array.prototype.slice.call(document.querySelectorAll('pre.mermaid'));
+      var rendered = new WeakSet();
+      function render(el){
+        if(rendered.has(el)) return; rendered.add(el);
+        try{ mermaid.run({nodes:[el]}); }catch(e){ mermaid.init(undefined, el); }
+      }
+      if('IntersectionObserver' in window){
+        var mo = new IntersectionObserver(function(ents){
+          ents.forEach(function(en){ if(en.isIntersecting){ render(en.target); mo.unobserve(en.target); } });
+        },{rootMargin:'300px 0px'});
+        blocks.forEach(function(b){ mo.observe(b); });
+      } else { blocks.forEach(render); }
+    })();
+  }
+  }
+</script>
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var els = document.querySelectorAll('.reveal');
+  if(reduce || !('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in');});}
+  else{
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target);} });
+    },{threshold:0.14, rootMargin:'0px 0px -8% 0px'});
+    els.forEach(function(e){io.observe(e);});
+  }
+  var glow = document.getElementById('glow');
+  var zones = [
+    {sel:'#mapa', c:'radial-gradient(600px 500px at 20% 20%, rgba(255,107,0,.16), transparent 60%)'},
+    {sel:'#procesos', c:'radial-gradient(700px 600px at 75% 40%, rgba(248,113,113,.16), transparent 60%)'},
+    {sel:'#quickwins', c:'radial-gradient(700px 600px at 25% 50%, rgba(52,211,153,.15), transparent 60%)'},
+    {sel:'#plataforma', c:'radial-gradient(800px 600px at 50% 30%, rgba(255,107,0,.16), transparent 62%)'},
+    {sel:'#visitala', c:'radial-gradient(700px 600px at 50% 70%, rgba(255,107,0,.16), transparent 60%)'},
+    {sel:'#cierre', c:'radial-gradient(800px 600px at 50% 60%, rgba(255,107,0,.18), transparent 60%)'}
+  ];
+  if(!reduce){
+    var zio = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ var z=zones.find(function(x){return en.target.matches(x.sel);}); if(z) glow.style.background=z.c; } });
+    },{threshold:0.4});
+    zones.forEach(function(z){var n=document.querySelector(z.sel); if(n) zio.observe(n);});
+    glow.style.background = zones[0].c;
+  }
+})();
+</script>
+</body>
+</html>

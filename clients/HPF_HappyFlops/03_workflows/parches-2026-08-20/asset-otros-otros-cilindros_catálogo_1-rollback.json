@@ -1,0 +1,8 @@
+{
+  "ficha_id": "Otros::Otros::Cilindros Catálogo 1",
+  "record": "6a75073ec994f8308bc849a0",
+  "campo": "media_url",
+  "valor_anterior": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/2f8fb77f-2d20-4b04-a720-c6d57efabd3e.jpeg",
+  "valor_nuevo": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/f5d39057-94dd-4067-a2fa-946e285de925.jpeg",
+  "nota": "Para revertir: PUT con valor_anterior + refrescar la caché de W3 con ttl_seg 0 + sincronizar catalogo-airtable.json."
+}

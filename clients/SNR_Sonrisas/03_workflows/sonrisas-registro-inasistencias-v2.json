@@ -1,0 +1,2007 @@
+{
+  "name": "Sonrisas | Registro Inasistencias",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1456,
+        1200
+      ],
+      "id": "b664418a-3563-428d-b3c1-338e0372f387",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1UUf5tcmXgn9gL7IaYAly_GGp4qGSwL5PhT6NcFXs-OY",
+          "mode": "list",
+          "cachedResultName": "Sonrisas | Bases de datos Automatizaciones [Interno]",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UUf5tcmXgn9gL7IaYAly_GGp4qGSwL5PhT6NcFXs-OY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1441639914,
+          "mode": "list",
+          "cachedResultName": "Registro Inasistencias",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UUf5tcmXgn9gL7IaYAly_GGp4qGSwL5PhT6NcFXs-OY/edit#gid=1441639914"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "ID",
+              "lookupValue": "={{ $('Split Out').item.json.id_paciente}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1680,
+        992
+      ],
+      "id": "24ed74fa-f669-423c-ab0e-a462743375ce",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5d6dc109-f2f7-4720-84c4-4d02bfae7b71",
+                    "leftValue": "={{ $('Get row(s) in sheet').item.json.Inasistencias }}",
+                    "rightValue": 2,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "0-2"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c74f432e-2f7b-4b27-b012-d9cc1d1e29a4",
+                    "leftValue": "={{ $('Get row(s) in sheet').item.json.Inasistencias }}",
+                    "rightValue": 4,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "3-4"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d3345624-a13f-4ec4-9442-dfc76febc59a",
+                    "leftValue": "={{ $('Get row(s) in sheet').item.json.Inasistencias }}",
+                    "rightValue": 4,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "+5"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "none"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        3440,
+        1184
+      ],
+      "id": "20ea5ee5-2a00-4142-b2f6-a9f15b94448d",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1UUf5tcmXgn9gL7IaYAly_GGp4qGSwL5PhT6NcFXs-OY",
+          "mode": "list",
+          "cachedResultName": "Sonrisas | Bases de datos Automatizaciones [Interno]",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UUf5tcmXgn9gL7IaYAly_GGp4qGSwL5PhT6NcFXs-OY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1441639914,
+          "mode": "list",
+          "cachedResultName": "Registro Inasistencias",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UUf5tcmXgn9gL7IaYAly_GGp4qGSwL5PhT6NcFXs-OY/edit#gid=1441639914"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $('Loop Over Items').item.json.id_paciente }}",
+            "Nombre": "={{ $('Loop Over Items').item.json.nombre_paciente }}",
+            "Inasistencias": "1",
+            "Fecha Ultima Inasistencia": "={{ $('Obtener Fecha Ayer').item.json.ayer }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Inasistencias",
+              "displayName": "Inasistencias",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Fecha Ultima Inasistencia",
+              "displayName": "Fecha Ultima Inasistencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2784,
+        1152
+      ],
+      "id": "00bec099-bd18-4a51-a31f-1512eb78a952",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "body.data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        1200
+      ],
+      "id": "c9d6b86c-a09e-4b80-8415-6d2814df00c5",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "amount": 3.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1904,
+        992
+      ],
+      "id": "f048fffb-5b85-44bb-b84e-68955b781c68",
+      "name": "Wait",
+      "webhookId": "e8ec9235-3764-4b33-9b63-b0dc72101f9d"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        784,
+        1184
+      ],
+      "id": "a5f6572a-1b5c-4be9-bbbe-d09e2689ac3d",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code Node\n// Input: items (array de objetos JSON)\n// Output:\n//   1) items filtrados (únicos por id_paciente)\n//   2) un segundo item con la lista de ids_paciente eliminados\n\nconst seen = new Set();\nconst unique = [];\nconst removedIds = [];\n\nfor (const item of items) {\n  const data = item.json;\n\n  if (!seen.has(data.id_paciente)) {\n    seen.add(data.id_paciente);\n    unique.push(item);\n  } else {\n    removedIds.push(data.id_paciente);\n  }\n}\n\n// El flujo debe retornar un array de items.\n// Devolvemos los items únicos + un item final con los ids eliminados.\nreturn [\n  ...unique,\n/*  {\n    json: {\n      removed_ids: removedIds\n    }\n  }*/\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        1200
+      ],
+      "id": "bea061e9-5c87-45b6-b662-4b3ae701c6ae",
+      "name": "Eliminar duplicados"
+    },
+    {
+      "parameters": {
+        "url": "https://api.dentalink.healthatom.com/api/v1/citas",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "=q",
+              "value": "={\"id_estado\":{\"eq\":\"8\"},\"fecha\":{\"eq\":\"{{ $json.ayer }}\"}}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token nsZXO2i9zjO9tYiqOxESqxVgsjpL3tTgQPdTQxti.NTb7Cg13dBRJrk27FXpLO1eSHeXdeOKtgVJ2Hl6e"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        1008
+      ],
+      "id": "ed9d7e4e-8a01-44f5-a20d-0e0e8bb55d72",
+      "name": "Obtener citas con estado 8",
+      "notesInFlow": true,
+      "notes": "Anulado Wpp"
+    },
+    {
+      "parameters": {
+        "url": "https://api.dentalink.healthatom.com/api/v1/citas",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "=q",
+              "value": "={\"id_estado\":{\"eq\":\"19\"},\"fecha\":{\"eq\":\"{{ $json.ayer }}\"}}\n\n"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token nsZXO2i9zjO9tYiqOxESqxVgsjpL3tTgQPdTQxti.NTb7Cg13dBRJrk27FXpLO1eSHeXdeOKtgVJ2Hl6e"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        1200
+      ],
+      "id": "88187718-403b-4374-81ca-3f3480f027c6",
+      "name": "Obtener citas con estado 19",
+      "notesInFlow": true,
+      "notes": "No asistió"
+    },
+    {
+      "parameters": {
+        "url": "https://api.dentalink.healthatom.com/api/v1/citas",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "=q",
+              "value": "={\n  \"fecha\": [\n    { \"gte\": \"{{ $('Get row(s) in sheet').item.json['Fecha Ultima Inasistencia'].substring(1) }}\" },\n    { \"lte\": \"{{ $('Obtener Fecha Ayer').item.json.ayer }}\" }\n  ],\n  \"id_estado\": { \"eq\": \"2\" }\n}\n"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token nsZXO2i9zjO9tYiqOxESqxVgsjpL3tTgQPdTQxti.NTb7Cg13dBRJrk27FXpLO1eSHeXdeOKtgVJ2Hl6e"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2352,
+        992
+      ],
+      "id": "d3cca25d-d3fa-4734-88e6-1c02c2b81512",
+      "name": "Obtener citas con estado 2",
+      "notesInFlow": true,
+      "notes": "Atendido"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6cc84d0e-68d6-49ad-8089-2bf6a485a94b",
+              "leftValue": "={{ $json.id_paciente }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3008,
+        992
+      ],
+      "id": "4751606e-a073-4497-ae83-d033e6521a1c",
+      "name": "Tiene asistencia"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1UUf5tcmXgn9gL7IaYAly_GGp4qGSwL5PhT6NcFXs-OY",
+          "mode": "list",
+          "cachedResultName": "Sonrisas | Bases de datos Automatizaciones [Interno]",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UUf5tcmXgn9gL7IaYAly_GGp4qGSwL5PhT6NcFXs-OY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1441639914,
+          "mode": "list",
+          "cachedResultName": "Registro Inasistencias",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UUf5tcmXgn9gL7IaYAly_GGp4qGSwL5PhT6NcFXs-OY/edit#gid=1441639914"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $('Get row(s) in sheet').item.json.ID }}",
+            "Inasistencias": "=0",
+            "Fecha Ultima Inasistencia": "="
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Inasistencias",
+              "displayName": "Inasistencias",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Fecha Ultima Inasistencia",
+              "displayName": "Fecha Ultima Inasistencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3440,
+        992
+      ],
+      "id": "3d322de6-2718-4b74-8e45-9d0406fd669b",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1UUf5tcmXgn9gL7IaYAly_GGp4qGSwL5PhT6NcFXs-OY",
+          "mode": "list",
+          "cachedResultName": "Sonrisas | Bases de datos Automatizaciones [Interno]",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UUf5tcmXgn9gL7IaYAly_GGp4qGSwL5PhT6NcFXs-OY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1441639914,
+          "mode": "list",
+          "cachedResultName": "Registro Inasistencias",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UUf5tcmXgn9gL7IaYAly_GGp4qGSwL5PhT6NcFXs-OY/edit#gid=1441639914"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $('Get row(s) in sheet').item.json.ID }}",
+            "Nombre": "={{ $('Get row(s) in sheet').item.json.Nombre }}",
+            "Inasistencias": "={{ $('Get row(s) in sheet').item.json.Inasistencias + 1}}",
+            "Fecha Ultima Inasistencia": "={{ $('Obtener Fecha Ayer *').item.json.ayer }}",
+            "row_number": 0
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Inasistencias",
+              "displayName": "Inasistencias",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Fecha Ultima Inasistencia",
+              "displayName": "Fecha Ultima Inasistencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3664,
+        1056
+      ],
+      "id": "aac72fac-e006-4dbe-82ed-fdd748d33382",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1UUf5tcmXgn9gL7IaYAly_GGp4qGSwL5PhT6NcFXs-OY",
+          "mode": "list",
+          "cachedResultName": "Sonrisas | Bases de datos Automatizaciones [Interno]",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UUf5tcmXgn9gL7IaYAly_GGp4qGSwL5PhT6NcFXs-OY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1441639914,
+          "mode": "list",
+          "cachedResultName": "Registro Inasistencias",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UUf5tcmXgn9gL7IaYAly_GGp4qGSwL5PhT6NcFXs-OY/edit#gid=1441639914"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $('Get row(s) in sheet').item.json.ID }}",
+            "Nombre": "={{ $('Get row(s) in sheet').item.json.Nombre }}",
+            "Inasistencias": "={{ $('Get row(s) in sheet').item.json.Inasistencias + 1}}",
+            "Fecha Ultima Inasistencia": "={{ $('Obtener Fecha Ayer').item.json.ayer }}",
+            "row_number": 0
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Inasistencias",
+              "displayName": "Inasistencias",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Fecha Ultima Inasistencia",
+              "displayName": "Fecha Ultima Inasistencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3664,
+        1200
+      ],
+      "id": "060fa7c0-4c10-4f39-853d-117fea8c78f8",
+      "name": "Update row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Si existe en la tabla, chequear que no tenga una cita con fecha posterior a la última cita inasistida, a la que haya asistido.\n\n- Estado: Asistió\n- Fecha: Mayor a \"Fecha Ultima Inasistencia\" y menor a 'hoy'",
+        "height": 144,
+        "width": 528,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1936,
+        800
+      ],
+      "typeVersion": 1,
+      "id": "e071508f-fde2-421c-ab67-666204986252",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1UUf5tcmXgn9gL7IaYAly_GGp4qGSwL5PhT6NcFXs-OY",
+          "mode": "list",
+          "cachedResultName": "Sonrisas | Bases de datos Automatizaciones [Interno]",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UUf5tcmXgn9gL7IaYAly_GGp4qGSwL5PhT6NcFXs-OY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1441639914,
+          "mode": "list",
+          "cachedResultName": "Registro Inasistencias",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UUf5tcmXgn9gL7IaYAly_GGp4qGSwL5PhT6NcFXs-OY/edit#gid=1441639914"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $('Get row(s) in sheet').item.json.ID }}",
+            "Nombre": "={{ $('Get row(s) in sheet').item.json.Nombre }}",
+            "Inasistencias": "={{ $('Get row(s) in sheet').item.json.Inasistencias + 1}}",
+            "Fecha Ultima Inasistencia": "={{ $('Obtener Fecha Ayer').item.json.ayer }}",
+            "row_number": 0
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Inasistencias",
+              "displayName": "Inasistencias",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Fecha Ultima Inasistencia",
+              "displayName": "Fecha Ultima Inasistencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3664,
+        1360
+      ],
+      "id": "9505bbcf-8dac-4958-b186-7cb7c2bd144a",
+      "name": "Update row in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.dentalink.healthatom.com/api/v1/tareas",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token nsZXO2i9zjO9tYiqOxESqxVgsjpL3tTgQPdTQxti.NTb7Cg13dBRJrk27FXpLO1eSHeXdeOKtgVJ2Hl6e"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "detalle",
+              "value": "=ENVIAR MENSAJE - Usuario con {{ $('Update row in sheet2').item.json.Inasistencias }} inasistencias!"
+            },
+            {
+              "name": "fecha_vencimiento",
+              "value": "={{ $now.format('yyyy-MM-dd') }}"
+            },
+            {
+              "name": "id_paciente",
+              "value": "={{ $('Get row(s) in sheet').item.json.ID }}"
+            },
+            {
+              "name": "id_sucursal",
+              "value": "={{ $('Loop Over Items').item.json.id_sucursal }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4112,
+        1200
+      ],
+      "id": "572b3cdb-0b18-4b28-bad3-8480549ddffb",
+      "name": "Crear Tarea",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "67ee1620-e8ad-43df-94a4-49d631f5f7c7",
+              "leftValue": "={{ $('Get row(s) in sheet').item.json.ID }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2128,
+        992
+      ],
+      "id": "60101daf-0e29-4fb3-9fff-3865e1346a13",
+      "name": "Existe en la tabla"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "41b6cf49-db2c-4cb2-a177-cc820cc158a8",
+              "leftValue": "={{ $('Get row(s) in sheet').item.json.ID }}",
+              "rightValue": "={{ $json.id_paciente }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        2784,
+        992
+      ],
+      "id": "66de110e-6a21-4d7f-b98c-bae30946677e",
+      "name": "current Paciente",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "amount": 3.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3888,
+        1200
+      ],
+      "id": "a4c4210d-02eb-49a5-bf55-b6f38e7d7578",
+      "name": "Wait2",
+      "webhookId": "f2822d67-e2ac-4640-89d1-d65cfacd31be"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.dentalink.healthatom.com/api/v1/tareas",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token nsZXO2i9zjO9tYiqOxESqxVgsjpL3tTgQPdTQxti.NTb7Cg13dBRJrk27FXpLO1eSHeXdeOKtgVJ2Hl6e"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "detalle",
+              "value": "=CONTACTAR EN 1 MES - Usuario con {{ $('Update row in sheet3').item.json.Inasistencias }} inasistencias!"
+            },
+            {
+              "name": "fecha_vencimiento",
+              "value": "={{ $now.format('yyyy-MM-dd') }}"
+            },
+            {
+              "name": "id_paciente",
+              "value": "={{ $('Get row(s) in sheet').item.json.ID }}"
+            },
+            {
+              "name": "id_sucursal",
+              "value": "={{ $('Loop Over Items').item.json.id_sucursal }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4112,
+        1360
+      ],
+      "id": "9b8c7e30-2ce1-4ae5-83bd-33c9f6847889",
+      "name": "Crear Tarea1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "amount": 3.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3888,
+        1360
+      ],
+      "id": "c9bf9669-ecba-4dfd-8294-067d77a7cf01",
+      "name": "Wait3",
+      "webhookId": "f2822d67-e2ac-4640-89d1-d65cfacd31be"
+    },
+    {
+      "parameters": {
+        "chatId": "6390727286",
+        "text": "=Fallo en el flujo:\n\n{{ $json.workflow.name }}\n\nVerifica la ejecución: {{ $json.execution.url }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4336,
+        1296
+      ],
+      "id": "a64318a0-6ea1-46c0-9413-be241787065d",
+      "name": "Mensaje de error",
+      "webhookId": "3b706118-5877-4684-8e2d-7f4cb828a76e",
+      "credentials": {
+        "telegramApi": {
+          "id": "V5k84z3AjQc9Y5yg",
+          "name": "botla agencia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                0,
+                6,
+                5,
+                4,
+                2,
+                3
+              ],
+              "triggerAtHour": 2
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -112,
+        1200
+      ],
+      "id": "1428c73c-9163-4ad3-abd1-5b764bd8715d",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://api.dentalink.healthatom.com/api/v1/citas",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "=q",
+              "value": "={\"id_estado\":{\"eq\":\"14\"},\"fecha\":{\"eq\":\"{{ $json.ayer }}\"}}\n\n"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token nsZXO2i9zjO9tYiqOxESqxVgsjpL3tTgQPdTQxti.NTb7Cg13dBRJrk27FXpLO1eSHeXdeOKtgVJ2Hl6e"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        1392
+      ],
+      "id": "2e26e433-e054-491f-b2e0-d4d42d25ecbb",
+      "name": "Obtener citas con estado 14",
+      "notesInFlow": true,
+      "notes": "Cambio de fecha"
+    },
+    {
+      "parameters": {
+        "amount": 3.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2560,
+        1152
+      ],
+      "id": "da2af666-9c01-468d-8685-894be6278244",
+      "name": "Wait5",
+      "webhookId": "f2822d67-e2ac-4640-89d1-d65cfacd31be"
+    },
+    {
+      "parameters": {
+        "amount": 3.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3888,
+        1056
+      ],
+      "id": "e1e827ae-b77b-4ac4-8416-67abed10beb3",
+      "name": "Wait6",
+      "webhookId": "f2822d67-e2ac-4640-89d1-d65cfacd31be"
+    },
+    {
+      "parameters": {
+        "amount": 3.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3216,
+        992
+      ],
+      "id": "c8bdf82b-71af-425d-b2e8-c8ddf939ae56",
+      "name": "Wait7",
+      "webhookId": "f2822d67-e2ac-4640-89d1-d65cfacd31be"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f8ff49aa-570e-45ce-b0f8-326b712e6b24",
+              "name": "ayer",
+              "value": "2025-11-26",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        1200
+      ],
+      "id": "e904b916-6653-48d0-a69c-1843e9c75993",
+      "name": "Obtener Fecha Ayer *",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const date = new Date();\n// Ajustamos a la zona horaria de Montevideo\nconst uruguayTime = new Date(date.toLocaleString('en-US', { timeZone: 'America/Montevideo' }));\n// Restamos un día (en ms)\nuruguayTime.setDate(uruguayTime.getDate() - 1);\n// Formateamos YYYY-MM-DD\nconst year = uruguayTime.getFullYear();\nconst month = String(uruguayTime.getMonth() + 1).padStart(2, '0');\nconst day = String(uruguayTime.getDate()).padStart(2, '0');\nreturn [{ json: { ayer: `${year}-${month}-${day}` } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        112,
+        1200
+      ],
+      "id": "89b7ac83-15f4-48ae-afa6-c035f707da84",
+      "name": "Obtener Fecha Ayer"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "body.data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2560,
+        992
+      ],
+      "id": "79aff9fa-bbed-4bfe-8c71-10971468a786",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        1700
+      ],
+      "id": "metricas-001-trigger",
+      "name": "Trigger Manual (Métricas)"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "documentId": {
+          "__rl": true,
+          "value": "CONFIGURAR_ID_SPREADSHEET_FUENTE",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "CONFIGURAR_NOMBRE_HOJA_CITAS_ESTADOS",
+          "mode": "name"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        480,
+        1700
+      ],
+      "id": "metricas-002-getcitas",
+      "name": "Get Citas Estados",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows = $input.all();\n\nconst CONFIRMACION = [\n  'Confirmado por pcte. vía WhatsApp',\n  'Confirmado por teléfono',\n  'Confirmado por Whatsapp'\n];\nconst NOTIF_WA = 'Notif. automática vía WhatsApp';\nconst NO_ASISTIO = 'No asistió';\nconst LLEGO = ['Atendido', 'Atendiéndose', 'En sala de espera', 'No asistió'];\n\n// 1. Agrupar por # Cita\nconst citasPorId = {};\nfor (const row of rows) {\n  const d = row.json;\n  const idCita = String(d['# Cita'] || d['Numero Cita'] || '');\n  if (!idCita) continue;\n  if (!citasPorId[idCita]) {\n    citasPorId[idCita] = {\n      pacienteId: String(d['# Paciente'] || d['Numero Paciente'] || ''),\n      nombrePaciente: ((d['Nombre Paciente'] || '') + ' ' + (d['Apellidos Paciente'] || '')).trim(),\n      mesCita: d['Mes Cita'] || '',\n      añoCita: d['Año Cita'] || '',\n      estados: [],\n      fechas: []\n    };\n  }\n  citasPorId[idCita].estados.push(String(d['Estado Cita'] || ''));\n  citasPorId[idCita].fechas.push(d['Fecha Estado Cita'] || '');\n}\n\n// 2. Clasificar cada cita\nconst citas = Object.values(citasPorId).map(c => {\n  const noAsistioIdx = c.estados.lastIndexOf(NO_ASISTIO);\n  return {\n    ...c,\n    llegoAlDia:    c.estados.some(e => LLEGO.includes(e)),\n    fueConfirmada: c.estados.some(e => CONFIRMACION.includes(e)),\n    fueNotifWA:    c.estados.includes(NOTIF_WA),\n    noAsistio:     noAsistioIdx >= 0,\n    fechaNoAsistio: noAsistioIdx >= 0 ? String(c.fechas[noAsistioIdx]).substring(0, 10) : ''\n  };\n});\n\n// 3. Métricas agregadas\nconst llegaron    = citas.filter(c => c.llegoAlDia);\nconst confirmadas = citas.filter(c => c.fueConfirmada);\nconst notifWA     = citas.filter(c => c.fueNotifWA);\n\nconst totalLlegaron    = llegaron.length;\nconst totalNoAsistio   = llegaron.filter(c => c.noAsistio).length;\nconst totalConfirmadas = confirmadas.length;\nconst confirmNoAsistio = confirmadas.filter(c => c.noAsistio).length;\nconst totalNotifWA     = notifWA.length;\nconst notifWANoAsistio = notifWA.filter(c => c.noAsistio).length;\n\nconst fmt = (n, d) => d > 0 ? (n / d * 100).toFixed(1) + '%' : '-';\n\nconst meses = [...new Set(citas.map(c => c.mesCita).filter(Boolean))].join(', ');\nconst años  = [...new Set(citas.map(c => String(c.añoCita)).filter(Boolean))].join(', ');\nconst periodo = (meses + ' ' + años).trim();\nconst now = new Date().toLocaleString('es-UY', { timeZone: 'America/Montevideo' });\n\n// 4. Resumen por paciente\nconst porPaciente = {};\nfor (const cita of citas) {\n  const pid = cita.pacienteId;\n  if (!pid) continue;\n  if (!porPaciente[pid]) {\n    porPaciente[pid] = {\n      ID: pid,\n      Nombre: cita.nombrePaciente,\n      Inasistencias: 0,\n      'Fecha Ultima Inasistencia': '',\n      'Confirmo y No Asistio': 0,\n      'Notif WA y No Asistio': 0\n    };\n  }\n  if (cita.noAsistio) {\n    const p = porPaciente[pid];\n    p.Inasistencias++;\n    if (!p['Fecha Ultima Inasistencia'] || cita.fechaNoAsistio > p['Fecha Ultima Inasistencia']) {\n      p['Fecha Ultima Inasistencia'] = cita.fechaNoAsistio;\n    }\n    if (cita.fueConfirmada) p['Confirmo y No Asistio']++;\n    if (cita.fueNotifWA)    p['Notif WA y No Asistio']++;\n  }\n}\n\nconst pacientes = Object.values(porPaciente)\n  .filter(p => p.Inasistencias > 0)\n  .sort((a, b) => b.Inasistencias - a.Inasistencias);\n\nreturn [{\n  json: {\n    resumen: {\n      periodo,\n      ultimaActualizacion: now,\n      totalLlegaron,\n      totalNoAsistio,\n      pctGeneral: fmt(totalNoAsistio, totalLlegaron),\n      totalConfirmadas,\n      confirmNoAsistio,\n      pctConfirm: fmt(confirmNoAsistio, totalConfirmadas),\n      totalNotifWA,\n      notifWANoAsistio,\n      pctWA: fmt(notifWANoAsistio, totalNotifWA)\n    },\n    pacientes\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        1700
+      ],
+      "id": "metricas-003-calcular",
+      "name": "Calcular Metricas"
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "value": "1JPzIL2fcoU_XGs-GDhboPdPosyQxCTE869DwkQ8XQCc",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Resumen",
+          "mode": "name"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        960,
+        1560
+      ],
+      "id": "metricas-004-clearresumen",
+      "name": "Limpiar Resumen",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const r = $('Calcular Metricas').first().json.resumen;\nreturn [\n  { json: { Concepto: 'Período',                            Valor: r.periodo } },\n  { json: { Concepto: 'Última actualización',               Valor: r.ultimaActualizacion } },\n  { json: { Concepto: '',                                    Valor: '' } },\n  { json: { Concepto: '── ÍNDICE GENERAL ──',               Valor: '' } },\n  { json: { Concepto: 'Total citas (llegaron al día)',      Valor: r.totalLlegaron } },\n  { json: { Concepto: 'Total no asistieron',                Valor: r.totalNoAsistio } },\n  { json: { Concepto: 'Índice de inasistencias',           Valor: r.pctGeneral } },\n  { json: { Concepto: '',                                    Valor: '' } },\n  { json: { Concepto: '── SOBRE CONFIRMADAS ──',            Valor: '' } },\n  { json: { Concepto: 'Total citas confirmadas',            Valor: r.totalConfirmadas } },\n  { json: { Concepto: 'Confirmadas que no asistieron',      Valor: r.confirmNoAsistio } },\n  { json: { Concepto: '% No asistió / Confirmadas',        Valor: r.pctConfirm } },\n  { json: { Concepto: '',                                    Valor: '' } },\n  { json: { Concepto: '── SOBRE NOTIFICADOS WA ──',         Valor: '' } },\n  { json: { Concepto: 'Total notificados por WA',           Valor: r.totalNotifWA } },\n  { json: { Concepto: 'Notificados WA que no asistieron',   Valor: r.notifWANoAsistio } },\n  { json: { Concepto: '% No asistió / Notificados WA',     Valor: r.pctWA } }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        1560
+      ],
+      "id": "metricas-005-prepresumen",
+      "name": "Preparar Filas Resumen"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1JPzIL2fcoU_XGs-GDhboPdPosyQxCTE869DwkQ8XQCc",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Resumen",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Concepto": "={{ $json.Concepto }}",
+            "Valor": "={{ $json.Valor }}"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1440,
+        1560
+      ],
+      "id": "metricas-006-escribirresumen",
+      "name": "Escribir Resumen",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "value": "1JPzIL2fcoU_XGs-GDhboPdPosyQxCTE869DwkQ8XQCc",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Inasistencias",
+          "mode": "name"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        960,
+        1840
+      ],
+      "id": "metricas-007-clearinas",
+      "name": "Limpiar Inasistencias",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const pacientes = $('Calcular Metricas').first().json.pacientes;\nreturn pacientes.map(p => ({ json: p }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        1840
+      ],
+      "id": "metricas-008-expandir",
+      "name": "Expandir Pacientes"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1JPzIL2fcoU_XGs-GDhboPdPosyQxCTE869DwkQ8XQCc",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Inasistencias",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $json.ID }}",
+            "Nombre": "={{ $json.Nombre }}",
+            "Inasistencias": "={{ $json.Inasistencias }}",
+            "Fecha Ultima Inasistencia": "={{ $json['Fecha Ultima Inasistencia'] }}",
+            "Confirmo y No Asistio": "={{ $json['Confirmo y No Asistio'] }}",
+            "Notif WA y No Asistio": "={{ $json['Notif WA y No Asistio'] }}"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1440,
+        1840
+      ],
+      "id": "metricas-009-escribirinas",
+      "name": "Escribir Inasistencias",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## 📊 Sección: Métricas de Inasistencias\n\n**Cómo usar:**\n1. Cecilia importa los .csv del sábado en el Google Sheets fuente\n2. Ejecutar manualmente con \"Trigger Manual (Métricas)\"\n\n**Configura antes del primer uso:**\n- Nodo `Get Citas Estados`: apuntar al Sheets donde Cecilia importa el CSV `agenda_citas_estados_mes_*.csv`\n- El reporte se escribe en: `1JPzIL2fcoU_XGs-GDhboPdPosyQxCTE869DwkQ8XQCc`\n  - Tab `Resumen`: nueva pestaña con KPIs agregados\n  - Tab `Inasistencias`: reemplaza los datos con métricas ampliadas\n\n**⚠️ Requiere que existan ambas pestañas** en el reporte antes de la primera ejecución. Ver plan de implementación.",
+        "height": 320,
+        "width": 520
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        200,
+        1520
+      ],
+      "id": "metricas-010-note",
+      "name": "Sticky Note - Métricas"
+    }
+  ],
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2025-12-10T02:00:58.062-03:00",
+          "Readable date": "December 10th 2025, 2:00:58 am",
+          "Readable time": "2:00:58 am",
+          "Day of week": "Wednesday",
+          "Year": "2025",
+          "Month": "December",
+          "Day of month": "10",
+          "Hour": "02",
+          "Minute": "00",
+          "Second": "58",
+          "Timezone": "America/Montevideo (UTC-03:00)"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Eliminar duplicados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Existe en la tabla",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eliminar duplicados": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener citas con estado 8": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener citas con estado 19": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Obtener citas con estado 2": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tiene asistencia": {
+      "main": [
+        [
+          {
+            "node": "Wait7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Wait6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear Tarea": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mensaje de error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Existe en la tabla": {
+      "main": [
+        [
+          {
+            "node": "Obtener citas con estado 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "current Paciente": {
+      "main": [
+        [
+          {
+            "node": "Tiene asistencia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Crear Tarea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear Tarea1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mensaje de error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Crear Tarea1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Obtener Fecha Ayer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener citas con estado 14": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Wait5": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait6": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait7": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener Fecha Ayer *": {
+      "main": [
+        [
+          {
+            "node": "Obtener citas con estado 8",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Obtener citas con estado 19",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Obtener citas con estado 14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener Fecha Ayer": {
+      "main": [
+        [
+          {
+            "node": "Obtener Fecha Ayer *",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "current Paciente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Manual (Métricas)": {
+      "main": [
+        [
+          {
+            "node": "Get Citas Estados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Citas Estados": {
+      "main": [
+        [
+          {
+            "node": "Calcular Metricas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calcular Metricas": {
+      "main": [
+        [
+          {
+            "node": "Limpiar Resumen",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Limpiar Inasistencias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limpiar Resumen": {
+      "main": [
+        [
+          {
+            "node": "Preparar Filas Resumen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Filas Resumen": {
+      "main": [
+        [
+          {
+            "node": "Escribir Resumen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limpiar Inasistencias": {
+      "main": [
+        [
+          {
+            "node": "Expandir Pacientes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Expandir Pacientes": {
+      "main": [
+        [
+          {
+            "node": "Escribir Inasistencias",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Montevideo",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true
+  },
+  "versionId": "21f51acc-10cb-4994-845b-c1cecf1e8d8b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  },
+  "id": "wJu0VUAdMMBM5eYO",
+  "tags": []
+}

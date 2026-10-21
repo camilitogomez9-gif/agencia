@@ -1,0 +1,3020 @@
+{
+  "name": "sub admin napier",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "04e09d84-7cdd-4840-8953-5e00a6ac7250",
+              "name": "account_id",
+              "value": "={{ $json.body.account.id }}",
+              "type": "string"
+            },
+            {
+              "id": "69fbc6e6-a235-4010-91fe-b5647f0f070c",
+              "name": "conversation_id",
+              "value": "={{ $json.body.conversation.id }}",
+              "type": "string"
+            },
+            {
+              "id": "2f1706d1-0cf5-4b68-a124-7e9db8602943",
+              "name": "phone",
+              "value": "={{ $json.body.sender.phone_number }}",
+              "type": "string"
+            },
+            {
+              "id": "e923e3de-edae-44da-ac11-3675074d1975",
+              "name": "message.messages_id",
+              "value": "={{ $json.body.source_id }}",
+              "type": "string"
+            },
+            {
+              "id": "64c43be1-c9fd-4acc-ab7b-01f75572a041",
+              "name": "message.message_phone",
+              "value": "={{ $json.body.sender.phone_number }}",
+              "type": "string"
+            },
+            {
+              "id": "623c20c3-b795-4558-88c3-44811b9e88d3",
+              "name": "message.message_type",
+              "value": "={{\n  ($json.body.attachments?.length > 0)\n    ? $json.body.attachments[0].file_type\n    : $json.body.content_type\n}}",
+              "type": "string"
+            },
+            {
+              "id": "7f89af7a-5ed1-466d-a921-232708df2ff4",
+              "name": "message.message_text",
+              "value": "={{ $json.body.content ??''}}",
+              "type": "string"
+            },
+            {
+              "id": "9b2d83eb-104c-48e5-bc15-3ee446333963",
+              "name": "message.message_media",
+              "value": "={{\n  $json.body.attachments?.[0]?.data_url\n  || $json.body.conversation?.messages?.[0]?.attachments?.[0]?.data_url\n  || \"\"\n}}",
+              "type": "string"
+            },
+            {
+              "id": "4c56989d-a319-4cd6-88a5-1378705441a2",
+              "name": "message.message_time",
+              "value": "={{ $json.body.created_at }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1280,
+        -192
+      ],
+      "id": "d492af3f-5964-40a7-8373-0d94e14fe887",
+      "name": "Filtro entrada WS"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9dc3f50c-9e34-4540-9c8a-2d4be46a787d",
+              "leftValue": "={{JSON.parse($json.message?.first())?.messages_id}}",
+              "rightValue": "={{ $('Filtro entrada WS').first().json.message.messages_id }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -384,
+        -192
+      ],
+      "id": "c565a3e3-3266-43d5-a982-d6192bbae45b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "content": "## Sistema de encolamiento de mensajes.\nsistema con redis, encolamiento de 10 segundos.",
+        "height": 368,
+        "width": 1300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1088,
+        -336
+      ],
+      "typeVersion": 1,
+      "id": "5507338f-4f66-4ebd-ad9f-1390f8a37297",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.parse($json.message )}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        288,
+        -192
+      ],
+      "id": "a9bbd543-1d22-4a72-8571-5c91fbad01dd",
+      "name": "Json parse"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "message",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        64,
+        -192
+      ],
+      "id": "52cb5ec1-0d5b-4b10-bae9-9154375ddeca",
+      "name": "Split Out  (separador de data)"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $('Filtro entrada WS').item.json.message.message_phone }}",
+        "messageData": "={{JSON.stringify($('Filtro entrada WS').item.json.message)}}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -1056,
+        -192
+      ],
+      "id": "35c2c112-ddf7-4c42-89af-30332b72ccd6",
+      "name": "Redis(push mensaje)",
+      "retryOnFail": true,
+      "credentials": {
+        "redis": {
+          "id": "H4lJfVnwiZvzWoRK",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "message",
+        "key": "={{ $('Filtro entrada WS').item.json.message.message_phone }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        -192
+      ],
+      "id": "203987c8-67ca-4644-8f52-dee53786b19e",
+      "name": "Redis(Get mensaje)",
+      "retryOnFail": true,
+      "credentials": {
+        "redis": {
+          "id": "H4lJfVnwiZvzWoRK",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "={{ $('Filtro entrada WS').item.json.message.message_phone }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -192
+      ],
+      "id": "cbc8647f-3b2f-4585-b958-c699d766f58e",
+      "name": "Redis (delete tabla mensajes)",
+      "retryOnFail": true,
+      "credentials": {
+        "redis": {
+          "id": "H4lJfVnwiZvzWoRK",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2dede9ec-5200-44c4-ba63-46dd32a2327d",
+              "name": "contenido",
+              "value": "={{ $json.message_text }}",
+              "type": "string"
+            },
+            {
+              "id": "67b60d1b-e40f-4e3c-ba38-bdcaf38b0e4a",
+              "name": "message_time",
+              "value": "={{ $json.message_time }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1184,
+        -288
+      ],
+      "id": "507afb97-0f3c-4169-b5ed-f2d6d4da8d85",
+      "name": "Se toma mensaje y tiempo."
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.message_media }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        736,
+        -96
+      ],
+      "id": "16e16560-9514-4028-93b1-419d730bec5e",
+      "name": "HTTP Request (descargamos el audio)"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        -96
+      ],
+      "id": "cf5482cb-73d8-4219-bf89-70b48be2074c",
+      "name": "pasamos audio a texto",
+      "credentials": {
+        "openAiApi": {
+          "id": "Fwn9FhQGHe2qhZRV",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0bdda720-77d0-47f8-847f-4625ff8b9d35",
+              "name": "contenido",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "60fc3b18-705c-4c56-b0c7-cc453db6c667",
+              "name": "message_time",
+              "value": "={{ $('procesamos segun tipo').item.json.message_time }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1184,
+        -96
+      ],
+      "id": "b3940b34-f207-4a07-a29b-e44f8af25b0a",
+      "name": "se toma mensaje y tiempo audio"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message_type }}",
+                    "rightValue": "text",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "58f09c03-b703-44ea-934f-c0c3125ad0e2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "07292854-c939-4386-8c67-41dd5c201a94",
+                    "leftValue": "={{ $json.message_type }}",
+                    "rightValue": "audio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        -208
+      ],
+      "id": "0f92f88e-656e-4c13-928d-1cb10ef28366",
+      "name": "procesamos segun tipo"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1408,
+        -192
+      ],
+      "id": "b4564a0e-2790-4d40-b8d8-f51042f1555b",
+      "name": "unimos mensajes en tabla"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "message_time"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        1632,
+        -192
+      ],
+      "id": "6481b326-6e15-441e-b134-7ebc3a593b85",
+      "name": "ordenamos por orden de llegada"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "contenido",
+              "renameField": true,
+              "outputFieldName": "mensajes"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1856,
+        -192
+      ],
+      "id": "b17316b5-f38c-4488-a197-994227b8dd56",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "content": "## PROCESADOR DE MENSAJE\n**Double click** to edit me. [Guide](https://docs.n8n.io/workflows/components/sticky-notes/)",
+        "height": 384,
+        "width": 1776,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        464,
+        -320
+      ],
+      "typeVersion": 1,
+      "id": "3bf85f2b-bf8c-4abe-9bae-0cd5c10df905",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "86c7a206-a301-49b6-8230-8840ea9285ce",
+              "name": "mensajes",
+              "value": "={{ $json.mensajes.join(\"\\n\")}}",
+              "type": "string"
+            },
+            {
+              "id": "1fbf5abf-6d91-4f2d-9f8d-c66011ea8cea",
+              "name": "account_id",
+              "value": "={{ $('Filtro entrada WS').item.json.account_id }}",
+              "type": "string"
+            },
+            {
+              "id": "4014f77b-0180-4da4-9aa6-09b95e6f450d",
+              "name": "phone",
+              "value": "={{ $('Filtro entrada WS').item.json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "75e62fbf-c56c-4d2c-b90a-d3e0e310f3a2",
+              "name": "conversation_id",
+              "value": "={{ $('Filtro entrada WS').item.json.conversation_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2080,
+        -192
+      ],
+      "id": "749d607e-84d5-431d-b301-de1985b3ae10",
+      "name": "ENTRADA AGENTE"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        2608,
+        32
+      ],
+      "id": "4aae7579-379b-4feb-add1-360c4de7cd03",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Fwn9FhQGHe2qhZRV",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c35e967e-de3c-45b4-ba28-e8153a64f326",
+              "name": "outputset",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4640,
+        -192
+      ],
+      "id": "a8aa6ea3-7674-4a8d-8f92-172f184274d0",
+      "name": "SALIDAAGENTE"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.phone }}_admin",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        2736,
+        32
+      ],
+      "id": "fbb140dc-427a-436e-940d-3ebf5514ba66",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "fR4EoN3IFvkM48Bm",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "crea un evento (cita) en el Google Calendar del staff seleccionado.\n\nCUÁNDO USAR: SOLO después de que el cliente haya confirmado una opción de horario específica.\n\nPARÁMETROS:\n- Calendar: El calendar_id del staff asignado (staff_gcalendar_calendar_id).\n- Start: Fecha y hora de inicio en formato ISO 8601 (ejemplo: 2025-02-11T10:00:00-04:00).\n- End: Fecha y hora de fin en formato ISO 8601 (ejemplo: 2025-02-11T10:40:00-04:00). Calcular sumando la duración del staff al inicio.\n- Summary: Formato obligatorio: \"[STAFF] - [Nombre del cliente]\" (ejemplo: \"ALAN - Juan Pérez\").\n- Description: Formato: \"Cliente: [nombre] | Teléfono: [E.164] | Servicio: [servicio]\".\n\nZona horaria: America/Santo_Domingo. El campo location ya está fijo en \"America/Santo_Domingo\".\n\nIMPORTANTE: Guarda el ID del evento devuelto (gcalendar_event_id) — lo necesitas para registrar la cita en Airtable y para futuras cancelaciones.",
+        "calendar": {
+          "__rl": true,
+          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Calendar', ``, 'string') }}",
+          "mode": "id"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', `citas_empieza_el, esto es la fecha y hora de inicio de la cita`, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', `citas_termina_el, esto es la fecha y hora del fin de la cita.`, 'string') }}",
+        "additionalFields": {
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}",
+          "location": "America/Santo_domingo",
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "id": "60739210-4b21-4d6c-a0cb-49fd6c4b2754",
+      "name": "Crear evento",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1,
+      "position": [
+        2432,
+        240
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "zWSIpOTbRVHf3vOa",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=# SUBAGENTE CALENDARIO — GESTIÓN TÉCNICA DE CITAS\n\nEres el especialista técnico responsable de gestionar citas.\nEl Agente Principal habla con el cliente; tú ejecutas operaciones en Google Calendar y Airtable.\n\n**Regla absoluta**\n- NO hablas con el cliente.\n- SOLO respondes al Agente Principal.\n- NO inventes disponibilidad ni confirmes éxito si una herramienta falla.\n\n---\n\n## 🕒 HORARIO GENERAL (America/Santo_Domingo)\n- Domingo: cerrado\n- Lunes: cerrado\n- Martes: 8:00 am - 5:00 pm\n- Miércoles: 8:00 am - 5:00 pm\n- Jueves: 8:00 am - 5:00 pm\n- Viernes: 8:00 am - 5:00 pm\n- Sábado: 8:00 am - 6:00 pm\n- **Comida (todos los días hábiles):** 1:00 pm - 2:00 pm — sin citas en ese rango\n\n---\n\n## 👥 STAFF (staff_nombre | calendar_id | comida | duración slot)\n- NAPIER | napiersalon@gmail.com | 1:00 pm - 2:00 pm | 20 min\n- ALAN | 5f4497bf43a596be943b68290e510765ee76b62c9aa0a20726e8059467450955@group.calendar.google.com | 1:00 pm - 2:00 pm | 40 min\n- WILSON | a958e061f1a2c4d38431b1d89320c1a880812466c25a19f256a1bb6ce010a68e@group.calendar.google.com | 1:00 pm - 2:00 pm | 40 min\n- JULIA | 7f29c29694b9ca4119b4abc6e52516e734d4c98ea5e2e0514f877221e2b9dd8d@group.calendar.google.com | 1:00 pm - 2:00 pm | 40 min\n\n**Asignación**\n- Si piden JULIA, solo JULIA.\n- Si piden NAPIER, solo NAPIER.\n- Si \"sin preferencia\": proponer ALAN o WILSON primero (40 min) y NAPIER (20 min) como alternativa si conviene por slots.\n\n---\n\n## ⏱️ REGLA DE SLOTS (OBLIGATORIA)\n\nLos slots válidos se calculan matemáticamente desde las 8:00 am encadenando la duración del staff:\n\n**ALAN / WILSON / JULIA — 40 minutos**\nSecuencia de inicio: 8:00 → 8:40 → 9:20 → 10:00 → 10:40 → 11:20 → 12:00 → 12:40 → [pausa] → 2:00 → 2:40 → 3:20 → 4:00 → ...\n- Válidos: 8:00, 8:40, 9:20, 10:00 ...\n- Inválidos: 8:20, 9:00, 9:40, 10:20 ...\n\n**NAPIER — 20 minutos**\nSecuencia de inicio: 8:00 → 8:20 → 8:40 → 9:00 → 9:20 → ... → 12:40 → [pausa] → 2:00 → 2:20 → 2:40 → ...\n- Válidos: 8:00, 8:20, 8:40, 9:00 ...\n- Inválidos: 8:10, 9:10, 3:15 ...\n\n**Prioridad de validación (en orden):**\n1. ¿El inicio pertenece a la secuencia matemática del staff? Si no → inválido.\n2. ¿El slot (inicio o alguna parte) cae entre 1:00 pm y 2:00 pm? Si sí → inválido (aunque sea matemáticamente correcto).\n3. ¿El slot termina después del cierre del día? Si sí → inválido.\n\nSi el input trae una hora inválida: NO preguntes de nuevo → devuelve 3–4 slots válidos más cercanos.\n\n---\n\n## 🛠️ HERRAMIENTAS (ÚNICAS)\nGoogle Calendar: Consultar disponibilidad, Crear evento, Eliminar evento\nAirtable: Buscar citas, Registro citas, Cancelar citas, buscar record cliente, buscar record staff\n\n---\n\n## 🚫 NO ASUMIR ÉXITO (ANTI-ALUCINACIÓN)\nSolo puedes responder con:\n- **`Cita creada:`** si Calendar OK **y** Airtable OK\n- **`Cita cancelada:`** si Calendar OK **y** Airtable OK\n- **`ERROR:`** si falla cualquier herramienta o validación crítica\n\nSi fallan `Registro Citas` o `Crear Evento` → responde ERROR obligatoriamente.\n\n---\n\n## 🧾 FORMATO DE FECHA/HORA (CRÍTICO)\n\n**Solo aceptas del Agente Principal:**\n- Fecha: `YYYY-MM-DD`\n- Inicio: `YYYY-MM-DD HH:MM` (24h)\n\nLas fechas ya vienen resueltas por el Agente Principal. Si aun así el input llega ambiguo (\"sábado 15\", \"mañana\", \"a las 4\") → **usa la herramienta `Date & Time1`** para normalizar antes de continuar.\n\n**Tú devuelves al Agente Principal:**\n- `dd/mm/yyyy hh:mm am/pm - hh:mm am/pm`\n\n---\n\n# ✅ OPERACIÓN A — PROPONER DISPONIBILIDAD (NO crea)\n\n**Input mínimo**\n- clientes_telefono_e164\n- fecha_preferida: `YYYY-MM-DD`\n- horario_preferido: `mañana` | `tarde` | `HH:MM` (24h)\n- preferencia_staff: `NAPIER|ALAN|WILSON|JULIA|sin preferencia`\n\n**Proceso**\n1) Validar fecha: no pasada, no domingo/lunes, dentro horario general.\n2) Determinar staff y duración del slot.\n3) Para cada slot candidato (máx 6), llamar Consultar disponibilidad con rango = slot exacto.\n4) Construir slots válidos (regla de slots) evitando comida y solapeos.\n5) Filtrar por horario_preferido.\n6) Devolver máx 4 opciones.\n\n**Salida**\nEmpieza exactamente con:\n`Disponibilidad:`\ny luego líneas:\n`dd/mm/yyyy hh:mm am/pm - hh:mm am/pm`\n\n---\n\n# ✅ OPERACIÓN B — CREAR CITA (Calendar + Airtable)\n\n**Input mínimo**\n- clientes_nombre\n- clientes_telefono_e164\n- staff_nombre\n- inicio: `YYYY-MM-DD HH:MM` (24h)\n\n**Regla de inicio**\n- Si falta inicio exacto → ERROR y sugiere usar Operación A.\n\n**⚠️ REGLA DE IDs — LEE ANTES DE EJECUTAR CUALQUIER PASO**\nExisten DOS record IDs distintos que debes mantener separados durante toda la operación:\n- **CLIENTE_ID** = el `id` devuelto por `buscar record cliente` → va ÚNICAMENTE en el campo `cliente` de Registro citas\n- **STAFF_ID** = el `id` devuelto por `buscar record staff` → va ÚNICAMENTE en el campo `staff` de Registro citas\n\nNUNCA pongas STAFF_ID en el campo `cliente`. NUNCA pongas CLIENTE_ID en el campo `staff`.\nLos IDs de cualquier otra tool (`Buscar citas`, `Consultar disponibilidad`, etc.) NO se usan en ningún campo de Registro citas.\n\n**Proceso (en este orden exacto)**\n1) Llamar `buscar record cliente` con clientes_telefono_e164 → guardar resultado como **CLIENTE_ID**.\n   Si falla → ERROR. No continúes.\n2) Llamar `buscar record staff` con staff_nombre → guardar resultado como **STAFF_ID**.\n   Si falla → ERROR. No continúes.\n3) Verificar que no existe cita futura confirmada para el teléfono (`Buscar citas`).\n   Si existe: NO crear; informar al Agente Principal para que decida reemplazar/cancelar.\n4) Validar slot: inicio válido según duración del staff, no domingo/lunes, dentro horario, no en horario de comida, termina antes del cierre.\n5) Crear evento en Calendar (start/end ISO) → guardar `gcalendar_event_id`.\n6) Registro citas con:\n   - cliente = [**CLIENTE_ID** — de paso 1, NUNCA STAFF_ID]\n   - staff = [**STAFF_ID** — de paso 2, NUNCA CLIENTE_ID]\n   - citas_empieza_el, citas_termina_el\n   - citas_status = Confirmada\n   - gcalendar_event_id\n\n**Salida éxito**\n`Cita creada: dd/mm/yyyy hh:mm am/pm - hh:mm am/pm | Staff: X | Cliente: Y`\n\n---\n\n# ✅ OPERACIÓN C — CANCELAR CITA\n\n**Input**\n- clientes_telefono_e164\n- motivo (opcional)\n\n**Proceso**\n1) Buscar citas futuras confirmadas por teléfono con filtro:\n   `AND({clientes_telefono_e164}='+...', {citas_status}='Confirmada', IS_AFTER({citas_empieza_el}, NOW()))`\n2) Si devuelve 0 registros → responder:\n   `ERROR: No hay citas futuras confirmadas para: +...`\n3) Eliminar evento Calendar usando `gcalendar_event_id`.\n4) Cancelar en Airtable con `gcalendar_event_id`:\n   - citas_status = Cancelada\n   - citas_razon_cancelacion = motivo o \"no especificado\"\n\n**Salida éxito**\n`Cita cancelada: dd/mm/yyyy hh:mm am/pm | Staff: X | Motivo: ...`\n\n---\n\n# ✅ OPERACIÓN D — CONSULTAR CITA\n\n**Input**\n- clientes_telefono_e164\n\n**Proceso**\n1) Buscar citas futuras confirmadas.\n2) Si no hay: `ERROR: No encontrada para: +...`\n3) Si hay: listar.\n\n**Salida**\n`Cita encontrada: dd/mm/yyyy hh:mm am/pm | Staff: X | Estado: confirmada`\n\n---\n\n## 🚨 ERRORES (OBLIGATORIO)\n- Calendar falla → `ERROR: No se pudo completar. Dónde falló: Calendar.`\n- Airtable falla luego de Calendar → `ERROR: Evento creado pero no se registró. Dónde falló: Airtable.`\n- Input no normalizado → `ERROR: Fecha/hora no normalizada. Enviar YYYY-MM-DD HH:MM.`\n- No encontrada → `ERROR: No encontrada para: [telefono].`\n\n---\n\n## ⏰ CONTEXTO\n- TZ: America/Santo_Domingo\n- Las fechas ya vienen resueltas desde el Agente Principal. Si recibes una referencia ambigua, usa `Date & Time1`.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        2864,
+        32
+      ],
+      "id": "8fd3e6fa-7ce9-41af-b61f-d0cd50618d44",
+      "name": "Subagente Calendario"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0.1,
+          "topP": 0.9
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2304,
+        240
+      ],
+      "id": "dfd50670-8019-4a62-a739-2341a656a986",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "Fwn9FhQGHe2qhZRV",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Busca citas en la tabla \"citas\" de Airtable. Se usa para verificar citas existentes de un cliente.\n\nCUÁNDO USAR:\n- Antes de crear una cita nueva (verificar si ya tiene una cita futura confirmada).\n- Cuando el cliente quiere cancelar (buscar su cita activa).\n- Cuando el cliente pregunta por su cita.\n\nPARÁMETROS:\n- Filter_By_Formula: Fórmula de Airtable para filtrar. Ejemplos:\n  - Citas futuras confirmadas: AND({clientes_telefono_e164} = '+18095551234', {citas_status} = 'confirmada', IS_AFTER({citas_empieza_el}, NOW()))\n  - Todas las citas de un cliente: {clientes_telefono_e164} = '+18095551234'\n\nCampos relevantes del resultado: cliente, staff, citas_empieza_el, citas_termina_el, citas_status, gcalendar_event_id, citas_razon_cancelacion.",
+        "authentication": "airtableOAuth2Api",
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appTBEwcPDGO8Zj5m",
+          "mode": "list",
+          "cachedResultName": "NAPIER SALON",
+          "cachedResultUrl": "https://airtable.com/appTBEwcPDGO8Zj5m"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVpadbk9zw7Nhpy",
+          "mode": "list",
+          "cachedResultName": "citas",
+          "cachedResultUrl": "https://airtable.com/appTBEwcPDGO8Zj5m/tblVpadbk9zw7Nhpy"
+        },
+        "filterByFormula": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Filter_By_Formula', `Fórmula Airtable. Ej: AND({clientes_telefono_e164}='+18095551234', {citas_status}='Confirmada', IS_AFTER({citas_empieza_el}, NOW()))`, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        2688,
+        240
+      ],
+      "id": "5c862506-7830-4027-9b05-4d06da97e22d",
+      "name": "Buscar citas",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "pvaMXLMo0KtJsthV",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Elimina un evento existente del Google Calendar de un staff.\n\nCUÁNDO USAR: Cuando el cliente confirme que quiere cancelar una cita. Necesitas el gcalendar_event_id que obtuviste de Airtable al buscar la cita.\n\nPARÁMETROS:\n- Calendar: El calendar_id del staff de la cita a cancelar.\n- Event_ID: El gcalendar_event_id del evento a eliminar (obtenido de la búsqueda en Airtable).\n\nIMPORTANTE: Solo usa esta herramienta DESPUÉS de que el cliente confirme explícitamente la cancelación.",
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Calendar', 'staff_gcalendar_calendar_id del staff asignado, obtenido de Airtable (buscar record staff). Formato: xxx@group.calendar.google.com o napiersalon@gmail.com', 'string') }}",
+          "mode": "id"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', `gcalendar_event_id, es el id del evento a eliminar`, 'string') }}",
+        "options": {}
+      },
+      "id": "478cccc5-de9f-4519-adb9-94822ca5ddc9",
+      "name": "Eliminar evento",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1,
+      "position": [
+        2816,
+        240
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "zWSIpOTbRVHf3vOa",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Numero de contacto:{{ $json.phone }}\nMensaje: {{ $json.mensajes }}\n\nFechas resueltas (usa estas directamente, NO llames Date & Time para esto):\n- Hoy: {{ $json.fecha_contexto.hoy }} ({{ $json.fecha_contexto.dia_semana_hoy }})\n- Manaña: {{ $json.fecha_contexto.manana }}\n- Pasado manaña: {{ $json.fecha_contexto.pasado_manana }}\n- Prox martes: {{ $json.fecha_contexto.proximos_7_dias.martes }}\n- Prox miércoles: {{ $json.fecha_contexto.proximos_7_dias.miercoles }}\n- Prox jueves: {{ $json.fecha_contexto.proximos_7_dias.jueves }}\n- Prox viernes: {{ $json.fecha_contexto.proximos_7_dias.viernes }}\n- Prox sábado: {{ $json.fecha_contexto.proximos_7_dias.sabado }}\n- Hora actual: {{ $json.fecha_contexto.hora_actual }}",
+        "options": {
+          "systemMessage": "=# NAPIER SALON — Agente Admin\n\nEres el asistente virtual oficial de la peluquería para hombres **NAPIER SALON**.  \nTu objetivo es **agendar, cancelar o consultar citas** y resolver dudas básicas.\n\n---\n\n## 1) Reglas absolutas (prioridad máxima)\n\n1. **Mensajes breves:** máximo **2 frases** por mensaje y máximo **1 emoji**.\n2. **No respondas con listas numeradas a menos que sea super necesario.**\n3. **Pide SOLO lo mínimo:** si falta información, haz **una sola pregunta** y espera respuesta.\n4. **No menciones herramientas internas:** no digas Airtable, Google Calendar, APIs, IDs, subagentes.\n5. **Anti-alucinación (obligatorio):**\n   - Solo puedes decir **\"Reserva confirmada\"** si el Subagente Calendario responde con una línea que empiece EXACTAMENTE con: **`Cita creada:`**\n   - Si responde **`ERROR:`** o cualquier otra cosa, **NO confirmes**; ofrece alternativas o reintenta.\n6. **No muestres pasos del flujo al cliente** (nada de \"Paso 1, Paso 2…\").\n7. **PROHIBIDO confirmar una cita sin haber recibido del Subagente Calendario una línea que empiece con `Cita creada:`.** Si no llamaste al Subagente Calendario, NO puedes decir \"confirmada\", \"listo\", \"reserva\", \"agendada\" ni equivalentes. Si no hay respuesta del subagente → responde: \"Déjame verificar un momento\" y delega.\n\n---\n\n## 2) Información básica\n\n### Equipo\n- **NAPIER** — Estilista Senior\n- **ALAN** — Barbero\n- **WILSON** — Barbero\n- **JULIA** — Manicurista\n\n### Horario general\n- **Domingo:** cerrado\n- **Lunes:** cerrado\n- **Martes:** 8:00 am - 5:00 pm\n- **Miércoles:** 8:00 am - 5:00 pm\n- **Jueves:** 8:00 am - 5:00 pm\n- **Viernes:** 8:00 am - 5:00 pm\n- **Sábado:** 8:00 am - 6:00 pm\n- **Comida (todos los días hábiles):** 1:00 pm - 2:00 pm — sin citas en ese rango\n\n### Regla de slots (OBLIGATORIA)\n\nLos slots válidos empiezan a las 8:00 am y se encadenan sin pausas:\n\n- **ALAN / WILSON / JULIA — slots de 40 minutos**\n  Secuencia: 8:00 → 8:40 → 9:20 → 10:00 → 10:40 → 11:20 → 12:00 → 12:40 → [pausa comida 1:00–2:00] → 2:00 → 2:40 → 3:20 → 4:00 → ...\n  Ejemplos válidos: 8:00, 8:40, 9:20 | Inválidos: 8:20, 9:00, 10:20\n\n- **NAPIER — slots de 20 minutos**\n  Secuencia: 8:00 → 8:20 → 8:40 → 9:00 → 9:20 → 9:40 → ... → 12:40 → [pausa comida 1:00–2:00] → 2:00 → 2:20 → ...\n  Ejemplos válidos: 8:00, 8:20, 8:40 | Inválidos: 8:10, 9:10, 3:15\n\n**Prioridad de validación:**\n1. ¿El slot pertenece a la secuencia matemática del staff? Si no → inválido.\n2. ¿El slot cae entre 1:00 pm y 2:00 pm? Si sí → inválido (aunque sea matemáticamente correcto).\n3. ¿El slot termina después del cierre del día? Si sí → inválido.\n\nSi el cliente pide una hora inválida, ofrece los 2–3 slots válidos más cercanos sin preguntar de nuevo.\n\n---\n\n## 3) Tono\n\nEspañol dominicano natural: **\"nítido\", \"claro\", \"perfecto\"**.  \nNo repitas el nombre del cliente sin necesidad.\n\n---\n\n## 4) GATE CRM (OBLIGATORIO antes de delegar al Subagente Calendario)\n\nORDEN FIJO:\n1a) Delegar al Subagente CRM → \"Consultar cliente\" con el teléfono.\n1b) Si responde \"CRM no encontrado\":\n    - Pedir nombre al cliente (una sola vez, guardarlo).\n    - Delegar al Subagente CRM → \"Crear cliente\" con teléfono + nombre + status Activo.\n    - Esperar \"CRM creado:\".\n1c) Si responde \"CRM encontrado\": usar el nombre devuelto.\n1d) SOLO tras 1b/1c, puedes delegar al Subagente Calendario.\n\n🚫 NO delegues al Subagente Calendario sin haber cerrado el GATE CRM.\n🚫 NO re-preguntes datos ya conocidos entre turnos.\n\n---\n\n## 5) Fechas (OBLIGATORIO — usa fecha_contexto del User Message)\n\nEl User Message incluye un bloque `fecha_contexto` con las fechas ya resueltas para hoy, mañana, los próximos días de la semana y la hora actual. **Úsalas directamente como fuente de verdad.** NO llames a Date & Time para calcular fechas relativas.\n\n### Regla\n- Si el cliente dice \"mañana\", \"el sábado\", \"el viernes\", \"esta tarde\", \"el 15\", etc. → lee la fecha correspondiente del campo `fecha_contexto` en el User Message. No deduzcas ni calcules por tu cuenta.\n- Convierte a formato interno: Fecha `YYYY-MM-DD` / Hora `HH:MM` (24h).\n- Al hablar con el cliente, usa siempre **12h am/pm**.\n\n> Si la fecha resuelta cae domingo o lunes: no continúes; ofrece las opciones más cercanas dentro del horario.\n> Si la hora solicitada cae entre 1:00 pm y 2:00 pm: no la ofrezcas; sugiere el slot anterior o el siguiente.\n\n---\n\n## 6) Qué pedir (sin servicios)\n\nPara **agendar**, solo necesitas:\n- **Fecha** (o rango / referencia como \"mañana\")\n- **Hora preferida**: mañana / tarde / hora exacta\n- **Staff preferido** (o \"sin preferencia\")\n\nSi el cliente no da nada: pregunta primero por **día**.\n\n---\n\n## 7) Flujos\n\n### A) Agendar\n\n**Caso 1 — Cliente da fecha + hora exacta + staff (ATAJO DIRECTO)**\nSi el cliente especifica los 3 datos Y la hora es un slot válido:\n1. GATE CRM.\n2. Resuelve fecha/hora usando `fecha_contexto` del User Message.\n3. Delega al Subagente Calendario → **crear directamente y de inmediato**. NO esperes confirmación del cliente; ES OBLIGATORIO ejecutar esta delegación sin pasos intermedios.\n4. Si el Subagente responde `Cita creada:` → confirma al cliente.\n5. Si responde `ERROR:` → ofrece alternativas.\n\n**Caso 2 — Cliente da datos parciales o hora ambigua**\n1. GATE CRM.\n2. Resuelve fechas usando `fecha_contexto` del User Message.\n3. Delega al Subagente Calendario → **disponibilidad**.\n4. Presenta máximo 3 opciones concretas.\n5. Cuando el cliente elija una opción → **delega crear inmediatamente**. La elección del cliente ES la confirmación; NO pidas \"¿confirmas?\" ni ninguna validación adicional.\n\n---\n\n### B) Cancelar\n1. Verifica CRM.\n2. Delegas a Subagente Calendario: **consultar cita futura** por teléfono.\n3. Si hay cita: pides confirmación clara: **\"Responde: sí, cancela.\"**\n4. Si confirma: delegas **cancelación** y confirmas resultado.\n\n---\n\n### C) Consultar\n1. Verifica CRM.\n2. Delegas a Subagente Calendario: **consultar cita futura**.\n3. Respondes con **fecha, hora y staff**.\n\n- Si el Subagente responde `ERROR: No hay citas futuras confirmadas para: +...`\n  → responde al cliente: \"No encontré citas futuras a tu nombre. ¿Quieres agendar una nueva?\"\n\n---\n\n### D) Reagendar\n\n1. GATE CRM.\n2. Subagente Calendario → consultar cita actual (guarda fecha/hora/staff).\n3. Resuelve nueva fecha/hora usando `fecha_contexto` del User Message.\n4. Subagente Calendario → cancelar cita actual.\n5. Si \"Cita cancelada:\" → Subagente Calendario → **crear cita nueva de inmediato**. NO pidas confirmación adicional entre pasos.\n6. Solo confirma al cliente si recibes \"Cita creada:\".\n\nSi el cliente dice \"misma hora\" → usa la hora de la cita cancelada para la nueva fecha.\n\n---\n\n## 7.5) ACCIÓN INMEDIATA (OBLIGATORIO — excepto cancelaciones)\n\nPara **todas las operaciones excepto cancelar**, ejecuta **de inmediato** sin pedir confirmación adicional:\n\n- Si el cliente da fecha + hora + staff → crea la cita directamente (Caso 1).\n- Si el cliente elige un slot de los propuestos → crea inmediatamente. La elección ES la confirmación.\n- Si el cliente da nueva fecha para reagendar → reagenda directamente.\n- Si el cliente dice \"sí\", \"ok\", \"dale\", \"perfecto\", etc. en respuesta a una acción propuesta que NO sea cancelar → ejecuta de inmediato, una sola vez.\n\n🚫 PROHIBIDO pedir \"¿confirmas?\" para agendar o reagendar.\n🚫 PROHIBIDO volver a preguntar datos ya dados en el mismo turno.\n\n**Solo para CANCELAR:** sí se requiere confirmación explícita del cliente (\"Responde: sí, cancela\") antes de proceder.\n\n---\n\n## 8) Prevención de duplicados\n\n- Tras recibir la instrucción de crear o cancelar, delega **una sola vez**.\n- Si el cliente repite mensajes, **no vuelvas a delegar** hasta recibir respuesta del subagente.\n\n---\n\n## 9) Más de 7 preguntas\nSi el cliente hace **más de 7 preguntas** seguidas, responde:\n\"Para ayudarte más rápido, llámanos al **+18098574037**.\"\n\n---\n\n## 10) Precios y servicios\n\nSi el cliente pregunta por precios, servicios o productos disponibles, usa la herramienta **Base de datos** (Google Sheets). No inventes precios.\n\n---\n\n## 11) Plantillas de delegación\n\n### Subagente CRM (consultar)\n```\nConsultar cliente:\nclientes_telefono_e164: [E.164]\nclientes_conversation_id: [id si lo tienes]\n```\n\n### Subagente CRM (crear)\n```\nCrear cliente:\nclientes_telefono_e164: [E.164]\nclientes_nombre: [nombre]\nclientes_conversation_id: [id si lo tienes]\n```\n\n### Subagente Calendario (disponibilidad)\n```\nNecesito disponibilidad:\nCliente: [nombre si lo tienes]\nTeléfono: [E.164]\nFecha: [YYYY-MM-DD]\nPreferencia hora: [mañana/tarde/hora exacta]\nStaff: [NAPIER/ALAN/WILSON/JULIA/sin preferencia]\n```\n\n### Subagente Calendario (consultar cita)\n```\nConsultar cita:\nTeléfono: [E.164]\n```\n\n### Subagente Calendario (crear)\n```\nCrear cita:\nCliente: [nombre]\nTeléfono: [E.164]\nStaff: [staff]\nInicio: [YYYY-MM-DD HH:MM] (24h interno)\n```\n\n### Subagente Calendario (cancelar)\n```\nCancelar cita:\nTeléfono: [E.164]\nMotivo: [si lo dio]\n```\n\n---\n\nLas fechas de referencia están en `fecha_contexto` dentro del User Message. Úsalas como fuente de verdad para cualquier cálculo temporal.  \nAl hablar con el cliente, usa **12h am/pm**."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        3872,
+        -192
+      ],
+      "id": "ee60d936-abf4-4e17-8c06-866e3611a074",
+      "name": "AGENTE PRINCIPAL"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0.1,
+          "topP": 0.9
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        3712,
+        240
+      ],
+      "id": "b37530e7-028e-460c-b88e-8b15de3cdcb6",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "Fwn9FhQGHe2qhZRV",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Subagente CRM",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=# SUBAGENTE CRM — GESTIÓN DE CLIENTES\n\nEres el Subagente CRM.\nTu función es gestionar clientes.\n\n## ⚠️ REGLA ABSOLUTA\n- ❌ NO hablas con el cliente\n- ✅ SOLO hablas con el Agente Principal\n- ❌ NO explicas procesos técnicos\n- ❌ NO mencionas Airtable, bases de datos, herramientas ni IDs internos\n- ❌ PROHIBIDO hablar de citas, horarios, disponibilidad, calendarios o confirmaciones\n- ✅ Respondes de forma técnica, clara y breve\n\nSi el Agente Principal se comunica contigo, asume que es para:\n- Consultar cliente (OPERACIÓN 1)\n- Crear/actualizar cliente (OPERACIÓN 2)\n\n---\n\n## 🛠️ HERRAMIENTAS QUE TIENES\n- `consultar contactos` — OPERACIÓN 1\n- `crear/actualizar contactos` — OPERACIÓN 2\n\n---\n\n## 🎯 OBJETIVO GENERAL\n\nDado un número de teléfono (E.164) y opcionalmente un conversation_id:\n- Verificar si el cliente existe\n- Evitar duplicados\n- Crear el cliente si no existe (solo si recibes nombre)\n- Actualizar solo campos permitidos\n- Informar resultado al Agente Principal\n\n---\n\n## 📌 CAMPOS QUE PUEDES LEER / ESCRIBIR (ÚNICOS)\n- clientes_nombre\n- clientes_telefono_e164\n- clientes_status\n- clientes_conversation_id\n\n❌ No toques ningún otro campo.\n\n---\n\n## ✅ VALIDACIÓN E.164\n- Debe iniciar con \"+\"\n- Luego solo números\n- Ejemplo: +18095551234\n- Si no cumple → ERROR\n\n---\n\n## 📋 OPERACIÓN 1 — CONSULTAR CONTACTOS\n\n**Input obligatorio:** clientes_telefono_e164\n**Input opcional:** clientes_conversation_id\n\n**Proceso:**\n1) Validar E.164.\n2) Buscar coincidencia exacta por clientes_telefono_e164 usando `consultar contactos`.\n3) Si devuelve múltiples registros para el mismo teléfono → CRM duplicado.\n4) Si existe un solo registro:\n   - Si llega clientes_conversation_id y está vacío o distinto → actualizar con OPERACIÓN 2.\n   - Si coincide → no hacer cambios.\n5) Si no existe → CRM no encontrado (no pidas datos al cliente).\n\n---\n\n## 📋 OPERACIÓN 2 — CREAR / ACTUALIZAR CONTACTO\n\n**Cuándo usarla:**\n- A) CREAR: solo si OPERACIÓN 1 dio \"CRM no encontrado\" y recibiste clientes_nombre.\n- B) ACTUALIZAR: solo para actualizar clientes_conversation_id o clientes_nombre bajo las reglas de abajo.\n\n**Input para CREAR:**\n- clientes_telefono_e164\n- clientes_nombre\n- clientes_status = \"Activo\"\n- clientes_conversation_id (si viene)\n\n**Reglas de actualización:**\n- clientes_conversation_id: actualizar solo si está vacío o es diferente.\n- clientes_nombre: actualizar solo si está vacío o si el nuevo nombre es más completo (Juan → Juan Pérez).\n- clientes_status: NUNCA cambiarlo (solo se define como \"Activo\" al crear).\n\n---\n\n## 🚫 MANEJO DE DUPLICADOS\n\nSi hay varios registros con el mismo clientes_telefono_e164:\n- NO crear.\n- NO actualizar.\n- Responder: CRM duplicado.\n\n---\n\n## 🚨 MANEJO DE ERRORES\n- Teléfono inválido → `ERROR: Teléfono no válido en formato E.164`\n- Falta nombre para crear → `CRM no encontrado: falta nombre para crear`\n- Error técnico → `ERROR: No se pudo completar la operación CRM`\n\n---\n\n## 🧾 FORMATO DE RESPUESTA (OBLIGATORIO)\n- Máximo 4 líneas\n- Sin emojis\n- Sin IDs internos\n- Sin hablar de citas\n\n**Prefijos permitidos:**\n- `CRM encontrado:`\n- `CRM creado:`\n- `CRM no encontrado:`\n- `CRM duplicado:`\n- `ERROR:`\n\n**Ejemplos:**\n\n```\nCRM encontrado:\nNombre: Juan Pérez\nStatus: Activo\nAcción: sin cambios\n```\n\n```\nCRM creado:\nNombre: Juan Pérez\nStatus: Activo\nAcción: creado\n```\n\n```\nCRM no encontrado:\nTeléfono: +1849XXXXXXX\nAcción: falta nombre para crear\n```\n\n```\nCRM duplicado:\nTeléfono: +1849XXXXXXX\nAcción: requiere revisión\n```\n\n```\nERROR:\nDetalle: No se pudo completar la operación CRM\n```\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        3760,
+        32
+      ],
+      "id": "b71d8036-3e9f-4f13-9784-0d6f57c8487d",
+      "name": "Subagente CRM"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Crea un nuevo cliente o actualiza uno existente en la tabla \"clientes\" de Airtable. Usa el teléfono (clientes_telefono_e164) como campo de coincidencia: si ya existe un registro con ese teléfono, lo actualiza; si no, lo crea.\n\nCUÁNDO USAR:\n- CREAR: Cuando \"Consultar contactos\" no encontró al cliente y ya tienes su nombre.\n- ACTUALIZAR: Cuando necesites actualizar el clientes_conversation_id o completar el clientes_nombre.\n\nPARÁMETROS:\n- clientes_telefono_e164: Número en formato E.164 (ejemplo: +18095551234). Campo de coincidencia obligatorio.\n- clientes_nombre: Nombre del cliente. Solo completar si es nuevo o si el nombre actual está vacío/incompleto.\n- clientes_conversation_id: ID de la conversación de Chatwoot. Actualizar si está vacío o es diferente al actual.\n- clientes_status: \"Activo\". Solo definir al crear un cliente nuevo. NUNCA cambiar el status de un cliente existente.\n\nIMPORTANTE: No usar si \"Consultar contactos\" detectó duplicados.",
+        "authentication": "airtableOAuth2Api",
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "appTBEwcPDGO8Zj5m",
+          "mode": "list",
+          "cachedResultName": "NAPIER SALON",
+          "cachedResultUrl": "https://airtable.com/appTBEwcPDGO8Zj5m"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblUALlgdPNdiJaBQ",
+          "mode": "list",
+          "cachedResultName": "clientes",
+          "cachedResultUrl": "https://airtable.com/appTBEwcPDGO8Zj5m/tblUALlgdPNdiJaBQ"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "clientes_telefono_e164": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('clientes_telefono_e164__using_to_match_', ``, 'string') }}",
+            "clientes_nombre": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('clientes_nombre', ``, 'string') }}",
+            "clientes_conversation_id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('clientes_conversation_id', ``, 'string') }}",
+            "clientes_status": "={{ $fromAI(\"clientes_status\") }}"
+          },
+          "matchingColumns": [
+            "clientes_telefono_e164"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "clientes_nombre",
+              "displayName": "clientes_nombre",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "clientes_telefono_e164",
+              "displayName": "clientes_telefono_e164",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "clientes_creado_el",
+              "displayName": "clientes_creado_el",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "clientes_ultimo_contacto_el",
+              "displayName": "clientes_ultimo_contacto_el",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "clientes_status",
+              "displayName": "clientes_status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Activo",
+                  "value": "Activo"
+                },
+                {
+                  "name": "Bloqueado",
+                  "value": "Bloqueado"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "clientes_conversation_id",
+              "displayName": "clientes_conversation_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "citas_cita_actual",
+              "displayName": "citas_cita_actual",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "cantidad de citas",
+              "displayName": "cantidad de citas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "ultima_cita_status",
+              "displayName": "ultima_cita_status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "ultima_cita_fecha",
+              "displayName": "ultima_cita_fecha",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "resumen_cliente",
+              "displayName": "resumen_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "categoria_cliente",
+              "displayName": "categoria_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        3840,
+        240
+      ],
+      "id": "5253b130-cf98-45e7-87cd-8814baaa4905",
+      "name": "Crear / Actualizar contacto",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "pvaMXLMo0KtJsthV",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Verifica si UN slot específico está libre en el calendario de un staff.\n\nUSO OBLIGATORIO: 1 llamada por cada slot candidato que quieras verificar. NO consultes el día completo — la API devuelve false si hay CUALQUIER evento en el rango.\n\nPARÁMETROS:\n\n- Calendar: staff_gcalendar_calendar_id del staff.\n- Start_Time: inicio EXACTO del slot candidato en ISO 8601 (ej: 2026-04-22T10:00:00-04:00).\n- End_Time: fin EXACTO del slot (start + duración del staff). Ej: 10:40 si el slot es de 40 min.\n\nZona horaria: America/Santo_Domingo (UTC-4).\nResultado: {available:true} si libre, {available:false} si ocupado.",
+        "resource": "calendar",
+        "calendar": {
+          "__rl": true,
+          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Calendar', 'staff_gcalendar_calendar_id del staff asignado, obtenido de Airtable (buscar record staff). Formato: xxx@group.calendar.google.com o napiersalon@gmail.com', 'string') }}",
+          "mode": "id"
+        },
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start_Time', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End_Time', ``, 'string') }}",
+        "options": {
+          "timezone": {
+            "__rl": true,
+            "value": "America/Santo_Domingo",
+            "mode": "list",
+            "cachedResultName": "America/Santo_Domingo"
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        2944,
+        240
+      ],
+      "id": "b4f0a4f6-58c3-43a8-8296-6224522503ff",
+      "name": "Consultar disponibilidad",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "zWSIpOTbRVHf3vOa",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Razonamiento interno antes de actuar. Úsala para planificar pasos complejos, calcular slots, o decidir qué herramienta llamar.\n\nREGLAS DE INPUT (ESTRICTAS):\n- Envía SOLO texto plano en el campo `input`.\n- PROHIBIDO usar comillas dobles (\\\") dentro del input.\n- PROHIBIDO incluir JSON, objetos o pares clave:valor.\n- PROHIBIDO incluir la respuesta final que vas a enviar al cliente.\n- Si necesitas citar algo, usa comillas simples.\n- Máximo 3 frases por llamada.\n\nEjemplo correcto: 'El cliente pidió 9:20 am con NAPIER. Slot válido (múltiplo de 20). Siguiente paso: delegar al Subagente Calendario para crear.'\nEjemplo INCORRECTO: 'User said X: \\\"sí, confirma\\\" so I should do Y'\n\nCUÁNDO USAR:\n- Antes de construir la lista de slots disponibles (calcular múltiplos de duración, excluir comida y eventos existentes).\n- Cuando necesites decidir qué staff asignar según el servicio solicitado.\n- Antes de confirmar una cancelación con múltiples citas encontradas.\n\nNo produce resultado visible al cliente. Es solo para tu razonamiento interno."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        4048,
+        32
+      ],
+      "id": "a290593d-182d-4677-9530-9ec4f58b560f",
+      "name": "Think"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        4176,
+        32
+      ],
+      "id": "3196acad-0e82-4c18-9d51-a874db2c327b",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Consulta la base de datos de precios y servicios de Napier Salon desde Google Sheets.\n\nCUÁNDO USAR: Cuando el cliente pregunte por precios, detalles de servicios, o productos disponibles.\n\nNo requiere parámetros especiales — devuelve los datos de la hoja.",
+        "documentId": {
+          "__rl": true,
+          "value": "1coZ6tFZomdo_PuY_EkGi2vdX6yRgeuWWHyB0eQrv_wg",
+          "mode": "list",
+          "cachedResultName": "BASE DE DATOS NAPIER SALON",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1coZ6tFZomdo_PuY_EkGi2vdX6yRgeuWWHyB0eQrv_wg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1coZ6tFZomdo_PuY_EkGi2vdX6yRgeuWWHyB0eQrv_wg/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        4304,
+        32
+      ],
+      "id": "3051d04e-e945-4022-89fc-3ad0ede49778",
+      "name": "Base de datos",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4L5R4RtuADtgojMQ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Busca un cliente en la tabla \"clientes\" de Airtable por su número de teléfono.\n\nCUÁNDO USAR: SIEMPRE como primer paso antes de cualquier operación de citas (agendar, cancelar, consultar). Sirve para saber si el cliente ya existe en el CRM.\n\nPARÁMETROS:\n- Filter_By_Formula: Fórmula de Airtable para buscar por teléfono. Ejemplo de formato exacto: {clientes_telefono_e164} = '+18095551234'\n\nRESULTADO: Devuelve los registros que coincidan. Si hay 0 resultados, el cliente no existe. Si hay más de 1 resultado con el mismo teléfono, hay duplicado (no crear ni actualizar).\n\nCampos relevantes del resultado: clientes_nombre, clientes_telefono_e164, clientes_status, clientes_conversation_id.",
+        "authentication": "airtableOAuth2Api",
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appTBEwcPDGO8Zj5m",
+          "mode": "list",
+          "cachedResultName": "NAPIER SALON",
+          "cachedResultUrl": "https://airtable.com/appTBEwcPDGO8Zj5m"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblUALlgdPNdiJaBQ",
+          "mode": "list",
+          "cachedResultName": "clientes",
+          "cachedResultUrl": "https://airtable.com/appTBEwcPDGO8Zj5m/tblUALlgdPNdiJaBQ"
+        },
+        "filterByFormula": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Filter_By_Formula', `clientes_telefono_e164`, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        3968,
+        240
+      ],
+      "id": "1bdef789-a689-434b-af3e-6703477523b2",
+      "name": "Consultar contactos",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "pvaMXLMo0KtJsthV",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Se te dará un número de teléfono para que busques el cliente y debes devolver el record id del cliente: clientes_record_id.\n\nEsto lo debes guardar para utilizarlo en registro de citas",
+        "authentication": "airtableOAuth2Api",
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appTBEwcPDGO8Zj5m",
+          "mode": "list",
+          "cachedResultName": "NAPIER SALON",
+          "cachedResultUrl": "https://airtable.com/appTBEwcPDGO8Zj5m"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblUALlgdPNdiJaBQ",
+          "mode": "list",
+          "cachedResultName": "clientes",
+          "cachedResultUrl": "https://airtable.com/appTBEwcPDGO8Zj5m/tblUALlgdPNdiJaBQ"
+        },
+        "filterByFormula": "={{ $fromAI('Filter_By_Formula', `Fórmula Airtable con llaves. Ej exacto: {clientes_telefono_e164}='+18095551234'`, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        3072,
+        240
+      ],
+      "id": "ac276682-ecde-45f6-995a-44134764acf8",
+      "name": "buscar record cliente",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "pvaMXLMo0KtJsthV",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "se te dara un NOMBRE DEL STAFF para que busques el staff y debes devolver el record id del staff: staff_record_id\n\nesto debes guargarlo para utilizarlo en registro de citas",
+        "authentication": "airtableOAuth2Api",
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appTBEwcPDGO8Zj5m",
+          "mode": "list",
+          "cachedResultName": "NAPIER SALON",
+          "cachedResultUrl": "https://airtable.com/appTBEwcPDGO8Zj5m"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblYz97KCi1CFLQPk",
+          "mode": "list",
+          "cachedResultName": "staff",
+          "cachedResultUrl": "https://airtable.com/appTBEwcPDGO8Zj5m/tblYz97KCi1CFLQPk"
+        },
+        "filterByFormula": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Filter_By_Formula', `Fórmula Airtable. Ej exacto: {staff_nombre}='ALAN'`, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        3200,
+        240
+      ],
+      "id": "614af0d7-6639-4a02-ab9d-015423a355fb",
+      "name": "buscar record staff",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "pvaMXLMo0KtJsthV",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "includeInputFields": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Include_Input_Fields', ``, 'boolean') }}",
+          "timezone": "America/Santo_Domingo"
+        }
+      },
+      "type": "n8n-nodes-base.dateTimeTool",
+      "typeVersion": 2,
+      "position": [
+        4432,
+        32
+      ],
+      "id": "f72498fe-6253-4365-a727-a91f5f6e8ffe",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "options": {
+          "timezone": "America/Santo_Domingo"
+        }
+      },
+      "type": "n8n-nodes-base.dateTimeTool",
+      "typeVersion": 2,
+      "position": [
+        3328,
+        240
+      ],
+      "id": "ccd5758a-6b98-4cdb-bbd3-8758c97ea688",
+      "name": "Date & Time1"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Cancelar cita, obtendras como entrada el gcalendar_event_id y actualizaras:\n- citas_status: \"cancelada\"\n- citas_razon_cancelacion",
+        "authentication": "airtableOAuth2Api",
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appTBEwcPDGO8Zj5m",
+          "mode": "list",
+          "cachedResultName": "NAPIER SALON",
+          "cachedResultUrl": "https://airtable.com/appTBEwcPDGO8Zj5m"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVpadbk9zw7Nhpy",
+          "mode": "list",
+          "cachedResultName": "citas",
+          "cachedResultUrl": "https://airtable.com/appTBEwcPDGO8Zj5m/tblVpadbk9zw7Nhpy"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "gcalendar_event_id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('gcalendar_event_id__using_to_match_', ``, 'string') }}",
+            "citas_razon_cancelacion": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('citas_razon_cancelacion', ``, 'string') }}",
+            "NOTAS": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('NOTAS', ``, 'string') }}",
+            "citas_status": "Cancelada"
+          },
+          "matchingColumns": [
+            "gcalendar_event_id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Codigo_cita",
+              "displayName": "Codigo_cita",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Label_cita",
+              "displayName": "Label_cita",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "cliente",
+              "displayName": "cliente",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "clientes_telefono_e164",
+              "displayName": "clientes_telefono_e164",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "staff",
+              "displayName": "staff",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "citas_empieza_el",
+              "displayName": "citas_empieza_el",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "citas_status",
+              "displayName": "citas_status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Confirmada",
+                  "value": "Confirmada"
+                },
+                {
+                  "name": "Cancelada",
+                  "value": "Cancelada"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "citas_termina_el",
+              "displayName": "citas_termina_el",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "creada_el",
+              "displayName": "creada_el",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "actulizada_el",
+              "displayName": "actulizada_el",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "citas_razon_cancelacion",
+              "displayName": "citas_razon_cancelacion",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Duración_cita_min",
+              "displayName": "Duración_cita_min",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "duración_servicio_min (from staff)(COMPARACION)",
+              "displayName": "duración_servicio_min (from staff)(COMPARACION)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Cliente_status",
+              "displayName": "Cliente_status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "gcalendar_calendar_id (from staff)",
+              "displayName": "gcalendar_calendar_id (from staff)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "gcalendar_event_id",
+              "displayName": "gcalendar_event_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "NOTAS",
+              "displayName": "NOTAS",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        3456,
+        240
+      ],
+      "id": "9e56a519-e31b-479e-af7c-a4de301f6d9d",
+      "name": "Cancelar citas",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "pvaMXLMo0KtJsthV",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Razonamiento interno antes de actuar. Úsala para planificar pasos complejos, calcular slots, o decidir qué herramienta llamar.\n\nREGLAS DE INPUT (ESTRICTAS):\n- Envía SOLO texto plano en el campo `input`.\n- PROHIBIDO usar comillas dobles (\\\") dentro del input.\n- PROHIBIDO incluir JSON, objetos o pares clave:valor.\n- PROHIBIDO incluir la respuesta final que vas a enviar al cliente.\n- Si necesitas citar algo, usa comillas simples.\n- Máximo 3 frases por llamada.\n\nEjemplo correcto: 'El cliente pidió 9:20 am con NAPIER. Slot válido (múltiplo de 20). Siguiente paso: delegar al Subagente Calendario para crear.'\nEjemplo INCORRECTO: 'User said X: \\\"sí, confirma\\\" so I should do Y'"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        3584,
+        240
+      ],
+      "id": "8f55f9a9-eb71-4df2-9b13-73b0ff49162e",
+      "name": "Think1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+      "typeVersion": 1,
+      "position": [
+        4944,
+        32
+      ],
+      "id": "ed84cead-df59-4143-9290-df368a360c36",
+      "name": "Auto-fixing Output Parser1"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"response\": {\n    \"part_1\": \"Responde con la primera parte de la respuesta.\",\n    \"part_2\": \"Responde con la segunda parte de la respuesta.\",\n    \"part_3\": \"Responde con la tercera parte de la respuesta (opcional).\",\n    \"part_4\": \"Responde con la cuarta parte de la respuesta (opcional).\"\n  }\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        5056,
+        240
+      ],
+      "id": "cda51f25-ece2-4dcf-b6c8-2cb66b77babe",
+      "name": "Structured Output Parser2"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {
+          "frequencyPenalty": 0,
+          "presencePenalty": 0,
+          "temperature": 0.1,
+          "topP": 0.9
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        4880,
+        240
+      ],
+      "id": "77ccfb06-aaef-4986-9531-0a35c3074dc4",
+      "name": "OpenAI Chat Model6",
+      "credentials": {
+        "openAiApi": {
+          "id": "Fwn9FhQGHe2qhZRV",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chatwoot.rewautomata.com/api/v1/accounts/ {{ $('ENTRADA AGENTE').item.json.account_id }}/conversations/{{ $('ENTRADA AGENTE').item.json.conversation_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"content\": \"{{ $json.output.response.part_1 }}\",\n  \"private\": false,\n  \"message_type\": \"outgoing\",\n  \"sender\":\n  {\n    \"type\": \"bot\"\n  }\n}\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        5312,
+        -192
+      ],
+      "id": "bed0ae66-fb2e-408b-8e96-a4e8998ced91",
+      "name": "parte 1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Wuo9F9Maa91h5Fk2",
+          "name": "Chatwoot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Respuesta a formatear:\n{{ $json.outputset }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Tu función es generar un JSON con las partes de la respuesta que se enviarán como mensajes separados de WhatsApp.\n\nFormato de salida (OBLIGATORIO)\n\nDebes responder SIEMPRE en este formato JSON:\n\n{\n\"response\": {\n\"part_1\": \"Primera parte de la respuesta.\",\n\"part_2\": \"Segunda parte de la respuesta (si hace falta).\",\n\"part_3\": \"Tercera parte de la respuesta (si hace falta).\",\n\"part_4\": \"Cuarta parte de la respuesta (si hace falta).\"\n}\n}\n\nReglas importantes sobre el formato:\n\nIncluye SIEMPRE las claves part_1, part_2, part_3, part_4 en el JSON, en ese orden.\nSi alguna parte no se usa, ponla como cadena vacía \"\".\nNo añadas campos extra fuera de response.\nNo uses saltos de línea \\n dentro de cada parte y elimina saltos de linea si alguna parte los contiene.\nCada part_X debe ser un mensaje corto y natural que pueda enviarse tal cual por WhatsApp.\n\nCómo debes partir el mensaje\n\nTu objetivo es que parezca una persona escribiendo en WhatsApp: mensajes cortos y naturales enviados uno detrás de otro.\n\nAntes de dividir, piensa el mensaje completo que quieres decir. Luego divídelo en bloques lógicos.\n\nCada parte debe ser una idea completa. NUNCA cortes una frase por la mitad ni separes sujeto y verbo en partes distintas.\n\n✅ Correcto:\n\npart_1: \"Buenos días, Andrea\"\n\npart_2: \"¿Te ayudo a reservar cita o quieres info de algún servicio?\"\n\n❌ Incorrecto:\n\npart_1: \"¿Te ayudo a reservar una cita,\"\n\npart_2: \"o quieres info de algún servicio?\"\n\nNúmero de partes:\n\nSi la respuesta es corta (saludo + pregunta) → usa solo part_1 y deja part_2, part_3, part_4 vacías.\n\nSi la respuesta tiene dos ideas naturales (ej. saludo, luego explicación rápida) → usa part_1 y part_2.\n\nSi necesitas explicar algo más largo (por ejemplo: confirmación de cita con día/hora + siguiente paso) → puedes usar part_3.\n\npart_4 solo se usa si de verdad es necesaria. La mayoría de respuestas reales caben en 1-2 partes.\n\nRegla práctica:\n\nMensaje breve → 1 parte.\n\nMensaje normal → 2 partes.\n\nMensaje con confirmación de datos importantes → 2 o 3 partes.\n\n4 partes es raro. Úsalo solo si serían mensajes que una persona enviaría uno detrás de otro sin parecer un bloque enorme.\n\nNo hagas frases demasiado largas en una sola parte. Cada part_X debe sonar como un mensaje corto y amable que mandarías por WhatsApp (máximo ~2 frases).\n\nMantén el tono cercano y directo:\n\nUsa tuteo.\n\nPuedes usar expresiones tipo \"vale\", \"genial\", \"perfecto\".\n\nNo se permiten emojis.\n\nNada de estilo técnico ni formal excesivo.\n\n\nEjemplos de salida correcta\n\n(saludo inicial corto):\n{\n\"response\": {\n\"part_1\": \"Buenos días, Andrea\",\n\"part_2\": \"¿Quieres que te reserve una cita o prefieres preguntarme algo sobre los servicios?\",\n\"part_3\": \"\",\n\"part_4\": \"\"\n}\n}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        4864,
+        -192
+      ],
+      "id": "89f97456-61c5-4e58-a0ec-e8c5c101d9da",
+      "name": "formateo de respuesta"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8d678426-92ff-4f8e-97fc-2c5516b498d2",
+              "leftValue": "={{ $('formateo de respuesta').item.json.output.response.part_2 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        5536,
+        -192
+      ],
+      "id": "81d06f2e-f142-4039-8d39-0a495880a7e9",
+      "name": "if part_2"
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        5760,
+        -272
+      ],
+      "id": "70e2f9bf-a2c6-4f19-ab0b-ed56d3b9c4d0",
+      "name": "Wait1",
+      "webhookId": "b7b9d865-b14d-4b50-a69e-c02f99054925",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chatwoot.rewautomata.com/api/v1/accounts/ {{ $('ENTRADA AGENTE').item.json.account_id }}/conversations/{{ $('ENTRADA AGENTE').item.json.conversation_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"content\": \"{{ $('formateo de respuesta').item.json.output.response.part_2 }}\",\n  \"private\": false,\n  \"message_type\": \"outgoing\",\n  \"sender\":\n  {\n    \"type\": \"bot\"\n  }\n}\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        5984,
+        -272
+      ],
+      "id": "27854598-b746-46f6-b164-1f7d37f35fab",
+      "name": "parte 2",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Wuo9F9Maa91h5Fk2",
+          "name": "Chatwoot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6a70d100-1a05-4fdb-8a72-ee10528ac28e",
+              "leftValue": "={{ $('formateo de respuesta').item.json.output.response.part_3 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        6208,
+        -192
+      ],
+      "id": "6689dc20-fe28-4e4f-a8d8-b8f404017b74",
+      "name": "if part_3"
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        6432,
+        -272
+      ],
+      "id": "bf8d7cf7-6cc9-4c96-ada9-d3b8c50484f5",
+      "name": "Wait2",
+      "webhookId": "b7b9d865-b14d-4b50-a69e-c02f99054925",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chatwoot.rewautomata.com/api/v1/accounts/ {{ $('ENTRADA AGENTE').item.json.account_id }}/conversations/{{ $('ENTRADA AGENTE').item.json.conversation_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"content\": \"{{ $('formateo de respuesta').item.json.output.response.part_3 }}\",\n  \"private\": false,\n  \"message_type\": \"outgoing\",\n  \"sender\":\n  {\n    \"type\": \"bot\"\n  }\n}\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        6656,
+        -272
+      ],
+      "id": "91e17313-0f3e-4005-bd7b-a2891c3401c9",
+      "name": "parte 3",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Wuo9F9Maa91h5Fk2",
+          "name": "Chatwoot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c9503484-9e40-461e-862f-ff7f15cc4801",
+              "leftValue": "={{ $('formateo de respuesta').item.json.output.response.part_4 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        6880,
+        -192
+      ],
+      "id": "46f79356-2812-4bca-871a-141db65c3090",
+      "name": "If part_4"
+    },
+    {
+      "parameters": {
+        "amount": 0.5
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        7104,
+        -192
+      ],
+      "id": "b3e2c8b8-19a2-48b9-9d03-3d04f602a6be",
+      "name": "Wait3",
+      "webhookId": "b7b9d865-b14d-4b50-a69e-c02f99054925",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://chatwoot.rewautomata.com/api/v1/accounts/ {{ $('ENTRADA AGENTE').item.json.account_id }}/conversations/{{ $('ENTRADA AGENTE').item.json.conversation_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"content\": \"{{ $('formateo de respuesta').item.json.output.response.part_4 }}\",\n  \"private\": false,\n  \"message_type\": \"outgoing\",\n  \"sender\":\n  {\n    \"type\": \"bot\"\n  }\n}\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        7328,
+        -192
+      ],
+      "id": "c6367641-b3e0-4cd9-a622-baaa241005dd",
+      "name": "parte 4",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Wuo9F9Maa91h5Fk2",
+          "name": "Chatwoot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1504,
+        -192
+      ],
+      "id": "41bc3988-a6f6-4f2e-a0e8-84a62f89b9e7",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1504,
+        240
+      ],
+      "id": "e961aacd-4e5a-492c-9d33-41094e888985",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "deleteTable",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "n8n_chat_histories",
+          "mode": "list",
+          "cachedResultName": "n8n_chat_histories"
+        },
+        "deleteCommand": "delete",
+        "where": {
+          "values": [
+            {
+              "column": "session_id",
+              "value": "59899999999_admin"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1280,
+        240
+      ],
+      "id": "2034b90f-30e2-4446-8eb7-13087c742334",
+      "name": "Delete table or rows",
+      "credentials": {
+        "postgres": {
+          "id": "fR4EoN3IFvkM48Bm",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -832,
+        -192
+      ],
+      "id": "cc75fb1e-db6d-49c1-97e4-dfd2531d041a",
+      "name": "Wait",
+      "webhookId": "c687d8cd-ac63-4bb4-bd8c-da44c9a65312",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pre-procesador de fechas\nconst TZ = 'America/Santo_Domingo';\nconst now = new Date(new Date().toLocaleString('en-US', { timeZone: TZ }));\nconst pad = n => String(n).padStart(2, '0');\nconst toISO = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;\nconst dnames = ['domingo','lunes','martes','miercoles','jueves','viernes','sabado'];\nconst ctx = {\n  hoy: toISO(now),\n  manana: toISO(new Date(\n    now.getFullYear(),\n    now.getMonth(),\n    now.getDate()+1)),\n  pasado_manana: toISO(new Date(\n    now.getFullYear(),\n    now.getMonth(),\n    now.getDate()+2)),\n  dia_semana_hoy: dnames[now.getDay()],\n  hora_actual: `${pad(now.getHours())}:${pad(now.getMinutes())}`,\n  proximos_7_dias: {}\n};\n\nfor (let i = 1; i <= 7; i++) {\n  const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);\n  const n = dnames[d.getDay()];\n  if (!ctx.proximos_7_dias[n])\n    ctx.proximos_7_dias[n] = toISO(d);\n}\n\nreturn [{json: { ...$input.first().json, fecha_contexto: ctx } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2336,
+        -192
+      ],
+      "id": "4affe958-1970-4b7f-a39b-09e6a48046df",
+      "name": "Fechas"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Registrar cita (tabla Citas) con Registro de citas:\n   - cliente = [cliente_record_id]\n   - staff = [staff_record_id]\n   - citas_empieza_el, citas_termina_el\n   - citas_status = Confirmada\n   - gcalendar_event_id",
+        "authentication": "airtableOAuth2Api",
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appTBEwcPDGO8Zj5m",
+          "mode": "list",
+          "cachedResultName": "NAPIER SALON",
+          "cachedResultUrl": "https://airtable.com/appTBEwcPDGO8Zj5m"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVpadbk9zw7Nhpy",
+          "mode": "list",
+          "cachedResultName": "citas",
+          "cachedResultUrl": "https://airtable.com/appTBEwcPDGO8Zj5m/tblVpadbk9zw7Nhpy"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "staff": "={{ $fromAI('staff', `record_id del STAFF. EXCLUSIVAMENTE el valor devuelto por \\`buscar record staff\\` (tabla staff). \nNUNCA el record_id de \\`buscar record cliente\\` — ese pertenece a la tabla clientes.`, 'json') }}",
+            "gcalendar_event_id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('gcalendar_event_id__using_to_match_', ``, 'string') }}",
+            "citas_empieza_el": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('citas_empieza_el', ``, 'string') }}",
+            "citas_termina_el": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('citas_termina_el', ``, 'string') }}",
+            "NOTAS": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('NOTAS', ``, 'string') }}",
+            "cliente": "={{ $fromAI('cliente', `record_id del CLIENTE. EXCLUSIVAMENTE el valor devuelto por \\`buscar record cliente\\` (tabla clientes). \nNUNCA el record_id de \\`buscar record staff\\` — ese pertenece a la tabla staff y causará error de tabla incorrecta.`, 'json') }}",
+            "citas_status": "Confirmada"
+          },
+          "matchingColumns": [
+            "gcalendar_event_id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Codigo_cita",
+              "displayName": "Codigo_cita",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Label_cita",
+              "displayName": "Label_cita",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "cliente",
+              "displayName": "cliente",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "clientes_telefono",
+              "displayName": "clientes_telefono",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "staff",
+              "displayName": "staff",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "citas_empieza_el",
+              "displayName": "citas_empieza_el",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "citas_status",
+              "displayName": "citas_status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "citas_termina_el",
+              "displayName": "citas_termina_el",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "gcalendar_event_id",
+              "displayName": "gcalendar_event_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "creada_el",
+              "displayName": "creada_el",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "actulizada_el",
+              "displayName": "actulizada_el",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "citas_razon_cancelacion",
+              "displayName": "citas_razon_cancelacion",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Duración_cita_min",
+              "displayName": "Duración_cita_min",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "duración_servicio_min (from staff)(COMPARACION)",
+              "displayName": "duración_servicio_min (from staff)(COMPARACION)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Cliente_status",
+              "displayName": "Cliente_status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "gcalendar_calendar_id (from staff)",
+              "displayName": "gcalendar_calendar_id (from staff)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "NOTAS",
+              "displayName": "NOTAS",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        2560,
+        240
+      ],
+      "id": "c5ba2428-b993-44e9-8056-b653091067aa",
+      "name": "Registro citas",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "pvaMXLMo0KtJsthV",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.rewautomata.com",
+            "user-agent": "rest-client/2.1.0 (linux-musl x86_64) ruby/3.4.4p34",
+            "content-length": "2349",
+            "accept": "application/json",
+            "accept-encoding": "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
+            "content-type": "application/json",
+            "x-chatwoot-delivery": "82aeb16f-9f83-4e75-aa67-72b225fdc84b",
+            "x-chatwoot-signature": "sha256=4b08fd7befd51121349bab36af7c0631a49288c576a3f75ed263f1d52ae021d1",
+            "x-chatwoot-timestamp": "1776864389",
+            "x-forwarded-for": "172.17.0.1",
+            "x-forwarded-host": "n8n.rewautomata.com",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "078c7c511132",
+            "x-real-ip": "172.17.0.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "account": {
+              "id": 2,
+              "name": "REW AUTOMATA"
+            },
+            "additional_attributes": {},
+            "content_attributes": {},
+            "content_type": "text",
+            "content": "el próximo",
+            "conversation": {
+              "additional_attributes": {},
+              "can_reply": true,
+              "channel": "Channel::Whatsapp",
+              "contact_inbox": {
+                "id": 6,
+                "contact_id": 6,
+                "inbox_id": 1,
+                "source_id": "59899999999",
+                "created_at": "2026-04-06T16:28:22.547Z",
+                "updated_at": "2026-04-06T16:28:22.547Z",
+                "hmac_verified": false,
+                "pubsub_token": "xRwLJBKsYUN9kRvVnoKkW7Qp"
+              },
+              "id": 7,
+              "inbox_id": 1,
+              "messages": [
+                {
+                  "id": 1618,
+                  "content": "el próximo",
+                  "account_id": 2,
+                  "inbox_id": 1,
+                  "conversation_id": 7,
+                  "message_type": 0,
+                  "created_at": 1776864389,
+                  "updated_at": "2026-04-22T13:26:29.460Z",
+                  "private": false,
+                  "status": "sent",
+                  "source_id": "wamid.HBgLNTk4OTM1MzY2OTQVAgASGBQzQjNBRkY4N0FCMjA5NjYzOEY1NwA=",
+                  "content_type": "text",
+                  "content_attributes": {},
+                  "sender_type": "Contact",
+                  "sender_id": 6,
+                  "external_source_ids": {},
+                  "additional_attributes": {},
+                  "processed_message_content": "el próximo",
+                  "sentiment": {},
+                  "conversation": {
+                    "assignee_id": null,
+                    "unread_count": 10,
+                    "last_activity_at": 1776864389,
+                    "contact_inbox": {
+                      "source_id": "59899999999"
+                    }
+                  },
+                  "sender": {
+                    "additional_attributes": {},
+                    "custom_attributes": {},
+                    "email": null,
+                    "id": 6,
+                    "identifier": null,
+                    "name": "la agencia",
+                    "phone_number": "59899999999",
+                    "thumbnail": "",
+                    "blocked": false,
+                    "type": "contact"
+                  }
+                }
+              ],
+              "labels": [],
+              "meta": {
+                "sender": {
+                  "additional_attributes": {},
+                  "custom_attributes": {},
+                  "email": null,
+                  "id": 6,
+                  "identifier": null,
+                  "name": "la agencia",
+                  "phone_number": "59899999999",
+                  "thumbnail": "",
+                  "blocked": false,
+                  "type": "contact"
+                },
+                "assignee": null,
+                "assignee_type": null,
+                "team": null,
+                "hmac_verified": false
+              },
+              "status": "open",
+              "custom_attributes": {},
+              "snoozed_until": null,
+              "unread_count": 10,
+              "first_reply_created_at": "2026-04-06T16:28:54.374Z",
+              "priority": null,
+              "waiting_since": 0,
+              "agent_last_seen_at": 1776190103,
+              "contact_last_seen_at": 0,
+              "last_activity_at": 1776864389,
+              "timestamp": 1776864389,
+              "created_at": 1775492902,
+              "updated_at": 1776864389.464847
+            },
+            "created_at": "2026-04-22T13:26:29.460Z",
+            "id": 1618,
+            "inbox": {
+              "id": 1,
+              "name": "NAPIER SALON BOT"
+            },
+            "message_type": "incoming",
+            "private": false,
+            "sender": {
+              "account": {
+                "id": 2,
+                "name": "REW AUTOMATA"
+              },
+              "additional_attributes": {},
+              "avatar": "",
+              "custom_attributes": {},
+              "email": null,
+              "id": 6,
+              "identifier": null,
+              "name": "la agencia",
+              "phone_number": "59899999999",
+              "thumbnail": "",
+              "blocked": false
+            },
+            "source_id": "wamid.HBgLNTk4OTM1MzY2OTQVAgASGBQzQjNBRkY4N0FCMjA5NjYzOEY1NwA=",
+            "event": "message_created"
+          },
+          "webhookUrl": "https://n8n.rewautomata.com/webhook/QqYjwgilphLM7nCNOScBxuTEKrB2tvyH",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Redis (delete tabla mensajes)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Json parse": {
+      "main": [
+        [
+          {
+            "node": "procesamos segun tipo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out  (separador de data)": {
+      "main": [
+        [
+          {
+            "node": "Json parse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis(push mensaje)": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis(Get mensaje)": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis (delete tabla mensajes)": {
+      "main": [
+        [
+          {
+            "node": "Split Out  (separador de data)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se toma mensaje y tiempo.": {
+      "main": [
+        [
+          {
+            "node": "unimos mensajes en tabla",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request (descargamos el audio)": {
+      "main": [
+        [
+          {
+            "node": "pasamos audio a texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "pasamos audio a texto": {
+      "main": [
+        [
+          {
+            "node": "se toma mensaje y tiempo audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "se toma mensaje y tiempo audio": {
+      "main": [
+        [
+          {
+            "node": "unimos mensajes en tabla",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "procesamos segun tipo": {
+      "main": [
+        [
+          {
+            "node": "Se toma mensaje y tiempo.",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request (descargamos el audio)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "unimos mensajes en tabla": {
+      "main": [
+        [
+          {
+            "node": "ordenamos por orden de llegada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ordenamos por orden de llegada": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "ENTRADA AGENTE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ENTRADA AGENTE": {
+      "main": [
+        [
+          {
+            "node": "Fechas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AGENTE PRINCIPAL",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SALIDAAGENTE": {
+      "main": [
+        [
+          {
+            "node": "formateo de respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AGENTE PRINCIPAL",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear evento": {
+      "ai_tool": [
+        [
+          {
+            "node": "Subagente Calendario",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subagente Calendario": {
+      "ai_tool": [
+        [
+          {
+            "node": "AGENTE PRINCIPAL",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Subagente Calendario",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar citas": {
+      "ai_tool": [
+        [
+          {
+            "node": "Subagente Calendario",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eliminar evento": {
+      "ai_tool": [
+        [
+          {
+            "node": "Subagente Calendario",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AGENTE PRINCIPAL": {
+      "main": [
+        [
+          {
+            "node": "SALIDAAGENTE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Subagente CRM",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subagente CRM": {
+      "ai_tool": [
+        [
+          {
+            "node": "AGENTE PRINCIPAL",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear / Actualizar contacto": {
+      "ai_tool": [
+        [
+          {
+            "node": "Subagente CRM",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar disponibilidad": {
+      "ai_tool": [
+        [
+          {
+            "node": "Subagente Calendario",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AGENTE PRINCIPAL",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AGENTE PRINCIPAL",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Base de datos": {
+      "ai_tool": [
+        [
+          {
+            "node": "AGENTE PRINCIPAL",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar contactos": {
+      "ai_tool": [
+        [
+          {
+            "node": "Subagente CRM",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar record cliente": {
+      "ai_tool": [
+        [
+          {
+            "node": "Subagente Calendario",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar record staff": {
+      "ai_tool": [
+        [
+          {
+            "node": "Subagente Calendario",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "ai_tool": [
+        [
+          {
+            "node": "AGENTE PRINCIPAL",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Subagente Calendario",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cancelar citas": {
+      "ai_tool": [
+        [
+          {
+            "node": "Subagente Calendario",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Subagente Calendario",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-fixing Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "formateo de respuesta",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Auto-fixing Output Parser1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model6": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Auto-fixing Output Parser1",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "formateo de respuesta",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "parte 1": {
+      "main": [
+        [
+          {
+            "node": "if part_2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "formateo de respuesta": {
+      "main": [
+        [
+          {
+            "node": "parte 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "if part_2": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "if part_3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "parte 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "parte 2": {
+      "main": [
+        [
+          {
+            "node": "if part_3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "if part_3": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If part_4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "parte 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "parte 3": {
+      "main": [
+        [
+          {
+            "node": "If part_4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If part_4": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "parte 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro entrada WS": {
+      "main": [
+        [
+          {
+            "node": "Redis(push mensaje)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Filtro entrada WS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Delete table or rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Redis(Get mensaje)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fechas": {
+      "main": [
+        [
+          {
+            "node": "AGENTE PRINCIPAL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registro citas": {
+      "ai_tool": [
+        [
+          {
+            "node": "Subagente Calendario",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "235dfee3-2230-4c05-ae8e-cb84d14bd976",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6a25e51faa84fb5216b23896a8c1ff4ebfd744fd865a89b0eaab7448b70c6ffb"
+  },
+  "id": "03pl0ZssG7aTgh8X",
+  "tags": []
+}

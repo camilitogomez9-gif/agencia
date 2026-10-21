@@ -1,0 +1,17 @@
+﻿titulo,Métodos(pdf),CURL,bot_id
+Métodos de Pago,NUMEROS DE CUENTA.pdf (https://v5.airtableusercontent.com/v3/u/52/52/1777442400000/eXJun8ZYGYlQN2I5PMnqGA/BN3QZAvB-jGv1ddNEbE8tomxpqLXBVrf00SPTL2RHHds_pZ8MQwmMTkdQ5xo3R5rQ9I0I--1j06JHarPq9kIsi4WaKpRyJ_PVzFi95058PDhUTTeVxds0FvK_D80QYBkakWEF0J31FnJSnahtWYPv4n5xKlzMEcJQhZZN1WNrk8/Y2SVE9yRBw4mGyUcb-3G5UPNMsEZ-i9WZuBaj3g94XA),"curl 'https://amojo.kommo.com/v2/780187c1-40c3-4af3-b468-130d9ea7a2f3/sendMessage?stand=v16' \
+  -H 'Accept: application/json, text/javascript, */*; q=0.01' \
+  -H 'Accept-Language: es-ES,es;q=0.9' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -H 'Origin: https://happyflopss.kommo.com' \
+  -H 'Referer: https://happyflopss.kommo.com/' \
+  -H 'Sec-Fetch-Dest: empty' \
+  -H 'Sec-Fetch-Mode: cors' \
+  -H 'Sec-Fetch-Site: same-site' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36' \
+  -H 'X-Auth-Token: 2f5df118-0600-42ec-9fbb-0b169e016bac' \
+  -H 'sec-ch-ua: ""Google Chrome"";v=""137"", ""Chromium"";v=""137"", ""Not/A)Brand"";v=""24""' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: ""Windows""' \
+  --data-raw '{""recipient_id"":""4dbcac2a-c514-4d71-abc0-68f91ff42330"",""group_id"":null,""text"":"""",""crm_dialog_id"":148248,""crm_contact_id"":22428677,""crm_account_id"":33068423,""crm_entity"":{""id"":20262327,""type"":2},""attachments"":[{""external_file_id"":""59e9b466-ad76-445a-b865-c09ec14423c8"",""external_file_vers_id"":""da332e41-fb90-4700-a4e8-4e6bf75aba33"",""type"":""file""}],""persona_name"":""Oscar Ignacio Covarrubias Gonzaez"",""persona_avatar"":""https://images.kommo.com/frontend/images/interface/avatars/-3.jpeg""}'",60820

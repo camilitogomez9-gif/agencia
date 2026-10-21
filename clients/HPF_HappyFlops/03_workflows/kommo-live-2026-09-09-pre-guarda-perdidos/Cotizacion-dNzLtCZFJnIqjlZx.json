@@ -1,0 +1,1912 @@
+{
+  "updatedAt": "2026-02-19T22:54:40.783Z",
+  "createdAt": "2026-02-18T20:32:17.687Z",
+  "id": "dNzLtCZFJnIqjlZx",
+  "name": "Happy Flops - Seg. Cotización",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "hours"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -6880,
+        128
+      ],
+      "id": "db617d09-aaaa-4ca1-a99d-196f9ea79c89",
+      "name": "Wait",
+      "webhookId": "90f74411-2a7b-4740-aaac-a61bbcbeb6a4"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  message->>'content' AS content\nFROM public.n8n_chat_histories\nWHERE session_id = '{{ $('HappyFlops - Seg. Rebeca').item.json.id }}'\n  AND message->>'type' = 'ai'\n  AND message ? 'content'              -- garantiza que existe la clave\nORDER BY id DESC\nLIMIT 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -6656,
+        128
+      ],
+      "id": "2ae756f9-8aac-4401-a209-ba76064f2a11",
+      "name": "Execute a SQL query",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bcf6c716-2c98-46cf-9f34-019830f3ba0f",
+              "leftValue": "={{ $('Execute a SQL query').item.json.content }}",
+              "rightValue": "Producto Principal",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -6432,
+        128
+      ],
+      "id": "67167c4a-82fe-41de-9837-6fd3063bece2",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -6208,
+        224
+      ],
+      "id": "cc280e35-45e4-4711-a0ed-2b7e128b9686",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "amount": 3,
+        "unit": "hours"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -5088,
+        32
+      ],
+      "id": "2ad0a309-47a9-46b3-8ca6-aaf3f4a53c7b",
+      "name": "Wait1",
+      "webhookId": "22951c72-72d0-49eb-ad34-0f416aa43877"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  message->>'content' AS content\nFROM public.n8n_chat_histories\nWHERE session_id = '{{ $('HappyFlops - Seg. Rebeca').item.json.id }}'\n  AND message->>'type' = 'ai'\n  AND message ? 'content'              -- garantiza que existe la clave\nORDER BY id DESC\nLIMIT 1;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -4864,
+        32
+      ],
+      "id": "21cb6738-b034-42d8-ab27-e1dc90dfdb28",
+      "name": "Execute a SQL query1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bcf6c716-2c98-46cf-9f34-019830f3ba0f",
+              "leftValue": "={{ $('Execute a SQL query1').item.json.content }}",
+              "rightValue": "necesito que me compartas la cantidad y el código postal",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -4640,
+        32
+      ],
+      "id": "9875a507-7fae-4b4a-96a9-4856b803276c",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "n8n_chat_histories",
+          "mode": "list",
+          "cachedResultName": "n8n_chat_histories"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "={\n  \"type\": \"ai\",\n  \"content\": \"Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦\",\n  \"tool_calls\": [],\n  \"additional_kwargs\": {},\n  \"response_metadata\": {},\n  \"invalid_tool_calls\": []\n}\n",
+            "session_id": "={{ $('HappyFlops - Seg. Rebeca').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -5312,
+        32
+      ],
+      "id": "d6d81d45-a98a-4aff-bae3-f8092d7b979e",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "unit": "hours"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -3296,
+        -64
+      ],
+      "id": "5ce25181-5f52-42ee-b2ba-84633be17524",
+      "name": "Wait2",
+      "webhookId": "22951c72-72d0-49eb-ad34-0f416aa43877"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  message->>'content' AS content\nFROM public.n8n_chat_histories\nWHERE session_id = '{{ $('HappyFlops - Seg. Rebeca').item.json.id }}'\n  AND message->>'type' = 'ai'\n  AND message ? 'content'              -- garantiza que existe la clave\nORDER BY id DESC\nLIMIT 1;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -3072,
+        -64
+      ],
+      "id": "066041de-0621-43b7-8817-e8193ceb21ff",
+      "name": "Execute a SQL query2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bcf6c716-2c98-46cf-9f34-019830f3ba0f",
+              "leftValue": "={{ $('Execute a SQL query2').item.json.content }}",
+              "rightValue": "solo me falta saber cuántas piezas necesitas y tu código postal",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2848,
+        -64
+      ],
+      "id": "2fd11896-9f7c-47d3-85f4-f154a93f0797",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "n8n_chat_histories",
+          "mode": "list",
+          "cachedResultName": "n8n_chat_histories"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "{\n  \"type\": \"ai\",\n  \"content\": \"Hola! 👋 Ya tengo tus productos seleccionados, solo me falta saber cuántas piezas necesitas y tu código postal para calcular el envío 🚚\",\n  \"tool_calls\": [],\n  \"additional_kwargs\": {},\n  \"response_metadata\": {},\n  \"invalid_tool_calls\": []\n}",
+            "session_id": "={{ $('HappyFlops - Seg. Rebeca').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -3520,
+        -64
+      ],
+      "id": "855aab2b-85a2-4c0d-b84f-308f15a82da5",
+      "name": "Insert rows in a table1",
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -4416,
+        128
+      ],
+      "id": "3319fa17-98aa-4d78-b750-8305833ecad4",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2624,
+        32
+      ],
+      "id": "6d9889f7-a9f1-4552-b05c-8f27b5a52501",
+      "name": "No Operation, do nothing2"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "n8n_chat_histories",
+          "mode": "list",
+          "cachedResultName": "n8n_chat_histories"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "{\n  \"type\": \"ai\",\n  \"content\": \"Hola 😊, para apartar y cotizar tus productos necesito esos dos datos: cantidad y código postal. Así puedo enviarte tu cotización 📄\",\n  \"tool_calls\": [],\n  \"additional_kwargs\": {},\n  \"response_metadata\": {},\n  \"invalid_tool_calls\": []\n}",
+            "session_id": "={{ $('HappyFlops - Seg. Rebeca').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1728,
+        -160
+      ],
+      "id": "932e863a-fefc-4490-a562-829486f1e769",
+      "name": "Insert rows in a table2",
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "id",
+              "type": "any"
+            },
+            {
+              "name": "link",
+              "type": "any"
+            },
+            {
+              "name": "account_id",
+              "type": "any"
+            },
+            {
+              "name": "chat_id",
+              "type": "any"
+            },
+            {
+              "name": "entity_id",
+              "type": "any"
+            },
+            {
+              "name": "element_type",
+              "type": "any"
+            },
+            {
+              "name": "author_id",
+              "type": "any"
+            },
+            {
+              "name": "talk_id",
+              "type": "any"
+            },
+            {
+              "name": "contact_id",
+              "type": "any"
+            },
+            {
+              "name": "account_id",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      "id": "d27d8f00-0b48-4dc8-813d-f410c624d7d7",
+      "typeVersion": 1.1,
+      "name": "HappyFlops - Seg. Rebeca",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -7376,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1504,
+        -160
+      ],
+      "id": "7ac1daf8-a1cb-4a45-aae7-82bcf6a77513",
+      "name": "Wait3",
+      "webhookId": "22951c72-72d0-49eb-ad34-0f416aa43877"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  message->>'content' AS content\nFROM public.n8n_chat_histories\nWHERE session_id = '{{ $('HappyFlops - Seg. Rebeca').item.json.id }}'\n  AND message->>'type' = 'ai'\n  AND message ? 'content'              -- garantiza que existe la clave\nORDER BY id DESC\nLIMIT 1;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1280,
+        -160
+      ],
+      "id": "922abe65-8dfa-459b-82a3-a7e9cf75b709",
+      "name": "Execute a SQL query3",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bcf6c716-2c98-46cf-9f34-019830f3ba0f",
+              "leftValue": "={{ $('Execute a SQL query3').item.json.content }}",
+              "rightValue": "para apartar y cotizar tus productos necesito esos dos datos",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1056,
+        -160
+      ],
+      "id": "4c4d68c8-0a2b-4525-a782-da88a029fdef",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://happyflopss.kommo.com/api/v4/leads/{{ $('HappyFlops - Seg. Rebeca').item.json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pipeline_id",
+              "value": "={{11622596}}"
+            },
+            {
+              "name": "status_id",
+              "value": "={{89263760}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -112,
+        -272
+      ],
+      "id": "eba6b898-a9c4-41e0-99b8-4391ba5e3283",
+      "name": "R1 SIN INFO",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://happyflopss.amocrm.com/api/v4/leads/{{ $('HappyFlops - Seg. Rebeca').item.json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e93ec916-a063-48fe-ad07-f5ace78828f5",
+      "name": "Get_Entity1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -6208,
+        32
+      ],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "33d0e5f2-a2d0-494a-b1c7-d1dfedb9e1f9",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "91266100",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -5984,
+        32
+      ],
+      "id": "a846d542-02ab-41ad-84d7-dc6ea2d1f6f4",
+      "name": "If7"
+    },
+    {
+      "parameters": {
+        "url": "=https://happyflopss.amocrm.com/api/v4/leads/{{ $('HappyFlops - Seg. Rebeca').item.json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ab2f2f6f-23d6-4992-a77c-68f63207c21b",
+      "name": "Get_Entity",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4416,
+        -64
+      ],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "33d0e5f2-a2d0-494a-b1c7-d1dfedb9e1f9",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "91266100",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -4192,
+        -64
+      ],
+      "id": "bfe1d15c-d9cb-4f83-96bc-bba7e392f653",
+      "name": "If8"
+    },
+    {
+      "parameters": {
+        "url": "=https://happyflopss.amocrm.com/api/v4/leads/{{ $('HappyFlops - Seg. Rebeca').item.json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b325effc-27b8-4702-ba0d-bdc8f06391c2",
+      "name": "Get_Entity2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2624,
+        -160
+      ],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "33d0e5f2-a2d0-494a-b1c7-d1dfedb9e1f9",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "91266100",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2400,
+        -160
+      ],
+      "id": "278d0587-537c-4449-b067-ac6122058bdc",
+      "name": "If9"
+    },
+    {
+      "parameters": {
+        "url": "=https://happyflopss.amocrm.com/api/v4/leads/{{ $('HappyFlops - Seg. Rebeca').item.json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1b183e85-6a5e-44a6-8138-c50c0b8b4800",
+      "name": "Get_Entity3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -832,
+        -272
+      ],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "33d0e5f2-a2d0-494a-b1c7-d1dfedb9e1f9",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "93616836",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -608,
+        -272
+      ],
+      "id": "5e6402ba-7b87-4d95-8208-68c2c071bd35",
+      "name": "If10"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "content"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        -16
+      ],
+      "id": "f8ffd45e-c38b-4b46-89b8-1cc46356d922",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=# Rol/Contexto (System):\n\nSos un clasificador binario. Tu tarea es decidir si los mensajes del usuario muestran desinterés explícito respecto a una cotización que le enviamos.\n\n# Instrucciones (User):\nAnalizá este array de textos (cada elemento es \"Mensaje del usuario N: ...\"), donde N=1 es el más reciente y N crece hacia atrás en el tiempo:\n\n{\n  \"mensajes\": {{ $json.content }}\n}\n\n\n# Reglas de decisión:\n\n- Prioridad temporal: evaluá en orden del 1 al 7 (del más reciente al más antiguo). Es decir, si bien puede que en algún mensaje la persona conteste desinteresadamente, si luego de ese desinterés o sea en números anteriores menciona alguna pregunta relacionada con que quiere continuar, o seguir cotizando o sigue haciendo preguntas, la respuesta debe ser \"No\". En cambio si luego de mostrar el desinterés no envía ningún mensaje mostrando un interés, entonces la respuesta debe ser \"Si\".\n\n- En cuanto detectes un desinterés explícito, decidí y dejá de revisar los anteriores.\n\n## Qué cuenta como DESINTERÉS (output: \"Si\"):\n\n    - Frases como: “no me interesa”, “no estoy interesado/a”, “no gracias”, “paso”, “dejá así”, “no voy a comprar”, “ya lo compré con otro”, “no necesito”, “cancelar”, “dar de baja”, “no continúo”, “muy caro, no sigo”, “no me sirve”, “no me escriban”, “borrame”, “quita mi número” “no quiero avanzar”, o similares donde se exprese un desinterés explícito.\n\n    - Cualquier redacción equivalente que indique rechazo claro a avanzar.\n\n## Qué NO es desinterés (responder \"No\"):\n\n    - Agradecimientos sin rechazo (“gracias”, “gracias luego veo”).\n\n    - Cambio de producto/servicio o corrección (“me confundí, quiero XV”, “una boda”).\n\n    - Dudas/preguntas o pedidos de información (“precio?”, “qué incluye?”, “hola”).\n\n    - Postergación sin rechazo explícito (“hablamos después”, “más adelante”, “me comunico luego”, \"mi evento es en un tiempo\").\n\n    - Mensajes vacíos, saludos, o relleno (“.”, “ok”, “hola”).\n\n    - Empates o ambigüedad: si no hay rechazo explícito en ninguno de los 7, respondé \"No\".\n\n# Salida obligatoria:\nDevolvé exclusivamente una de estas dos cadenas (sin comillas adicionales, sin explicación, sin JSON, sin texto extra):\n\n- **\"Si\"** (si hay desinterés explícito)\n\n- **\"No\"** (en cualquier otro caso)\n\n# Ejemplos:\n\n## Ejemplo A (debería devolver No):\n\n{\n  \"mensajes\": [\n    \"Mensaje del usuario 1: .\",\n    \"Mensaje del usuario 2: kit anticruda\",\n    \"Mensaje del usuario 3: PERDON era un xv, me confundi, quiero el evento de xv\",\n    \"Mensaje del usuario 4: una boda\",\n    \"Mensaje del usuario 5: .\",\n    \"Mensaje del usuario 6: hola\",\n    \"Mensaje del usuario 7: .\"\n  ]\n}\n\n\nSalida: **No**\n\n## Ejemplo B (debería devolver Si):\n\n{\n  \"mensajes\": [\n    \"Mensaje del usuario 1: gracias, no me interesa\",\n    \"Mensaje del usuario 2: cuánto cuesta?\",\n    \"Mensaje del usuario 3: vemos luego\",\n    \"Mensaje del usuario 4: .\",\n    \"Mensaje del usuario 5: hola\",\n    \"Mensaje del usuario 6: .\",\n    \"Mensaje del usuario 7: .\"\n  ]\n}\n\n\nSalida: **Si**"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -384,
+        -16
+      ],
+      "id": "d72c30e2-f142-406d-9477-1c1480a6f131",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "a1k3E4C9uRRHxngs",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://happyflopss.kommo.com/api/v4/leads/{{ $('HappyFlops - Seg. Rebeca').item.json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pipeline_id",
+              "value": "={{11622596}}"
+            },
+            {
+              "name": "status_id",
+              "value": "={{143}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        80
+      ],
+      "id": "a00b0a9a-046d-4ab0-b5fb-a69952146ef0",
+      "name": "PERDIDOS1",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH base AS (\n  SELECT\n    id,\n    message->>'content' AS content\n  FROM public.n8n_chat_histories\n  WHERE session_id = '{{ $('HappyFlops - Seg. Rebeca').item.json.id }}'\n    AND message->>'type' = 'human'\n    AND message ? 'content'\n    AND (message->>'content') ILIKE 'Mensaje del usuario:%'\n  ORDER BY id DESC\n  LIMIT 7\n),\nnumerados AS (\n  SELECT\n    ROW_NUMBER() OVER (ORDER BY id DESC) AS rn,\n    REGEXP_REPLACE(content, '^\\s*Mensaje del usuario\\s*:\\s*', '') AS body\n  FROM base\n)\nSELECT\n  'Mensaje del usuario ' || rn || ': ' || body AS content\nFROM numerados\nORDER BY rn;  -- queda en orden 1, 2, 3, ... (del más reciente al más viejo)\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -832,
+        -16
+      ],
+      "id": "d07dbdbf-a3c5-44f5-95f7-659576dfc03c",
+      "name": "Execute a SQL query4",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d3b2da9e-06d6-415a-b990-095ea09b4dce",
+              "leftValue": "={{ $json.message.content }}",
+              "rightValue": "No",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        16,
+        -16
+      ],
+      "id": "e155fe52-869b-4233-befa-32f70f2bc6ba",
+      "name": "If4"
+    },
+    {
+      "parameters": {
+        "url": "=https://happyflopss.amocrm.com/api/v4/leads/{{ $('HappyFlops - Seg. Rebeca').item.json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4accab5b-02a6-47c5-9f48-b3df0f0558be",
+      "name": "Get_Entity4",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        -128
+      ],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "33d0e5f2-a2d0-494a-b1c7-d1dfedb9e1f9",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "93616836",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        432,
+        -128
+      ],
+      "id": "f83b45a4-5f7b-4345-91f5-e8b9b097db02",
+      "name": "If11"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://happyflopss.kommo.com/api/v4/leads/{{ $('HappyFlops - Seg. Rebeca').item.json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pipeline_id",
+              "value": "={{11622596}}"
+            },
+            {
+              "name": "status_id",
+              "value": "={{89263760}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        -128
+      ],
+      "id": "4779da56-1534-4bd5-9be8-4dc327a37dad",
+      "name": "R1 SIN INFO1",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://happyflopss.kommo.com/api/v4/leads/{{ $('HappyFlops - Seg. Rebeca').item.json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pipeline_id",
+              "value": "={{11622596}}"
+            },
+            {
+              "name": "status_id",
+              "value": "={{93616836}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -7120,
+        128
+      ],
+      "id": "73ce8d92-94f2-4f29-8ce9-ff29f5a426ef",
+      "name": "ETAPA 3",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bae097b5-87bb-4c23-9ae7-cceecc26ad8f",
+              "leftValue": "={{ $('Get_Entity4').item.json.data }}",
+              "rightValue": "143",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        704,
+        -144
+      ],
+      "id": "5b7c28db-7df1-4267-847e-cdb22804ea7c",
+      "name": "If5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bae097b5-87bb-4c23-9ae7-cceecc26ad8f",
+              "leftValue": "={{ $('Get_Entity3').item.json.data }}",
+              "rightValue": "143",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -384,
+        -288
+      ],
+      "id": "939f45c0-5b07-4225-a791-ee221d6f417d",
+      "name": "If6"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://happyflopss.amocrm.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": 60878,\n    \"entity_id\": {{ $('HappyFlops - Seg. Rebeca').item.json.entity_id }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -5648,
+        48
+      ],
+      "id": "4c84ed27-ef56-4ca7-9e70-fe583b7e414c",
+      "name": "Envio Mensaje8",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://happyflopss.amocrm.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": 60880,\n    \"entity_id\": {{ $('HappyFlops - Seg. Rebeca').item.json.entity_id }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3824,
+        -64
+      ],
+      "id": "277de236-00b2-45c1-a698-ea23256e05bd",
+      "name": "Envio Mensaje",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://happyflopss.amocrm.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": 60882,\n    \"entity_id\": {{ $('HappyFlops - Seg. Rebeca').item.json.entity_id }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2080,
+        -144
+      ],
+      "id": "b8d35797-bddb-4194-8d51-07297c0a2109",
+      "name": "Envio Mensaje1",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get_Entity1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Get_Entity",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query2": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Get_Entity2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table1": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HappyFlops - Seg. Rebeca": {
+      "main": [
+        [
+          {
+            "node": "ETAPA 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query3": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Get_Entity3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute a SQL query4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table2": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Entity1": {
+      "main": [
+        [
+          {
+            "node": "If7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If7": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envio Mensaje8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Entity": {
+      "main": [
+        [
+          {
+            "node": "If8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If8": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envio Mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Entity2": {
+      "main": [
+        [
+          {
+            "node": "If9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If9": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Envio Mensaje1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Entity3": {
+      "main": [
+        [
+          {
+            "node": "If10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If10": {
+      "main": [
+        [
+          {
+            "node": "If6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query4": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Get_Entity4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "PERDIDOS1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Entity4": {
+      "main": [
+        [
+          {
+            "node": "If11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If11": {
+      "main": [
+        [
+          {
+            "node": "If5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ETAPA 3": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If5": {
+      "main": [
+        [],
+        [
+          {
+            "node": "R1 SIN INFO1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If6": {
+      "main": [
+        [],
+        [
+          {
+            "node": "R1 SIN INFO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio Mensaje8": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio Mensaje": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio Mensaje1": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "HappyFlops - Seg. Rebeca": [
+      {
+        "json": {
+          "id": "+52138610439482131",
+          "link": "https://happyflopss.amocrm.com",
+          "account_id": "33068423",
+          "chat_id": "7f79331e-894c-4f48-959e-02264974d4b3",
+          "entity_id": "24249363",
+          "element_type": "2",
+          "author_id": "91470e6e-0c79-4695-8390-6c511b780db8",
+          "talk_id": "218243",
+          "contact_id": "26305739"
+        }
+      }
+    ]
+  },
+  "versionId": "e8fc176e-1e5a-4ebd-986b-c83d1ee7e4b7",
+  "activeVersionId": null,
+  "versionCounter": 40,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-18T20:32:17.687Z",
+      "createdAt": "2026-02-18T20:32:17.687Z",
+      "role": "workflow:owner",
+      "workflowId": "dNzLtCZFJnIqjlZx",
+      "projectId": "g2TpxqLMiC0UsUBj",
+      "project": {
+        "updatedAt": "2025-05-10T12:26:37.475Z",
+        "createdAt": "2025-05-10T12:24:10.921Z",
+        "id": "g2TpxqLMiC0UsUBj",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-05-10T12:24:10.921Z",
+            "createdAt": "2025-05-10T12:24:10.921Z",
+            "userId": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+            "projectId": "g2TpxqLMiC0UsUBj",
+            "user": {
+              "updatedAt": "2026-09-09T17:25:12.659Z",
+              "createdAt": "2025-05-10T12:24:07.518Z",
+              "id": "f8ec92ee-f620-474a-bc29-61d4396705e2",
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "lastName": "AI",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-05-10T12:26:59.729Z",
+                "personalization_survey_n8n_version": "1.91.3",
+                "companySize": "<20",
+                "companyType": "systems-integrator",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "6fpcC3iGwfEYO3Eu",
+                "userActivatedAt": 1757033385622,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1773184568459
+                },
+                "easyAIWorkflowOnboarded": true,
+                "dismissedCallouts": {
+                  "aiAgentStarterCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-09",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

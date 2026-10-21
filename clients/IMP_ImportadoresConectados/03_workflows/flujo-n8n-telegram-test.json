@@ -1,0 +1,859 @@
+{
+  "name": "Agente Diego Labores — Test Telegram (AI Agent)",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "node-01-telegram-trigger",
+      "name": "Recibir Mensaje Telegram",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        300
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "REEMPLAZAR_CON_ID_CREDENTIAL_TELEGRAM",
+          "name": "Telegram Bot (prueba Diego Labores)"
+        }
+      },
+      "notes": "Trigger que recibe todos los mensajes del bot de Telegram de prueba. Solo para testing — no conectar al bot de producción."
+    },
+    {
+      "parameters": {
+        "jsCode": "const msg = $input.first().json;\nconst text = msg.message?.text || '';\nif (text.startsWith('/')) {\n  return [{ json: { skip: true, chatId: msg.message.chat.id.toString(), text } }];\n}\nconst username = msg.message?.from?.username || msg.message?.from?.first_name || 'tester';\nreturn [{\n  json: {\n    skip: false,\n    chatId: msg.message.chat.id.toString(),\n    leadIdentifier: 'tg_' + username.toLowerCase().replace(/[^a-z0-9_]/g, '_'),\n    mensajeActual: text.trim(),\n    canal: 'telegram_test',\n    fuente: 'telegram_test'\n  }\n}];"
+      },
+      "id": "node-02-normalizar",
+      "name": "Normalizar Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ],
+      "notes": "Extrae chatId, username y texto. Construye leadIdentifier con prefijo 'tg_'. Ignora comandos (/)."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-skip",
+              "leftValue": "={{ $json.skip }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "node-03-if-skip",
+      "name": "¿Ignorar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Normalizar Payload').first().json.chatId }}",
+        "text": "dale, escribime lo que necesitás y arrancamos",
+        "additionalFields": {}
+      },
+      "id": "node-04-cmd-reply",
+      "name": "Responder Comando",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        900,
+        200
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "REEMPLAZAR_CON_ID_CREDENTIAL_TELEGRAM",
+          "name": "Telegram Bot (prueba Diego Labores)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "baseId": {
+          "__rl": true,
+          "value": "={{ $env.AIRTABLE_BASE_ID_DIEGOLABORES }}",
+          "mode": "id"
+        },
+        "tableId": {
+          "__rl": true,
+          "value": "={{ $env.AIRTABLE_TABLE_LEADS }}",
+          "mode": "name"
+        },
+        "filterByFormula": "={nombre} = \"{{ $json.leadIdentifier }}\"",
+        "options": {
+          "fields": [
+            "nombre",
+            "historial",
+            "perfil_lead",
+            "etapa_conversion"
+          ]
+        }
+      },
+      "id": "node-05-airtable-buscar",
+      "name": "Buscar Lead en Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        680,
+        420
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "REEMPLAZAR_CON_ID_CREDENTIAL_AIRTABLE",
+          "name": "Airtable (Diego Labores)"
+        }
+      },
+      "notes": "Busca el leadIdentifier en la tabla Leads. Trae solo los campos necesarios para no sobrecargar el payload."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-existe",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ]
+        }
+      },
+      "id": "node-06-if-existe",
+      "name": "¿Lead Existe?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        900,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "baseId": {
+          "__rl": true,
+          "value": "={{ $env.AIRTABLE_BASE_ID_DIEGOLABORES }}",
+          "mode": "id"
+        },
+        "tableId": {
+          "__rl": true,
+          "value": "={{ $env.AIRTABLE_TABLE_LEADS }}",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nombre": "={{ $('Normalizar Payload').first().json.leadIdentifier }}",
+            "canal_ingreso": "telegram_test",
+            "fuente": "telegram_test",
+            "pais": "sin_definir",
+            "perfil_lead": "sin_clasificar",
+            "etapa_conversion": "apertura",
+            "producto_interes": "sin_definir",
+            "califica": "pendiente",
+            "historial": "",
+            "fecha_primer_contacto": "={{ new Date().toISOString().split('T')[0] }}",
+            "fecha_ultima_interaccion": "={{ new Date().toISOString().split('T')[0] }}"
+          }
+        }
+      },
+      "id": "node-07-airtable-crear",
+      "name": "Crear Lead en Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1120,
+        540
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "REEMPLAZAR_CON_ID_CREDENTIAL_AIRTABLE",
+          "name": "Airtable (Diego Labores)"
+        }
+      },
+      "notes": "Crea nuevo registro con datos iniciales. El agente completará los campos a medida que avanza la conversación."
+    },
+    {
+      "parameters": {
+        "jsCode": "const normalizado = $('Normalizar Payload').first().json;\nconst airtableRecord = $input.first().json;\n\nconst historialExistente = airtableRecord?.fields?.historial || airtableRecord?.historial || '';\nconst perfilLead = airtableRecord?.fields?.perfil_lead || airtableRecord?.perfil_lead || 'sin_clasificar';\nconst etapaConversion = airtableRecord?.fields?.etapa_conversion || airtableRecord?.etapa_conversion || 'apertura';\nconst recordId = airtableRecord?.id || '';\n\n// Agregar mensaje actual al historial\nconst historialConMensaje = historialExistente\n  ? historialExistente + '\\n[LEAD]: ' + normalizado.mensajeActual\n  : '[LEAD]: ' + normalizado.mensajeActual;\n\nconst historialTruncado = historialConMensaje.length > 3000\n  ? '...(historial truncado)\\n' + historialConMensaje.slice(-3000)\n  : historialConMensaje;\n\nreturn [{\n  json: {\n    ...normalizado,\n    historial: historialTruncado,\n    historialExistente,\n    perfilLead,\n    etapaConversion,\n    recordId\n  }\n}];"
+      },
+      "id": "node-08-preparar-datos",
+      "name": "Preparar Datos del Lead",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1340,
+        420
+      ],
+      "notes": "Consolida datos del lead (sea nuevo o existente). Construye el historial con el mensaje actual ya incluido. El recordId se usa más adelante para actualizar Airtable."
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.mensajeActual }}",
+        "hasOutputParser": false,
+        "options": {
+          "systemMessage": "=Sos el asesor de ventas de Diego Labores.\n\n---\n\nQUIÉN ES DIEGO LABORES\n\nDiego Labores (@diegolabores) es emprendedor uruguayo con más de 15 años de experiencia real en importaciones y negocios. Enseña a construir negocios rentables y sostenibles usando importaciones como palanca — no como fin en sí mismo. Su diferencial: habla desde lo que ya hizo, probó y sostuvo. Sin fórmulas mágicas, sin promesas vacías.\n\nAudiencia: Argentina y Uruguay, clase media, 25–45 años.\n\n---\n\nTU ROL\n\nSos el asesor del equipo de Diego. No sos Diego — hablás en nombre del equipo y hacés referencia a Diego en tercera persona.\n\nObjetivo 1: Cerrar la venta directa por chat.\nObjetivo 2: Si hay confusión sobre qué producto, derivar a meet 30min con Diego.\n\n---\n\nPRODUCTOS DISPONIBLES\n\n1. IMPORTADORES CONECTADOS — $497 USD\n   Promesa: \"En 90 días creá tu primer negocio de importaciones reales, con acompañamiento paso a paso, a través del método I360, sin humo, sin improvisar, y aunque no tengas experiencia ni capital.\"\n   Incluye: Clases grabadas por módulos (se desbloquean gradualmente), acompañamiento 3 meses, plantilla IA como asesor personal, términos para negociar con China, tendencias de productos, plantillas de expertos, planilla de compra.\n   Para quién: Empleados y emprendedores que quieren iniciar un negocio de importaciones. Sin experiencia previa requerida.\n\n2. MENTORÍA 1:1 \"De la Idea al Negocio Real\" — $2.000 USD\n   Promesa: \"Transformar una idea confusa en un negocio claro, validado y listo para ejecutarse, evitando errores de inicio que hacen que la mayoría abandone.\"\n   Incluye: Hasta 3 meses de acompañamiento, reuniones semanales con el equipo de Diego, presentación del plan con Diego, plan de acción listo para ejecutar. No incluye ejecución.\n   Para quién: Personas que quieren emprender en serio pero están en etapa de confusión y duda. Prefieren avanzar con acompañamiento 1:1, sin grupos grandes.\n   Diferencia clave con IC: No es de conocimiento vs. no conocimiento — es de momento psicológico. Más confusión y dudas → Mentoría. Quiere aprender y arrancar en grupo → IC.\n\n3. CONSULTORÍA DE NEGOCIO DE IMPORTACIÓN — $3.000 a $5.000 USD\n   Promesa: \"Destrabar tu negocio, ordenarlo y definir una estrategia clara para volver a crecer con control y rentabilidad.\"\n   Incluye: 3 meses de trabajo, reuniones semanales con consultor del equipo, seguimiento de métricas, revisión estratégica final con Diego. No incluye ejecución.\n   Para quién: Dueños de negocio que ya venden pero están estancados. Trabajan mucho sin ver crecimiento. Para operadores, no para aprendices.\n   Señal clave del lead: \"Algo no está bien, pero no sé exactamente qué.\"\n\n4. CLUB DEL IMPORTADOR — $17 USD/mes ($170 USD/año)\n   Promesa: \"Comunidad privada para emprendedores que ya importan y buscan operar con más estrategia, menos errores y mejores márgenes.\"\n   Incluye: Comunidad privada en Telegram, networking entre importadores, compras conjuntas, noticias y tendencias, charlas con expertos.\n   Para quién: SOLO para personas que ya están importando. No para principiantes.\n   No ofrecer como primera opción. Solo cuando el lead ya opera con importaciones.\n\n5. ENTRENAMIENTO GRATUITO — sin costo\n   3 clases grabadas. Lead magnet para quienes aún no conocen bien a Diego o no saben si importar es para ellos.\n   Cuándo ofrecer: Lead muy frío, nivel de consciencia 1, aún no califica, o necesita contexto antes de evaluar IC.\n\n---\n\nPERFIL DEL LEAD Y PRODUCTO RECOMENDADO\n\nnunca_emprendo: Empleado, nunca emprendió → Importadores Conectados ($497)\nintento_fracaso: Intentó y no le fue bien → IC ($497) o Mentoría 1:1 ($2.000) según nivel de confusión\nya_vende: Ya tiene negocio operando pero quiere crecer → Mentoría 1:1 ($2.000) o Consultoría ($3.000–$5.000)\nya_importa: Ya importa, quiere mejorar la operación → Club del Importador ($17/mes)\nsolo_precio: Preguntó el precio antes de entender el valor → calificar primero, luego presentar con contexto\nsin_clasificar: Sin información suficiente → pregunta abierta para detectar perfil\n\n---\n\nPSICOLOGÍA DEL LEAD — CÓMO PIENSA Y DECIDE\n\nEste lead decide por ANÁLISIS, no por urgencia. Necesita:\n1. Entender antes de sentirse seguro (la emoción correcta llega después de la claridad, no antes)\n2. Ver pasos claros, no saltos\n3. Percibir bajo riesgo simbólico (no quedar expuesto si algo sale mal)\n4. Validación de alguien que ya recorrió el camino\n\nLO QUE LO MUEVE: percibir que seguir quieto también tiene un costo\nLO QUE LO PARALIZA: confusión, hype, urgencia forzada, promesas vacías, exceso de emoción sin lógica\nLO QUE LO ACTIVA: claridad concreta + primer paso pequeño y controlado\nLO QUE LO HACE DESCONFIAR: cambios de discurso, lenguaje aspiracional exagerado, ostentación\n\nESTÁ EN NIVEL 2 DE CONSCIENCIA: ya sabe que tiene un problema y que existe una solución. No necesita que le expliquen qué es importar. Está evaluando a quién confiarle el proceso.\n\nCTA que funciona: \"Evaluá si esto tiene sentido para vos\" / \"Contame en qué etapa estás y te digo qué le conviene a alguien así\" / \"Quedarte quieto también es una decisión — elegí con información\"\nCTA que NO funciona: \"Últimos cupos\" / \"Animate\" / \"Es tu momento\" / \"No te quedes afuera\" / \"Ahora o nunca\"\n\n---\n\nCALIFICACIÓN\n\nCALIFICA: Quiere emprender o crecer, está en etapa de cambio, tiene capacidad de inversión, busca estructura y acompañamiento.\nNO CALIFICA: Quiere resultado sin proceso, busca algo gratis, actitud de \"todo es caro\" sin escuchar.\n\nCuando no califica: \"Entiendo — lo que ofrecemos requiere compromiso real con el proceso. Si en algún momento eso cambia, acá estamos.\"\n\n---\n\nTONO Y ESTILO — IDENTIDAD VERBAL DE MARCA\n\nPALABRAS QUE SÍ USÁS: claridad, proceso, criterio, estructura, decisión, experiencia real, paso a paso, sostenible, acompañamiento, marco, sistema, escalable, impecable, excelente, buenísimo, dale, vamo arriba, negocio real, con criterio\nPALABRAS QUE NUNCA USÁS: fácil, rápido, garantizado, secreto, millonario, explosivo, ingresos pasivos, animate, transformación total, libertad financiera (sin contexto), crack, genio, te cambia la vida, libertad total\n\nPERSONALIDAD: Cercana + Confiable + Estratégica. Autoridad tranquila con cercanía humana.\nARQUETIPO: El Mentor / El Sabio Práctico — ya pasó por ahí, guía sin empujar, ordena sin imponer.\n\nLenguaje rioplatense: vos/sos, che, dale, mirá.\nUna sola pregunta por turno. Mensajes de 1–3 oraciones por parte.\nNo inventés: \"justo estabas en el chat\", urgencia artificial, \"tenemos pocos cupos\".\n\n---\n\nFLUJO DE CONVERSACIÓN\n\nApertura: Saludá con calidez. Preguntá en qué etapa está hoy: empleado, emprendiendo o ya vendiendo.\nDiagnóstico: Entendé situación actual → qué quiere lograr → qué le frena. Una pregunta por vez. No apresurar.\nPropuesta: Conectá con el producto correcto según PERFIL + MOMENTO PSICOLÓGICO (no solo conocimiento). Presentá precio con contexto.\nCierre: Invitá a evaluar, no a saltar. Si duda entre productos → meet 30min: [REEMPLAZAR_CON_LINK_AGENDA_DIEGO]\n\n---\n\nETIQUETAS DE NOTIFICACIÓN (incluirlas al final de tu respuesta si aplica, en su propia línea)\n\n[NOTIFICAR_CIERRE] — lead expresó intención de comprar\n[NOTIFICAR_AGENDA] — derivar a meet 30min con Diego\n[NOTIFICAR_DESCALIFICADO] — lead no aplica al perfil\n[NOTIFICAR_FOLLOWUP] — no cerró hoy, necesita seguimiento\n\n---\n\nFORMATO DE RESPUESTA — MUY IMPORTANTE\n\nDividí tu respuesta en 2 a 4 partes, separadas exactamente por:\n---\n(en su propia línea, sin espacios ni texto antes o después, solo los tres guiones)\n\nCada parte: 1–3 oraciones máximo.\n\nEJEMPLO CORRECTO:\nqué bueno que llegaste, dale\n---\npara entenderte mejor — ¿hoy estás trabajando en relación de dependencia o ya tenés algo propio?\n\n---\n\nCONTEXTO DEL LEAD\n\nCanal: {{ $('Preparar Datos del Lead').first().json.canal }}\nPerfil detectado: {{ $('Preparar Datos del Lead').first().json.perfilLead }}\nEtapa actual: {{ $('Preparar Datos del Lead').first().json.etapaConversion }}\n\nHISTORIAL DE CONVERSACIÓN:\n{{ $('Preparar Datos del Lead').first().json.historial }}"
+        }
+      },
+      "id": "node-09-ai-agent",
+      "name": "AI Agent — Asesor Diego Labores",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1560,
+        420
+      ],
+      "notes": "Nodo AI Agent que centraliza la lógica del agente.\n\nSub-nodos conectados:\n- Google Gemini Chat Model (requerido)\n- Tools opcionales para el futuro (ver sección de extensibilidad)\n\nCómo agregar tools en el futuro:\n1. Crear un nodo tool (Airtable Tool, HTTP Request Tool, Execute Workflow Tool)\n2. Conectarlo al AI Agent por la entrada 'tool'\n3. El agente decide cuándo llamarlo automáticamente — n8n maneja el loop de tool-calling\n\nEjemplos de tools útiles:\n- Consultar disponibilidad en el calendario de Diego\n- Registrar datos del lead en Airtable directamente\n- Buscar información de productos\n- Enviar link de pago"
+    },
+    {
+      "parameters": {
+        "model": "gemini-2.5-flash",
+        "options": {
+          "temperature": 0.7,
+          "maxOutputTokens": 800
+        }
+      },
+      "id": "node-10-gemini-model",
+      "name": "Google Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        600
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "REEMPLAZAR_CON_ID_CREDENTIAL_GEMINI",
+          "name": "Google Gemini (Diego Labores)"
+        }
+      },
+      "notes": "Modelo de lenguaje. Se conecta al AI Agent como sub-nodo por la entrada 'model'. Usar gemini-2.5-flash para costo/latencia óptimos."
+    },
+    {
+      "parameters": {
+        "jsCode": "const agentOutput = $input.first().json.output || '';\n\n// Split por separador ---\nconst partes = agentOutput\n  .split(/\\n---\\n|^---$/m)\n  .map(p => p.trim())\n  .filter(p => p.length > 0 && p !== '---');\n\n// Extraer etiquetas de notificación\nconst notificarCierre = agentOutput.includes('[NOTIFICAR_CIERRE]');\nconst notificarAgenda = agentOutput.includes('[NOTIFICAR_AGENDA]');\nconst notificarDescalificado = agentOutput.includes('[NOTIFICAR_DESCALIFICADO]');\nconst notificarFollowup = agentOutput.includes('[NOTIFICAR_FOLLOWUP]');\n\n// Limpiar etiquetas del texto visible\nconst mensajesConDelay = partes.map((texto, idx) => {\n  const textoLimpio = texto.replace(/\\[NOTIFICAR_[A-Z_]+\\]/g, '').trim();\n  const delay = idx === 0\n    ? Math.min(Math.max(textoLimpio.length * 50, 1500), 4000)\n    : Math.min(Math.max(textoLimpio.length * 50, 1000), 6000);\n  return { texto: textoLimpio, delay };\n});\n\n// Actualizar historial con respuesta del agente\nconst respuestaAgente = mensajesConDelay.map(m => m.texto).join(' ');\nconst lead = $('Preparar Datos del Lead').first().json;\nconst historialNuevo = lead.historial + '\\n[ASESOR]: ' + respuestaAgente;\nconst historialTruncado = historialNuevo.length > 3000\n  ? '...(truncado)\\n' + historialNuevo.slice(-3000)\n  : historialNuevo;\n\n// Nueva etapa del pipeline\nlet nuevaEtapa = lead.etapaConversion;\nif (notificarCierre) nuevaEtapa = 'ganado';\nelse if (notificarDescalificado) nuevaEtapa = 'descalificado';\nelse if (notificarAgenda) nuevaEtapa = 'agenda_solicitada';\nelse if (notificarFollowup) nuevaEtapa = 'pendiente_followup';\nelse if (nuevaEtapa === 'apertura') nuevaEtapa = 'diagnostico';\nelse if (nuevaEtapa === 'diagnostico' && agentOutput.includes('$')) nuevaEtapa = 'propuesta';\n\nreturn [{\n  json: {\n    ...lead,\n    mensajesConDelay,\n    historialNuevo: historialTruncado,\n    nuevaEtapa,\n    notificarCierre,\n    notificarAgenda,\n    notificarDescalificado,\n    notificarFollowup,\n    totalMensajes: mensajesConDelay.length\n  }\n}];"
+      },
+      "id": "node-11-parsear",
+      "name": "Parsear Respuesta",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1780,
+        420
+      ],
+      "notes": "Lee el output del AI Agent (campo 'output'). Divide por '---', calcula delays, limpia etiquetas de notificación y determina nueva etapa del pipeline."
+    },
+    {
+      "parameters": {
+        "amount": "={{ $json.mensajesConDelay[0].delay }}",
+        "unit": "milliseconds"
+      },
+      "id": "node-12-delay-1",
+      "name": "Delay Msg 1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2000,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Normalizar Payload').first().json.chatId }}",
+        "text": "={{ $('Parsear Respuesta').first().json.mensajesConDelay[0].texto }}",
+        "additionalFields": {}
+      },
+      "id": "node-13-send-1",
+      "name": "Enviar Msg 1",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2200,
+        300
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "REEMPLAZAR_CON_ID_CREDENTIAL_TELEGRAM",
+          "name": "Telegram Bot (prueba Diego Labores)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "c2",
+              "leftValue": "={{ $('Parsear Respuesta').first().json.totalMensajes }}",
+              "rightValue": 2,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ]
+        }
+      },
+      "id": "node-14-if-msg2",
+      "name": "¿Hay Msg 2?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2420,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "amount": "={{ $('Parsear Respuesta').first().json.mensajesConDelay[1]?.delay || 2000 }}",
+        "unit": "milliseconds"
+      },
+      "id": "node-15-delay-2",
+      "name": "Delay Msg 2",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2640,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Normalizar Payload').first().json.chatId }}",
+        "text": "={{ $('Parsear Respuesta').first().json.mensajesConDelay[1]?.texto || '' }}",
+        "additionalFields": {}
+      },
+      "id": "node-16-send-2",
+      "name": "Enviar Msg 2",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2860,
+        200
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "REEMPLAZAR_CON_ID_CREDENTIAL_TELEGRAM",
+          "name": "Telegram Bot (prueba Diego Labores)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "c3",
+              "leftValue": "={{ $('Parsear Respuesta').first().json.totalMensajes }}",
+              "rightValue": 3,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ]
+        }
+      },
+      "id": "node-17-if-msg3",
+      "name": "¿Hay Msg 3?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        3080,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "amount": "={{ $('Parsear Respuesta').first().json.mensajesConDelay[2]?.delay || 2000 }}",
+        "unit": "milliseconds"
+      },
+      "id": "node-18-delay-3",
+      "name": "Delay Msg 3",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3300,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Normalizar Payload').first().json.chatId }}",
+        "text": "={{ $('Parsear Respuesta').first().json.mensajesConDelay[2]?.texto || '' }}",
+        "additionalFields": {}
+      },
+      "id": "node-19-send-3",
+      "name": "Enviar Msg 3",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3520,
+        100
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "REEMPLAZAR_CON_ID_CREDENTIAL_TELEGRAM",
+          "name": "Telegram Bot (prueba Diego Labores)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "baseId": {
+          "__rl": true,
+          "value": "={{ $env.AIRTABLE_BASE_ID_DIEGOLABORES }}",
+          "mode": "id"
+        },
+        "tableId": {
+          "__rl": true,
+          "value": "={{ $env.AIRTABLE_TABLE_LEADS }}",
+          "mode": "name"
+        },
+        "id": "={{ $('Preparar Datos del Lead').first().json.recordId }}",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "historial": "={{ $('Parsear Respuesta').first().json.historialNuevo }}",
+            "etapa_conversion": "={{ $('Parsear Respuesta').first().json.nuevaEtapa }}",
+            "fecha_ultima_interaccion": "={{ new Date().toISOString().split('T')[0] }}"
+          }
+        }
+      },
+      "id": "node-20-airtable-update",
+      "name": "Actualizar Lead en Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        3520,
+        300
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "REEMPLAZAR_CON_ID_CREDENTIAL_AIRTABLE",
+          "name": "Airtable (Diego Labores)"
+        }
+      },
+      "notes": "Actualiza historial, etapa del pipeline y fecha de última interacción. Se ejecuta después de enviar todos los mensajes."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-notif",
+              "leftValue": "={{ $('Parsear Respuesta').first().json.notificarCierre || $('Parsear Respuesta').first().json.notificarAgenda || $('Parsear Respuesta').first().json.notificarDescalificado || $('Parsear Respuesta').first().json.notificarFollowup }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "node-21-if-notif",
+      "name": "¿Notificar Equipo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        3740,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const parsed = $('Parsear Respuesta').first().json;\nconst lead = $('Preparar Datos del Lead').first().json;\nlet emoji = '🔔', tipo = 'Seguimiento';\nif (parsed.notificarCierre) { emoji = '🎉'; tipo = 'VENTA CERRADA'; }\nelse if (parsed.notificarAgenda) { emoji = '📅'; tipo = 'AGENDA SOLICITADA'; }\nelse if (parsed.notificarDescalificado) { emoji = '❌'; tipo = 'Lead descalificado'; }\nelse if (parsed.notificarFollowup) { emoji = '🔄'; tipo = 'Follow-up pendiente'; }\nconst msg = `${emoji} *${tipo}*\\n\\nLead: \\`${lead.leadIdentifier}\\`\\nCanal: ${lead.canal}\\nPerfil: ${lead.perfilLead}\\nEtapa: ${parsed.nuevaEtapa}\\n\\n_Revisá Airtable para el historial completo._`;\nreturn [{ json: { mensaje: msg } }];"
+      },
+      "id": "node-22-build-notif",
+      "name": "Construir Notificación",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3960,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID_EQUIPO }}",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "node-23-notif-equipo",
+      "name": "Notificar Equipo",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4180,
+        200
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "REEMPLAZAR_CON_ID_CREDENTIAL_TELEGRAM",
+          "name": "Telegram Bot (prueba Diego Labores)"
+        }
+      },
+      "notes": "Para pruebas, puede ser el mismo chat del tester. En producción, apuntar al grupo del equipo de Diego."
+    }
+  ],
+  "connections": {
+    "Recibir Mensaje Telegram": {
+      "main": [
+        [
+          {
+            "node": "Normalizar Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar Payload": {
+      "main": [
+        [
+          {
+            "node": "¿Ignorar?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Ignorar?": {
+      "main": [
+        [
+          {
+            "node": "Responder Comando",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Buscar Lead en Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Lead en Airtable": {
+      "main": [
+        [
+          {
+            "node": "¿Lead Existe?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Lead Existe?": {
+      "main": [
+        [
+          {
+            "node": "Preparar Datos del Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Crear Lead en Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear Lead en Airtable": {
+      "main": [
+        [
+          {
+            "node": "Preparar Datos del Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Datos del Lead": {
+      "main": [
+        [
+          {
+            "node": "AI Agent — Asesor Diego Labores",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent — Asesor Diego Labores": {
+      "main": [
+        [
+          {
+            "node": "Parsear Respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent — Asesor Diego Labores",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parsear Respuesta": {
+      "main": [
+        [
+          {
+            "node": "Delay Msg 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delay Msg 1": {
+      "main": [
+        [
+          {
+            "node": "Enviar Msg 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Msg 1": {
+      "main": [
+        [
+          {
+            "node": "¿Hay Msg 2?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay Msg 2?": {
+      "main": [
+        [
+          {
+            "node": "Delay Msg 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actualizar Lead en Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delay Msg 2": {
+      "main": [
+        [
+          {
+            "node": "Enviar Msg 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Msg 2": {
+      "main": [
+        [
+          {
+            "node": "¿Hay Msg 3?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay Msg 3?": {
+      "main": [
+        [
+          {
+            "node": "Delay Msg 3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actualizar Lead en Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delay Msg 3": {
+      "main": [
+        [
+          {
+            "node": "Enviar Msg 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Msg 3": {
+      "main": [
+        [
+          {
+            "node": "Actualizar Lead en Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar Lead en Airtable": {
+      "main": [
+        [
+          {
+            "node": "¿Notificar Equipo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Notificar Equipo?": {
+      "main": [
+        [
+          {
+            "node": "Construir Notificación",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Construir Notificación": {
+      "main": [
+        [
+          {
+            "node": "Notificar Equipo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "diego-labores"
+    },
+    {
+      "name": "agente-ventas"
+    },
+    {
+      "name": "test"
+    }
+  ],
+  "_notas_extensibilidad": {
+    "como_agregar_tools": [
+      "1. Crear un nodo tool (ej: Airtable Tool, HTTP Request Tool, Execute Workflow Tool)",
+      "2. Conectarlo al nodo 'AI Agent — Asesor Diego Labores' por la entrada 'tool'",
+      "3. El AI Agent decide automáticamente cuándo llamarlo — n8n maneja el loop de tool-calling",
+      "No se necesita modificar el Code node de Parsear Respuesta para agregar tools"
+    ],
+    "tools_sugeridos_futuro": [
+      "Consultar disponibilidad de agenda de Diego (HTTP Request → Calendly/GHL API)",
+      "Buscar información de productos (puede ser un subworkflow)",
+      "Registrar datos del lead directamente desde el agente (Airtable Tool)",
+      "Enviar link de pago según producto elegido"
+    ]
+  },
+  "_configuracion": {
+    "variables_requeridas": [
+      "AIRTABLE_BASE_ID_DIEGOLABORES",
+      "AIRTABLE_TABLE_LEADS",
+      "TELEGRAM_CHAT_ID_EQUIPO"
+    ],
+    "credenciales_requeridas": [
+      "Telegram API (token del bot de prueba)",
+      "Airtable Token API (personal access token con acceso a la base)",
+      "Google Gemini (API key)"
+    ],
+    "instrucciones": [
+      "1. Importar este JSON en n8n: Settings → Import from File",
+      "2. Reemplazar los REEMPLAZAR_CON_ID_CREDENTIAL_* con IDs reales de credenciales en n8n",
+      "3. Setear las variables de entorno en n8n",
+      "4. En el nodo 'AI Agent', reemplazar [REEMPLAZAR_CON_LINK_AGENDA_DIEGO] con el link real",
+      "5. Activar el workflow y enviar un mensaje al bot para probar"
+    ]
+  }
+}

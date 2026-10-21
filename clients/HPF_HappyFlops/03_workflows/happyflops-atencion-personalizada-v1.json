@@ -1,0 +1,134 @@
+{
+  "name": "ATENCION_PERSONALIZADA",
+  "nodes": [
+    {
+      "parameters": {
+        "chatId": "-4925599962",
+        "text": "=👋 El Lead: {{ $node[\"Start\"].json.lead }} necesita atención personalizada",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -720,
+        -448
+      ],
+      "id": "57ed35a0-50f5-48ab-be6b-35e17e4c6bad",
+      "name": "Usr. Se encuentra en etapa de cotización",
+      "webhookId": "34cf8327-0e0c-4f9c-a3a0-6d3ad9365990",
+      "credentials": {
+        "telegramApi": {
+          "id": "vgyWhM8OBUJtYOGC",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"lead\": 123\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -992,
+        -448
+      ],
+      "id": "e669793c-733a-4191-9395-67a6666dbcbd",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://happyflopss.kommo.com/api/v4/leads/{{ $node[\"Start\"].json.lead }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pipeline_id",
+              "value": "={{11622596}}"
+            },
+            {
+              "name": "status_id",
+              "value": "={{91266100}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -480,
+        -448
+      ],
+      "id": "0f694379-39d7-46f0-b74c-d102a7d4ed21",
+      "name": "ATENCION_PERSONALIZADA4",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "5LAQ0vGZpLnE497Q",
+          "name": "H.F"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "lead": 21788573
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Usr. Se encuentra en etapa de cotización",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Usr. Se encuentra en etapa de cotización": {
+      "main": [
+        [
+          {
+            "node": "ATENCION_PERSONALIZADA4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "25935559-51ba-42dd-9f93-f3b446008f78",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2fb601f29b5c700d2141654e4608e081bd1e5daa9614999069a9eb314029edc9"
+  },
+  "id": "SUgT7UPYyQ3NDgRp",
+  "tags": []
+}

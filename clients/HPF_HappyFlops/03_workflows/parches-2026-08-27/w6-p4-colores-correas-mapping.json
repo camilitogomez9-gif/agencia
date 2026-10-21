@@ -1,0 +1,13 @@
+{
+  "wf": "W6",
+  "descripcion": "P4 reunión Oscar 2026-08-27: cuando el usuario pide colores de correas/sandalias, mandar la ficha 'Colores de correas' (imagen paleta + caption 'COLORES DE CORREAS'). Agrega el término 'colores de correas' al set de accesorios de Products y la regla de cuándo usarlo. Las 3 fichas (Boda/XV/Otros) ya están creadas en el custom object con el asset colores-correas-sandalias.jpeg.",
+  "ediciones": [
+    {
+      "nodo": "Products",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "Corresponden a la subcategoría \"Accesorios\" y en los productos, alguno de estos: \"shein\", \"tinta\", \"correas 15\", \"correas 9\", \"tapas termos\". SI DETECTAS QUE DICE COLORES O ALGUNA DE ACCESORIOS, MANDA SOLO ESO Y SIN EL PRODUCTO PRINCIPAL.",
+      "reemplazo": "Corresponden a la subcategoría \"Accesorios\" y en los productos, alguno de estos: \"shein\", \"tinta\", \"correas 15\", \"correas 9\", \"tapas termos\", \"colores de correas\". IMPORTANTE — colores de correas/sandalias: si el usuario pregunta por los COLORES de las correas o de las sandalias (ej: \"qué colores de correas hay\", \"de qué colores son las sandalias\", \"colores de correas\"), en \"productos\" usá el término \"colores de correas\" (se le envía la imagen con la paleta de colores). SI DETECTAS QUE DICE COLORES O ALGUNA DE ACCESORIOS, MANDA SOLO ESO Y SIN EL PRODUCTO PRINCIPAL.",
+      "motivo": "Antes 'colores de correas' caía en el mapeo genérico de correas por grosor (correas 15/9). Ahora hay una ficha dedicada con la paleta de colores; este término la dispara."
+    }
+  ]
+}

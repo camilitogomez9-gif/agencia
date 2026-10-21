@@ -1,0 +1,134 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "description": "Registra al lead en la base de captura (Google Sheets) apenas hay un teléfono válido, y lo enriquece (upsert por subscriber_id) cuando llega el correo. El teléfono se resuelve solo: primero el de ManyChat (determinístico, ya cableado en telefono_webhook), y como fallback el que el lead escribió en el chat (arg telefono). NO pases el número del canal vos: solo pasá 'telefono' si el lead escribió su número en la conversación. Si la tool devuelve REJECTED reason=telefono_invalido, todavía no hay número: pedíselo al lead y volvé a invocar cuando lo tenga. already_exists=true → no lo menciones, seguí natural. Es independiente de notificar_lead.",
+        "workflowId": {
+          "__rl": true,
+          "value": "v9HD7P2uroG4Ni3A",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/v9HD7P2uroG4Ni3A",
+          "cachedResultName": "sys-tool-registrar-datos-lead-v2"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $fromAI('email', `Email del cliente en formato xxx@xxx.xxx`, 'string') }}",
+            "nombre": "={{ $fromAI('nombre', `Nombre del cliente`, 'string') }}",
+            "telefono": "={{ $fromAI('telefono', `Teléfono que el LEAD ESCRIBIÓ en el chat (solo dígitos, con o sin +). Dejá vacío si el lead no escribió un número, o si el número ya vino por ManyChat.`, 'string') }}",
+            "origen": "={{ $fromAI('origen', `Motivo del email. Valores: newsletter, derivacion, descuento_insumos, otro`, 'string') }}",
+            "aplicacion_interes": "={{ $fromAI('aplicacion_interes', `Aplicación o equipo que el cliente consulta`, 'string') }}",
+            "canal": "={{ $('Normalize Payload').item.json.canalLabel }}",
+            "subscriber_id": "={{ $('Normalize Payload').item.json.subId }}",
+            "session_id": "={{ $('Normalize Payload').item.json.sessionKey }}",
+            "telefono_webhook": "={{ $('Normalize Payload').item.json.phone }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "telefono",
+              "displayName": "telefono",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "telefono_webhook",
+              "displayName": "telefono_webhook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "aplicacion_interes",
+              "displayName": "aplicacion_interes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "origen",
+              "displayName": "origen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "canal",
+              "displayName": "canal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "subscriber_id",
+              "displayName": "subscriber_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        2192,
+        160
+      ],
+      "id": "reg-datos-lead-v26-0001",
+      "name": "registrar_datos_lead"
+    }
+  ],
+  "connections": {}
+}

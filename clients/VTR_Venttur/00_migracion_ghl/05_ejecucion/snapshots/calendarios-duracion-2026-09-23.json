@@ -1,0 +1,142 @@
+[
+ {
+  "id": "CIxOV100yyRFqPoa6LdK",
+  "name": "Internados",
+  "before": {
+   "slotDuration": 30,
+   "slotDurationUnit": "mins",
+   "slotInterval": 30,
+   "slotIntervalUnit": "mins"
+  },
+  "after": {
+   "slotDuration": 45,
+   "slotInterval": 45
+  }
+ },
+ {
+  "id": "SiAPsk27X5yilff5bSS5",
+  "name": "Intercambio académico con familias",
+  "before": {
+   "slotDuration": 30,
+   "slotDurationUnit": "mins",
+   "slotInterval": 30,
+   "slotIntervalUnit": "mins"
+  },
+  "after": {
+   "slotDuration": 45,
+   "slotInterval": 45
+  }
+ },
+ {
+  "id": "981EzNS7jf9HhJNkL41W",
+  "name": "Campamentos de verano",
+  "before": {
+   "slotDuration": 30,
+   "slotDurationUnit": "mins",
+   "slotInterval": 30,
+   "slotIntervalUnit": "mins"
+  },
+  "after": {
+   "slotDuration": 45,
+   "slotInterval": 45
+  }
+ },
+ {
+  "id": "oNN7oLWsNhQlWi7q7pDX",
+  "name": "Pathway Alemania",
+  "before": {
+   "slotDuration": 30,
+   "slotDurationUnit": "mins",
+   "slotInterval": 30,
+   "slotIntervalUnit": "mins"
+  },
+  "after": {
+   "slotDuration": 45,
+   "slotInterval": 45
+  }
+ },
+ {
+  "id": "Omgde6Ko8TGKYMtiUb1x",
+  "name": "Gap Year / Estudia y Trabaja",
+  "before": {
+   "slotDuration": 30,
+   "slotDurationUnit": "mins",
+   "slotInterval": 30,
+   "slotIntervalUnit": "mins"
+  },
+  "after": {
+   "slotDuration": 45,
+   "slotInterval": 45
+  }
+ },
+ {
+  "id": "5PxslDhdQxZeDcKmLYNq",
+  "name": "Cursos de idiomas en el extranjero",
+  "before": {
+   "slotDuration": 30,
+   "slotDurationUnit": "mins",
+   "slotInterval": 30,
+   "slotIntervalUnit": "mins"
+  },
+  "after": {
+   "slotDuration": 45,
+   "slotInterval": 45
+  }
+ },
+ {
+  "id": "RUjWx74NPK77FPUcs5ME",
+  "name": "Educación superior",
+  "before": {
+   "slotDuration": 30,
+   "slotDurationUnit": "mins",
+   "slotInterval": 30,
+   "slotIntervalUnit": "mins"
+  },
+  "after": {
+   "slotDuration": 45,
+   "slotInterval": 45
+  }
+ },
+ {
+  "id": "j0jcAdaieJXaoPZBempp",
+  "name": "Viajes educativos",
+  "before": {
+   "slotDuration": 30,
+   "slotDurationUnit": "mins",
+   "slotInterval": 30,
+   "slotIntervalUnit": "mins"
+  },
+  "after": {
+   "slotDuration": 45,
+   "slotInterval": 45
+  }
+ },
+ {
+  "id": "QJQyabdWhBgYtjeGcEKZ",
+  "name": "Asesoría con Juan José Alfaro",
+  "before": {
+   "slotDuration": 30,
+   "slotDurationUnit": "mins",
+   "slotInterval": 30,
+   "slotIntervalUnit": "mins"
+  },
+  "after": {
+   "slotDuration": 45,
+   "slotInterval": 45
+  }
+ },
+ {
+  "id": "fOsl9U4b40ulCczFwf69",
+  "name": "Asesoría con Niza Valeriano",
+  "before": {
+   "slotDuration": 30,
+   "slotDurationUnit": "mins",
+   "slotInterval": 30,
+   "slotIntervalUnit": "mins"
+  },
+  "after": {
+   "slotDuration": 45,
+   "slotInterval": 45
+  }
+ }
+]

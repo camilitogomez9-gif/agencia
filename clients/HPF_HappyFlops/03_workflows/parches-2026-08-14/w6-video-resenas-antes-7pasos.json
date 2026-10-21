@@ -1,0 +1,14 @@
+{
+  "wf": "W6",
+  "descripcion": "Envía el video de reseñas de confianza justo ANTES del mensaje de los 7 pasos. Pedido por Oscar en la reunión del 11/08: 'antes de enviar los pasos, haz tu pedido en 7 pasos, envía el salesbot de video reseña de confianza'. Era el último punto que quedaba bloqueado por falta del asset.",
+  "asset": "Video subido a la librería de GHL (2.241.228 bytes, byte-idéntico al que pasó la agencia el 12/08). Texto verbatim del salesbot 62110 de Kommo.",
+  "por_que_constante_y_no_ficha": "Se intentó crearlo como ficha del custom object para que Oscar pudiera cambiarlo desde el CRM, pero la API de GHL se contradice al crear: sin locationId devuelve 400 'no especificado' y con locationId devuelve 422 'no debe existir'. Como es un asset fijo atado a un mensaje fijo —misma categoría que el saludo canónico y el CTA, que ya viven como constantes en este nodo— se cablea igual. Contrapartida: para cambiarlo hay que tocar el nodo, no el CRM.",
+  "ediciones": [
+    {
+      "nodo": "Partir en burbujas",
+      "campo": "parameters.jsCode",
+      "anchor": "// El PDF de los datos bancarios se cuelga de la última burbuja del agente",
+      "reemplazo": "// ── VIDEO DE RESEÑAS, ANTES DE LOS 7 PASOS ─────────────────────────────────────\n// Oscar (11/08): \"antes de enviar los pasos, haz tu pedido en 7 pasos, envía el\n// salesbot de video reseña de confianza\". En Kommo era el salesbot 62110; en GHL no\n// hay salesbots, así que el paso no existía.\n//\n// Se dispara con el bloque de los 7 pasos, que es exactamente donde Oscar lo pidió, y\n// se inserta DESPUÉS de las fichas de producto y ANTES del texto del agente.\n//\n// ⚠️ La cardinalidad va atada al mensaje de los 7 pasos: si el agente lo repitiera en\n// una misma conversación, el video saldría de nuevo. El prompt del Recolector ya dice\n// \"no mandes reiteradas veces el mensaje de los 7 pasos\", así que hoy no pasa; si\n// alguna vez pasa, se arregla ahí y no acá.\nconst VIDEO_RESENAS = 'https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a7e351ca6a03cda06c8508c.mp4';\nconst TEXTO_RESENAS = 'Sabemos que comprar por internet puede generar desconfianza… 😰\\n\\n'\n  + 'Con HAPPY FLOPS, tienes la SEGURIDAD de que TODO es CONFIABLE, aquí puedes ver '\n  + 'lo que dicen nuestros clientes en Facebook ⭐⭐⭐⭐⭐';\nif (/7 SENCILLOS PASOS/i.test(txt)) {\n  partesFinales.splice(fichasFinales.length, 0,\n    { texto: TEXTO_RESENAS, adjuntos: [VIDEO_RESENAS] });\n}\n\n// El PDF de los datos bancarios se cuelga de la última burbuja del agente"
+    }
+  ]
+}

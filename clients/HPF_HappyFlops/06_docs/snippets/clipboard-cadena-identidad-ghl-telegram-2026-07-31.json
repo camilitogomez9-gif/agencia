@@ -1,0 +1,333 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/contacts/upsert",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"locationId\": \"onRwi0ZF4uYi0Lp6GAbE\",\n  \"email\": \"{{ $json.email_sintetico }}\",\n  \"firstName\": {{ JSON.stringify($json.first_name || \"Lead\") }},\n  \"lastName\": {{ JSON.stringify($json.last_name || \"Telegram\") }},\n  \"name\": {{ JSON.stringify($json.full_name) }},\n  \"source\": \"Telegram (demo Rebeca)\"\n}"
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -5152,
+        700
+      ],
+      "id": "4dbab100-35a8-5972-888d-069cfd560bc2",
+      "name": "GHL: Upsert Contacto",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://services.leadconnectorhq.com/opportunities/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {},
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "location_id",
+              "value": "onRwi0ZF4uYi0Lp6GAbE"
+            },
+            {
+              "name": "contact_id",
+              "value": "={{ $('GHL: Upsert Contacto').first().json.contact?.id || 'sin-contacto' }}"
+            },
+            {
+              "name": "limit",
+              "value": "20"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4928,
+        700
+      ],
+      "id": "03aabad4-6816-5b54-a0ea-b0a846dc4c2e",
+      "name": "GHL: Buscar Oportunidad",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://services.leadconnectorhq.com/opportunities/pipelines",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {},
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "locationId",
+              "value": "onRwi0ZF4uYi0Lp6GAbE"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4704,
+        700
+      ],
+      "id": "9d9b8055-4518-570e-b4a1-4423977de988",
+      "name": "GHL: Pipelines",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://services.leadconnectorhq.com/locations/onRwi0ZF4uYi0Lp6GAbE/customFields",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {},
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "opportunity"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4480,
+        700
+      ],
+      "id": "debe29c7-af8c-5e0b-a179-69087deef0cb",
+      "name": "GHL: Custom Fields Opp",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Resuelve el contexto real de GHL para un chat de Telegram.\n// Equivale a lo que en produccion trae el webhook de WF-01: contact_id, opportunity_id,\n// stage (nombre) y custom_fields (por key). Ademas construye los mapas de stage ids y\n// custom field ids, que en produccion viven hardcodeados.\nconst LOCATION_ID   = 'onRwi0ZF4uYi0Lp6GAbE';\nconst PIPELINE_NAME = 'Happy Flops IA';\n\nconst grab = (node) => { try { return $(node).first().json || {}; } catch (e) { return {}; } };\n\n// ─────────── contacto ───────────\nconst up = grab('GHL: Upsert Contacto');\nconst contact = up.contact || up.data || up || {};\nconst contact_id = String(contact.id || '');\nconst contact_tags = (contact.tags || []).map(t => String(t).trim().toLowerCase());\n\n// ─────────── pipeline + stages ───────────\nconst pipesRaw = grab('GHL: Pipelines');\nconst pipelines = pipesRaw.pipelines || pipesRaw.data || [];\nconst pipe =\n  pipelines.find(p => String(p.name || '').trim().toLowerCase() === PIPELINE_NAME.toLowerCase()) ||\n  pipelines[0] || null;\n\nconst STAGE_ID_BY_NAME = {};\nconst STAGE_NAME_BY_ID = {};\nfor (const s of (pipe && pipe.stages) || []) {\n  STAGE_ID_BY_NAME[String(s.name).trim()] = s.id;\n  STAGE_NAME_BY_ID[s.id] = String(s.name).trim();\n}\n// Fallback: ids conocidos por hardcode historico (sirven si el GET de pipelines falla).\nconst STAGE_FALLBACK = {\n  'Cotizado':        '96fa0ade-c853-4db3-97f4-56d58d69af8c',\n  'Esperando Pago':  '843a06f1-1214-4baa-a3a0-f197cb240b5d',\n  'Pago Confirmado': '96d760e5-f290-456c-a117-57e61ce6c27d',\n};\nfor (const [k, v] of Object.entries(STAGE_FALLBACK)) {\n  if (!STAGE_ID_BY_NAME[k]) { STAGE_ID_BY_NAME[k] = v; STAGE_NAME_BY_ID[v] = k; }\n}\n\n// ─────────── definiciones de custom fields ───────────\nconst cfRaw  = grab('GHL: Custom Fields Opp');\nconst cfDefs = cfRaw.customFields || cfRaw.data || [];\nconst CF_ID_BY_KEY = {};\nconst CF_KEY_BY_ID = {};\nfor (const f of cfDefs) {\n  const key = String(f.fieldKey || f.key || '').replace(/^opportunity\\./, '').replace(/^contact\\./, '');\n  if (!key || !f.id) continue;\n  CF_ID_BY_KEY[key] = f.id;\n  CF_KEY_BY_ID[f.id] = key;\n}\n// El unico id conocido por hardcode historico.\nif (!CF_KEY_BY_ID['ahVpF5ldsRcuOIn9Mxdk']) {\n  CF_KEY_BY_ID['ahVpF5ldsRcuOIn9Mxdk'] = 'evento_detectado';\n  CF_ID_BY_KEY['evento_detectado'] = CF_ID_BY_KEY['evento_detectado'] || 'ahVpF5ldsRcuOIn9Mxdk';\n}\n\n// customFields de un opportunity -> objeto plano por key\nfunction cfObject(opp) {\n  const out = {};\n  for (const cf of (opp && opp.customFields) || []) {\n    const key = CF_KEY_BY_ID[cf.id] || String(cf.key || cf.fieldKey || '').replace(/^opportunity\\./, '');\n    if (!key) continue;\n    let v = cf.fieldValue !== undefined ? cf.fieldValue\n          : cf.field_value !== undefined ? cf.field_value\n          : cf.value;\n    if (Array.isArray(v)) v = v[0];\n    out[key] = v;\n  }\n  return out;\n}\n\n// ─────────── oportunidad ───────────\nconst searchRaw = grab('GHL: Buscar Oportunidad');\n// distinguir \"la busqueda respondio vacio\" de \"la busqueda fallo\": si falla y lo tomamos\n// como lista vacia, creariamos una oportunidad nueva en CADA mensaje.\nconst searchOk = Array.isArray(searchRaw.opportunities) || Array.isArray(searchRaw.data);\nlet opps = searchRaw.opportunities || searchRaw.data || [];\nif (!Array.isArray(opps)) opps = [];\nif (pipe) {\n  const delPipe = opps.filter(o => String(o.pipelineId || '') === String(pipe.id));\n  if (delPipe.length) opps = delPipe;\n}\n// preferimos la abierta mas reciente\nopps.sort((a, b) => {\n  const ao = (a.status === 'open') ? 1 : 0;\n  const bo = (b.status === 'open') ? 1 : 0;\n  if (ao !== bo) return bo - ao;\n  return String(b.updatedAt || b.dateUpdated || '').localeCompare(String(a.updatedAt || a.dateUpdated || ''));\n});\nconst opp = opps[0] || null;\n\nconst stageName = opp\n  ? (STAGE_NAME_BY_ID[opp.pipelineStageId] || String(opp.pipelineStageName || '').trim() || 'Lead Nuevo')\n  : 'Lead Nuevo';\n\nconst base = $('Normalizar Telegram').first().json;\n\nreturn {\n  ...base,\n  crm_ok: !!contact_id,\n  location_id: LOCATION_ID,\n  pipeline_id: pipe ? pipe.id : '',\n  pipeline_name: pipe ? pipe.name : '',\n  contact_id,\n  contact_tags,\n  opportunity_id: opp ? opp.id : '',\n  // solo creamos oportunidad si la busqueda REALMENTE respondio y vino vacia\n  needs_opportunity: !opp && searchOk,\n  search_ok: searchOk,\n  stage: stageName,\n  custom_fields: cfObject(opp),\n  stage_ids: STAGE_ID_BY_NAME,\n  stage_names: STAGE_NAME_BY_ID,\n  cf_ids: CF_ID_BY_KEY,\n  cf_keys: CF_KEY_BY_ID,\n  _diag: {\n    pipelines_encontrados: pipelines.length,\n    cf_defs_encontradas: cfDefs.length,\n    opps_encontradas: opps.length,\n  },\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4256,
+        700
+      ],
+      "id": "27325d17-42a7-5f54-96a5-201755185832",
+      "name": "Resolver Contexto CRM"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fdd40943-e965-59ae-b58f-f087a8249387",
+              "leftValue": "={{ $json.needs_opportunity }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -4032,
+        700
+      ],
+      "id": "77478f84-ec79-5559-baa8-d5502e9fb5a9",
+      "name": "¿Falta oportunidad?"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/opportunities/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"pipelineId\": \"{{ $json.pipeline_id }}\",\n  \"locationId\": \"onRwi0ZF4uYi0Lp6GAbE\",\n  \"contactId\": \"{{ $json.contact_id }}\",\n  \"name\": {{ JSON.stringify($json.full_name + \" (Telegram)\") }},\n  \"status\": \"open\"\n}"
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4032,
+        900
+      ],
+      "id": "be72ecbb-f811-5f76-a88e-2470fc1871a8",
+      "name": "GHL: Crear Oportunidad",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "GHL: Upsert Contacto": {
+      "main": [
+        [
+          {
+            "node": "GHL: Buscar Oportunidad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL: Buscar Oportunidad": {
+      "main": [
+        [
+          {
+            "node": "GHL: Pipelines",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL: Pipelines": {
+      "main": [
+        [
+          {
+            "node": "GHL: Custom Fields Opp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL: Custom Fields Opp": {
+      "main": [
+        [
+          {
+            "node": "Resolver Contexto CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolver Contexto CRM": {
+      "main": [
+        [
+          {
+            "node": "¿Falta oportunidad?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Falta oportunidad?": {
+      "main": [
+        [
+          {
+            "node": "GHL: Crear Oportunidad",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  }
+}

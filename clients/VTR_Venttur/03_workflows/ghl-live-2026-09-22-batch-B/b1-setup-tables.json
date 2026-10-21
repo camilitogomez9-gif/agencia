@@ -1,0 +1,223 @@
+{
+  "updatedAt": "2026-09-22T03:38:43.191Z",
+  "createdAt": "2026-09-22T03:38:37.248Z",
+  "id": "twjXKbt92hlFD85g",
+  "name": "VTR Batch B1 · Setup Supabase Tables (one-shot)",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "vtr-batch-b1-setup-99942abd",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "f44eafe7-e2db-49bb-b9da-5db8f042799b",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "ec3d3be8-63a8-46e8-92bb-7ec4536d63c2"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "CREATE TABLE IF NOT EXISTS vtr_message_dedup (  hash text PRIMARY KEY,  contact_id text NOT NULL,  date_created timestamptz NOT NULL,  body text NOT NULL,  first_seen_at timestamptz NOT NULL DEFAULT now());",
+        "options": {}
+      },
+      "id": "62b8ba23-2ec6-41dd-9f27-87c8463eca55",
+      "name": "CREATE vtr_message_dedup",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        240,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "ihpvM7nYMdLCwWDP",
+          "name": "Venttur"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "CREATE TABLE IF NOT EXISTS vtr_message_buffer (  contact_id text PRIMARY KEY,  messages jsonb NOT NULL DEFAULT '[]'::jsonb,  first_message_at timestamptz,  last_message_at timestamptz,  flushed_at timestamptz);",
+        "options": {}
+      },
+      "id": "84af947a-46b8-4bf0-aaea-a09bd123c162",
+      "name": "CREATE vtr_message_buffer",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        480,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "ihpvM7nYMdLCwWDP",
+          "name": "Venttur"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT   (SELECT COUNT(*) FROM vtr_message_dedup) AS dedup_count,  (SELECT COUNT(*) FROM vtr_message_buffer) AS buffer_count,  (SELECT COUNT(*) FROM capi_folios) AS folios_count,  (SELECT COUNT(*) FROM capi_programas) AS programas_count;",
+        "options": {}
+      },
+      "id": "c7be9957-a80d-4da5-a2ca-7f0a81e920e0",
+      "name": "Verify counts",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        720,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "ihpvM7nYMdLCwWDP",
+          "name": "Venttur"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, dedup_count: $json.dedup_count, buffer_count: $json.buffer_count, folios_count: $json.folios_count, programas_count: $json.programas_count } }}",
+        "options": {}
+      },
+      "id": "8f984e0d-ed4b-4597-beeb-2c9c4849b494",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "CREATE vtr_message_dedup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CREATE vtr_message_dedup": {
+      "main": [
+        [
+          {
+            "node": "CREATE vtr_message_buffer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CREATE vtr_message_buffer": {
+      "main": [
+        [
+          {
+            "node": "Verify counts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify counts": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "adc47e3e-9f05-461a-9cde-ad7e06aa998c",
+  "activeVersionId": null,
+  "versionCounter": 4,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-09-22T03:38:37.256Z",
+      "createdAt": "2026-09-22T03:38:37.256Z",
+      "role": "workflow:owner",
+      "workflowId": "twjXKbt92hlFD85g",
+      "projectId": "OZub3m3DGqbZefcZ",
+      "project": {
+        "updatedAt": "2025-02-10T13:18:00.403Z",
+        "createdAt": "2025-02-10T13:17:23.832Z",
+        "id": "OZub3m3DGqbZefcZ",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-02-10T13:17:23.833Z",
+            "createdAt": "2025-02-10T13:17:23.833Z",
+            "userId": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+            "projectId": "OZub3m3DGqbZefcZ",
+            "user": {
+              "updatedAt": "2026-09-21T22:19:54.000Z",
+              "createdAt": "2025-02-10T13:17:22.713Z",
+              "id": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "lastName": "AI",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-02-10T13:18:23.044Z",
+                "personalization_survey_n8n_version": "1.77.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "KFHNPOd9iRMDKpBc",
+                "userActivatedAt": 1739194255698,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1789467400717
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-21",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

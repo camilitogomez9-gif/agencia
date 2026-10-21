@@ -1,0 +1,17 @@
+{
+  "wf": "W6",
+  "descripcion": "R2 — el mensaje del lead no llegaba al Recolector en el camino step_3 + consulta especial. Referencia relativa $json -> referencia absoluta al nodo, que es lo que hacia el bot viejo.",
+  "causa": "Tres nodos alimentan al Recolector y solo dos traen 'texto'/'fecha': Switch de step [3] (step_4) y ¿Hay productos? [1] (step_3 sin productos) arrastran el ctx de Normalizar entrada; pero ¿Requiere cotizar? [0] es un IF cuyo input es la salida del nodo openAi '¿Consulta especial?', o sea {message:{content:{response:'si'}}}. Ahi $json.texto y $json.fecha resuelven vacio y el agente contesta desde la memoria sola.",
+  "evidencia": "El viejo lo leia con referencia ABSOLUTA: $node[\"Message & Date\"] en 03_workflows/base-prod-2026-08-06/main-happy-flops.json:1296. Correlacion medida sobre los 21 turnos del test de paridad en que el lead dio cantidad+CP: el fallo es exclusivo del camino con fichas, cero fallos en el camino sano. Control: B3 turno 4 ('quiero 100, CP 44100') no emitio fichas -> fue por Switch de step -> cotizo bien. Firma del mecanismo: B6 valida las 60 piezas contra el minimo de 50 en la MISMA oracion en la que dice necesitar la cantidad (historia si, turno actual no).",
+  "cierra": "R2 (B5, B8, C6, D1, D2, H3) + el 'no avisa el minimo de cilindros' que reporto Oscar en julio.",
+  "estandar": "_core/standards/n8n-data-references.md — $json vs $('NodeName')",
+  "no_tocar": "Starter / Main Image / Products .parameters.text NO se tocan: ahi $json viene de Switch de step, que arrastra el ctx completo y funciona bien.",
+  "ediciones": [
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.text",
+      "anchor": "=Respuesta del usuario: {{ $json.texto }}\nFecha de hoy: {{ $json.fecha }}",
+      "reemplazo": "=Respuesta del usuario: {{ $('Normalizar entrada').first().json.texto }}\nFecha de hoy: {{ $('Normalizar entrada').first().json.fecha }}"
+    }
+  ]
+}

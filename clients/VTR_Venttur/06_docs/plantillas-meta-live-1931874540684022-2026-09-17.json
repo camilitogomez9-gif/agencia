@@ -1,0 +1,743 @@
+[
+  {
+    "name": "boarding_form_followup_touch3",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}},\n\nSabemos que elegir una experiencia educativa internacional es una decisión importante y que normalmente surgen muchas preguntas sobre destinos, seguridad, costos, requisitos y beneficios para el futuro del estudiante.\n\nNuestro objetivo es ayudarte a encontrar la mejor opción según las metas y necesidades de tu familia.\n\nSi aún estás explorando alternativas, responde este mensaje y con gusto te orientaremos sin compromiso.",
+        "example": {
+          "body_text": [
+            [
+              "Juan"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "957859743921053"
+  },
+  {
+    "name": "boarding_form_followup_touch2",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}},\n\nMuchos padres nos contactan porque quieren brindarles a sus hijos una experiencia internacional que los ayude a desarrollar independencia, confianza y una visión global para su futuro.\n\nCada estudiante tiene objetivos distintos, por eso nos gustaría entender mejor tu caso para orientarte adecuadamente.\n\n¿Para qué edad o grado escolar estás buscando opciones?",
+        "example": {
+          "body_text": [
+            [
+              "Juan"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "1798342104877776"
+  },
+  {
+    "name": "boarding_form_followup",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}, gracias por tu interés en nuestros programas de Boarding School.\n\nVimos que recientemente solicitaste información sobre opciones de estudio en el extranjero.\n\nMe gustaría conocer un poco más sobre tu interés para poder orientarte mejor. ¿El programa sería para tu hijo(a) o para algún familiar?",
+        "example": {
+          "body_text": [
+            [
+              "la agencia"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "2262740014133501"
+  },
+  {
+    "name": "boarding_form_follow",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}}, gracias por tu interés en nuestros programas de Boarding School.\n\nVimos que recientemente solicitaste información sobre opciones de estudio en el extranjero.\n\nMe gustaría conocer un poco más sobre tu interés para poder orientarte mejor. ¿El programa sería para tu hijo(a) o para algún familiar?",
+        "example": {
+          "body_text": [
+            [
+              "max"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "1312575927139815"
+  },
+  {
+    "name": "agenda_seg",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}} 👋 Hace unos días te compartí el enlace para agendar tu asesoría personalizada, pero vi que aún no la agendaste. ¿Tuviste algún problema con el link?\n\nSé que una decisión así requiere claridad, y por eso diseñamos estas sesiones: para ayudarte a resolver dudas reales, evitar errores comunes y construir un plan viable antes de que se pierda tiempo valioso o se cierren opciones 🗓️\n\nMe interesa que tomes la mejor decisión posible, con respaldo profesional y en el momento adecuado.\n\n¿Te gustaría que te lo vuelva a compartir?",
+        "example": {
+          "body_text": [
+            [
+              "buenas"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "764238993127069"
+  },
+  {
+    "name": "seg_dia_1_pw",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Una pregunta que muchos no se atreven a hacer.\n\nHola {{1}}, te dejo algo que tal vez te sirva aunque todavía estés pensando o comparando opciones:\n\nUna de las preguntas más comunes (pero que casi nadie hace) es:\n\n“¿Es verdad que puedo estudiar una carrera en Alemania pagando menos que en México?”\n\nLa respuesta es sí, pero depende mucho de cómo te prepares.\n\nEl Pathway es el paso previo para acceder a universidades públicas con colegiaturas muy bajas. Pero hay muchas versiones de este programa, y no todas te llevan al mismo resultado.\n\nSi quieres, te puedo ayudar a entender cuál sí aplica para ti y cuál no.",
+        "example": {
+          "body_text": [
+            [
+              "buenas"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "537628846040185"
+  },
+  {
+    "name": "seg_dia_7_gen",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“Aquí cuando lo necesites”\n\nTe agradezco mucho que nos hayas escrito. Entiendo que a veces los tiempos no coinciden o que uno necesita pensarlo más.\n\nSolo quería dejarte claro que, si en algún momento quieres avanzar o resolver dudas, aquí estoy para ayudarte de forma honesta, sin presiones.\n\nQue tomes la mejor decisión es lo más importante, sea ahora o después."
+      }
+    ],
+    "id": "1810392559898021"
+  },
+  {
+    "name": "seg_dia_5_gen",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“Las rutas más comunes”\n\nTe comparto algo que le sirve a muchos que apenas están explorando:\n\n🎓 Internados (educación de alto nivel en el extranjero)\n🏡 Años académicos en familia anfitriona\n☀️ Campamentos de verano\n🎓 Pathway universitario\n🌍 Programas de estudia y trabaja\n\nCada ruta tiene perfiles distintos. Si me dices qué te llama más la atención, te puedo ayudar a afinar cuál sería ideal para ti (o para tu hijo)."
+      }
+    ],
+    "id": "1058616616399504"
+  },
+  {
+    "name": "seg_dia_3_gen",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“¿Prefieres que te oriente?”\n\nA veces lo más difícil no es encontrar programas, sino saber por dónde empezar.\n\nSi quieres, puedo orientarte con algunas preguntas rápidas para saber qué tipo de opciones te harían más sentido, sin compromiso.\n\nMe puedes decir si prefieres que te guíe paso a paso."
+      }
+    ],
+    "id": "613136841829905"
+  },
+  {
+    "name": "seg_dia_7_sc",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“¿Vale la pena?”\n\nUna de las preguntas que más nos hacen es:\n\n“¿Vale la pena enviar a mi hijo solo al extranjero por unas semanas?”\n\nY la respuesta siempre es: depende de qué estés buscando sembrar.\n\nEn muchos casos, es un primer paso ideal para un adolescente que más adelante puede estudiar fuera.\n\nSi en algún momento quieres tener claridad sobre esto, estoy aquí para ayudarte a decidir con calma y con toda la información sobre la mesa."
+      }
+    ],
+    "id": "1783930699196551"
+  },
+  {
+    "name": "seg_dia_5_sc",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Qué países manejamos (y por qué)\n\nTe dejo los destinos donde actualmente manejamos campamentos con los mejores niveles de seguridad, estructura y contenido formativo:\n\n🇺🇸 Estados Unidos\n🇬🇧 Reino Unido\n🇨🇦 Canadá\n🇫🇷 Francia\n🇩🇪 Alemania\n\nY muchos más…\n\nTodos tienen enfoques diferentes: algunos son más académicos, otros más culturales o deportivos.\n\nSi tienes algún país en mente, puedo ayudarte a identificar si es una buena opción para tu hijo este verano."
+      }
+    ],
+    "id": "2110089932801038"
+  },
+  {
+    "name": "seg_dia_3_sc",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“3 preguntas que pueden ayudarte a decidir”\n\nTe comparto 3 preguntas que siempre usamos para ayudar a los papás a decidir si un campamento es lo que su hijo necesita ahora:\n\n1. ¿Tu hijo se adapta fácilmente a nuevos entornos o le cuesta salir de su zona de confort?\n\n2. ¿Ha tenido experiencias de autonomía antes (viajes, actividades extracurriculares, convivencias)?\n\n3. ¿Este viaje es un primer paso para algo más (como estudiar fuera) o solo para disfrutar el verano?\n\nNo hay respuestas correctas. Pero saber esto te ayuda a elegir mejor.\n\nSi me cuentas un poco de lo que estás buscando, con gusto te oriento."
+      }
+    ],
+    "id": "1503952167633296"
+  },
+  {
+    "name": "seg_dia_7_aa",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“Lo que yo le diría a cualquier papá”\n\nPara cerrar, solo te quiero dejar esto:\n\nComo papá, una de las mejores decisiones que puedes tomar es NO hacer esto solo.\n\nNo se trata de tener prisa por mandar a tu hijo fuera, sino de saber si es el momento correcto, el programa correcto y el entorno correcto.\n\nSi en algún punto quieres hablarlo con alguien que ya acompañó a muchas familias en este proceso, aquí estoy."
+      }
+    ],
+    "id": "1822618825337725"
+  },
+  {
+    "name": "seg_dia_5_aa",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“Dónde sí hay programas (y cómo se elige bien)”\n\nTe comparto los países donde actualmente manejamos este tipo de experiencia con familia anfitriona y colegio público:\n\n🇺🇸 Estados Unidos\n🇨🇦 Canadá\n🇫🇷 Francia \n🇮🇹 Italia\n🇳🇱 Países Bajos\n\nTodos tienen diferencias importantes en cuanto a visado, requisitos, estructura y selección de familias.\n\nSi tienes uno en mente, puedo ayudarte a saber si es el más adecuado según el perfil de tu hijo y lo que están buscando como familia."
+      }
+    ],
+    "id": "1281148623381883"
+  },
+  {
+    "name": "seg_dia_3_aa",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "¿Cómo saber si tu hijo está listo?\n\nUna de las dudas más grandes que tienen los papás es:\n\n“¿Mi hijo realmente está preparado para vivir un año fuera, en casa de otra familia?”\n\nTe comparto algunos indicadores que usamos para acompañar a las familias en esta decisión:\n\n✅ Tiene cierto nivel de autonomía y se adapta bien a nuevas reglas\n✅ Muestra apertura a otras culturas y estilos de vida\n✅ Tiene curiosidad por mejorar su idioma\n✅ Papás e hijo comparten expectativas realistas del programa\n\nSi quieres, podemos ver juntos si este es el momento ideal o si habría que trabajar ciertos puntos antes."
+      }
+    ],
+    "id": "1240377910909671"
+  },
+  {
+    "name": "seg_dia_7_gy",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“Lo importante no es irte… es saber por qué”\n\nGracias por leer hasta aquí. Te dejo solo esta última reflexión:\n\nNo se trata de si vale la pena irte o no, sino de si sabes por qué lo harías y qué quieres obtener de esa experiencia.\n\nSi no es el momento, está bien. Pero si crees que este proyecto puede cambiar tu camino, una conversación te puede dar mucha más claridad.\n\nAquí estoy cuando quieras retomarlo."
+      }
+    ],
+    "id": "1173515984541125"
+  },
+  {
+    "name": "seg_dia_5_gy",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“¿Qué países permiten estudiar y trabajar legalmente?”\n\nUna de las preguntas más comunes es:\n\n“¿Dónde se puede estudiar y trabajar legalmente al mismo tiempo?”\n\nTe comparto un resumen rápido:\n\n🇦🇺 Australia – Con cursos de idiomas o vocacionales\n 🇮🇪 Irlanda – Con cursos de más de 25 semanas\n 🇨🇦 Canadá – En programas académicos específicos\n 🇲🇹 Malta / 🇦🇪 Dubái – Con ciertas condiciones\n\nY más…\n\nCada país tiene sus reglas, y elegir mal puede significar no poder trabajar. Si quieres, te explico cuál te convendría según tu perfil."
+      }
+    ],
+    "id": "1050109313904775"
+  },
+  {
+    "name": "seg_dia_3_gy",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“Te comparto esta reflexión”\n\nMuchas veces se piensa que el Gap Year es solo para “descansar” antes de la universidad. Pero si se planea bien, puede ayudarte a:\n\n✅ Validar intereses antes de elegir carrera\n✅ Mejorar nivel de idioma\n✅ Desarrollar independencia y madurez\n✅ Ingresar con ventaja a un programa académico o laboral después\n\nSi me cuentas un poco de lo que están buscando, te puedo decir si este tipo de programa realmente hace sentido."
+      }
+    ],
+    "id": "4199997476951322"
+  },
+  {
+    "name": "seg_dia_7_ptw",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“Lo importante es que tomes una buena decisión”\n\nNo te quiero llenar de mensajes, solo cerrar con esto:\n\nSi estás pensando en estudiar en Alemania, lo mejor que puedes hacer es tener claridad desde ahora.\n\nAunque no sea con nosotros, tomar una buena decisión desde el principio te puede ahorrar tiempo, dinero y frustraciones.\n\nSi en algún punto quieres retomarlo, cuenta conmigo."
+      }
+    ],
+    "id": "1799891933899911"
+  },
+  {
+    "name": "seg_dia_5_ptw",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“Te comparto esto que usamos para saber quien tiene buen perfil para el Pathway”\n\nEste checklist lo usamos en nuestras asesorías iniciales. Te lo comparto por si quieres evaluar por tu cuenta si esto hace sentido para ti:\n\n✅ ¿Tienes o estás por terminar la prepa o una carrera universitaria?\n✅ ¿Te gustaría estudiar una carrera o maestría en una universidad pública? \n✅ ¿Estás dispuesto a aprender alemán desde cero (o reforzarlo)?\n✅ ¿Ves esta experiencia como una inversión a mediano/largo plazo?\n\nSi respondiste que sí a 3 o más… vale la pena hablar. Y si no, igual te puedo orientar con opciones más adecuadas."
+      }
+    ],
+    "id": "1104645748254983"
+  },
+  {
+    "name": "seg_dia_3_ptw",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“Lo que me hubiera gustado saber antes”\n\nMuchos estudiantes que nos escriben creen que si hablan algo de alemán, ya pueden aplicar directo a la uni.\n\nPero lo que nadie les dice es que necesitas cumplir varios requisitos formales y académicos y si no los tienes, puedes perder tiempo valioso o incluso que te nieguen la visa.\n\nSi me cuentas un poco más de tu perfil, puedo decirte si estás en el camino correcto… o si hay algo que debas ajustar antes de avanzar."
+      }
+    ],
+    "id": "1250880546738788"
+  },
+  {
+    "name": "seg_dia_7_bs",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "No te quiero saturar, lo prometo. Solo quería dejarte esto último:\n\nSi en algún punto decides que este tema sí es algo serio para tu hijo (o para ti), tener una charla con nosotros puede evitarte muchos errores.\n\nAquí no vendemos viajes, ayudamos a tomar buenas decisiones.\n\nCuando sientas que es el momento, aquí estoy."
+      }
+    ],
+    "id": "1150696253747702"
+  },
+  {
+    "name": "seg_dia_5_bs",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Te comparto esto, por si lo quieres revisar\n\nEsto lo usamos normalmente con las familias que sí avanzan con nosotros, pero quise compartírtelo aunque no hayas decidido todavía:\n\n🧠 Mini checklist: ¿Está tu hijo listo para estudiar fuera?\n\n✅ Tiene cierta autonomía en casa\n\n✅ Sabe manejar frustraciones sin papás cerca\n\n✅ Tiene una razón clara (más allá de “me gusta viajar”)\n\n✅ Ustedes como papás tienen expectativas claras\n\nNo es un test. Solo algo que te puede ayudar a pensar si es el momento correcto.\n\nSi te sirve, me da gusto. Y si en algún momento quieres retomarlo, aquí seguimos."
+      }
+    ],
+    "id": "1097219962363155"
+  },
+  {
+    "name": "seg_dia_3_bs",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "La pregunta que cambia todo\n\n¿Cómo es tu hijo cuando nadie lo ve?\n\nEsta pregunta cambia completamente el tipo de recomendación.\n\nMuchas veces se elige por destino o por precio, pero si no se parte del perfil del estudiante, es muy fácil equivocarse.\n\nSi te interesa, con gusto te ayudo a pensar desde ahí."
+      }
+    ],
+    "id": "2216757955451915"
+  },
+  {
+    "name": "seg_dia_1_bs",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Te comparto algo que puede servirte\n\nHola {{1}}, no estoy seguro si este sea un buen momento para ti, pero quería dejarte esto por si te ayuda:\n\nMuchos papás se detienen porque sienten que no tienen toda la información o no saben por dónde empezar.\n\nTe comparto los 3 errores más comunes al elegir escuela en el extranjero:\n\n1. Elegir por el país, no por el perfil del estudiante\n\n2. Guiarse solo por el presupuesto sin entender qué implica\n\n3. No considerar si la edad y madurez son compatibles con el programa\n\nEspero que estos errores te brinden más claridad. Ojalá te sirva, saludos y un fuerte abrazo.",
+        "example": {
+          "body_text": [
+            [
+              "buenas"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "596293683528528"
+  },
+  {
+    "name": "seguimiento_dia_1_bs",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Te comparto algo que puede servirte\n\nHola {{1}}, no estoy seguro si este sea un buen momento para ti, pero quería dejarte esto por si te ayuda:\n\nMuchos papás se detienen porque sienten que no tienen toda la información o no saben por dónde empezar.\n\nTe comparto los 3 errores más comunes al elegir escuela en el extranjero:\n\n1. Elegir por el país, no por el perfil del estudiante\n\n2. Guiarse solo por el presupuesto sin entender qué implica\n\n3. No considerar si la edad y madurez son compatibles con el programa\n\nEspero que estos errores te brinden más claridad. Ojalá te sirva, saludos y un fuerte abrazo.",
+        "example": {
+          "body_text": [
+            [
+              "Mariana"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "606703585827890"
+  },
+  {
+    "name": "seguimiento_dia_3_bs",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "La pregunta que cambia todo\n\n¿Cómo es tu hijo cuando nadie lo ve?\n\nEsta pregunta cambia completamente el tipo de recomendación.\n\nMuchas veces se elige por destino o por precio, pero si no se parte del perfil del estudiante, es muy fácil equivocarse.\n\nSi te interesa, con gusto te ayudo a pensar desde ahí."
+      }
+    ],
+    "id": "1403477594223708"
+  },
+  {
+    "name": "seguimiento_dia_5_bs",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Te comparto esto, por si lo quieres revisar\n\nEsto lo usamos normalmente con las familias que sí avanzan con nosotros, pero quise compartírtelo aunque no hayas decidido todavía:\n\n🧠 Mini checklist: ¿Está tu hijo listo para estudiar fuera?\n\n✅ Tiene cierta autonomía en casa\n\n✅ Sabe manejar frustraciones sin papás cerca\n\n✅ Tiene una razón clara (más allá de “me gusta viajar”)\n\n✅ Ustedes como papás tienen expectativas claras\n\nNo es un test. Solo algo que te puede ayudar a pensar si es el momento correcto.\n\nSi te sirve, me da gusto. Y si en algún momento quieres retomarlo, aquí seguimos."
+      }
+    ],
+    "id": "1586312125687486"
+  },
+  {
+    "name": "seguimiento_dia_7_bs",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "No te quiero saturar, lo prometo. Solo quería dejarte esto último:\n\nSi en algún punto decides que este tema sí es algo serio para tu hijo (o para ti), tener una charla con nosotros puede evitarte muchos errores.\n\n_Aquí no vendemos viajes, ayudamos a tomar buenas decisiones._\n\nCuando sientas que es el momento, aquí estoy."
+      }
+    ],
+    "id": "1434950151031941"
+  },
+  {
+    "name": "seguimiento_dia_1_ptw",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Una pregunta que muchos no se atreven a hacer.\n\nHola {{1}}, te dejo algo que tal vez te sirva aunque todavía estés pensando o comparando opciones:\n\nUna de las preguntas más comunes (pero que casi nadie hace) es:\n\n_“¿Es verdad que puedo estudiar una carrera en Alemania pagando menos que en México?”_\n\nLa respuesta es sí, pero depende mucho de cómo te prepares.\n\nEl Pathway es el paso previo para acceder a universidades públicas con colegiaturas muy bajas. Pero hay muchas versiones de este programa, y no todas te llevan al mismo resultado.\n\nSi quieres, te puedo ayudar a entender cuál sí aplica para ti y cuál no.",
+        "example": {
+          "body_text": [
+            [
+              "Mariana"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "775554671802387"
+  },
+  {
+    "name": "seguimiento_dia_3_ptw",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“Lo que me hubiera gustado saber antes”\n\nMuchos estudiantes que nos escriben creen que si hablan algo de alemán, ya pueden aplicar directo a la uni.\n\nPero lo que nadie les dice es que necesitas cumplir varios requisitos formales y académicos y si no los tienes, puedes perder tiempo valioso o incluso que te nieguen la visa.\n\nSi me cuentas un poco más de tu perfil, puedo decirte si estás en el camino correcto… o si hay algo que debas ajustar antes de avanzar."
+      }
+    ],
+    "id": "1486588532721403"
+  },
+  {
+    "name": "seguimiento_dia_5_ptw",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“Te comparto esto que usamos para saber quien tiene buen perfil para el Pathway”\n\nEste checklist lo usamos en nuestras asesorías iniciales. Te lo comparto por si quieres evaluar por tu cuenta si esto hace sentido para ti:\n\n✅ ¿Tienes o estás por terminar la prepa o una carrera universitaria?\n✅ ¿Te gustaría estudiar una carrera o maestría en una universidad pública? \n✅ ¿Estás dispuesto a aprender alemán desde cero (o reforzarlo)?\n✅ ¿Ves esta experiencia como una inversión a mediano/largo plazo?\n\nSi respondiste que sí a 3 o más… vale la pena hablar. Y si no, igual te puedo orientar con opciones más adecuadas."
+      }
+    ],
+    "id": "24637241322527924"
+  },
+  {
+    "name": "seguimiento_dia_7_ptw",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“Lo importante es que tomes una buena decisión”\n\nNo te quiero llenar de mensajes, solo cerrar con esto:\n\nSi estás pensando en estudiar en Alemania, lo mejor que puedes hacer es tener claridad desde ahora.\n\nAunque no sea con nosotros, tomar una buena decisión desde el principio te puede ahorrar tiempo, dinero y frustraciones.\n\nSi en algún punto quieres retomarlo, cuenta conmigo."
+      }
+    ],
+    "id": "1517499646300059"
+  },
+  {
+    "name": "seguimiento_dia_1_gy",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“¿Gap Year o escapatoria?”\n\nHola {{1}}, no sé si todavía estás explorando opciones, pero te comparto esto que puede ayudarte a tomar una mejor decisión:\n\nUna de las diferencias más importantes que nadie explica es esta:\n\n👉 Un Gap Year no es una “pausa” ni una “escapatoria”. Bien diseñado, es una herramienta para ganar claridad, madurez y dirección. \n\nLo ideal es que no sea improvisado. Si te interesa, puedo ayudarte a definir cuál es el enfoque más adecuado para ti.",
+        "example": {
+          "body_text": [
+            [
+              "Manu"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "1432966081463795"
+  },
+  {
+    "name": "seguimiento_dia_3_gy",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“Te comparto esta reflexión”\n\nMuchas veces se piensa que el Gap Year es solo para “descansar” antes de la universidad. Pero si se planea bien, puede ayudarte a:\n\n✅ Validar intereses antes de elegir carrera\n✅ Mejorar nivel de idioma\n✅ Desarrollar independencia y madurez\n✅ Ingresar con ventaja a un programa académico o laboral después\n\nSi me cuentas un poco de lo que están buscando, te puedo decir si este tipo de programa realmente hace sentido."
+      }
+    ],
+    "id": "1490763332336989"
+  },
+  {
+    "name": "seguimiento_dia_5_gy",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“¿Qué países permiten estudiar y trabajar legalmente?”\n\nUna de las preguntas más comunes es:\n\n“¿Dónde se puede estudiar y trabajar legalmente al mismo tiempo?”\n\nTe comparto un resumen rápido:\n\n🇦🇺 Australia – Con cursos de idiomas o vocacionales\n 🇮🇪 Irlanda – Con cursos de más de 25 semanas\n 🇨🇦 Canadá – En programas académicos específicos\n 🇲🇹 Malta / 🇦🇪 Dubái – Con ciertas condiciones\n\nY más…\n\nCada país tiene sus reglas, y elegir mal puede significar no poder trabajar. Si quieres, te explico cuál te convendría según tu perfil."
+      }
+    ],
+    "id": "1776680516256766"
+  },
+  {
+    "name": "seguimiento_dia_7_gy",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“Lo importante no es irte… es saber por qué”\n\nGracias por leer hasta aquí. Te dejo solo esta última reflexión:\n\nNo se trata de si vale la pena irte o no, sino de si sabes por qué lo harías y qué quieres obtener de esa experiencia.\n\nSi no es el momento, está bien. Pero si crees que este proyecto puede cambiar tu camino, una conversación te puede dar mucha más claridad.\n\nAquí estoy cuando quieras retomarlo."
+      }
+    ],
+    "id": "1051725007136878"
+  },
+  {
+    "name": "seguimiento_dia_1_aa",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“No es solo el país, es la casa”\n\nHola {{1}}, no estoy seguro si todavía estás considerando esta opción, pero te quiero dejar una reflexión importante:\n\nMuchos papás eligen el país o el colegio… pero se olvidan de algo esencial:\n\n👉 Tu hijo no va a vivir en una escuela, va a vivir en una casa.\n\nEl impacto que tiene la familia anfitriona en la experiencia es enorme.\n\nSi quieres, te puedo explicar cómo funciona este punto en cada país y por",
+        "example": {
+          "body_text": [
+            [
+              "mario"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "641731564921775"
+  },
+  {
+    "name": "seguimiento_dia_3_aa",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "¿Cómo saber si tu hijo está listo?\n\nUna de las dudas más grandes que tienen los papás es:\n\n“¿Mi hijo realmente está preparado para vivir un año fuera, en casa de otra familia?”\n\nTe comparto algunos indicadores que usamos para acompañar a las familias en esta decisión:\n\n✅ Tiene cierto nivel de autonomía y se adapta bien a nuevas reglas\n✅ Muestra apertura a otras culturas y estilos de vida\n✅ Tiene curiosidad por mejorar su idioma\n✅ Papás e hijo comparten expectativas realistas del programa\n\nSi quieres, podemos ver juntos si este es el momento ideal o si habría que trabajar ciertos puntos antes."
+      }
+    ],
+    "id": "1932232917597376"
+  },
+  {
+    "name": "seguimiento_dia_5_aa",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“Dónde sí hay programas (y cómo se elige bien)”\n\nTe comparto los países donde actualmente manejamos este tipo de experiencia con familia anfitriona y colegio público:\n\n🇺🇸 Estados Unidos\n🇨🇦 Canadá\n🇫🇷 Francia \n🇮🇹 Italia\n🇳🇱 Países Bajos\n\nTodos tienen diferencias importantes en cuanto a visado, requisitos, estructura y selección de familias.\n\nSi tienes uno en mente, puedo ayudarte a saber si es el más adecuado según el perfil de tu hijo y lo que están buscando como familia."
+      }
+    ],
+    "id": "1045673287556907"
+  },
+  {
+    "name": "seguimiento_dia_7_aa",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“Lo que yo le diría a cualquier papá”\n\nPara cerrar, solo te quiero dejar esto:\n\nComo papá, una de las mejores decisiones que puedes tomar es NO hacer esto solo.\n\nNo se trata de tener prisa por mandar a tu hijo fuera, sino de saber si es el momento correcto, el programa correcto y el entorno correcto.\n\nSi en algún punto quieres hablarlo con alguien que ya acompañó a muchas familias en este proceso, aquí estoy."
+      }
+    ],
+    "id": "1220294396500727"
+  },
+  {
+    "name": "seguimiento_dia_1_plantilla_sc",
+    "language": "es",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "¿Campamento o vacaciones?\n\nHola {{1}}, te escribo porque algo que veo seguido con papás que están considerando un campamento de verano es esto:\n\n👉 A veces se piensa que es solo “unas vacaciones fuera”, pero la realidad es que bien elegido, puede ser una experiencia que le dé a tu hijo más seguridad, independencia y visión del mundo.\n\nSi quieres, te puedo explicar qué tipo de campamento sería ideal para su edad y personalidad, y qué países tienen las mejores opciones en este momento.",
+        "example": {
+          "body_text": [
+            [
+              "Mau"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "718646177725394"
+  },
+  {
+    "name": "seguimiento_dia_3_sc",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“3 preguntas que pueden ayudarte a decidir”\n\nTe comparto 3 preguntas que siempre usamos para ayudar a los papás a decidir si un campamento es lo que su hijo necesita ahora:\n\n1. ¿Tu hijo se adapta fácilmente a nuevos entornos o le cuesta salir de su zona de confort?\n\n2. ¿Ha tenido experiencias de autonomía antes (viajes, actividades extracurriculares, convivencias)?\n\n3. ¿Este viaje es un primer paso para algo más (como estudiar fuera) o solo para disfrutar el verano?\n\nNo hay respuestas correctas. Pero saber esto te ayuda a elegir mejor.\n\nSi me cuentas un poco de lo que estás buscando, con gusto te oriento."
+      }
+    ],
+    "id": "1635227220503896"
+  },
+  {
+    "name": "seguimiento_dia_5_sc",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Qué países manejamos (y por qué)\n\nTe dejo los destinos donde actualmente manejamos campamentos con los mejores niveles de seguridad, estructura y contenido formativo:\n\n🇺🇸 Estados Unidos\n🇬🇧 Reino Unido\n🇨🇦 Canadá\n🇫🇷 Francia\n🇩🇪 Alemania\n\nY muchos más…\n\nTodos tienen enfoques diferentes: algunos son más académicos, otros más culturales o deportivos.\n\nSi tienes algún país en mente, puedo ayudarte a identificar si es una buena opción para tu hijo este verano."
+      }
+    ],
+    "id": "1649151752415303"
+  },
+  {
+    "name": "seguimiento_dia_7_sc",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“¿Vale la pena?”\n\nUna de las preguntas que más nos hacen es:\n\n“¿Vale la pena enviar a mi hijo solo al extranjero por unas semanas?”\n\nY la respuesta siempre es: depende de qué estés buscando sembrar.\n\nEn muchos casos, es un primer paso ideal para un adolescente que más adelante puede estudiar fuera.\n\nSi en algún momento quieres tener claridad sobre esto, estoy aquí para ayudarte a decidir con calma y con toda la información sobre la mesa."
+      }
+    ],
+    "id": "24275643362073300"
+  },
+  {
+    "name": "seguimiento_dia_1_gen",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“¿En qué etapa estás?”\n\nHola, espero que estés muy bien. Vi que nos escribiste hace poco, pero no sé si ya tienes claro lo que estás buscando o apenas estás explorando opciones.\n\nSolo para que sepas: ayudamos a familias y estudiantes a encontrar el mejor programa para estudiar fuera, dependiendo de su perfil, intereses y objetivos.\n\nCuando quieras, podemos platicarlo sin compromiso. Aquí sigo."
+      }
+    ],
+    "id": "1875462043234691"
+  },
+  {
+    "name": "seguimiento_dia_3_gen",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“¿Prefieres que te oriente?”\n\nA veces lo más difícil no es encontrar programas, sino saber por dónde empezar.\n\nSi quieres, puedo orientarte con algunas preguntas rápidas para saber qué tipo de opciones te harían más sentido, sin compromiso.\n\nMe puedes decir si prefieres que te guíe paso a paso."
+      }
+    ],
+    "id": "626427863808586"
+  },
+  {
+    "name": "seguimiento_dia_5_gen",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“Las rutas más comunes”\n\nTe comparto algo que le sirve a muchos que apenas están explorando:\n\n🎓 Internados (educación de alto nivel en el extranjero)\n🏡 Años académicos en familia anfitriona\n☀️ Campamentos de verano\n🎓 Pathway universitario\n🌍 Programas de estudia y trabaja\n\nCada ruta tiene perfiles distintos. Si me dices qué te llama más la atención, te puedo ayudar a afinar cuál sería ideal para ti (o para tu hijo)."
+      }
+    ],
+    "id": "1744014866488213"
+  },
+  {
+    "name": "seguimiento_dia_7_gen",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "“Aquí cuando lo necesites”\n\nTe agradezco mucho que nos hayas escrito. Entiendo que a veces los tiempos no coinciden o que uno necesita pensarlo más.\n\nSolo quería dejarte claro que, si en algún momento quieres avanzar o resolver dudas, aquí estoy para ayudarte de forma honesta, sin presiones.\n\nQue tomes la mejor decisión es lo más importante, sea ahora o después."
+      }
+    ],
+    "id": "2467176687016138"
+  },
+  {
+    "name": "seguimiento_gen_no_agendo",
+    "language": "es_MX",
+    "status": "APPROVED",
+    "category": "MARKETING",
+    "components": [
+      {
+        "type": "BODY",
+        "text": "Hola {{1}} 👋 Hace unos días te compartí el enlace para agendar tu asesoría personalizada, pero vi que aún no la agendaste. ¿Tuviste algún problema con el link?\n\nSé que una decisión así requiere claridad, y por eso diseñamos estas sesiones: para ayudarte a resolver dudas reales, evitar errores comunes y construir un plan viable antes de que se pierda tiempo valioso o se cierren opciones 🗓️\n\nMe interesa que tomes la mejor decisión posible, con respaldo profesional y en el momento adecuado.\n\n¿Te gustaría que te lo vuelva a compartir?",
+        "example": {
+          "body_text": [
+            [
+              "Maria"
+            ]
+          ]
+        }
+      }
+    ],
+    "id": "2413263602386770"
+  }
+]

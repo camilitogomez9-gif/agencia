@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAG · Muestra — Sneak peek (folder gallery)</title>
+<style>
+:root{
+  --bg:#1a0e0f;
+  --text:#f6efe9; --text-muted:#b6a8a2; --text-dim:#83756f;
+  --grn-1:#34d399; --grn-2:#8ef0c4;
+  --font:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-font-smoothing:antialiased;}
+body{
+  margin:0;font-family:var(--font);color:var(--text);
+  background:
+    radial-gradient(1100px 700px at 80% -8%, rgba(52,211,153,.11), transparent 60%),
+    radial-gradient(900px 700px at 0% 30%, rgba(52,211,153,.05), transparent 55%),
+    var(--bg);
+  padding:64px 0 96px;
+}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px;}
+
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;display:inline-flex;align-items:center;gap:9px;}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
+.grad{background:linear-gradient(120deg,var(--grn-1),var(--grn-2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+
+.head{margin-bottom:34px;}
+.head h2{font-size:clamp(24px,3.6vw,38px);font-weight:600;letter-spacing:-.02em;margin:16px 0 12px;max-width:20ch;}
+.head p{color:var(--text-muted);font-size:16.5px;line-height:1.6;max-width:64ch;margin:0;}
+
+/* ---- folder gallery: paneles que se expanden al hover ---- */
+.folders{display:flex;gap:14px;height:196px;}
+.fp{
+  position:relative;flex:1;min-width:0;overflow:hidden;cursor:default;
+  border-radius:22px;padding:18px 20px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  background:linear-gradient(160deg, rgba(255,255,255,.12), rgba(255,255,255,.035));
+  border:1px solid rgba(255,255,255,.16);
+  backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.3), inset 0 -16px 26px rgba(0,0,0,.14), 0 14px 34px -20px rgba(0,0,0,.55);
+  transition:flex .55s cubic-bezier(.2,.8,.2,1), transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .45s, border-color .45s, opacity .45s;
+}
+.fp::before{content:"";position:absolute;inset:0;background:radial-gradient(135% 95% at 50% 120%, rgba(52,211,153,.24), transparent 62%);opacity:.5;transition:opacity .45s;pointer-events:none;}
+/* expandir el hovereado, comprimir el resto */
+.folders:hover .fp{flex:.62;opacity:.82;transform:scale(.985);}
+.folders .fp:hover{
+  flex:3.4;opacity:1;transform:translateY(-8px) scale(1);
+  border-color:rgba(120,240,180,.48);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.36), inset 0 -16px 26px rgba(0,0,0,.12), 0 30px 60px -24px rgba(0,0,0,.7), 0 0 0 1px rgba(52,211,153,.08);
+}
+.folders .fp:hover::before{opacity:1;}
+
+.fp .ic{font-size:28px;line-height:1;filter:drop-shadow(0 2px 7px rgba(0,0,0,.4));}
+.fp .cap{position:relative;min-height:60px;}
+/* etiqueta corta (estado colapsado) */
+.fp .mini{position:absolute;left:0;bottom:0;white-space:nowrap;font-size:16px;font-weight:600;letter-spacing:-.01em;transition:opacity .3s;}
+/* contenido completo (al expandir) */
+.fp .full{position:absolute;left:0;bottom:0;width:100%;opacity:0;transform:translateY(8px);transition:opacity .4s ease .05s, transform .4s ease .05s;}
+.fp .full .t{font-size:18px;font-weight:600;letter-spacing:-.01em;line-height:1.15;}
+.fp .full .b{margin-top:7px;font-size:13.5px;color:var(--text-muted);line-height:1.4;max-width:36ch;}
+.fp .full .chip{display:inline-flex;margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:4px 10px;border-radius:999px;color:var(--grn-2);background:rgba(52,211,153,.14);border:1px solid rgba(52,211,153,.34);}
+.fp:hover .mini{opacity:0;}
+.fp:hover .full{opacity:1;transform:none;}
+
+.hint{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--text-dim);margin-top:14px;}
+
+.close{margin-top:32px;color:var(--text-muted);font-size:16px;}
+.close b{color:var(--text);font-weight:600;}
+.note{margin-top:52px;padding:22px 24px;border-radius:20px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);color:var(--text-muted);font-size:14px;line-height:1.6;}
+.note b{color:var(--text);}
+
+@media(max-width:760px){
+  .folders{flex-direction:column;height:auto;gap:12px;}
+  .fp{flex:none;min-height:88px;flex-direction:row;align-items:center;gap:16px;padding:16px 18px;}
+  .fp .cap{min-height:0;flex:1;}
+  .fp .mini,.fp .full{position:static;}
+  .fp .full{opacity:1;transform:none;}
+  .fp .mini{display:none;}
+  .folders:hover .fp{flex:none;opacity:1;transform:none;}
+  .folders .fp:hover{flex:none;transform:none;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <span class="eyebrow grad"><span class="dot"></span> Lo que sigue · Fase 2</span>
+    <h2>Un vistazo a la <span class="grad">plataforma completa</span>.</h2>
+    <p>Las quick wins son la rampa. Esto es a dónde llegan: toda la operación en una sola plataforma. Un adelanto de lo que viene.</p>
+  </div>
+
+  <div class="folders">
+    <div class="fp">
+      <div class="ic">💸</div>
+      <div class="cap">
+        <div class="mini">Pago</div>
+        <div class="full"><div class="t">Pago automático</div><div class="b">El pago a choferes se arma y se dispersa solo, sin dictado.</div><span class="chip">Fase 2</span></div>
+      </div>
+    </div>
+    <div class="fp">
+      <div class="ic">🏦</div>
+      <div class="cap">
+        <div class="mini">Cobranza</div>
+        <div class="full"><div class="t">Cobranza que avisa</div><div class="b">Avisa qué se cobró y qué falta, sin revisar el banco a mano.</div><span class="chip">Fase 2</span></div>
+      </div>
+    </div>
+    <div class="fp">
+      <div class="ic">🧾</div>
+      <div class="cap">
+        <div class="mini">Facturación</div>
+        <div class="full"><div class="t">Facturación sin frenos</div><div class="b">Un semáforo muestra qué falta para facturar a cada cliente.</div><span class="chip">Fase 2</span></div>
+      </div>
+    </div>
+    <div class="fp">
+      <div class="ic">📊</div>
+      <div class="cap">
+        <div class="mini">Reportes</div>
+        <div class="full"><div class="t">Reportes automáticos</div><div class="b">El reporte de cobro de cada cliente se genera solo.</div><span class="chip">Fase 2</span></div>
+      </div>
+    </div>
+    <div class="fp">
+      <div class="ic">🪪</div>
+      <div class="cap">
+        <div class="mini">Expediente</div>
+        <div class="full"><div class="t">Expediente digital</div><div class="b">El legajo del chofer, digital y accesible cuando se necesita.</div><span class="chip">Fase 2</span></div>
+      </div>
+    </div>
+    <div class="fp">
+      <div class="ic">📈</div>
+      <div class="cap">
+        <div class="mini">Dirección</div>
+        <div class="full"><div class="t">Dirección en números</div><div class="b">Margen, cobranza e incidencias del negocio, en vivo.</div><span class="chip">Fase 2</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="hint">pasá el cursor por cada panel para asomarte →</div>
+
+  <div class="close">Todo esto es la <b>Fase 2</b>. El alcance lo definimos juntos, sobre lo que ya quedó funcionando.</div>
+
+  <div class="note"><b>Sobre esta muestra:</b> patrón "folder gallery" (paneles que se expanden y se elevan al pasar el cursor), altura reducida y acento verde. Colapsados muestran ícono + nombre corto; al expandir revelan el beneficio + chip Fase 2. Ajustable: velocidad de la animación, cuánto se expande, íconos.</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,235 @@
+{
+  "OP · Bot Venttur": {
+    "id": "sezekQ4oFybMb4S5Bop1",
+    "legacy": false,
+    "stages": {
+      "Nuevo Lead": "f4a9a1bb-6815-4cd1-84dc-6c158f380de5",
+      "Contactado": "aae74394-9027-4eae-95de-46de1946d92a",
+      "En diagnóstico": "0edec1f6-ba58-4c88-a542-809e1e88a1ff",
+      "Cualificado": "ab26d75f-47cb-4dfb-a146-3b170a6b72f2",
+      "Cita agendada": "36fa419c-e836-48a8-8a77-72b38d357173",
+      "Cita confirmada": "7c0c40b6-4a25-4d1c-a2a2-40e5f38095bc",
+      "Asistió": "08f742d9-2aaa-4a76-abc2-48d34a9f3ba9",
+      "Ganado": "7ac11942-d746-44f0-84e9-640919884c23",
+      "Perdido": "9118c086-c0aa-47a1-890f-1945c2863941",
+      "Abandonado frío": "868e89f8-941b-4e77-bf98-eeef23c6b759"
+    }
+  },
+  "Campaña Internados Erika": {
+    "id": "0Lp7xCY9NTnDOQ6YRFf5",
+    "legacy": false,
+    "stages": {
+      "Dejo Sus Datos": "3f86f49f-400e-48a4-85af-c557a1d64714",
+      "Contestó La llamada y continua seguimiento por Whatsapp": "d1dbd8bd-711a-41c8-b372-aa21274427c5",
+      "Continuó Conversación WA": "a87d2f1b-2be8-42f0-8a46-30db83e4e075",
+      "Día 1 Seguimiento": "ecd05485-3340-4f24-9011-ed78ebb2704a",
+      "Día 5 Seguimiento": "9d3c0db2-289f-4d24-9009-345f983c84fa",
+      "Día 10 Seguimiento": "7f853ec5-cc45-4235-9cec-b88fb0a37d17",
+      "Día 15 Seguimiento": "14604f3f-21c5-4516-9ba7-54fa4c7dd801",
+      "Día 20 Seguimiento": "e4f8dfb9-2e23-44b7-bd54-26d9bef19cdc",
+      "Agendar Cita de Venta.": "1df88285-5460-43a5-be56-7a21ac139dc0",
+      "Agendar Cita Venta Cruzada": "203203e7-5191-454f-82cb-ba2ed3203755",
+      "Cita de Ventas concretada": "bb0daaca-e560-4e51-bac2-6097655a8ea8",
+      "Cita Concretada de Venta Cruzada": "4d80fbfe-f0af-4286-ae66-083953c10e15"
+    }
+  },
+  "VENTAS EMA METODOLOGÍA": {
+    "id": "9MHAJV5x5QEQ1CMEEbiK",
+    "legacy": false,
+    "stages": {
+      "AA PUBLICO": "303415b5-2e10-4ae3-8050-c98917410b0d",
+      "PERFILAMIENTO INDIVIDUAL": "6066b64e-8f02-4d7c-a628-7995a4f76bda",
+      "AGENDÓ REUNIÓN": "c98c8930-2815-4d46-84e6-16ac78638152",
+      "RE-AGENDÓ LA REUNIÓN": "aed8222a-e806-4756-812b-304907a3a245",
+      "NO ASISTIÓ A LA REUNIÓN": "da649f9a-6d4e-4053-9124-62e3738f2e17",
+      "ASISTIÓ A LA REUNIÓN": "1686f399-14bf-4fd3-a565-a4d2c9cb4764",
+      "PRESENTACIÓN": "72b099cb-6848-4de1-b591-cafdcb2787d1",
+      "PRESUPUESTO ABIERTO": "749799ed-10e7-4a5c-96fd-d9baa8dbb17a",
+      "PRESUPUESTO ENVIADO": "426d55b6-a56b-4e00-abda-fedf02657313",
+      "SUMMER CAMP": "4298d5cf-b6a6-439e-a2a4-cc1ec1e6f494",
+      "IDIOMAS": "1ce5d03e-e2f8-48ee-a26c-5c8d3979cb43",
+      "PERDIDA DE CAMPAÑA PASADA": "1bd1068f-d6c4-4db9-9296-bffbc6bd39bf"
+    }
+  },
+  "Campaña Australia Abril 25": {
+    "id": "wZTA8hgdYLb7UGZM1Yqr",
+    "legacy": true,
+    "stages": {
+      "Se registró": "2e62a148-c84d-465a-918e-2489b61d46b0",
+      "Gracias por asistir": "dd0bc838-bff5-44b7-8e71-01be9f689828"
+    }
+  },
+  "Venta SPE - Internados": {
+    "id": "owQvDrHhckAbxFqh5THW",
+    "legacy": false,
+    "stages": {
+      "No contesto - se envió Whatsapp": "e1027a09-d24c-486e-985a-767c31d4f6a2",
+      "Contactar para agendar cita": "17ebb070-558a-4633-90be-ad29a832b1e8",
+      "Llamar de nuevo más tarde": "f87fda26-c966-46fd-a107-1351a9401b6a",
+      "Agendó Reunión": "f7011a66-8148-4026-a616-bf23c07e9cf3",
+      "Seguimiento post reunión": "73b844b6-cf8c-4e77-8f2c-004910cde615",
+      "En espera de pago - cobranza": "7cfe00b0-1a7b-4665-98e5-8fa6fdc0d149"
+    }
+  },
+  "Afiliación Venttur": {
+    "id": "y8HWlXZzWXEridlDotck",
+    "legacy": false,
+    "stages": {
+      "Envió Whatsapp": "f7f655ce-53f3-4b4a-a6f3-15cf5e6721f3",
+      "Dejo sus datos": "7466eba1-95b3-49ed-92a1-726cca955c17",
+      "Continúo Conversación": "77cd28b4-b5f8-4f8c-8d0c-a30ee94a2b0a",
+      "Revisando requisitos": "748a0f30-472d-4580-822b-d074a21618d9",
+      "Agendo Videollamada": "aea8703b-a915-4f28-b0c1-493e68bdf6e7",
+      "Asistió a Video Llamada": "78d200c6-e7b4-4abe-be1a-8993b24466ea",
+      "Firma de contrato": "2ebfe354-6306-4d12-82fa-32d9494de7a0"
+    }
+  },
+  "Operativo Internados": {
+    "id": "iB14RGap1HImv5smV210",
+    "legacy": false,
+    "stages": {
+      "Envío de aplicación a la familia y revisión": "dda78278-773d-48ee-965d-c9e5bfbb1608",
+      "Envío de aplicación a la institución": "dd1ab21d-3bed-4f65-8e5c-285456a22ab4",
+      "Exámenes posicionamiento": "ad770098-d57f-440f-a6ad-35e45a9eebad",
+      "Aceptación del estudiante y recepción de facturas": "7cd9f3ee-7fdf-4da4-864b-0829b71e606e",
+      "PRESENTACIÓN": "2a6b3676-e734-4acd-8e77-035467e08fbb",
+      "PRESUPUESTO ABIERTO": "2a81d454-9fe6-4ffd-a42c-645bfb51e6ad",
+      "PRESUPUESTO PAGADO": "890d3144-57dc-485f-ac5c-7ece051aba5a",
+      "Pago del programa": "518e7779-6bdd-48e7-bcb7-fccff2f01a1e",
+      "Recepción de documentos oficiales para visado": "a01baaf1-865b-4998-b699-5e0e81a9f869",
+      "Gestión de visado": "77ee7308-004c-496b-86e1-ffa4feb62d6d",
+      "Coordinar llegada": "d051945e-87ab-4b99-a37c-bf5ca96b25ed",
+      "JUNTA FAMILIA + ESCUELA": "1f1f2a4a-0dff-41b7-a6e6-3c7e463dce3c",
+      "Estudiante en destino": "009ed6b6-0e0a-4b69-b807-dcdcdd26eb4d"
+    }
+  },
+  "Reclutamiento de escuelas": {
+    "id": "ou5cL0bHKIh5riEvSjha",
+    "legacy": true,
+    "stages": {
+      "Solicitud de cita": "edf01c77-1ee9-41b6-adea-8c197d58713f"
+    }
+  },
+  "Academias Deportivas": {
+    "id": "FlQ0DDWKJteLRNkJXsuS",
+    "legacy": true,
+    "stages": {
+      "Ingreso a la base de Datos": "bab7a279-a947-4ce3-b4f3-d8920619b650",
+      "Leyó Correo de Presentación": "f49f6ebd-b796-40e5-ae29-aa991b7b2b6a",
+      "Requisitos para firma de convenio": "88411dc8-46b2-4099-bccf-3cbd70c023ef"
+    }
+  },
+  "Operativo Año Académico": {
+    "id": "l4g1DNaWdMDYxb575Xo1",
+    "legacy": false,
+    "stages": {
+      "Recabar documentos y datos para la aplicación": "2b1b593d-52a3-4684-8a4c-b9203ddb1461",
+      "Realizar aplicación": "9fc14884-e794-44b9-936d-764e4af0b70a",
+      "Recibir documentos de la escuela": "b858e2a9-8b4d-42e3-aacb-ac096a077643",
+      "Enviar presupuesto final": "2ab383b5-81fb-4230-a54d-ce090129b05a",
+      "Cobrar programa": "76a21607-a7df-457c-a1a4-b2de50388e12",
+      "Enviar comprobante de pago a la escuela": "6d03efe7-abfc-411f-a79b-9454870a5bfa",
+      "Tramitar Visa (si aplica)": "974a7272-cfcf-45ce-9fa1-5e986e3b7bac",
+      "Coordinar llegada": "3fced461-9e1c-4ce8-bff8-a9e384a8c17a",
+      "Estudiante en destino": "a2e281b6-b03a-4c6f-b6af-ef212f174e94"
+    }
+  },
+  "Seguimiento": {
+    "id": "Ac02Nr4Xk2fHOwRsHwH0",
+    "legacy": false,
+    "stages": {
+      "1er Seguimiento (1er día)": "2ba39162-8793-482e-999f-cf895ff3689e",
+      "4to Seguimiento (Mes 4)": "f9a8e135-ac30-4651-a4bc-575e0be7350a",
+      "5to Seguimiento (Mes 6)": "ca81abf1-ddab-4216-acb9-5f54f06efe6a"
+    }
+  },
+  "Operativo Idiomas": {
+    "id": "ByuL5ELI3LHHhtxZj4ge",
+    "legacy": false,
+    "stages": {
+      "Realizar aplicación": "181e2cc6-4e9e-4671-a884-997eb65e1ed9",
+      "Cobrar programa": "e3c01b39-9fde-4790-a42b-51c2e56967fc",
+      "Tramitar visa (Si aplica)": "cc855d7d-987b-46b6-98b9-1a952a83e90a",
+      "Estudiante en destino": "40b2602f-2751-4ca5-90ba-d04ed47df236"
+    }
+  },
+  "Operativo Summercamp": {
+    "id": "hW8L1ask4oy5UuTCMV8f",
+    "legacy": false,
+    "stages": {
+      "Trámites Migratorios": "507cc4a8-ec28-46ca-883d-c929b87e6726",
+      "Coordinar llegada": "fda8a70f-c447-40ec-87ec-55bfde12fb74",
+      "Estudiante en destino": "f11be692-e31e-48b8-8e84-34ff64b7f61e"
+    }
+  },
+  "Viaje a Japón UP 2026": {
+    "id": "Uyq8z1szivx8w4J7oKoB",
+    "legacy": false,
+    "stages": {
+      "Inscripción y recepción de documentos": "6931fbcb-b247-4ed2-8f7f-2155f351dcee",
+      "Viaje liquidado": "ef270034-d03f-48a3-92a3-b6ca0a6c8970"
+    }
+  },
+  "Operativo Gap Year": {
+    "id": "rWwGef3tTGg32SifC6zN",
+    "legacy": false,
+    "stages": {
+      "Cobrar inscripción": "390b0c69-39cf-44cb-b627-af09d647532e",
+      "Enviar presupuesto final": "85831d99-cfd5-4ca2-98ee-27457c80d5c3",
+      "Cobrar programa": "6021a4c3-b3a5-4658-9939-f2ede3e0e9fe",
+      "Enviar comprobante pago a la escuela y LOO Firmado por estudiante y Diploma de prepa traducido.": "5a44b5b6-816a-4b1b-b1a6-7f8436b403e0",
+      "Recepción CoE (Post Pago programa)": "10759d30-9a35-408a-aeff-b2980a52bc76",
+      "Cobrar y tramitar seguro OSHC": "7de73641-87df-4f93-98b3-f3cb25cd8d1d",
+      "Estudiante en destino": "6e6590f5-5c4a-4db4-bde8-98c5d9f185b3"
+    }
+  },
+  "Operativo Pathway": {
+    "id": "ERPB4Sp8nI5PNh4SeMaQ",
+    "legacy": false,
+    "stages": {
+      "Enviar documentación a la escuela para pre-evaluación": "8a108928-5402-49a5-87fa-91795f3bc884",
+      "Presentar ETA a estudiante y papás": "54e2ad86-c0a7-46dd-add4-a44960fae313",
+      "Cobrar Inscripción 1": "bd5eb1ef-3185-40f7-b45a-7dacb4c5d703",
+      "Cobrar inscripción 2 + inscripción escuela": "d584b406-1ea8-42ef-9088-e4419038c114",
+      "Recopilar documentación en físico para trámites": "e0b24e03-e8e8-4830-822b-a533e4f29ae9",
+      "Traducir + Copias Certificadas de Documentos Checklist": "1988558f-cb32-4b69-b952-8bfe371a2f64",
+      "Crear MEE (si aplica)": "e2636653-48e9-4c11-b88d-4cb3bf58a87b",
+      "Cobrar Programa": "5af82c15-3c66-4190-98b3-d31197db38cc",
+      "Estudiante en destino": "2fb321f2-28f2-47ce-a202-575f98a0d449"
+    }
+  },
+  "Operativo Educación superior": {
+    "id": "VqJr2wDW4LYdrChK5pNH",
+    "legacy": false,
+    "stages": {
+      "Cobro de inscripción": "9ccdf75e-e3cd-43fe-959e-cfcb98ccb378",
+      "Tramitar visa (Si aplica)": "b93e56bf-5233-43d6-9cf7-4d24b3054903",
+      "Estudiante en destino": "56df5a5f-1bb8-4e9a-9e8d-9f3d24a111fa"
+    }
+  },
+  "La Garenne CDMX": {
+    "id": "r12eYMaHxpKxMU8lHddK",
+    "legacy": true,
+    "stages": {
+      "Dejo sus datos": "888b3ef0-77cc-4db5-a7d1-02d08cfb5f0e",
+      "Después del evento": "8ed4b838-bff4-4a22-93f8-8251d0d22bcb"
+    }
+  },
+  "La Garenne Leon": {
+    "id": "vQocWE8jusDZ9SCa4Eh6",
+    "legacy": true,
+    "stages": {
+      "Dejo sus datos": "293fa217-5594-4b1e-b042-657d8073954e",
+      "Dia del evento": "8e080704-2dfd-45a7-85bd-9fa104073ca9",
+      "Después del evento": "27e01b6b-36b9-4c71-bab5-a6259505f162"
+    }
+  },
+  "Sin asignar / Default": {
+    "id": "sieWE9Aj7mazecEWYBWz",
+    "legacy": false,
+    "stages": {
+      "Sin etapa": "1a4d740c-4da6-41b9-87d1-55810939bda8",
+      "Propuesta presentada": "4827303e-25d5-4ed6-839f-e0b46c36c3df"
+    }
+  }
+}

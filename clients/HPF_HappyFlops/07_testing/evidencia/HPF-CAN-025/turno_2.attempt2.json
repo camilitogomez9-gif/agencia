@@ -1,0 +1,97 @@
+{
+  "probe_id": "sess_hpf_can_025_1785954140#e779d1ea214b",
+  "session_id": "sess_hpf_can_025_1785954140",
+  "contact_id": "KSLMGxHkYbEUEwfkFjdk",
+  "canal": "ghl",
+  "texto_enviado": "boda",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 15.1,
+  "version_antes": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "version_despues": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "capturado_utc": "2026-08-05T18:23:05.215370+00:00",
+  "execution_id": "989563",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T18:22:45.003Z",
+  "stoppedAt": "2026-08-05T18:22:59.859Z",
+  "n_esperadas": 2,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Qué padre que estés planeando tu boda! Cuéntame, qué recuerditos te gustaría ver para tu evento?",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "Tenemos sandalias, pantuflas, cilindros, mandiles, kit anticruda y vasos popote personalizados. Con cuál te gustaría empezar?",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send Message via GHL",
+      "run": 0,
+      "ms": 516,
+      "reintentos_posibles": false,
+      "canal": "ghl",
+      "entregado": true,
+      "message_id": "9ZTDTMLKEISAXKwDensb",
+      "chat_id": "jrEzTusVDghOAJ7VXf60",
+      "texto_entregado": null,
+      "error": null
+    },
+    {
+      "emisor": "Send Message via GHL",
+      "run": 1,
+      "ms": 742,
+      "reintentos_posibles": false,
+      "canal": "ghl",
+      "entregado": true,
+      "message_id": "Pmf6Yb9Xi6FqEQADKWmT",
+      "chat_id": "jrEzTusVDghOAJ7VXf60",
+      "texto_entregado": null,
+      "error": null
+    }
+  ],
+  "n_entregadas": 2,
+  "partes_post": [
+    {
+      "emisor": "Send Imagen Principal",
+      "run": 0,
+      "ms": 697,
+      "reintentos_posibles": false,
+      "canal": "ghl",
+      "entregado": true,
+      "message_id": "aTYSipcvXmH5M4Y7rat7",
+      "chat_id": "jrEzTusVDghOAJ7VXf60",
+      "texto_entregado": null,
+      "error": null
+    },
+    {
+      "emisor": "Send Promo Evento",
+      "run": 0,
+      "ms": 724,
+      "reintentos_posibles": false,
+      "canal": "ghl",
+      "entregado": true,
+      "message_id": "lEWqMTkabwcUaHfSI2Kl",
+      "chat_id": "jrEzTusVDghOAJ7VXf60",
+      "texto_entregado": null,
+      "error": null
+    }
+  ],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Qué padre que estés planeando tu boda! Cuéntame, ¿qué recuerditos te gustaría ver para tu evento? Tenemos sandalias, pantuflas, cilindros, mandiles, kit anticruda y vasos popote personalizados. ¿Con cuál te gustaría empezar?",
+    "tools": [
+      "IDENTIFICAR_EVENTO"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-CAN-025"
+}

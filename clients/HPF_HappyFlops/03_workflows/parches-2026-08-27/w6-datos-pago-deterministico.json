@@ -1,0 +1,13 @@
+{
+  "wf": "W6",
+  "descripcion": "P8 reunión Oscar 2026-08-27: el texto que acompaña los datos de pago queda fijo palabra por palabra (decisión: determinístico en el nodo, no confiar en el LLM). En 'Partir en burbujas', dentro del guard que adjunta el PDF de números de cuenta (teniaMarcador && pdfPago), se pisa el texto de la última burbuja con el texto exacto de Oscar antes de colgar el PDF. Camino B (prompt-only) descartado por la lección del proyecto (fixes por nodo pegan, por prompt no siempre).",
+  "ediciones": [
+    {
+      "nodo": "Partir en burbujas",
+      "campo": "parameters.jsCode",
+      "anchor": "  const ult = partesFinales[partesFinales.length - 1];\n  ult.adjuntos = (ult.adjuntos || []).concat([pdfPago]);",
+      "reemplazo": "  const ult = partesFinales[partesFinales.length - 1];\n  // P8 (reunión Oscar 2026-08-27): el texto que acompaña los datos de pago es\n  // determinístico, no lo redacta el LLM. Se pisa la última burbuja con el texto\n  // exacto de Oscar, en el mismo turno donde sale el PDF de números de cuenta.\n  ult.texto = 'Aquí tiene toda la info para el pago. Cuando tenga el comprobante del 50% de anticipo, mándelo por aquí para seguir con su pedido. Si tiene alguna duda, le ayudo con gusto. 😊✨';\n  ult.adjuntos = (ult.adjuntos || []).concat([pdfPago]);",
+      "motivo": "El texto de pago era no-determinístico (lo redactaba el LLM con few-shot). Ahora es byte-exacto y consistente en todos los turnos. Solo se activa cuando hay marcador de pago Y hay PDF en caché, así el texto 'Aquí tiene toda la info para el pago' nunca se emite sin el PDF."
+    }
+  ]
+}

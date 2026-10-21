@@ -1,0 +1,13 @@
+{
+  "wf": "W6",
+  "descripcion": "puntos 6 y 7: el link de Google Maps llega como [link](url) markdown, que WhatsApp NO renderiza — al cliente le llega roto. Medido 5/5 con markdown_link=True. La separación de '¿de dónde son?' vs '¿es seguro?' ya funciona (5/5), así que NO hace falta delta de prompt: lo único que falla es el formato del link, y eso se arregla determinísticamente.",
+  "por_que_nodo_y_no_prompt": "Pedirle al LLM que no use markdown es probabilístico; el 12/8 se midió que un arreglo por prompt da ~57% y uno por código 100%. Además esto aplica a CUALQUIER link que el agente escriba, no solo al de Maps.",
+  "ediciones": [
+    {
+      "nodo": "Partir en burbujas",
+      "campo": "parameters.jsCode",
+      "anchor": "const INDIVISIBLE = /(Cotizaci[óo]n|Anticipo|7 SENCILLOS PASOS|7 DIAS DE PROMO)/i;",
+      "reemplazo": "// ── LINKS EN MARKDOWN → URL PELADA ─────────────────────────────────────────────\n// WhatsApp no renderiza [texto](url): al cliente le llega el corchete, el paréntesis\n// y la URL cruda, todo junto. Se midió sobre 5 corridas de «¿de dónde son?» que el\n// agente escribe el link de Google Maps en markdown 5 de 5 veces, o sea siempre.\n//\n// Va por código y no por prompt porque acá no hay criterio que delegar: el formato\n// correcto es uno solo, y una regla de prompt daría ~el 57% que se midió el 12/8 en el\n// otro punto que se intentó resolver así. Aplica a cualquier link, no solo al de Maps.\n//\n// Si el texto visible del link es distinto de la URL, se conserva como etiqueta antes\n// de la URL para no perder el contexto («nuestra ubicación: https://…»).\ntxt = txt.replace(/\\[([^\\]]{0,80})\\]\\((https?:\\/\\/[^\\s)]+)\\)/g, (_, etiqueta, url) => {\n  const e = String(etiqueta).trim();\n  const soloLink = !e || /^(aqu[íi]|link|enlace|ac[áa]|ver|mapa|ubicaci[óo]n)$/i.test(e);\n  return soloLink ? url : `${e}: ${url}`;\n});\n\nconst INDIVISIBLE = /(Cotizaci[óo]n|Anticipo|7 SENCILLOS PASOS|7 DIAS DE PROMO)/i;"
+    }
+  ]
+}

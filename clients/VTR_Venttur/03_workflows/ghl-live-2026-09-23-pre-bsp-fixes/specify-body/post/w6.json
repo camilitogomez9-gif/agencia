@@ -1,0 +1,528 @@
+{
+ "updatedAt": "2026-09-23T21:13:55.258Z",
+ "createdAt": "2026-09-22T05:15:45.494Z",
+ "id": "AS9ZNhY3GJDfhY3P",
+ "name": "W6 · Confirmación agenda (GHL) - Venttur (OFF)",
+ "description": null,
+ "active": true,
+ "isArchived": false,
+ "nodes": [
+  {
+   "parameters": {
+    "httpMethod": "POST",
+    "path": "vtr-confirmacion-agenda-ghl-a191d178",
+    "responseMode": "responseNode",
+    "options": {}
+   },
+   "id": "0a30522d-3dde-4aa3-84af-d91886627e00",
+   "name": "Webhook: appointment GHL",
+   "type": "n8n-nodes-base.webhook",
+   "typeVersion": 2,
+   "position": [
+    0,
+    0
+   ],
+   "webhookId": "22088c26-8e88-45e7-865d-8749493b552b"
+  },
+  {
+   "parameters": {
+    "jsCode": "\n// W6 · Normaliza payload de appointment GHL + arma mensaje + body de marcado\n// Contrato esperado (POST desde GHL Workflow \"Customer Booked Appointment\"):\n//   { contact_id, phone, first_name, programa, appointment_start, appointment_title,\n//     calendar_name, assigned_user, meeting_link }\nconst p = $('Webhook: appointment GHL').first().json.body || $('Webhook: appointment GHL').first().json;\n\nconst contact_id = (p.contact_id || p.contactId || '').toString();\nconst first_name = (p.first_name || p.firstName || '').toString();\nconst programa   = (p.programa || p.programa_interes || p.calendar_name || '').toString();\nconst start      = (p.appointment_start || p.startTime || p.start_time || '').toString();\nlet meeting    = (p.meeting_link || p.meeting_location || p.address || '').toString();\nif (meeting && !/^https?:\\/\\//.test(meeting)) meeting = '';\n\n// asesoría vs cita\nconst pp = programa.toLowerCase();\nconst palabra = (/pathway|superior/.test(pp)) ? 'asesoría' : 'cita';\n\n// Fecha/hora en TZ CDMX\nlet fecha = '';\ntry {\n  if (start) {\n    const dt = DateTime.fromISO(start, { setZone: true }).setZone('America/Mexico_City');\n    if (dt.isValid) fecha = dt.toFormat(\"dd/MM 'a las' HH:mm\");\n  }\n} catch (e) { fecha = ''; }\n\n\n// PRE-BSP-0923 · Si la fecha del webhook no se pudo leer (GHL manda {{appointment.start_time}} formateado, no\n// ISO), se toma de la API: la cita más reciente del contacto.\nlet startIso = start;\nif (!fecha || !meeting) {\n  try {\n    const r = $('GHL · Citas del contacto').first().json || {};\n    const evs = (r.events || []).filter(e => e && e.startTime && !/cancel/i.test(e.appointmentStatus || ''));\n    evs.sort((a, b) => (Date.parse(b.dateAdded || b.startTime) || 0) - (Date.parse(a.dateAdded || a.startTime) || 0));\n    const ev = evs[0];\n    if (ev) {\n      if (!fecha) {\n        let dt = DateTime.fromISO(String(ev.startTime).replace(' ', 'T'), { setZone: true });\n        if (!/[zZ]|[+-]\\d\\d:?\\d\\d$/.test(String(ev.startTime))) dt = DateTime.fromISO(String(ev.startTime).replace(' ', 'T'), { zone: 'America/Mexico_City' });\n        dt = dt.setZone('America/Mexico_City');\n        if (dt.isValid) { fecha = dt.toFormat(\"dd/MM 'a las' HH:mm\"); startIso = dt.toISO(); }\n      }\n      if (!meeting && ev.address && /^https?:\\/\\//.test(ev.address)) meeting = ev.address;\n    }\n  } catch (e) {}\n}\n\nlet message = first_name\n  ? `${first_name}, ¡confirmamos tu ${palabra}${fecha ? ' para el ' + fecha : ''}! 📅`\n  : `¡Confirmamos tu ${palabra}${fecha ? ' para el ' + fecha : ''}! 📅`;\nif (meeting) message += `\\n\\n📲 Te dejo el link de la reunión para que lo tengas a mano: ${meeting}`;\n\nconst CF = {\"agendan_cita\": \"LwXu8AxMLhVGCbNmgzm2\", \"estado_conversacion\": \"Omg1BvHmpXR0MMGsrpFh\"};\nconst mark_body = {\n  customFields: [\n    { id: CF.agendan_cita, value: 'true' },\n    { id: CF.estado_conversacion, value: 'Cita confirmada' }\n  ]\n};\nconst send_body = { type: 'WhatsApp', contactId: contact_id, message };\n\nreturn [{ json: { contact_id, first_name, programa, fecha, meeting, message, send_body, mark_body } }];\n"
+   },
+   "id": "9d0b4114-1c0d-4344-ae8c-ade52246f311",
+   "name": "Normalize + build msg",
+   "type": "n8n-nodes-base.code",
+   "typeVersion": 2,
+   "position": [
+    220,
+    0
+   ]
+  },
+  {
+   "parameters": {
+    "method": "POST",
+    "url": "https://services.leadconnectorhq.com/conversations/messages",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Version",
+       "value": "2021-04-15"
+      },
+      {
+       "name": "LocationId",
+       "value": "7aXb4JCKsWV5nUyBXeSF"
+      }
+     ]
+    },
+    "sendBody": true,
+    "contentType": "json",
+    "jsonBody": "={{ JSON.stringify($json.send_body) }}",
+    "options": {},
+    "specifyBody": "json"
+   },
+   "id": "f42ddc1f-8d92-4f26-9de7-a3b8b1af890b",
+   "name": "1. Enviar confirmación (WhatsApp)",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    440,
+    0
+   ],
+   "credentials": {
+    "httpHeaderAuth": {
+     "id": "YkVmaA4jlRbO1TQD",
+     "name": "GHL VTR (PIT)"
+    }
+   },
+   "onError": "continueRegularOutput"
+  },
+  {
+   "parameters": {
+    "method": "PUT",
+    "url": "=https://services.leadconnectorhq.com/contacts/{{ $('Normalize + build msg').first().json.contact_id }}",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Version",
+       "value": "2021-07-28"
+      },
+      {
+       "name": "LocationId",
+       "value": "7aXb4JCKsWV5nUyBXeSF"
+      }
+     ]
+    },
+    "sendBody": true,
+    "contentType": "json",
+    "jsonBody": "={{ JSON.stringify($('Normalize + build msg').first().json.mark_body) }}",
+    "options": {},
+    "specifyBody": "json"
+   },
+   "id": "fe8a0930-b574-4a06-8f52-3a11f43078b1",
+   "name": "2. Marcar agendan_cita=true",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    660,
+    0
+   ],
+   "credentials": {
+    "httpHeaderAuth": {
+     "id": "YkVmaA4jlRbO1TQD",
+     "name": "GHL VTR (PIT)"
+    }
+   },
+   "onError": "continueRegularOutput"
+  },
+  {
+   "parameters": {
+    "respondWith": "json",
+    "responseBody": "={\"ok\": true}",
+    "options": {}
+   },
+   "id": "2415bca1-3c1a-4876-a93d-05bcaa520aad",
+   "name": "Responder OK",
+   "type": "n8n-nodes-base.respondToWebhook",
+   "typeVersion": 1.1,
+   "position": [
+    880,
+    0
+   ]
+  },
+  {
+   "parameters": {
+    "method": "GET",
+    "url": "=https://services.leadconnectorhq.com/contacts/{{ ($json.body || $json).contact_id || ($json.body || $json).contactId }}/appointments",
+    "authentication": "genericCredentialType",
+    "genericAuthType": "httpHeaderAuth",
+    "sendHeaders": true,
+    "headerParameters": {
+     "parameters": [
+      {
+       "name": "Version",
+       "value": "2021-07-28"
+      }
+     ]
+    },
+    "options": {}
+   },
+   "name": "GHL · Citas del contacto",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    110,
+    200
+   ],
+   "id": "c5839d17-0e46-401f-869d-3c870d715086",
+   "credentials": {
+    "httpHeaderAuth": {
+     "id": "YkVmaA4jlRbO1TQD",
+     "name": "GHL VTR (PIT)"
+    }
+   },
+   "alwaysOutputData": true,
+   "onError": "continueRegularOutput"
+  }
+ ],
+ "connections": {
+  "Webhook: appointment GHL": {
+   "main": [
+    [
+     {
+      "node": "GHL · Citas del contacto",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Normalize + build msg": {
+   "main": [
+    [
+     {
+      "node": "1. Enviar confirmación (WhatsApp)",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "1. Enviar confirmación (WhatsApp)": {
+   "main": [
+    [
+     {
+      "node": "2. Marcar agendan_cita=true",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "2. Marcar agendan_cita=true": {
+   "main": [
+    [
+     {
+      "node": "Responder OK",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "GHL · Citas del contacto": {
+   "main": [
+    [
+     {
+      "node": "Normalize + build msg",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  }
+ },
+ "settings": {
+  "executionOrder": "v1",
+  "callerPolicy": "workflowsFromSameOwner",
+  "availableInMCP": false
+ },
+ "staticData": null,
+ "meta": null,
+ "pinData": null,
+ "versionId": "66b3d60a-e67f-4a19-bf88-be335a12c95d",
+ "activeVersionId": "66b3d60a-e67f-4a19-bf88-be335a12c95d",
+ "versionCounter": 8,
+ "triggerCount": 1,
+ "shared": [
+  {
+   "updatedAt": "2026-09-22T05:15:45.498Z",
+   "createdAt": "2026-09-22T05:15:45.498Z",
+   "role": "workflow:owner",
+   "workflowId": "AS9ZNhY3GJDfhY3P",
+   "projectId": "OZub3m3DGqbZefcZ",
+   "project": {
+    "updatedAt": "2025-02-10T13:18:00.403Z",
+    "createdAt": "2025-02-10T13:17:23.832Z",
+    "id": "OZub3m3DGqbZefcZ",
+    "name": "la agencia <[EMAIL-AGENCIA]>",
+    "type": "personal",
+    "icon": null,
+    "description": null,
+    "projectRelations": [
+     {
+      "updatedAt": "2025-02-10T13:17:23.833Z",
+      "createdAt": "2025-02-10T13:17:23.833Z",
+      "userId": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+      "projectId": "OZub3m3DGqbZefcZ",
+      "user": {
+       "updatedAt": "2026-09-23T21:06:24.000Z",
+       "createdAt": "2025-02-10T13:17:22.713Z",
+       "id": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+       "email": "[EMAIL-AGENCIA]",
+       "firstName": "la agencia",
+       "lastName": "AI",
+       "personalizationAnswers": {
+        "version": "v4",
+        "personalization_survey_submitted_at": "2025-02-10T13:18:23.044Z",
+        "personalization_survey_n8n_version": "1.77.3",
+        "companySize": "<20",
+        "companyType": "digital-agency",
+        "role": "business-owner",
+        "reportedSource": "youtube"
+       },
+       "settings": {
+        "userActivated": true,
+        "easyAIWorkflowOnboarded": true,
+        "firstSuccessfulWorkflowId": "KFHNPOd9iRMDKpBc",
+        "userActivatedAt": 1739194255698,
+        "npsSurvey": {
+         "responded": true,
+         "lastShownAt": 1790197346912
+        }
+       },
+       "disabled": false,
+       "mfaEnabled": false,
+       "lastActiveAt": "2026-09-23",
+       "isPending": false
+      }
+     }
+    ]
+   }
+  }
+ ],
+ "tags": [],
+ "activeVersion": {
+  "updatedAt": "2026-09-23T21:13:55.248Z",
+  "createdAt": "2026-09-23T21:13:55.248Z",
+  "versionId": "66b3d60a-e67f-4a19-bf88-be335a12c95d",
+  "workflowId": "AS9ZNhY3GJDfhY3P",
+  "nodes": [
+   {
+    "parameters": {
+     "httpMethod": "POST",
+     "path": "vtr-confirmacion-agenda-ghl-a191d178",
+     "responseMode": "responseNode",
+     "options": {}
+    },
+    "id": "0a30522d-3dde-4aa3-84af-d91886627e00",
+    "name": "Webhook: appointment GHL",
+    "type": "n8n-nodes-base.webhook",
+    "typeVersion": 2,
+    "position": [
+     0,
+     0
+    ],
+    "webhookId": "22088c26-8e88-45e7-865d-8749493b552b"
+   },
+   {
+    "parameters": {
+     "jsCode": "\n// W6 · Normaliza payload de appointment GHL + arma mensaje + body de marcado\n// Contrato esperado (POST desde GHL Workflow \"Customer Booked Appointment\"):\n//   { contact_id, phone, first_name, programa, appointment_start, appointment_title,\n//     calendar_name, assigned_user, meeting_link }\nconst p = $('Webhook: appointment GHL').first().json.body || $('Webhook: appointment GHL').first().json;\n\nconst contact_id = (p.contact_id || p.contactId || '').toString();\nconst first_name = (p.first_name || p.firstName || '').toString();\nconst programa   = (p.programa || p.programa_interes || p.calendar_name || '').toString();\nconst start      = (p.appointment_start || p.startTime || p.start_time || '').toString();\nlet meeting    = (p.meeting_link || p.meeting_location || p.address || '').toString();\nif (meeting && !/^https?:\\/\\//.test(meeting)) meeting = '';\n\n// asesoría vs cita\nconst pp = programa.toLowerCase();\nconst palabra = (/pathway|superior/.test(pp)) ? 'asesoría' : 'cita';\n\n// Fecha/hora en TZ CDMX\nlet fecha = '';\ntry {\n  if (start) {\n    const dt = DateTime.fromISO(start, { setZone: true }).setZone('America/Mexico_City');\n    if (dt.isValid) fecha = dt.toFormat(\"dd/MM 'a las' HH:mm\");\n  }\n} catch (e) { fecha = ''; }\n\n\n// PRE-BSP-0923 · Si la fecha del webhook no se pudo leer (GHL manda {{appointment.start_time}} formateado, no\n// ISO), se toma de la API: la cita más reciente del contacto.\nlet startIso = start;\nif (!fecha || !meeting) {\n  try {\n    const r = $('GHL · Citas del contacto').first().json || {};\n    const evs = (r.events || []).filter(e => e && e.startTime && !/cancel/i.test(e.appointmentStatus || ''));\n    evs.sort((a, b) => (Date.parse(b.dateAdded || b.startTime) || 0) - (Date.parse(a.dateAdded || a.startTime) || 0));\n    const ev = evs[0];\n    if (ev) {\n      if (!fecha) {\n        let dt = DateTime.fromISO(String(ev.startTime).replace(' ', 'T'), { setZone: true });\n        if (!/[zZ]|[+-]\\d\\d:?\\d\\d$/.test(String(ev.startTime))) dt = DateTime.fromISO(String(ev.startTime).replace(' ', 'T'), { zone: 'America/Mexico_City' });\n        dt = dt.setZone('America/Mexico_City');\n        if (dt.isValid) { fecha = dt.toFormat(\"dd/MM 'a las' HH:mm\"); startIso = dt.toISO(); }\n      }\n      if (!meeting && ev.address && /^https?:\\/\\//.test(ev.address)) meeting = ev.address;\n    }\n  } catch (e) {}\n}\n\nlet message = first_name\n  ? `${first_name}, ¡confirmamos tu ${palabra}${fecha ? ' para el ' + fecha : ''}! 📅`\n  : `¡Confirmamos tu ${palabra}${fecha ? ' para el ' + fecha : ''}! 📅`;\nif (meeting) message += `\\n\\n📲 Te dejo el link de la reunión para que lo tengas a mano: ${meeting}`;\n\nconst CF = {\"agendan_cita\": \"LwXu8AxMLhVGCbNmgzm2\", \"estado_conversacion\": \"Omg1BvHmpXR0MMGsrpFh\"};\nconst mark_body = {\n  customFields: [\n    { id: CF.agendan_cita, value: 'true' },\n    { id: CF.estado_conversacion, value: 'Cita confirmada' }\n  ]\n};\nconst send_body = { type: 'WhatsApp', contactId: contact_id, message };\n\nreturn [{ json: { contact_id, first_name, programa, fecha, meeting, message, send_body, mark_body } }];\n"
+    },
+    "id": "9d0b4114-1c0d-4344-ae8c-ade52246f311",
+    "name": "Normalize + build msg",
+    "type": "n8n-nodes-base.code",
+    "typeVersion": 2,
+    "position": [
+     220,
+     0
+    ]
+   },
+   {
+    "parameters": {
+     "method": "POST",
+     "url": "https://services.leadconnectorhq.com/conversations/messages",
+     "authentication": "genericCredentialType",
+     "genericAuthType": "httpHeaderAuth",
+     "sendHeaders": true,
+     "headerParameters": {
+      "parameters": [
+       {
+        "name": "Version",
+        "value": "2021-04-15"
+       },
+       {
+        "name": "LocationId",
+        "value": "7aXb4JCKsWV5nUyBXeSF"
+       }
+      ]
+     },
+     "sendBody": true,
+     "contentType": "json",
+     "jsonBody": "={{ JSON.stringify($json.send_body) }}",
+     "options": {},
+     "specifyBody": "json"
+    },
+    "id": "f42ddc1f-8d92-4f26-9de7-a3b8b1af890b",
+    "name": "1. Enviar confirmación (WhatsApp)",
+    "type": "n8n-nodes-base.httpRequest",
+    "typeVersion": 4.2,
+    "position": [
+     440,
+     0
+    ],
+    "credentials": {
+     "httpHeaderAuth": {
+      "id": "YkVmaA4jlRbO1TQD",
+      "name": "GHL VTR (PIT)"
+     }
+    },
+    "onError": "continueRegularOutput"
+   },
+   {
+    "parameters": {
+     "method": "PUT",
+     "url": "=https://services.leadconnectorhq.com/contacts/{{ $('Normalize + build msg').first().json.contact_id }}",
+     "authentication": "genericCredentialType",
+     "genericAuthType": "httpHeaderAuth",
+     "sendHeaders": true,
+     "headerParameters": {
+      "parameters": [
+       {
+        "name": "Version",
+        "value": "2021-07-28"
+       },
+       {
+        "name": "LocationId",
+        "value": "7aXb4JCKsWV5nUyBXeSF"
+       }
+      ]
+     },
+     "sendBody": true,
+     "contentType": "json",
+     "jsonBody": "={{ JSON.stringify($('Normalize + build msg').first().json.mark_body) }}",
+     "options": {},
+     "specifyBody": "json"
+    },
+    "id": "fe8a0930-b574-4a06-8f52-3a11f43078b1",
+    "name": "2. Marcar agendan_cita=true",
+    "type": "n8n-nodes-base.httpRequest",
+    "typeVersion": 4.2,
+    "position": [
+     660,
+     0
+    ],
+    "credentials": {
+     "httpHeaderAuth": {
+      "id": "YkVmaA4jlRbO1TQD",
+      "name": "GHL VTR (PIT)"
+     }
+    },
+    "onError": "continueRegularOutput"
+   },
+   {
+    "parameters": {
+     "respondWith": "json",
+     "responseBody": "={\"ok\": true}",
+     "options": {}
+    },
+    "id": "2415bca1-3c1a-4876-a93d-05bcaa520aad",
+    "name": "Responder OK",
+    "type": "n8n-nodes-base.respondToWebhook",
+    "typeVersion": 1.1,
+    "position": [
+     880,
+     0
+    ]
+   },
+   {
+    "parameters": {
+     "method": "GET",
+     "url": "=https://services.leadconnectorhq.com/contacts/{{ ($json.body || $json).contact_id || ($json.body || $json).contactId }}/appointments",
+     "authentication": "genericCredentialType",
+     "genericAuthType": "httpHeaderAuth",
+     "sendHeaders": true,
+     "headerParameters": {
+      "parameters": [
+       {
+        "name": "Version",
+        "value": "2021-07-28"
+       }
+      ]
+     },
+     "options": {}
+    },
+    "name": "GHL · Citas del contacto",
+    "type": "n8n-nodes-base.httpRequest",
+    "typeVersion": 4.2,
+    "position": [
+     110,
+     200
+    ],
+    "id": "c5839d17-0e46-401f-869d-3c870d715086",
+    "credentials": {
+     "httpHeaderAuth": {
+      "id": "YkVmaA4jlRbO1TQD",
+      "name": "GHL VTR (PIT)"
+     }
+    },
+    "alwaysOutputData": true,
+    "onError": "continueRegularOutput"
+   }
+  ],
+  "connections": {
+   "Webhook: appointment GHL": {
+    "main": [
+     [
+      {
+       "node": "GHL · Citas del contacto",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   },
+   "Normalize + build msg": {
+    "main": [
+     [
+      {
+       "node": "1. Enviar confirmación (WhatsApp)",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   },
+   "1. Enviar confirmación (WhatsApp)": {
+    "main": [
+     [
+      {
+       "node": "2. Marcar agendan_cita=true",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   },
+   "2. Marcar agendan_cita=true": {
+    "main": [
+     [
+      {
+       "node": "Responder OK",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   },
+   "GHL · Citas del contacto": {
+    "main": [
+     [
+      {
+       "node": "Normalize + build msg",
+       "type": "main",
+       "index": 0
+      }
+     ]
+    ]
+   }
+  },
+  "authors": "la agencia",
+  "name": null,
+  "description": null
+ }
+}

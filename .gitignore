@@ -1,0 +1,52 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Variables de entorno y secretos
+.env
+.env.*
+*.key
+*.pem
+secrets/
+
+# Credenciales de clientes (Airtable, ManyChat, Supabase, etc.) — NUNCA commitear
+**/airtable-credentials.md
+**/manychat-credentials.md
+**/supabase-credentials.md
+**/*-credentials.md
+**/credentials-*.md
+
+# Dependencias
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Outputs temporales
+*.tmp
+*.log
+*.bak
+
+# IDEs
+.vscode/
+.idea/
+
+# Archivos de sesión interna
+.session
+
+# Base de datos local (Next.js webapp)
+*.db
+*.db-shm
+*.db-wal
+
+# Build artifacts (Next.js)
+.next/
+tsconfig.tsbuildinfo
+.vercel
+
+# VTR backup Clientify pre-cutover (PII)
+clients/VTR_Venttur/00_migracion_ghl/05_ejecucion/backup-clientify-*/
+
+# Caché del tablero de estado (scripts/generators/estado-cliente.py)
+clients/*/06_docs/estado/.cache.json

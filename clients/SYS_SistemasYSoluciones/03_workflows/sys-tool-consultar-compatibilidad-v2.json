@@ -1,0 +1,202 @@
+{
+  "name": "sys-tool-consultar-compatibilidad-v2",
+  "nodes": [
+    {
+      "id": "d6072a37-636f-51be-8173-3d45d4d5319f",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"tipo_consulta\": \"equipo_sustrato\",\n  \"equipo\": \"\",\n  \"elemento\": \"\",\n  \"session_id\": \"\"\n}"
+      }
+    },
+    {
+      "id": "a1e7dbb8-d5c3-5bc3-8836-159f674dca1d",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "const args = $input.first().json;\nif (!args.equipo || !args.elemento || !args.tipo_consulta) {\n  return [{ json: { status: 'ERROR', _skip: true, message_to_agent: 'Faltan parámetros. Requiero tipo_consulta (equipo_sustrato | equipo_tinta | equipo_cabezal), equipo y elemento.' } }];\n}\nreturn [{ json: args }];"
+      }
+    },
+    {
+      "id": "e37c4f7b-a607-5421-bc65-bd71ac412ffa",
+      "name": "Search Equipo",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        300
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "3zohdTBWzW8UUN6P",
+          "name": "Airtable SYS"
+        }
+      },
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": "appMD3g2HWxzBaZAM"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": "tblHO7kWEbFBVTWQn"
+        },
+        "filterByFormula": "={{ `FIND(LOWER(\"${String($json.equipo).toLowerCase()}\"), LOWER({Modelo}))>0` }}",
+        "limit": 3,
+        "options": {},
+        "view": {
+          "__rl": true,
+          "mode": "list",
+          "value": "viwCUJCvUbuDFXKqA"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "id": "24affbff-f475-5d6f-aa5d-25fe4f18013a",
+      "name": "Format Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "// v2 — F1: filtra records vacíos antes de procesar.\n\nconst matches = $input.all().filter(m => m.json && m.json.id && m.json.Modelo);\nconst args = $('Execute Workflow Trigger').first().json;\n\nif (matches.length === 0) {\n  return [{ json: {\n    status: 'NOT_FOUND',\n    data: null,\n    message_to_agent: `No encontré el equipo \"${args.equipo}\" en el catálogo. Si el cliente nombró un modelo concreto (ej. HR 6004 DU, BIZHUB C450i), verificá el nombre exacto. Si está preguntando por una tecnología (DTF, UV, etc.) usá consultar_tecnologia o consultar_catalogo.`,\n    trace_id: $execution.id\n  } }];\n}\n\nconst equipo = matches[0].json;\nconst elementoLower = String(args.elemento).toLowerCase();\n\nlet compatible = 'depende';\nlet notas = '';\nlet fieldChecked = '';\n\nif (args.tipo_consulta === 'equipo_sustrato') {\n  const sustratos = (equipo['Sustratos compatibles'] || []).map(s => String(s).toLowerCase());\n  compatible = sustratos.length > 0 && sustratos.some(s => s.includes(elementoLower) || elementoLower.includes(s));\n  fieldChecked = 'Sustratos compatibles';\n  notas = compatible\n    ? `Sí, el equipo ${equipo.Modelo} es compatible con ${args.elemento} (según catálogo).`\n    : `El equipo ${equipo.Modelo} no lista ${args.elemento} en sus sustratos compatibles del catálogo. Para confirmar oficialmente, derivá al comercial.`;\n} else if (args.tipo_consulta === 'equipo_tinta') {\n  fieldChecked = 'Cabezales tipo';\n  notas = `Compatibilidad de tinta requiere verificación técnica. Cabezal del equipo: ${equipo['Cabezales tipo'] || 'no especificado'}. Derivá al comercial para confirmación.`;\n  compatible = 'depende';\n} else if (args.tipo_consulta === 'equipo_cabezal') {\n  const cab = String(equipo['Cabezales tipo'] || '').toLowerCase();\n  fieldChecked = 'Cabezales tipo';\n  compatible = cab && cab.includes(elementoLower);\n  notas = compatible\n    ? `Sí, el equipo ${equipo.Modelo} usa cabezales ${equipo['Cabezales tipo']}, compatible con lo que pregunta el cliente.`\n    : `El equipo ${equipo.Modelo} usa cabezales ${equipo['Cabezales tipo'] || 'no especificado'}. No matchea exactamente con \"${args.elemento}\". Derivá al comercial.`;\n}\n\nreturn [{ json: {\n  status: 'RESOLVED',\n  data: { compatible, notas, equipo_referencia: equipo.Modelo, field_checked: fieldChecked },\n  message_to_agent: notas,\n  trace_id: $execution.id\n} }];"
+      },
+      "notes": "v2 — F1: filtra records vacíos. Mejora message NOT_FOUND con sugerencia de usar consultar_tecnologia/consultar_catalogo si el cliente pasó una tecnología en vez de un modelo."
+    },
+    {
+      "id": "d2aee742-f2d0-520e-a10e-f3e05470037d",
+      "name": "Log to sys_tool_calls",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        960,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sys_tool_calls (session_id, tool_name, input_payload, output_payload, status, duration_ms)\nVALUES ($1, 'consultar-compatibilidad', $2::jsonb, $3::jsonb, $4, $5)",
+        "options": {
+          "queryReplacement": "={{ [$('Execute Workflow Trigger').first().json.session_id || 'unknown', JSON.stringify($('Execute Workflow Trigger').first().json), JSON.stringify($json), $json.status || 'success', $json.duration_ms || 0] }}"
+        },
+        "continueOnFail": true
+      },
+      "continueOnFail": true,
+      "notes": "Log a sys_tool_calls. continueOnFail=true para no romper la tool si Postgres falla."
+    },
+    {
+      "id": "0680d41c-7ec6-5ec1-89c1-8d71993fae8c",
+      "name": "Return Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        300
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $('Format Output').first().json }}",
+        "options": {}
+      },
+      "notes": "v2 — F2: .item.json → .first().json — resuelve el bug 1.4.A/1.4.B (devolvía {success:true})."
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Search Equipo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Equipo": {
+      "main": [
+        [
+          {
+            "node": "Format Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Output": {
+      "main": [
+        [
+          {
+            "node": "Log to sys_tool_calls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to sys_tool_calls": {
+      "main": [
+        [
+          {
+            "node": "Return Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "SYS"
+    },
+    {
+      "name": "F4"
+    },
+    {
+      "name": "tool"
+    }
+  ],
+  "versionId": "775d4a8d-0678-43ef-a520-40e9c4f3fedd",
+  "id": "g92OmRNkh6TVtTIY"
+}

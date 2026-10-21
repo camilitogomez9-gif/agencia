@@ -1,0 +1,3048 @@
+[
+  {
+    "conversation_samples": [
+      {
+        "sample_id": "sample_1",
+        "session_hash": "90ca0b3809efffad65b9ea6829292bff",
+        "purpose": "golden_test_transcript_for_migration_parity",
+        "format": "numbered_transcript_with_structured_turns",
+        "message_count": 14,
+        "human_count": 7,
+        "assistant_count": 7,
+        "first_message_id": 1162806,
+        "last_message_id": 1162866,
+        "turns": [
+          {
+            "turn": 1,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: ¡Hola! Quiero más información. Buenos días k precio tienen?!?"
+          },
+          {
+            "turn": 2,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "“Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\" Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”"
+          },
+          {
+            "turn": 3,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: XV años"
+          },
+          {
+            "turn": 4,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_2\"}}"
+          },
+          {
+            "turn": 5,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: XV años Fecha de hoy: [PHONE]T11:19:[PHONE]:00"
+          },
+          {
+            "turn": 6,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+          },
+          {
+            "turn": 7,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Kiero de sandalias y cilindros Y k es kit anti cruda?!? Ya vi"
+          },
+          {
+            "turn": 8,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_3\"}}"
+          },
+          {
+            "turn": 9,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Kiero de sandalias y cilindros Y k es kit anti cruda?!? Ya vi Fecha de hoy: [PHONE]T11:22:[PHONE]:00"
+          },
+          {
+            "turn": 10,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\",\"cilindros\",\"anticrudas\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+          },
+          {
+            "turn": 11,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Buenas tardes disculpe será k me duren de AKI hasta noviembre"
+          },
+          {
+            "turn": 12,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 13,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Buenas tardes disculpe será k me duren de AKI hasta noviembre Fecha de hoy: [PHONE]T11:26:[PHONE]:00"
+          },
+          {
+            "turn": 14,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Claro, nuestros productos están diseñados para durar y ser de alta calidad. Si realiza su pedido ahora, tendrá suficiente tiempo para recibirlos y almacenarlos hasta su evento en noviembre. 😊 Para poder cotizarle las sandalias y cilindros, necesitaría que me diga la cantidad de cada uno y su código postal. Además, si las sandalias son delgadas o gruesas. ¡Gracias!"
+          }
+        ],
+        "transcript_text": "01. CLIENTE: Respuesta del usuario: ¡Hola! Quiero más información. Buenos días k precio tienen?!?\n02. AGENTE: “Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\" Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”\n03. CLIENTE: Mensaje del usuario: XV años\n04. AGENTE: {\"output\":{\"step\":\"step_2\"}}\n05. CLIENTE: Respuesta del usuario: XV años Fecha de hoy: [PHONE]T11:19:[PHONE]:00\n06. AGENTE: {\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}\n07. CLIENTE: Mensaje del usuario: Kiero de sandalias y cilindros Y k es kit anti cruda?!? Ya vi\n08. AGENTE: {\"output\":{\"step\":\"step_3\"}}\n09. CLIENTE: Respuesta del usuario: Kiero de sandalias y cilindros Y k es kit anti cruda?!? Ya vi Fecha de hoy: [PHONE]T11:22:[PHONE]:00\n10. AGENTE: {\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\",\"cilindros\",\"anticrudas\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}\n11. CLIENTE: Mensaje del usuario: Buenas tardes disculpe será k me duren de AKI hasta noviembre\n12. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n13. CLIENTE: Respuesta del usuario: Buenas tardes disculpe será k me duren de AKI hasta noviembre Fecha de hoy: [PHONE]T11:26:[PHONE]:00\n14. AGENTE: Claro, nuestros productos están diseñados para durar y ser de alta calidad. Si realiza su pedido ahora, tendrá suficiente tiempo para recibirlos y almacenarlos hasta su evento en noviembre. 😊 Para poder cotizarle las sandalias y cilindros, necesitaría que me diga la cantidad de cada uno y su código postal. Además, si las sandalias son delgadas o gruesas. ¡Gracias!",
+        "analysis_hint": "Usar turns para evaluacion estructurada y transcript_text para lectura humana. Roles: CLIENTE=usuario final, AGENTE=respuesta del bot/IA. Datos sensibles fueron anonimizados en SQL.",
+        "raw": {
+          "sample_id": "sample_1",
+          "session_hash": "90ca0b3809efffad65b9ea6829292bff",
+          "message_count": "14",
+          "human_count": "7",
+          "assistant_count": "7",
+          "first_message_id": 1162806,
+          "last_message_id": 1162866,
+          "transcript": [
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: ¡Hola! Quiero más información. Buenos días k precio tienen?!?"
+            },
+            {
+              "role": "assistant",
+              "content": "“Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\" Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: XV años"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_2\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: XV años Fecha de hoy: [PHONE]T11:19:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Kiero de sandalias y cilindros Y k es kit anti cruda?!? Ya vi"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_3\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Kiero de sandalias y cilindros Y k es kit anti cruda?!? Ya vi Fecha de hoy: [PHONE]T11:22:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\",\"cilindros\",\"anticrudas\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Buenas tardes disculpe será k me duren de AKI hasta noviembre"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Buenas tardes disculpe será k me duren de AKI hasta noviembre Fecha de hoy: [PHONE]T11:26:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "Claro, nuestros productos están diseñados para durar y ser de alta calidad. Si realiza su pedido ahora, tendrá suficiente tiempo para recibirlos y almacenarlos hasta su evento en noviembre. 😊 Para poder cotizarle las sandalias y cilindros, necesitaría que me diga la cantidad de cada uno y su código postal. Además, si las sandalias son delgadas o gruesas. ¡Gracias!"
+            }
+          ]
+        }
+      },
+      {
+        "sample_id": "sample_2",
+        "session_hash": "45ad66a86a7d57ec95831edbd5c746e8",
+        "purpose": "golden_test_transcript_for_migration_parity",
+        "format": "numbered_transcript_with_structured_turns",
+        "message_count": 39,
+        "human_count": 18,
+        "assistant_count": 21,
+        "first_message_id": 1128495,
+        "last_message_id": 1162862,
+        "turns": [
+          {
+            "turn": 1,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: ¡Hola! Quiero más información."
+          },
+          {
+            "turn": 2,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "“Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”"
+          },
+          {
+            "turn": 3,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola 👋, sigues por aquí? Solo necesito que me cuentes qué tipo de evento tienes para poder ayudarte a elegir lo mejor para ti 🎉"
+          },
+          {
+            "turn": 4,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola! 😄 Cuéntame, es para boda, XV años u otro evento? Así puedo enviarte las opciones de productos 💡"
+          },
+          {
+            "turn": 5,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola 😊, no quiero que se te pase la oportunidad de encontrar los recuerdos perfectos para tu evento. De que es tu evento? 💍🎂🎈"
+          },
+          {
+            "turn": 6,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Q dueño tiene de chanclas Para 15 años 50 pzas Temática tiana"
+          },
+          {
+            "turn": 7,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_3\"}}"
+          },
+          {
+            "turn": 8,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Q dueño tiene de chanclas Para 15 años 50 pzas Temática tiana Fecha de hoy: [PHONE]T11:11:[PHONE]:00"
+          },
+          {
+            "turn": 9,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\"],\"texto_dinamico\":\"¿Le interesa sumarlas a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+          },
+          {
+            "turn": 10,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Q dueño tiene de chanclas Para 15 años 50 pzas Temática tiana Fecha de hoy: [PHONE]T11:11:[PHONE]:00"
+          },
+          {
+            "turn": 11,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Para poder cotizarle las sandalias necesitaría que me diga si las quiere delgadas o gruesas, además de su código postal para calcular el envío. 😊"
+          },
+          {
+            "turn": 12,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Con envío Cp. 30700"
+          },
+          {
+            "turn": 13,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 14,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Con envío Cp. 30700 Fecha de hoy: [PHONE]T11:13:[PHONE]:00"
+          },
+          {
+            "turn": 15,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Para poder cotizarle las sandalias necesitaría que me diga si las quiere delgadas o gruesas. 😊"
+          },
+          {
+            "turn": 16,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Suela delgada"
+          },
+          {
+            "turn": 17,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 18,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Suela delgada Fecha de hoy: [PHONE]T11:14:[PHONE]:00"
+          },
+          {
+            "turn": 19,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "¡Qué buena elección! Aquí está la cotización para tus sandalias delgadas: ⏳(7 DIAS DE PROMO)⏳ - 50 Sandalias Delgadas x $25 = $1,250 - Envío: $300 - **Total**: $1,550 - **Anticipo (50%)**: $775 *¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀 1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO* 2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños. 3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir. 4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️. 5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️. 6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸. 7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días). ¿Te gustaría avanzar con el pedido? Así te paso los números de cuenta para que pagues el anticipo. 😊"
+          },
+          {
+            "turn": 20,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Te envio una imagen del producto que quiero: Sandalias Fecha de hoy: [PHONE]T11:16:[PHONE]:00"
+          },
+          {
+            "turn": 21,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "¡Qué diseño tan bonito! 😊 ¿Quieres que continuemos con el proceso para tu pedido de sandalias delgadas?"
+          },
+          {
+            "turn": 22,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Si por favor"
+          },
+          {
+            "turn": 23,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 24,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Si por favor Fecha de hoy: [PHONE]T11:20:[PHONE]:00"
+          },
+          {
+            "turn": 25,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "¡Perfecto! Para continuar, por favor envíame el diseño que deseas para las sandalias, y procederemos con el siguiente paso. 😊"
+          },
+          {
+            "turn": 26,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Voy"
+          },
+          {
+            "turn": 27,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 28,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Voy Fecha de hoy: [PHONE]T11:25:[PHONE]:00"
+          },
+          {
+            "turn": 29,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "¡Perfecto! Espero tu diseño para continuar con el proceso. Si tienes alguna otra pregunta o necesitas ayuda, aquí estoy para ayudarte. 😊"
+          },
+          {
+            "turn": 30,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: La chanclas quiero 50 pza ."
+          },
+          {
+            "turn": 31,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 32,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: La chanclas quiero 50 pza . Fecha de hoy: [PHONE]T11:19:[PHONE]:00"
+          },
+          {
+            "turn": 33,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "¡Entendido! Ya tengo la información para tu pedido de 50 sandalias delgadas. Si ya tienes el diseño listo, por favor envíamelo para que podamos avanzar con el proceso. 😊"
+          },
+          {
+            "turn": 34,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Te envio una imagen del producto que quiero: Sandalias Fecha de hoy: [PHONE]T11:23:[PHONE]:00"
+          },
+          {
+            "turn": 35,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "¡Qué diseño tan bonito! 😊 ¿Quieres que continuemos con el proceso para tu pedido de 50 sandalias delgadas?"
+          },
+          {
+            "turn": 36,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Si Por favor"
+          },
+          {
+            "turn": 37,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 38,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Si Por favor Fecha de hoy: [PHONE]T11:25:[PHONE]:00"
+          },
+          {
+            "turn": 39,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "¡Perfecto! Para continuar, por favor envíame el diseño que deseas para las sandalias, y procederemos con el siguiente paso. 😊"
+          }
+        ],
+        "transcript_text": "01. CLIENTE: Respuesta del usuario: ¡Hola! Quiero más información.\n02. AGENTE: “Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”\n03. AGENTE: Hola 👋, sigues por aquí? Solo necesito que me cuentes qué tipo de evento tienes para poder ayudarte a elegir lo mejor para ti 🎉\n04. AGENTE: Hola! 😄 Cuéntame, es para boda, XV años u otro evento? Así puedo enviarte las opciones de productos 💡\n05. AGENTE: Hola 😊, no quiero que se te pase la oportunidad de encontrar los recuerdos perfectos para tu evento. De que es tu evento? 💍🎂🎈\n06. CLIENTE: Mensaje del usuario: Q dueño tiene de chanclas Para 15 años 50 pzas Temática tiana\n07. AGENTE: {\"output\":{\"step\":\"step_3\"}}\n08. CLIENTE: Respuesta del usuario: Q dueño tiene de chanclas Para 15 años 50 pzas Temática tiana Fecha de hoy: [PHONE]T11:11:[PHONE]:00\n09. AGENTE: {\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\"],\"texto_dinamico\":\"¿Le interesa sumarlas a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}\n10. CLIENTE: Respuesta del usuario: Q dueño tiene de chanclas Para 15 años 50 pzas Temática tiana Fecha de hoy: [PHONE]T11:11:[PHONE]:00\n11. AGENTE: Para poder cotizarle las sandalias necesitaría que me diga si las quiere delgadas o gruesas, además de su código postal para calcular el envío. 😊\n12. CLIENTE: Mensaje del usuario: Con envío Cp. 30700\n13. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n14. CLIENTE: Respuesta del usuario: Con envío Cp. 30700 Fecha de hoy: [PHONE]T11:13:[PHONE]:00\n15. AGENTE: Para poder cotizarle las sandalias necesitaría que me diga si las quiere delgadas o gruesas. 😊\n16. CLIENTE: Mensaje del usuario: Suela delgada\n17. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n18. CLIENTE: Respuesta del usuario: Suela delgada Fecha de hoy: [PHONE]T11:14:[PHONE]:00\n19. AGENTE: ¡Qué buena elección! Aquí está la cotización para tus sandalias delgadas: ⏳(7 DIAS DE PROMO)⏳ - 50 Sandalias Delgadas x $25 = $1,250 - Envío: $300 - **Total**: $1,550 - **Anticipo (50%)**: $775 *¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀 1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO* 2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños. 3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir. 4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️. 5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️. 6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸. 7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días). ¿Te gustaría avanzar con el pedido? Así te paso los números de cuenta para que pagues el anticipo. 😊\n20. CLIENTE: Respuesta del usuario: Te envio una imagen del producto que quiero: Sandalias Fecha de hoy: [PHONE]T11:16:[PHONE]:00\n21. AGENTE: ¡Qué diseño tan bonito! 😊 ¿Quieres que continuemos con el proceso para tu pedido de sandalias delgadas?\n22. CLIENTE: Mensaje del usuario: Si por favor\n23. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n24. CLIENTE: Respuesta del usuario: Si por favor Fecha de hoy: [PHONE]T11:20:[PHONE]:00\n25. AGENTE: ¡Perfecto! Para continuar, por favor envíame el diseño que deseas para las sandalias, y procederemos con el siguiente paso. 😊\n26. CLIENTE: Mensaje del usuario: Voy\n27. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n28. CLIENTE: Respuesta del usuario: Voy Fecha de hoy: [PHONE]T11:25:[PHONE]:00\n29. AGENTE: ¡Perfecto! Espero tu diseño para continuar con el proceso. Si tienes alguna otra pregunta o necesitas ayuda, aquí estoy para ayudarte. 😊\n30. CLIENTE: Mensaje del usuario: La chanclas quiero 50 pza .\n31. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n32. CLIENTE: Respuesta del usuario: La chanclas quiero 50 pza . Fecha de hoy: [PHONE]T11:19:[PHONE]:00\n33. AGENTE: ¡Entendido! Ya tengo la información para tu pedido de 50 sandalias delgadas. Si ya tienes el diseño listo, por favor envíamelo para que podamos avanzar con el proceso. 😊\n34. CLIENTE: Respuesta del usuario: Te envio una imagen del producto que quiero: Sandalias Fecha de hoy: [PHONE]T11:23:[PHONE]:00\n35. AGENTE: ¡Qué diseño tan bonito! 😊 ¿Quieres que continuemos con el proceso para tu pedido de 50 sandalias delgadas?\n36. CLIENTE: Mensaje del usuario: Si Por favor\n37. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n38. CLIENTE: Respuesta del usuario: Si Por favor Fecha de hoy: [PHONE]T11:25:[PHONE]:00\n39. AGENTE: ¡Perfecto! Para continuar, por favor envíame el diseño que deseas para las sandalias, y procederemos con el siguiente paso. 😊",
+        "analysis_hint": "Usar turns para evaluacion estructurada y transcript_text para lectura humana. Roles: CLIENTE=usuario final, AGENTE=respuesta del bot/IA. Datos sensibles fueron anonimizados en SQL.",
+        "raw": {
+          "sample_id": "sample_2",
+          "session_hash": "45ad66a86a7d57ec95831edbd5c746e8",
+          "message_count": "39",
+          "human_count": "18",
+          "assistant_count": "21",
+          "first_message_id": 1128495,
+          "last_message_id": 1162862,
+          "transcript": [
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: ¡Hola! Quiero más información."
+            },
+            {
+              "role": "assistant",
+              "content": "“Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola 👋, sigues por aquí? Solo necesito que me cuentes qué tipo de evento tienes para poder ayudarte a elegir lo mejor para ti 🎉"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola! 😄 Cuéntame, es para boda, XV años u otro evento? Así puedo enviarte las opciones de productos 💡"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola 😊, no quiero que se te pase la oportunidad de encontrar los recuerdos perfectos para tu evento. De que es tu evento? 💍🎂🎈"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Q dueño tiene de chanclas Para 15 años 50 pzas Temática tiana"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_3\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Q dueño tiene de chanclas Para 15 años 50 pzas Temática tiana Fecha de hoy: [PHONE]T11:11:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\"],\"texto_dinamico\":\"¿Le interesa sumarlas a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Q dueño tiene de chanclas Para 15 años 50 pzas Temática tiana Fecha de hoy: [PHONE]T11:11:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "Para poder cotizarle las sandalias necesitaría que me diga si las quiere delgadas o gruesas, además de su código postal para calcular el envío. 😊"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Con envío Cp. 30700"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Con envío Cp. 30700 Fecha de hoy: [PHONE]T11:13:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "Para poder cotizarle las sandalias necesitaría que me diga si las quiere delgadas o gruesas. 😊"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Suela delgada"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Suela delgada Fecha de hoy: [PHONE]T11:14:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "¡Qué buena elección! Aquí está la cotización para tus sandalias delgadas: ⏳(7 DIAS DE PROMO)⏳ - 50 Sandalias Delgadas x $25 = $1,250 - Envío: $300 - **Total**: $1,550 - **Anticipo (50%)**: $775 *¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀 1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO* 2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños. 3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir. 4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️. 5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️. 6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸. 7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días). ¿Te gustaría avanzar con el pedido? Así te paso los números de cuenta para que pagues el anticipo. 😊"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Te envio una imagen del producto que quiero: Sandalias Fecha de hoy: [PHONE]T11:16:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "¡Qué diseño tan bonito! 😊 ¿Quieres que continuemos con el proceso para tu pedido de sandalias delgadas?"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Si por favor"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Si por favor Fecha de hoy: [PHONE]T11:20:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "¡Perfecto! Para continuar, por favor envíame el diseño que deseas para las sandalias, y procederemos con el siguiente paso. 😊"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Voy"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Voy Fecha de hoy: [PHONE]T11:25:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "¡Perfecto! Espero tu diseño para continuar con el proceso. Si tienes alguna otra pregunta o necesitas ayuda, aquí estoy para ayudarte. 😊"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: La chanclas quiero 50 pza ."
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: La chanclas quiero 50 pza . Fecha de hoy: [PHONE]T11:19:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "¡Entendido! Ya tengo la información para tu pedido de 50 sandalias delgadas. Si ya tienes el diseño listo, por favor envíamelo para que podamos avanzar con el proceso. 😊"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Te envio una imagen del producto que quiero: Sandalias Fecha de hoy: [PHONE]T11:23:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "¡Qué diseño tan bonito! 😊 ¿Quieres que continuemos con el proceso para tu pedido de 50 sandalias delgadas?"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Si Por favor"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Si Por favor Fecha de hoy: [PHONE]T11:25:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "¡Perfecto! Para continuar, por favor envíame el diseño que deseas para las sandalias, y procederemos con el siguiente paso. 😊"
+            }
+          ]
+        }
+      },
+      {
+        "sample_id": "sample_3",
+        "session_hash": "fe36446fcfceef841a4745cb777d765f",
+        "purpose": "golden_test_transcript_for_migration_parity",
+        "format": "numbered_transcript_with_structured_turns",
+        "message_count": 14,
+        "human_count": 7,
+        "assistant_count": 7,
+        "first_message_id": 1162766,
+        "last_message_id": 1162858,
+        "turns": [
+          {
+            "turn": 1,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: ¡Hola! Quiero más información. Precios por favor"
+          },
+          {
+            "turn": 2,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "“Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\" Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”"
+          },
+          {
+            "turn": 3,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Son 50 años"
+          },
+          {
+            "turn": 4,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_2\"}}"
+          },
+          {
+            "turn": 5,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Son 50 años Fecha de hoy: [PHONE]T11:11:[PHONE]:00"
+          },
+          {
+            "turn": 6,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"Boda\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+          },
+          {
+            "turn": 7,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Precio de los termos Pantuflas Sandalias Vasos por favor"
+          },
+          {
+            "turn": 8,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_3\"}}"
+          },
+          {
+            "turn": 9,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Precio de los termos Pantuflas Sandalias Vasos por favor Fecha de hoy: [PHONE]T11:14:[PHONE]:00"
+          },
+          {
+            "turn": 10,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"Boda\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"cilindros\",\"pantuflas\",\"sandalias\",\"vasos\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+          },
+          {
+            "turn": 11,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Veo que son 15 días de anticipo"
+          },
+          {
+            "turn": 12,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 13,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Veo que son 15 días de anticipo Fecha de hoy: [PHONE]T11:24:[PHONE]:00"
+          },
+          {
+            "turn": 14,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Así es, el tiempo de producción es de 15 días naturales para productos personalizados. ¿Le gustaría que le cotice alguno de los productos? Si es así, por favor indíqueme la cantidad de cada producto y su código postal para calcular el envío. 😊"
+          }
+        ],
+        "transcript_text": "01. CLIENTE: Respuesta del usuario: ¡Hola! Quiero más información. Precios por favor\n02. AGENTE: “Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\" Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”\n03. CLIENTE: Mensaje del usuario: Son 50 años\n04. AGENTE: {\"output\":{\"step\":\"step_2\"}}\n05. CLIENTE: Respuesta del usuario: Son 50 años Fecha de hoy: [PHONE]T11:11:[PHONE]:00\n06. AGENTE: {\"output\":{\"evento\":\"Boda\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}\n07. CLIENTE: Mensaje del usuario: Precio de los termos Pantuflas Sandalias Vasos por favor\n08. AGENTE: {\"output\":{\"step\":\"step_3\"}}\n09. CLIENTE: Respuesta del usuario: Precio de los termos Pantuflas Sandalias Vasos por favor Fecha de hoy: [PHONE]T11:14:[PHONE]:00\n10. AGENTE: {\"output\":{\"evento\":\"Boda\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"cilindros\",\"pantuflas\",\"sandalias\",\"vasos\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}\n11. CLIENTE: Mensaje del usuario: Veo que son 15 días de anticipo\n12. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n13. CLIENTE: Respuesta del usuario: Veo que son 15 días de anticipo Fecha de hoy: [PHONE]T11:24:[PHONE]:00\n14. AGENTE: Así es, el tiempo de producción es de 15 días naturales para productos personalizados. ¿Le gustaría que le cotice alguno de los productos? Si es así, por favor indíqueme la cantidad de cada producto y su código postal para calcular el envío. 😊",
+        "analysis_hint": "Usar turns para evaluacion estructurada y transcript_text para lectura humana. Roles: CLIENTE=usuario final, AGENTE=respuesta del bot/IA. Datos sensibles fueron anonimizados en SQL.",
+        "raw": {
+          "sample_id": "sample_3",
+          "session_hash": "fe36446fcfceef841a4745cb777d765f",
+          "message_count": "14",
+          "human_count": "7",
+          "assistant_count": "7",
+          "first_message_id": 1162766,
+          "last_message_id": 1162858,
+          "transcript": [
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: ¡Hola! Quiero más información. Precios por favor"
+            },
+            {
+              "role": "assistant",
+              "content": "“Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\" Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Son 50 años"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_2\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Son 50 años Fecha de hoy: [PHONE]T11:11:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"Boda\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Precio de los termos Pantuflas Sandalias Vasos por favor"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_3\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Precio de los termos Pantuflas Sandalias Vasos por favor Fecha de hoy: [PHONE]T11:14:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"Boda\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"cilindros\",\"pantuflas\",\"sandalias\",\"vasos\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Veo que son 15 días de anticipo"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Veo que son 15 días de anticipo Fecha de hoy: [PHONE]T11:24:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "Así es, el tiempo de producción es de 15 días naturales para productos personalizados. ¿Le gustaría que le cotice alguno de los productos? Si es así, por favor indíqueme la cantidad de cada producto y su código postal para calcular el envío. 😊"
+            }
+          ]
+        }
+      },
+      {
+        "sample_id": "sample_4",
+        "session_hash": "61f60803cabd5c3d0ac8c4f7bc7cbf67",
+        "purpose": "golden_test_transcript_for_migration_parity",
+        "format": "numbered_transcript_with_structured_turns",
+        "message_count": 67,
+        "human_count": 32,
+        "assistant_count": 35,
+        "first_message_id": 1128056,
+        "last_message_id": 1162854,
+        "turns": [
+          {
+            "turn": 1,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: ¡Hola! Quiero más información. ¡Hola! Quiero más información"
+          },
+          {
+            "turn": 2,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "“Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”"
+          },
+          {
+            "turn": 3,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: 15 años"
+          },
+          {
+            "turn": 4,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_2\"}}"
+          },
+          {
+            "turn": 5,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: 15 años Fecha de hoy: [PHONE]T00:14:[PHONE]:00"
+          },
+          {
+            "turn": 6,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+          },
+          {
+            "turn": 7,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Sandalias"
+          },
+          {
+            "turn": 8,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_3\"}}"
+          },
+          {
+            "turn": 9,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Sandalias Fecha de hoy: [PHONE]T00:16:[PHONE]:00"
+          },
+          {
+            "turn": 10,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\"],\"texto_dinamico\":\"¿Le interesa sumarlas a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+          },
+          {
+            "turn": 11,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦"
+          },
+          {
+            "turn": 12,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola! 👋 Ya tengo tus productos seleccionados, solo me falta saber cuántas piezas necesitas y tu código postal para calcular el envío 🚚"
+          },
+          {
+            "turn": 13,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola 😊, para apartar y cotizar tus productos necesito esos dos datos: cantidad y código postal. Así puedo enviarte tu cotización 📄"
+          },
+          {
+            "turn": 14,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: 50 piezas y 61800 Hola buen día"
+          },
+          {
+            "turn": 15,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 16,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: 50 piezas y 61800 Hola buen día Fecha de hoy: [PHONE]T09:38:[PHONE]:00"
+          },
+          {
+            "turn": 17,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Gracias por la información. ¿Las sandalias que deseas son delgadas o gruesas? Esto me ayudará a calcular el costo exacto para ti. 😊"
+          },
+          {
+            "turn": 18,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Delgadas"
+          },
+          {
+            "turn": 19,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 20,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Delgadas Fecha de hoy: [PHONE]T09:44:[PHONE]:00"
+          },
+          {
+            "turn": 21,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "¡Qué buena elección! Aquí tienes la cotización: ⏳(7 DIAS DE PROMO)⏳ 50 Sandalias Delgadas x $25 = $1,250 Envío: $300 Total: $1,550 Anticipo (50%): $775 *¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀 1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO* 2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños. 3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir. 4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️. 5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️ 6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸. 7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días). Mira, ya que pides sandalias, ¿le gustaría agregar cilindros o kits anticrudas para su evento? ¡Son un hit en XV Años! ✨ ¿Le gustaría avanzar con el pedido? Así le paso los números de cuenta para que pague el anticipo."
+          },
+          {
+            "turn": 22,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Hola si me párese bien"
+          },
+          {
+            "turn": 23,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 24,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Hola si me párese bien Fecha de hoy: [PHONE]T10:02:[PHONE]:00"
+          },
+          {
+            "turn": 25,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "¡Perfecto! 😊 Aquí tienes el enlace para realizar el pago del anticipo: [url1234.com123](url1234.com123). Por favor, envíame el comprobante del 50% de anticipo para seguir con el proceso. Cualquier duda, aquí estoy para ayudarte. ¡Gracias por elegir Happy Flops! ✨"
+          },
+          {
+            "turn": 26,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Disculpe sería de la de suela gruesa"
+          },
+          {
+            "turn": 27,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_3\"}}"
+          },
+          {
+            "turn": 28,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Disculpe sería de la de suela gruesa Fecha de hoy: [PHONE]T10:38:[PHONE]:00"
+          },
+          {
+            "turn": 29,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{}"
+          },
+          {
+            "turn": 30,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Disculpe sería de la de suela gruesa Fecha de hoy: [PHONE]T10:38:[PHONE]:00"
+          },
+          {
+            "turn": 31,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{}"
+          },
+          {
+            "turn": 32,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Disculpe sería de la de suela gruesa Fecha de hoy: [PHONE]T10:38:[PHONE]:00"
+          },
+          {
+            "turn": 33,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{}"
+          },
+          {
+            "turn": 34,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Disculpe sería de la de suela gruesa Fecha de hoy: [PHONE]T10:38:[PHONE]:00"
+          },
+          {
+            "turn": 35,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{}"
+          },
+          {
+            "turn": 36,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Disculpe sería de la de suela gruesa Fecha de hoy: [PHONE]T10:38:[PHONE]:00"
+          },
+          {
+            "turn": 37,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{}"
+          },
+          {
+            "turn": 38,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Disculpe sería de la de suela gruesa Fecha de hoy: [PHONE]T10:38:[PHONE]:00"
+          },
+          {
+            "turn": 39,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\"],\"texto_dinamico\":\"¿Le interesa sumarlas a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+          },
+          {
+            "turn": 40,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Disculpe no se resbalan al pisar en piso ? ? Son antiderapante"
+          },
+          {
+            "turn": 41,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_3\"}}"
+          },
+          {
+            "turn": 42,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Disculpe no se resbalan al pisar en piso ? ? Son antiderapante Fecha de hoy: [PHONE]T10:41:[PHONE]:00"
+          },
+          {
+            "turn": 43,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\"],\"texto_dinamico\":\"\"}}"
+          },
+          {
+            "turn": 44,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: 50 piezas de la gruesa número 61800"
+          },
+          {
+            "turn": 45,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 46,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: 50 piezas de la gruesa número 61800 Fecha de hoy: [PHONE]T10:53:[PHONE]:00"
+          },
+          {
+            "turn": 47,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "¡Gracias por la corrección! Aquí tienes la cotización actualizada para las sandalias gruesas: ⏳(7 DIAS DE PROMO)⏳ 50 Sandalias Gruesas x $30 = $1,500 Envío: $300 Total: $1,800 Anticipo (50%): $900 *¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀 1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO* 2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños. 3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir. 4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️. 5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️ 6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸. 7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días). ¿Te gustaría avanzar con el pedido? Así te paso los números de cuenta para que pagues el anticipo."
+          },
+          {
+            "turn": 48,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Hola si le encargo 50 pares de la de 30 pesos X favor"
+          },
+          {
+            "turn": 49,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 50,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Hola si le encargo 50 pares de la de 30 pesos X favor Fecha de hoy: [PHONE]T11:04:[PHONE]:00"
+          },
+          {
+            "turn": 51,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "¡Perfecto! 😊 Aquí tienes el enlace para realizar el pago del anticipo: [url1234.com123](url1234.com123). Por favor, envíame el comprobante del 50% de anticipo para seguir con el proceso. Cualquier duda, aquí estoy para ayudarte. ¡Gracias por elegir Happy Flops! ✨"
+          },
+          {
+            "turn": 52,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Cuánto sería el anticipo ? Más tardesito le envío el anticipo cuantos días tarda en llegar disculpe"
+          },
+          {
+            "turn": 53,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 54,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Cuánto sería el anticipo ? Más tardesito le envío el anticipo cuantos días tarda en llegar disculpe Fecha de hoy: [PHONE]T11:07:[PHONE]:00"
+          },
+          {
+            "turn": 55,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "El **anticipo** sería de **$900**. Una vez que recibamos el anticipo, la producción tarda 15 días naturales. Después, el envío toma de 2 a 5 días hábiles. Espero tu comprobante de anticipo para comenzar con el proceso. ¡Gracias por elegirnos! 😊"
+          },
+          {
+            "turn": 56,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Ok En un ratito se los envío"
+          },
+          {
+            "turn": 57,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 58,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Ok En un ratito se los envío Fecha de hoy: [PHONE]T11:09:[PHONE]:00"
+          },
+          {
+            "turn": 59,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "¡Perfecto! Aguardamos el comprobante del anticipo para avanzar con tu pedido. Cualquier duda, aquí estoy para ayudarte. ¡Gracias por confiar en Happy Flops! ✨"
+          },
+          {
+            "turn": 60,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Hola no alcanse a depositar ayer por lo de mi trabajo Pero en un rato le deposito"
+          },
+          {
+            "turn": 61,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 62,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Hola no alcanse a depositar ayer por lo de mi trabajo Pero en un rato le deposito Fecha de hoy: [PHONE]T11:19:[PHONE]:00"
+          },
+          {
+            "turn": 63,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "No te preocupes, está bien. 😊 Aguardamos tu depósito cuando puedas realizarlo. Cualquier cosa, aquí estoy para ayudarte. ¡Gracias por elegir Happy Flops! ✨"
+          },
+          {
+            "turn": 64,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Ahí mil gracias en un ratito le ago el deposito"
+          },
+          {
+            "turn": 65,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 66,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Ahí mil gracias en un ratito le ago el deposito Fecha de hoy: [PHONE]T11:24:[PHONE]:00"
+          },
+          {
+            "turn": 67,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "¡Perfecto! Aguardamos tu depósito. Cualquier duda o consulta, aquí estoy para ayudarte. ¡Gracias por confiar en Happy Flops! 😊✨"
+          }
+        ],
+        "transcript_text": "01. CLIENTE: Respuesta del usuario: ¡Hola! Quiero más información. ¡Hola! Quiero más información\n02. AGENTE: “Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”\n03. CLIENTE: Mensaje del usuario: 15 años\n04. AGENTE: {\"output\":{\"step\":\"step_2\"}}\n05. CLIENTE: Respuesta del usuario: 15 años Fecha de hoy: [PHONE]T00:14:[PHONE]:00\n06. AGENTE: {\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}\n07. CLIENTE: Mensaje del usuario: Sandalias\n08. AGENTE: {\"output\":{\"step\":\"step_3\"}}\n09. CLIENTE: Respuesta del usuario: Sandalias Fecha de hoy: [PHONE]T00:16:[PHONE]:00\n10. AGENTE: {\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\"],\"texto_dinamico\":\"¿Le interesa sumarlas a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}\n11. AGENTE: Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦\n12. AGENTE: Hola! 👋 Ya tengo tus productos seleccionados, solo me falta saber cuántas piezas necesitas y tu código postal para calcular el envío 🚚\n13. AGENTE: Hola 😊, para apartar y cotizar tus productos necesito esos dos datos: cantidad y código postal. Así puedo enviarte tu cotización 📄\n14. CLIENTE: Mensaje del usuario: 50 piezas y 61800 Hola buen día\n15. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n16. CLIENTE: Respuesta del usuario: 50 piezas y 61800 Hola buen día Fecha de hoy: [PHONE]T09:38:[PHONE]:00\n17. AGENTE: Gracias por la información. ¿Las sandalias que deseas son delgadas o gruesas? Esto me ayudará a calcular el costo exacto para ti. 😊\n18. CLIENTE: Mensaje del usuario: Delgadas\n19. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n20. CLIENTE: Respuesta del usuario: Delgadas Fecha de hoy: [PHONE]T09:44:[PHONE]:00\n21. AGENTE: ¡Qué buena elección! Aquí tienes la cotización: ⏳(7 DIAS DE PROMO)⏳ 50 Sandalias Delgadas x $25 = $1,250 Envío: $300 Total: $1,550 Anticipo (50%): $775 *¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀 1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO* 2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños. 3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir. 4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️. 5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️ 6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸. 7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días). Mira, ya que pides sandalias, ¿le gustaría agregar cilindros o kits anticrudas para su evento? ¡Son un hit en XV Años! ✨ ¿Le gustaría avanzar con el pedido? Así le paso los números de cuenta para que pague el anticipo.\n22. CLIENTE: Mensaje del usuario: Hola si me párese bien\n23. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n24. CLIENTE: Respuesta del usuario: Hola si me párese bien Fecha de hoy: [PHONE]T10:02:[PHONE]:00\n25. AGENTE: ¡Perfecto! 😊 Aquí tienes el enlace para realizar el pago del anticipo: [url1234.com123](url1234.com123). Por favor, envíame el comprobante del 50% de anticipo para seguir con el proceso. Cualquier duda, aquí estoy para ayudarte. ¡Gracias por elegir Happy Flops! ✨\n26. CLIENTE: Mensaje del usuario: Disculpe sería de la de suela gruesa\n27. AGENTE: {\"output\":{\"step\":\"step_3\"}}\n28. CLIENTE: Respuesta del usuario: Disculpe sería de la de suela gruesa Fecha de hoy: [PHONE]T10:38:[PHONE]:00\n29. AGENTE: {}\n30. CLIENTE: Respuesta del usuario: Disculpe sería de la de suela gruesa Fecha de hoy: [PHONE]T10:38:[PHONE]:00\n31. AGENTE: {}\n32. CLIENTE: Respuesta del usuario: Disculpe sería de la de suela gruesa Fecha de hoy: [PHONE]T10:38:[PHONE]:00\n33. AGENTE: {}\n34. CLIENTE: Respuesta del usuario: Disculpe sería de la de suela gruesa Fecha de hoy: [PHONE]T10:38:[PHONE]:00\n35. AGENTE: {}\n36. CLIENTE: Respuesta del usuario: Disculpe sería de la de suela gruesa Fecha de hoy: [PHONE]T10:38:[PHONE]:00\n37. AGENTE: {}\n38. CLIENTE: Respuesta del usuario: Disculpe sería de la de suela gruesa Fecha de hoy: [PHONE]T10:38:[PHONE]:00\n39. AGENTE: {\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\"],\"texto_dinamico\":\"¿Le interesa sumarlas a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}\n40. CLIENTE: Mensaje del usuario: Disculpe no se resbalan al pisar en piso ? ? Son antiderapante\n41. AGENTE: {\"output\":{\"step\":\"step_3\"}}\n42. CLIENTE: Respuesta del usuario: Disculpe no se resbalan al pisar en piso ? ? Son antiderapante Fecha de hoy: [PHONE]T10:41:[PHONE]:00\n43. AGENTE: {\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\"],\"texto_dinamico\":\"\"}}\n44. CLIENTE: Mensaje del usuario: 50 piezas de la gruesa número 61800\n45. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n46. CLIENTE: Respuesta del usuario: 50 piezas de la gruesa número 61800 Fecha de hoy: [PHONE]T10:53:[PHONE]:00\n47. AGENTE: ¡Gracias por la corrección! Aquí tienes la cotización actualizada para las sandalias gruesas: ⏳(7 DIAS DE PROMO)⏳ 50 Sandalias Gruesas x $30 = $1,500 Envío: $300 Total: $1,800 Anticipo (50%): $900 *¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀 1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO* 2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños. 3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir. 4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️. 5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️ 6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸. 7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días). ¿Te gustaría avanzar con el pedido? Así te paso los números de cuenta para que pagues el anticipo.\n48. CLIENTE: Mensaje del usuario: Hola si le encargo 50 pares de la de 30 pesos X favor\n49. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n50. CLIENTE: Respuesta del usuario: Hola si le encargo 50 pares de la de 30 pesos X favor Fecha de hoy: [PHONE]T11:04:[PHONE]:00\n51. AGENTE: ¡Perfecto! 😊 Aquí tienes el enlace para realizar el pago del anticipo: [url1234.com123](url1234.com123). Por favor, envíame el comprobante del 50% de anticipo para seguir con el proceso. Cualquier duda, aquí estoy para ayudarte. ¡Gracias por elegir Happy Flops! ✨\n52. CLIENTE: Mensaje del usuario: Cuánto sería el anticipo ? Más tardesito le envío el anticipo cuantos días tarda en llegar disculpe\n53. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n54. CLIENTE: Respuesta del usuario: Cuánto sería el anticipo ? Más tardesito le envío el anticipo cuantos días tarda en llegar disculpe Fecha de hoy: [PHONE]T11:07:[PHONE]:00\n55. AGENTE: El **anticipo** sería de **$900**. Una vez que recibamos el anticipo, la producción tarda 15 días naturales. Después, el envío toma de 2 a 5 días hábiles. Espero tu comprobante de anticipo para comenzar con el proceso. ¡Gracias por elegirnos! 😊\n56. CLIENTE: Mensaje del usuario: Ok En un ratito se los envío\n57. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n58. CLIENTE: Respuesta del usuario: Ok En un ratito se los envío Fecha de hoy: [PHONE]T11:09:[PHONE]:00\n59. AGENTE: ¡Perfecto! Aguardamos el comprobante del anticipo para avanzar con tu pedido. Cualquier duda, aquí estoy para ayudarte. ¡Gracias por confiar en Happy Flops! ✨\n60. CLIENTE: Mensaje del usuario: Hola no alcanse a depositar ayer por lo de mi trabajo Pero en un rato le deposito\n61. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n62. CLIENTE: Respuesta del usuario: Hola no alcanse a depositar ayer por lo de mi trabajo Pero en un rato le deposito Fecha de hoy: [PHONE]T11:19:[PHONE]:00\n63. AGENTE: No te preocupes, está bien. 😊 Aguardamos tu depósito cuando puedas realizarlo. Cualquier cosa, aquí estoy para ayudarte. ¡Gracias por elegir Happy Flops! ✨\n64. CLIENTE: Mensaje del usuario: Ahí mil gracias en un ratito le ago el deposito\n65. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n66. CLIENTE: Respuesta del usuario: Ahí mil gracias en un ratito le ago el deposito Fecha de hoy: [PHONE]T11:24:[PHONE]:00\n67. AGENTE: ¡Perfecto! Aguardamos tu depósito. Cualquier duda o consulta, aquí estoy para ayudarte. ¡Gracias por confiar en Happy Flops! 😊✨",
+        "analysis_hint": "Usar turns para evaluacion estructurada y transcript_text para lectura humana. Roles: CLIENTE=usuario final, AGENTE=respuesta del bot/IA. Datos sensibles fueron anonimizados en SQL.",
+        "raw": {
+          "sample_id": "sample_4",
+          "session_hash": "61f60803cabd5c3d0ac8c4f7bc7cbf67",
+          "message_count": "67",
+          "human_count": "32",
+          "assistant_count": "35",
+          "first_message_id": 1128056,
+          "last_message_id": 1162854,
+          "transcript": [
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: ¡Hola! Quiero más información. ¡Hola! Quiero más información"
+            },
+            {
+              "role": "assistant",
+              "content": "“Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: 15 años"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_2\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: 15 años Fecha de hoy: [PHONE]T00:14:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Sandalias"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_3\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Sandalias Fecha de hoy: [PHONE]T00:16:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\"],\"texto_dinamico\":\"¿Le interesa sumarlas a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola! 👋 Ya tengo tus productos seleccionados, solo me falta saber cuántas piezas necesitas y tu código postal para calcular el envío 🚚"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola 😊, para apartar y cotizar tus productos necesito esos dos datos: cantidad y código postal. Así puedo enviarte tu cotización 📄"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: 50 piezas y 61800 Hola buen día"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: 50 piezas y 61800 Hola buen día Fecha de hoy: [PHONE]T09:38:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "Gracias por la información. ¿Las sandalias que deseas son delgadas o gruesas? Esto me ayudará a calcular el costo exacto para ti. 😊"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Delgadas"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Delgadas Fecha de hoy: [PHONE]T09:44:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "¡Qué buena elección! Aquí tienes la cotización: ⏳(7 DIAS DE PROMO)⏳ 50 Sandalias Delgadas x $25 = $1,250 Envío: $300 Total: $1,550 Anticipo (50%): $775 *¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀 1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO* 2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños. 3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir. 4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️. 5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️ 6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸. 7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días). Mira, ya que pides sandalias, ¿le gustaría agregar cilindros o kits anticrudas para su evento? ¡Son un hit en XV Años! ✨ ¿Le gustaría avanzar con el pedido? Así le paso los números de cuenta para que pague el anticipo."
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Hola si me párese bien"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Hola si me párese bien Fecha de hoy: [PHONE]T10:02:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "¡Perfecto! 😊 Aquí tienes el enlace para realizar el pago del anticipo: [url1234.com123](url1234.com123). Por favor, envíame el comprobante del 50% de anticipo para seguir con el proceso. Cualquier duda, aquí estoy para ayudarte. ¡Gracias por elegir Happy Flops! ✨"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Disculpe sería de la de suela gruesa"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_3\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Disculpe sería de la de suela gruesa Fecha de hoy: [PHONE]T10:38:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Disculpe sería de la de suela gruesa Fecha de hoy: [PHONE]T10:38:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Disculpe sería de la de suela gruesa Fecha de hoy: [PHONE]T10:38:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Disculpe sería de la de suela gruesa Fecha de hoy: [PHONE]T10:38:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Disculpe sería de la de suela gruesa Fecha de hoy: [PHONE]T10:38:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Disculpe sería de la de suela gruesa Fecha de hoy: [PHONE]T10:38:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\"],\"texto_dinamico\":\"¿Le interesa sumarlas a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Disculpe no se resbalan al pisar en piso ? ? Son antiderapante"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_3\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Disculpe no se resbalan al pisar en piso ? ? Son antiderapante Fecha de hoy: [PHONE]T10:41:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\"],\"texto_dinamico\":\"\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: 50 piezas de la gruesa número 61800"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: 50 piezas de la gruesa número 61800 Fecha de hoy: [PHONE]T10:53:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "¡Gracias por la corrección! Aquí tienes la cotización actualizada para las sandalias gruesas: ⏳(7 DIAS DE PROMO)⏳ 50 Sandalias Gruesas x $30 = $1,500 Envío: $300 Total: $1,800 Anticipo (50%): $900 *¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀 1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO* 2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños. 3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir. 4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️. 5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️ 6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸. 7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días). ¿Te gustaría avanzar con el pedido? Así te paso los números de cuenta para que pagues el anticipo."
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Hola si le encargo 50 pares de la de 30 pesos X favor"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Hola si le encargo 50 pares de la de 30 pesos X favor Fecha de hoy: [PHONE]T11:04:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "¡Perfecto! 😊 Aquí tienes el enlace para realizar el pago del anticipo: [url1234.com123](url1234.com123). Por favor, envíame el comprobante del 50% de anticipo para seguir con el proceso. Cualquier duda, aquí estoy para ayudarte. ¡Gracias por elegir Happy Flops! ✨"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Cuánto sería el anticipo ? Más tardesito le envío el anticipo cuantos días tarda en llegar disculpe"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Cuánto sería el anticipo ? Más tardesito le envío el anticipo cuantos días tarda en llegar disculpe Fecha de hoy: [PHONE]T11:07:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "El **anticipo** sería de **$900**. Una vez que recibamos el anticipo, la producción tarda 15 días naturales. Después, el envío toma de 2 a 5 días hábiles. Espero tu comprobante de anticipo para comenzar con el proceso. ¡Gracias por elegirnos! 😊"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Ok En un ratito se los envío"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Ok En un ratito se los envío Fecha de hoy: [PHONE]T11:09:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "¡Perfecto! Aguardamos el comprobante del anticipo para avanzar con tu pedido. Cualquier duda, aquí estoy para ayudarte. ¡Gracias por confiar en Happy Flops! ✨"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Hola no alcanse a depositar ayer por lo de mi trabajo Pero en un rato le deposito"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Hola no alcanse a depositar ayer por lo de mi trabajo Pero en un rato le deposito Fecha de hoy: [PHONE]T11:19:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "No te preocupes, está bien. 😊 Aguardamos tu depósito cuando puedas realizarlo. Cualquier cosa, aquí estoy para ayudarte. ¡Gracias por elegir Happy Flops! ✨"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Ahí mil gracias en un ratito le ago el deposito"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Ahí mil gracias en un ratito le ago el deposito Fecha de hoy: [PHONE]T11:24:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "¡Perfecto! Aguardamos tu depósito. Cualquier duda o consulta, aquí estoy para ayudarte. ¡Gracias por confiar en Happy Flops! 😊✨"
+            }
+          ]
+        }
+      },
+      {
+        "sample_id": "sample_5",
+        "session_hash": "db1c51a3d63aa695242485958870cb3a",
+        "purpose": "golden_test_transcript_for_migration_parity",
+        "format": "numbered_transcript_with_structured_turns",
+        "message_count": 12,
+        "human_count": 5,
+        "assistant_count": 7,
+        "first_message_id": 1161678,
+        "last_message_id": 1162850,
+        "turns": [
+          {
+            "turn": 1,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Hola buen dia! quiero mas informacion sobre Happy Flops"
+          },
+          {
+            "turn": 2,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "“Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”"
+          },
+          {
+            "turn": 3,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Xv años"
+          },
+          {
+            "turn": 4,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_2\"}}"
+          },
+          {
+            "turn": 5,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Xv años Fecha de hoy: [PHONE]T07:22:[PHONE]:00"
+          },
+          {
+            "turn": 6,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+          },
+          {
+            "turn": 7,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Sandalias y pantunflas"
+          },
+          {
+            "turn": 8,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_3\"}}"
+          },
+          {
+            "turn": 9,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Sandalias y pantunflas Fecha de hoy: [PHONE]T07:23:[PHONE]:00"
+          },
+          {
+            "turn": 10,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\",\"pantuflas\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+          },
+          {
+            "turn": 11,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦"
+          },
+          {
+            "turn": 12,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola! 👋 Ya tengo tus productos seleccionados, solo me falta saber cuántas piezas necesitas y tu código postal para calcular el envío 🚚"
+          }
+        ],
+        "transcript_text": "01. CLIENTE: Respuesta del usuario: Hola buen dia! quiero mas informacion sobre Happy Flops\n02. AGENTE: “Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”\n03. CLIENTE: Mensaje del usuario: Xv años\n04. AGENTE: {\"output\":{\"step\":\"step_2\"}}\n05. CLIENTE: Respuesta del usuario: Xv años Fecha de hoy: [PHONE]T07:22:[PHONE]:00\n06. AGENTE: {\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}\n07. CLIENTE: Mensaje del usuario: Sandalias y pantunflas\n08. AGENTE: {\"output\":{\"step\":\"step_3\"}}\n09. CLIENTE: Respuesta del usuario: Sandalias y pantunflas Fecha de hoy: [PHONE]T07:23:[PHONE]:00\n10. AGENTE: {\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\",\"pantuflas\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}\n11. AGENTE: Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦\n12. AGENTE: Hola! 👋 Ya tengo tus productos seleccionados, solo me falta saber cuántas piezas necesitas y tu código postal para calcular el envío 🚚",
+        "analysis_hint": "Usar turns para evaluacion estructurada y transcript_text para lectura humana. Roles: CLIENTE=usuario final, AGENTE=respuesta del bot/IA. Datos sensibles fueron anonimizados en SQL.",
+        "raw": {
+          "sample_id": "sample_5",
+          "session_hash": "db1c51a3d63aa695242485958870cb3a",
+          "message_count": "12",
+          "human_count": "5",
+          "assistant_count": "7",
+          "first_message_id": 1161678,
+          "last_message_id": 1162850,
+          "transcript": [
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Hola buen dia! quiero mas informacion sobre Happy Flops"
+            },
+            {
+              "role": "assistant",
+              "content": "“Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Xv años"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_2\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Xv años Fecha de hoy: [PHONE]T07:22:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Sandalias y pantunflas"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_3\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Sandalias y pantunflas Fecha de hoy: [PHONE]T07:23:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\",\"pantuflas\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola! 👋 Ya tengo tus productos seleccionados, solo me falta saber cuántas piezas necesitas y tu código postal para calcular el envío 🚚"
+            }
+          ]
+        }
+      },
+      {
+        "sample_id": "sample_6",
+        "session_hash": "74c2858b18f874eb5f85e2b06a15b94c",
+        "purpose": "golden_test_transcript_for_migration_parity",
+        "format": "numbered_transcript_with_structured_turns",
+        "message_count": 28,
+        "human_count": 12,
+        "assistant_count": 16,
+        "first_message_id": 840403,
+        "last_message_id": 1162847,
+        "turns": [
+          {
+            "turn": 1,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Hola buen dia! quiero mas informacion sobre Happy Flops sobre los vasos Que precio tienen"
+          },
+          {
+            "turn": 2,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”"
+          },
+          {
+            "turn": 3,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: xv años"
+          },
+          {
+            "turn": 4,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_2\"}}"
+          },
+          {
+            "turn": 5,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: xv años Fecha de hoy: [PHONE]T12:47:[PHONE]:00"
+          },
+          {
+            "turn": 6,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+          },
+          {
+            "turn": 7,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Vasos Y sandalias"
+          },
+          {
+            "turn": 8,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_3\"}}"
+          },
+          {
+            "turn": 9,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Vasos Y sandalias Fecha de hoy: [PHONE]T12:48:[PHONE]:00"
+          },
+          {
+            "turn": 10,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"cilindros\",\"sandalias\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+          },
+          {
+            "turn": 11,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦"
+          },
+          {
+            "turn": 12,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola! 👋 Ya tengo tus productos seleccionados, solo me falta saber cuántas piezas necesitas y tu código postal para calcular el envío 🚚"
+          },
+          {
+            "turn": 13,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola 😊, para apartar y cotizar tus productos necesito esos dos datos: cantidad y código postal. Así puedo enviarte tu cotización 📄"
+          },
+          {
+            "turn": 14,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas"
+          },
+          {
+            "turn": 15,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_3\"}}"
+          },
+          {
+            "turn": 16,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas Fecha de hoy: [PHONE]T10:22:[PHONE]:00"
+          },
+          {
+            "turn": 17,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{}"
+          },
+          {
+            "turn": 18,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas Fecha de hoy: [PHONE]T10:22:[PHONE]:00"
+          },
+          {
+            "turn": 19,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{}"
+          },
+          {
+            "turn": 20,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas Fecha de hoy: [PHONE]T10:22:[PHONE]:00"
+          },
+          {
+            "turn": 21,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{}"
+          },
+          {
+            "turn": 22,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas Fecha de hoy: [PHONE]T10:22:[PHONE]:00"
+          },
+          {
+            "turn": 23,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{}"
+          },
+          {
+            "turn": 24,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas Fecha de hoy: [PHONE]T10:22:[PHONE]:00"
+          },
+          {
+            "turn": 25,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{}"
+          },
+          {
+            "turn": 26,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas Fecha de hoy: [PHONE]T10:22:[PHONE]:00"
+          },
+          {
+            "turn": 27,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\",\"pantuflas\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+          },
+          {
+            "turn": 28,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦"
+          }
+        ],
+        "transcript_text": "01. CLIENTE: Respuesta del usuario: Hola buen dia! quiero mas informacion sobre Happy Flops sobre los vasos Que precio tienen\n02. AGENTE: Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”\n03. CLIENTE: Mensaje del usuario: xv años\n04. AGENTE: {\"output\":{\"step\":\"step_2\"}}\n05. CLIENTE: Respuesta del usuario: xv años Fecha de hoy: [PHONE]T12:47:[PHONE]:00\n06. AGENTE: {\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}\n07. CLIENTE: Mensaje del usuario: Vasos Y sandalias\n08. AGENTE: {\"output\":{\"step\":\"step_3\"}}\n09. CLIENTE: Respuesta del usuario: Vasos Y sandalias Fecha de hoy: [PHONE]T12:48:[PHONE]:00\n10. AGENTE: {\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"cilindros\",\"sandalias\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}\n11. AGENTE: Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦\n12. AGENTE: Hola! 👋 Ya tengo tus productos seleccionados, solo me falta saber cuántas piezas necesitas y tu código postal para calcular el envío 🚚\n13. AGENTE: Hola 😊, para apartar y cotizar tus productos necesito esos dos datos: cantidad y código postal. Así puedo enviarte tu cotización 📄\n14. CLIENTE: Mensaje del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas\n15. AGENTE: {\"output\":{\"step\":\"step_3\"}}\n16. CLIENTE: Respuesta del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas Fecha de hoy: [PHONE]T10:22:[PHONE]:00\n17. AGENTE: {}\n18. CLIENTE: Respuesta del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas Fecha de hoy: [PHONE]T10:22:[PHONE]:00\n19. AGENTE: {}\n20. CLIENTE: Respuesta del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas Fecha de hoy: [PHONE]T10:22:[PHONE]:00\n21. AGENTE: {}\n22. CLIENTE: Respuesta del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas Fecha de hoy: [PHONE]T10:22:[PHONE]:00\n23. AGENTE: {}\n24. CLIENTE: Respuesta del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas Fecha de hoy: [PHONE]T10:22:[PHONE]:00\n25. AGENTE: {}\n26. CLIENTE: Respuesta del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas Fecha de hoy: [PHONE]T10:22:[PHONE]:00\n27. AGENTE: {\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\",\"pantuflas\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}\n28. AGENTE: Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦",
+        "analysis_hint": "Usar turns para evaluacion estructurada y transcript_text para lectura humana. Roles: CLIENTE=usuario final, AGENTE=respuesta del bot/IA. Datos sensibles fueron anonimizados en SQL.",
+        "raw": {
+          "sample_id": "sample_6",
+          "session_hash": "74c2858b18f874eb5f85e2b06a15b94c",
+          "message_count": "28",
+          "human_count": "12",
+          "assistant_count": "16",
+          "first_message_id": 840403,
+          "last_message_id": 1162847,
+          "transcript": [
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Hola buen dia! quiero mas informacion sobre Happy Flops sobre los vasos Que precio tienen"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: xv años"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_2\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: xv años Fecha de hoy: [PHONE]T12:47:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Vasos Y sandalias"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_3\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Vasos Y sandalias Fecha de hoy: [PHONE]T12:48:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"cilindros\",\"sandalias\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola! 👋 Ya tengo tus productos seleccionados, solo me falta saber cuántas piezas necesitas y tu código postal para calcular el envío 🚚"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola 😊, para apartar y cotizar tus productos necesito esos dos datos: cantidad y código postal. Así puedo enviarte tu cotización 📄"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_3\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas Fecha de hoy: [PHONE]T10:22:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas Fecha de hoy: [PHONE]T10:22:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas Fecha de hoy: [PHONE]T10:22:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas Fecha de hoy: [PHONE]T10:22:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas Fecha de hoy: [PHONE]T10:22:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Buenos días Quisiera saber el precio de paquetes de sandalias y pantunflas Fecha de hoy: [PHONE]T10:22:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\",\"pantuflas\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦"
+            }
+          ]
+        }
+      },
+      {
+        "sample_id": "sample_7",
+        "session_hash": "38ba1bce67f338918b31ad206bec99b9",
+        "purpose": "golden_test_transcript_for_migration_parity",
+        "format": "numbered_transcript_with_structured_turns",
+        "message_count": 26,
+        "human_count": 13,
+        "assistant_count": 13,
+        "first_message_id": 1162740,
+        "last_message_id": 1162846,
+        "turns": [
+          {
+            "turn": 1,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: ¡Hola! Quiero más información."
+          },
+          {
+            "turn": 2,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "“Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”"
+          },
+          {
+            "turn": 3,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Hola XV"
+          },
+          {
+            "turn": 4,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_2\"}}"
+          },
+          {
+            "turn": 5,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Hola XV Fecha de hoy: [PHONE]T11:08:[PHONE]:00"
+          },
+          {
+            "turn": 6,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+          },
+          {
+            "turn": 7,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Pantuflas"
+          },
+          {
+            "turn": 8,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_3\"}}"
+          },
+          {
+            "turn": 9,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Pantuflas Fecha de hoy: [PHONE]T11:11:[PHONE]:00"
+          },
+          {
+            "turn": 10,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"pantuflas\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+          },
+          {
+            "turn": 11,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Me interesa esta Cuando termina la oferta ???"
+          },
+          {
+            "turn": 12,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 13,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Me interesa esta Cuando termina la oferta ??? Fecha de hoy: [PHONE]T11:15:[PHONE]:00"
+          },
+          {
+            "turn": 14,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "La oferta termina en 7 días, así que tienes hasta el 10 de mayo para aprovecharla. 😊 Para poder cotizarle las pantuflas, necesitaría que me diga la cantidad que desea y su código postal."
+          },
+          {
+            "turn": 15,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Podrían ser 60 piezas ??? El código postal es 59230"
+          },
+          {
+            "turn": 16,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 17,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Podrían ser 60 piezas ??? El código postal es 59230 Fecha de hoy: [PHONE]T11:17:[PHONE]:00"
+          },
+          {
+            "turn": 18,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "¡Qué buena elección! Aquí tienes la cotización: ⏳(7 DIAS DE PROMO)⏳ 60 Pantuflas x $30 = $1,800 Envío: $300 Total: $2,100 Anticipo (50%): $1,050 *¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀 1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO* 2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños. 3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir. 4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️. 5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️ 6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸. 7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días). ¿Le gustaría avanzar con el pedido? Así le paso los números de cuenta para que pague el anticipo."
+          },
+          {
+            "turn": 19,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: La verdad si lo haré pero en un par de días más 🙏🏻"
+          },
+          {
+            "turn": 20,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 21,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: La verdad si lo haré pero en un par de días más 🙏🏻 Fecha de hoy: [PHONE]T11:20:[PHONE]:00"
+          },
+          {
+            "turn": 22,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "¡Perfecto! 😊 No hay problema, aquí estaré para ayudarte cuando estés listo para avanzar con el pedido. Recuerda que la oferta es válida hasta el 10 de mayo. Si tienes alguna otra pregunta o necesitas más información, no dudes en escribirme. ¡Gracias por considerar Happy Flops para tu evento! ✨"
+          },
+          {
+            "turn": 23,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Sii te agradezco!!!"
+          },
+          {
+            "turn": 24,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 25,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Sii te agradezco!!! Fecha de hoy: [PHONE]T11:22:[PHONE]:00"
+          },
+          {
+            "turn": 26,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "¡De nada! Aquí estaré para cualquier cosa que necesites. ¡Que tengas un excelente día! 😊✨"
+          }
+        ],
+        "transcript_text": "01. CLIENTE: Respuesta del usuario: ¡Hola! Quiero más información.\n02. AGENTE: “Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”\n03. CLIENTE: Mensaje del usuario: Hola XV\n04. AGENTE: {\"output\":{\"step\":\"step_2\"}}\n05. CLIENTE: Respuesta del usuario: Hola XV Fecha de hoy: [PHONE]T11:08:[PHONE]:00\n06. AGENTE: {\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}\n07. CLIENTE: Mensaje del usuario: Pantuflas\n08. AGENTE: {\"output\":{\"step\":\"step_3\"}}\n09. CLIENTE: Respuesta del usuario: Pantuflas Fecha de hoy: [PHONE]T11:11:[PHONE]:00\n10. AGENTE: {\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"pantuflas\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}\n11. CLIENTE: Mensaje del usuario: Me interesa esta Cuando termina la oferta ???\n12. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n13. CLIENTE: Respuesta del usuario: Me interesa esta Cuando termina la oferta ??? Fecha de hoy: [PHONE]T11:15:[PHONE]:00\n14. AGENTE: La oferta termina en 7 días, así que tienes hasta el 10 de mayo para aprovecharla. 😊 Para poder cotizarle las pantuflas, necesitaría que me diga la cantidad que desea y su código postal.\n15. CLIENTE: Mensaje del usuario: Podrían ser 60 piezas ??? El código postal es 59230\n16. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n17. CLIENTE: Respuesta del usuario: Podrían ser 60 piezas ??? El código postal es 59230 Fecha de hoy: [PHONE]T11:17:[PHONE]:00\n18. AGENTE: ¡Qué buena elección! Aquí tienes la cotización: ⏳(7 DIAS DE PROMO)⏳ 60 Pantuflas x $30 = $1,800 Envío: $300 Total: $2,100 Anticipo (50%): $1,050 *¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀 1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO* 2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños. 3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir. 4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️. 5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️ 6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸. 7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días). ¿Le gustaría avanzar con el pedido? Así le paso los números de cuenta para que pague el anticipo.\n19. CLIENTE: Mensaje del usuario: La verdad si lo haré pero en un par de días más 🙏🏻\n20. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n21. CLIENTE: Respuesta del usuario: La verdad si lo haré pero en un par de días más 🙏🏻 Fecha de hoy: [PHONE]T11:20:[PHONE]:00\n22. AGENTE: ¡Perfecto! 😊 No hay problema, aquí estaré para ayudarte cuando estés listo para avanzar con el pedido. Recuerda que la oferta es válida hasta el 10 de mayo. Si tienes alguna otra pregunta o necesitas más información, no dudes en escribirme. ¡Gracias por considerar Happy Flops para tu evento! ✨\n23. CLIENTE: Mensaje del usuario: Sii te agradezco!!!\n24. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n25. CLIENTE: Respuesta del usuario: Sii te agradezco!!! Fecha de hoy: [PHONE]T11:22:[PHONE]:00\n26. AGENTE: ¡De nada! Aquí estaré para cualquier cosa que necesites. ¡Que tengas un excelente día! 😊✨",
+        "analysis_hint": "Usar turns para evaluacion estructurada y transcript_text para lectura humana. Roles: CLIENTE=usuario final, AGENTE=respuesta del bot/IA. Datos sensibles fueron anonimizados en SQL.",
+        "raw": {
+          "sample_id": "sample_7",
+          "session_hash": "38ba1bce67f338918b31ad206bec99b9",
+          "message_count": "26",
+          "human_count": "13",
+          "assistant_count": "13",
+          "first_message_id": 1162740,
+          "last_message_id": 1162846,
+          "transcript": [
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: ¡Hola! Quiero más información."
+            },
+            {
+              "role": "assistant",
+              "content": "“Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Hola XV"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_2\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Hola XV Fecha de hoy: [PHONE]T11:08:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Pantuflas"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_3\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Pantuflas Fecha de hoy: [PHONE]T11:11:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"pantuflas\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Me interesa esta Cuando termina la oferta ???"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Me interesa esta Cuando termina la oferta ??? Fecha de hoy: [PHONE]T11:15:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "La oferta termina en 7 días, así que tienes hasta el 10 de mayo para aprovecharla. 😊 Para poder cotizarle las pantuflas, necesitaría que me diga la cantidad que desea y su código postal."
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Podrían ser 60 piezas ??? El código postal es 59230"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Podrían ser 60 piezas ??? El código postal es 59230 Fecha de hoy: [PHONE]T11:17:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "¡Qué buena elección! Aquí tienes la cotización: ⏳(7 DIAS DE PROMO)⏳ 60 Pantuflas x $30 = $1,800 Envío: $300 Total: $2,100 Anticipo (50%): $1,050 *¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀 1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO* 2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños. 3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir. 4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️. 5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️ 6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸. 7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días). ¿Le gustaría avanzar con el pedido? Así le paso los números de cuenta para que pague el anticipo."
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: La verdad si lo haré pero en un par de días más 🙏🏻"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: La verdad si lo haré pero en un par de días más 🙏🏻 Fecha de hoy: [PHONE]T11:20:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "¡Perfecto! 😊 No hay problema, aquí estaré para ayudarte cuando estés listo para avanzar con el pedido. Recuerda que la oferta es válida hasta el 10 de mayo. Si tienes alguna otra pregunta o necesitas más información, no dudes en escribirme. ¡Gracias por considerar Happy Flops para tu evento! ✨"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Sii te agradezco!!!"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Sii te agradezco!!! Fecha de hoy: [PHONE]T11:22:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "¡De nada! Aquí estaré para cualquier cosa que necesites. ¡Que tengas un excelente día! 😊✨"
+            }
+          ]
+        }
+      },
+      {
+        "sample_id": "sample_8",
+        "session_hash": "10c76886521c006d824ac9ebc85e91c7",
+        "purpose": "golden_test_transcript_for_migration_parity",
+        "format": "numbered_transcript_with_structured_turns",
+        "message_count": 42,
+        "human_count": 18,
+        "assistant_count": 24,
+        "first_message_id": 454231,
+        "last_message_id": 1162838,
+        "turns": [
+          {
+            "turn": 1,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Precio de sandalias ?"
+          },
+          {
+            "turn": 2,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”"
+          },
+          {
+            "turn": 3,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: XV"
+          },
+          {
+            "turn": 4,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_2\"}}"
+          },
+          {
+            "turn": 5,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: XV Fecha de hoy: [PHONE]T09:50:[PHONE]:00"
+          },
+          {
+            "turn": 6,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+          },
+          {
+            "turn": 7,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Sandalias 🩴"
+          },
+          {
+            "turn": 8,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_3\"}}"
+          },
+          {
+            "turn": 9,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Sandalias 🩴 Fecha de hoy: [PHONE]T09:53:[PHONE]:00"
+          },
+          {
+            "turn": 10,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\"],\"texto_dinamico\":\"¿Le interesa sumarlas a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+          },
+          {
+            "turn": 11,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦"
+          },
+          {
+            "turn": 12,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola! 👋 Ya tengo tus productos seleccionados, solo me falta saber cuántas piezas necesitas y tu código postal para calcular el envío 🚚"
+          },
+          {
+            "turn": 13,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola 😊, para apartar y cotizar tus productos necesito esos dos datos: cantidad y código postal. Así puedo enviarte tu cotización 📄"
+          },
+          {
+            "turn": 14,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Te envio una imagen del producto que quiero: Pantuflas Fecha de hoy: [PHONE]T17:41:[PHONE]:00"
+          },
+          {
+            "turn": 15,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Qué diseño tan bonito de pantuflas! 😊 ¿Quieres que continuemos con el proceso para cotizar y hacer tu pedido?"
+          },
+          {
+            "turn": 16,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Si"
+          },
+          {
+            "turn": 17,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_3\"}}"
+          },
+          {
+            "turn": 18,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Si Fecha de hoy: [PHONE]T17:42:[PHONE]:00"
+          },
+          {
+            "turn": 19,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{}"
+          },
+          {
+            "turn": 20,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Si Fecha de hoy: [PHONE]T17:42:[PHONE]:00"
+          },
+          {
+            "turn": 21,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{}"
+          },
+          {
+            "turn": 22,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Si Fecha de hoy: [PHONE]T17:42:[PHONE]:00"
+          },
+          {
+            "turn": 23,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{}"
+          },
+          {
+            "turn": 24,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Si Fecha de hoy: [PHONE]T17:42:[PHONE]:00"
+          },
+          {
+            "turn": 25,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"pantuflas\"],\"texto_dinamico\":\"¿Le interesa sumarlas a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+          },
+          {
+            "turn": 26,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦"
+          },
+          {
+            "turn": 27,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola! 👋 Ya tengo tus productos seleccionados, solo me falta saber cuántas piezas necesitas y tu código postal para calcular el envío 🚚"
+          },
+          {
+            "turn": 28,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola 😊, para apartar y cotizar tus productos necesito esos dos datos: cantidad y código postal. Así puedo enviarte tu cotización 📄"
+          },
+          {
+            "turn": 29,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: XV"
+          },
+          {
+            "turn": 30,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_2\"}}"
+          },
+          {
+            "turn": 31,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: XV Fecha de hoy: [PHONE]T11:15:[PHONE]:00"
+          },
+          {
+            "turn": 32,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+          },
+          {
+            "turn": 33,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Te envio una imagen del producto que quiero: Sandalias Fecha de hoy: [PHONE]T11:17:[PHONE]:00"
+          },
+          {
+            "turn": 34,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Qué diseño muy bonito de sandalias! 😊 ¿Quieres que continuemos con el proceso para cotizar y hacer tu pedido?"
+          },
+          {
+            "turn": 35,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Quiero de estas? Si haré pedido de 50 pzas solo puedo escoger un modelo? Si"
+          },
+          {
+            "turn": 36,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 37,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Quiero de estas? Si haré pedido de 50 pzas solo puedo escoger un modelo? Si Fecha de hoy: [PHONE]T11:18:[PHONE]:00"
+          },
+          {
+            "turn": 38,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Sí, para un pedido de 50 pares de sandalias, puedes elegir un solo diseño. 😊 Ahora, para poder cotizarte, ¿me podrías confirmar si las sandalias que deseas son delgadas o gruesas y tu código postal para calcular el envío? 📦"
+          },
+          {
+            "turn": 39,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Delgadas 84063"
+          },
+          {
+            "turn": 40,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 41,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Delgadas 84063 Fecha de hoy: [PHONE]T11:20:[PHONE]:00"
+          },
+          {
+            "turn": 42,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "¡Perfecto! Aquí tienes la cotización para tu pedido de **50 Sandalias Delgadas**: ⏳(7 DIAS DE PROMO)⏳ 50 Sandalias Delgadas x $25 = $1,250 Envío: $300 Total: $1,550 Anticipo (50%): $775 *¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀 1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO* 2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños. 3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir. 4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️. 5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️ 6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸. 7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días). ¿Te gustaría avanzar con el pedido? Así te paso los números de cuenta para que pagues el anticipo."
+          }
+        ],
+        "transcript_text": "01. CLIENTE: Respuesta del usuario: Precio de sandalias ?\n02. AGENTE: Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”\n03. CLIENTE: Mensaje del usuario: XV\n04. AGENTE: {\"output\":{\"step\":\"step_2\"}}\n05. CLIENTE: Respuesta del usuario: XV Fecha de hoy: [PHONE]T09:50:[PHONE]:00\n06. AGENTE: {\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}\n07. CLIENTE: Mensaje del usuario: Sandalias 🩴\n08. AGENTE: {\"output\":{\"step\":\"step_3\"}}\n09. CLIENTE: Respuesta del usuario: Sandalias 🩴 Fecha de hoy: [PHONE]T09:53:[PHONE]:00\n10. AGENTE: {\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\"],\"texto_dinamico\":\"¿Le interesa sumarlas a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}\n11. AGENTE: Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦\n12. AGENTE: Hola! 👋 Ya tengo tus productos seleccionados, solo me falta saber cuántas piezas necesitas y tu código postal para calcular el envío 🚚\n13. AGENTE: Hola 😊, para apartar y cotizar tus productos necesito esos dos datos: cantidad y código postal. Así puedo enviarte tu cotización 📄\n14. CLIENTE: Respuesta del usuario: Te envio una imagen del producto que quiero: Pantuflas Fecha de hoy: [PHONE]T17:41:[PHONE]:00\n15. AGENTE: Qué diseño tan bonito de pantuflas! 😊 ¿Quieres que continuemos con el proceso para cotizar y hacer tu pedido?\n16. CLIENTE: Mensaje del usuario: Si\n17. AGENTE: {\"output\":{\"step\":\"step_3\"}}\n18. CLIENTE: Respuesta del usuario: Si Fecha de hoy: [PHONE]T17:42:[PHONE]:00\n19. AGENTE: {}\n20. CLIENTE: Respuesta del usuario: Si Fecha de hoy: [PHONE]T17:42:[PHONE]:00\n21. AGENTE: {}\n22. CLIENTE: Respuesta del usuario: Si Fecha de hoy: [PHONE]T17:42:[PHONE]:00\n23. AGENTE: {}\n24. CLIENTE: Respuesta del usuario: Si Fecha de hoy: [PHONE]T17:42:[PHONE]:00\n25. AGENTE: {\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"pantuflas\"],\"texto_dinamico\":\"¿Le interesa sumarlas a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}\n26. AGENTE: Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦\n27. AGENTE: Hola! 👋 Ya tengo tus productos seleccionados, solo me falta saber cuántas piezas necesitas y tu código postal para calcular el envío 🚚\n28. AGENTE: Hola 😊, para apartar y cotizar tus productos necesito esos dos datos: cantidad y código postal. Así puedo enviarte tu cotización 📄\n29. CLIENTE: Mensaje del usuario: XV\n30. AGENTE: {\"output\":{\"step\":\"step_2\"}}\n31. CLIENTE: Respuesta del usuario: XV Fecha de hoy: [PHONE]T11:15:[PHONE]:00\n32. AGENTE: {\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}\n33. CLIENTE: Respuesta del usuario: Te envio una imagen del producto que quiero: Sandalias Fecha de hoy: [PHONE]T11:17:[PHONE]:00\n34. AGENTE: Qué diseño muy bonito de sandalias! 😊 ¿Quieres que continuemos con el proceso para cotizar y hacer tu pedido?\n35. CLIENTE: Mensaje del usuario: Quiero de estas? Si haré pedido de 50 pzas solo puedo escoger un modelo? Si\n36. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n37. CLIENTE: Respuesta del usuario: Quiero de estas? Si haré pedido de 50 pzas solo puedo escoger un modelo? Si Fecha de hoy: [PHONE]T11:18:[PHONE]:00\n38. AGENTE: Sí, para un pedido de 50 pares de sandalias, puedes elegir un solo diseño. 😊 Ahora, para poder cotizarte, ¿me podrías confirmar si las sandalias que deseas son delgadas o gruesas y tu código postal para calcular el envío? 📦\n39. CLIENTE: Mensaje del usuario: Delgadas 84063\n40. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n41. CLIENTE: Respuesta del usuario: Delgadas 84063 Fecha de hoy: [PHONE]T11:20:[PHONE]:00\n42. AGENTE: ¡Perfecto! Aquí tienes la cotización para tu pedido de **50 Sandalias Delgadas**: ⏳(7 DIAS DE PROMO)⏳ 50 Sandalias Delgadas x $25 = $1,250 Envío: $300 Total: $1,550 Anticipo (50%): $775 *¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀 1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO* 2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños. 3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir. 4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️. 5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️ 6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸. 7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días). ¿Te gustaría avanzar con el pedido? Así te paso los números de cuenta para que pagues el anticipo.",
+        "analysis_hint": "Usar turns para evaluacion estructurada y transcript_text para lectura humana. Roles: CLIENTE=usuario final, AGENTE=respuesta del bot/IA. Datos sensibles fueron anonimizados en SQL.",
+        "raw": {
+          "sample_id": "sample_8",
+          "session_hash": "10c76886521c006d824ac9ebc85e91c7",
+          "message_count": "42",
+          "human_count": "18",
+          "assistant_count": "24",
+          "first_message_id": 454231,
+          "last_message_id": 1162838,
+          "transcript": [
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Precio de sandalias ?"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros”"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: XV"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_2\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: XV Fecha de hoy: [PHONE]T09:50:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Sandalias 🩴"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_3\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Sandalias 🩴 Fecha de hoy: [PHONE]T09:53:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"sandalias\"],\"texto_dinamico\":\"¿Le interesa sumarlas a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola! 👋 Ya tengo tus productos seleccionados, solo me falta saber cuántas piezas necesitas y tu código postal para calcular el envío 🚚"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola 😊, para apartar y cotizar tus productos necesito esos dos datos: cantidad y código postal. Así puedo enviarte tu cotización 📄"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Te envio una imagen del producto que quiero: Pantuflas Fecha de hoy: [PHONE]T17:41:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "Qué diseño tan bonito de pantuflas! 😊 ¿Quieres que continuemos con el proceso para cotizar y hacer tu pedido?"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Si"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_3\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Si Fecha de hoy: [PHONE]T17:42:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Si Fecha de hoy: [PHONE]T17:42:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Si Fecha de hoy: [PHONE]T17:42:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Si Fecha de hoy: [PHONE]T17:42:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"pantuflas\"],\"texto_dinamico\":\"¿Le interesa sumarlas a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola! 👋 Ya tengo tus productos seleccionados, solo me falta saber cuántas piezas necesitas y tu código postal para calcular el envío 🚚"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola 😊, para apartar y cotizar tus productos necesito esos dos datos: cantidad y código postal. Así puedo enviarte tu cotización 📄"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: XV"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_2\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: XV Fecha de hoy: [PHONE]T11:15:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Te envio una imagen del producto que quiero: Sandalias Fecha de hoy: [PHONE]T11:17:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "Qué diseño muy bonito de sandalias! 😊 ¿Quieres que continuemos con el proceso para cotizar y hacer tu pedido?"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Quiero de estas? Si haré pedido de 50 pzas solo puedo escoger un modelo? Si"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Quiero de estas? Si haré pedido de 50 pzas solo puedo escoger un modelo? Si Fecha de hoy: [PHONE]T11:18:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "Sí, para un pedido de 50 pares de sandalias, puedes elegir un solo diseño. 😊 Ahora, para poder cotizarte, ¿me podrías confirmar si las sandalias que deseas son delgadas o gruesas y tu código postal para calcular el envío? 📦"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Delgadas 84063"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Delgadas 84063 Fecha de hoy: [PHONE]T11:20:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "¡Perfecto! Aquí tienes la cotización para tu pedido de **50 Sandalias Delgadas**: ⏳(7 DIAS DE PROMO)⏳ 50 Sandalias Delgadas x $25 = $1,250 Envío: $300 Total: $1,550 Anticipo (50%): $775 *¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀 1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO* 2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños. 3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir. 4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️. 5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️ 6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸. 7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días). ¿Te gustaría avanzar con el pedido? Así te paso los números de cuenta para que pagues el anticipo."
+            }
+          ]
+        }
+      },
+      {
+        "sample_id": "sample_9",
+        "session_hash": "b1d8aa5455bb3012122a959ba8172051",
+        "purpose": "golden_test_transcript_for_migration_parity",
+        "format": "numbered_transcript_with_structured_turns",
+        "message_count": 11,
+        "human_count": 5,
+        "assistant_count": 6,
+        "first_message_id": 1162351,
+        "last_message_id": 1162830,
+        "turns": [
+          {
+            "turn": 1,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Hola buenos días me puedes dar información acerca del precio de sandalias"
+          },
+          {
+            "turn": 2,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros"
+          },
+          {
+            "turn": 3,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Xv años"
+          },
+          {
+            "turn": 4,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_2\"}}"
+          },
+          {
+            "turn": 5,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Xv años Fecha de hoy: [PHONE]T10:17:[PHONE]:00"
+          },
+          {
+            "turn": 6,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+          },
+          {
+            "turn": 7,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Precio de todos"
+          },
+          {
+            "turn": 8,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_3\"}}"
+          },
+          {
+            "turn": 9,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Precio de todos Fecha de hoy: [PHONE]T10:20:[PHONE]:00"
+          },
+          {
+            "turn": 10,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"pantuflas\",\"sandalias\",\"cilindros\",\"mandiles\",\"anticrudas\",\"vasos\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+          },
+          {
+            "turn": 11,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦"
+          }
+        ],
+        "transcript_text": "01. CLIENTE: Respuesta del usuario: Hola buenos días me puedes dar información acerca del precio de sandalias\n02. AGENTE: Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros\n03. CLIENTE: Mensaje del usuario: Xv años\n04. AGENTE: {\"output\":{\"step\":\"step_2\"}}\n05. CLIENTE: Respuesta del usuario: Xv años Fecha de hoy: [PHONE]T10:17:[PHONE]:00\n06. AGENTE: {\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}\n07. CLIENTE: Mensaje del usuario: Precio de todos\n08. AGENTE: {\"output\":{\"step\":\"step_3\"}}\n09. CLIENTE: Respuesta del usuario: Precio de todos Fecha de hoy: [PHONE]T10:20:[PHONE]:00\n10. AGENTE: {\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"pantuflas\",\"sandalias\",\"cilindros\",\"mandiles\",\"anticrudas\",\"vasos\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}\n11. AGENTE: Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦",
+        "analysis_hint": "Usar turns para evaluacion estructurada y transcript_text para lectura humana. Roles: CLIENTE=usuario final, AGENTE=respuesta del bot/IA. Datos sensibles fueron anonimizados en SQL.",
+        "raw": {
+          "sample_id": "sample_9",
+          "session_hash": "b1d8aa5455bb3012122a959ba8172051",
+          "message_count": "11",
+          "human_count": "5",
+          "assistant_count": "6",
+          "first_message_id": 1162351,
+          "last_message_id": 1162830,
+          "transcript": [
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Hola buenos días me puedes dar información acerca del precio de sandalias"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Xv años"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_2\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Xv años Fecha de hoy: [PHONE]T10:17:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Precio de todos"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_3\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Precio de todos Fecha de hoy: [PHONE]T10:20:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"pantuflas\",\"sandalias\",\"cilindros\",\"mandiles\",\"anticrudas\",\"vasos\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola 😄, para poder enviarte la cotización necesito que me compartas la cantidad y el código postal 📦"
+            }
+          ]
+        }
+      },
+      {
+        "sample_id": "sample_10",
+        "session_hash": "1da0a6b7a01116fdd8c005319cbf7489",
+        "purpose": "golden_test_transcript_for_migration_parity",
+        "format": "numbered_transcript_with_structured_turns",
+        "message_count": 16,
+        "human_count": 8,
+        "assistant_count": 8,
+        "first_message_id": 1162744,
+        "last_message_id": 1162829,
+        "turns": [
+          {
+            "turn": 1,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: ¡Hola! Quiero más información. Precios !!!"
+          },
+          {
+            "turn": 2,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros"
+          },
+          {
+            "turn": 3,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: XV años"
+          },
+          {
+            "turn": 4,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_2\"}}"
+          },
+          {
+            "turn": 5,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: XV años Fecha de hoy: [PHONE]T11:09:[PHONE]:00"
+          },
+          {
+            "turn": 6,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+          },
+          {
+            "turn": 7,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Me manda cotización de los vasos y sandalias"
+          },
+          {
+            "turn": 8,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_3\"}}"
+          },
+          {
+            "turn": 9,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Me manda cotización de los vasos y sandalias Fecha de hoy: [PHONE]T11:10:[PHONE]:00"
+          },
+          {
+            "turn": 10,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"vasos\",\"sandalias\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+          },
+          {
+            "turn": 11,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Me manda cotización de los vasos y sandalias Fecha de hoy: [PHONE]T11:10:[PHONE]:00"
+          },
+          {
+            "turn": 12,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "Para poder cotizarle las sandalias y los vasos, necesitaría que me diga la cantidad de cada uno, el código postal para el envío, y si las sandalias son delgadas o gruesas. 😊"
+          },
+          {
+            "turn": 13,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Mensaje del usuario: Son los unicos diseños de vasos que tiene ?"
+          },
+          {
+            "turn": 14,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "{\"output\":{\"step\":\"step_4\"}}"
+          },
+          {
+            "turn": 15,
+            "role": "human",
+            "speaker": "CLIENTE",
+            "text": "Respuesta del usuario: Son los unicos diseños de vasos que tiene ? Fecha de hoy: [PHONE]T11:20:[PHONE]:00"
+          },
+          {
+            "turn": 16,
+            "role": "assistant",
+            "speaker": "AGENTE",
+            "text": "He consultado con nuestro equipo sobre los diseños de vasos. Pronto te responderemos con más detalles. ¿Te gustaría que te cotice algo más mientras tanto? 😊"
+          }
+        ],
+        "transcript_text": "01. CLIENTE: Respuesta del usuario: ¡Hola! Quiero más información. Precios !!!\n02. AGENTE: Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros\n03. CLIENTE: Mensaje del usuario: XV años\n04. AGENTE: {\"output\":{\"step\":\"step_2\"}}\n05. CLIENTE: Respuesta del usuario: XV años Fecha de hoy: [PHONE]T11:09:[PHONE]:00\n06. AGENTE: {\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}\n07. CLIENTE: Mensaje del usuario: Me manda cotización de los vasos y sandalias\n08. AGENTE: {\"output\":{\"step\":\"step_3\"}}\n09. CLIENTE: Respuesta del usuario: Me manda cotización de los vasos y sandalias Fecha de hoy: [PHONE]T11:10:[PHONE]:00\n10. AGENTE: {\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"vasos\",\"sandalias\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}\n11. CLIENTE: Respuesta del usuario: Me manda cotización de los vasos y sandalias Fecha de hoy: [PHONE]T11:10:[PHONE]:00\n12. AGENTE: Para poder cotizarle las sandalias y los vasos, necesitaría que me diga la cantidad de cada uno, el código postal para el envío, y si las sandalias son delgadas o gruesas. 😊\n13. CLIENTE: Mensaje del usuario: Son los unicos diseños de vasos que tiene ?\n14. AGENTE: {\"output\":{\"step\":\"step_4\"}}\n15. CLIENTE: Respuesta del usuario: Son los unicos diseños de vasos que tiene ? Fecha de hoy: [PHONE]T11:20:[PHONE]:00\n16. AGENTE: He consultado con nuestro equipo sobre los diseños de vasos. Pronto te responderemos con más detalles. ¿Te gustaría que te cotice algo más mientras tanto? 😊",
+        "analysis_hint": "Usar turns para evaluacion estructurada y transcript_text para lectura humana. Roles: CLIENTE=usuario final, AGENTE=respuesta del bot/IA. Datos sensibles fueron anonimizados en SQL.",
+        "raw": {
+          "sample_id": "sample_10",
+          "session_hash": "1da0a6b7a01116fdd8c005319cbf7489",
+          "message_count": "16",
+          "human_count": "8",
+          "assistant_count": "8",
+          "first_message_id": 1162744,
+          "last_message_id": 1162829,
+          "transcript": [
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: ¡Hola! Quiero más información. Precios !!!"
+            },
+            {
+              "role": "assistant",
+              "content": "Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀ Me podría decir de que es su evento? 🤵👰 - Boda 🎂🥳 - XV Años 👼🏢 - Otros"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: XV años"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_2\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: XV años Fecha de hoy: [PHONE]T11:09:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"texto_dinamico\":\"Qué padre! 😊 \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Me manda cotización de los vasos y sandalias"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_3\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Me manda cotización de los vasos y sandalias Fecha de hoy: [PHONE]T11:10:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"evento\":\"XV\",\"subcategoria\":\"Producto Principal\",\"productos\":[\"vasos\",\"sandalias\"],\"texto_dinamico\":\"¿Le interesa sumarlos a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n¡Gracias!\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Me manda cotización de los vasos y sandalias Fecha de hoy: [PHONE]T11:10:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "Para poder cotizarle las sandalias y los vasos, necesitaría que me diga la cantidad de cada uno, el código postal para el envío, y si las sandalias son delgadas o gruesas. 😊"
+            },
+            {
+              "role": "human",
+              "content": "Mensaje del usuario: Son los unicos diseños de vasos que tiene ?"
+            },
+            {
+              "role": "assistant",
+              "content": "{\"output\":{\"step\":\"step_4\"}}"
+            },
+            {
+              "role": "human",
+              "content": "Respuesta del usuario: Son los unicos diseños de vasos que tiene ? Fecha de hoy: [PHONE]T11:20:[PHONE]:00"
+            },
+            {
+              "role": "assistant",
+              "content": "He consultado con nuestro equipo sobre los diseños de vasos. Pronto te responderemos con más detalles. ¿Te gustaría que te cotice algo más mientras tanto? 😊"
+            }
+          ]
+        }
+      }
+    ],
+    "relationships": {
+      "pipeline_salesbot": [],
+      "stage_salesbot": [],
+      "custom_field_salesbot": [],
+      "implicit_automations": []
+    },
+    "_debug": {
+      "raw_counts": {
+        "pipelines": 0,
+        "custom_fields": 0,
+        "tags": 0,
+        "salesbots": 0,
+        "leads_sample": 0,
+        "conversation_samples": 10
+      },
+      "first_page_shapes": {
+        "pipelines": {
+          "pack_items": 1,
+          "pages": 1,
+          "first_type": "object",
+          "first_keys": [
+            "kommo_base_url"
+          ],
+          "embedded_keys": []
+        },
+        "custom_fields": {
+          "pack_items": 1,
+          "pages": 1,
+          "first_type": "object",
+          "first_keys": [
+            "kommo_base_url"
+          ],
+          "embedded_keys": []
+        },
+        "tags": {
+          "pack_items": 1,
+          "pages": 1,
+          "first_type": "object",
+          "first_keys": [
+            "kommo_base_url"
+          ],
+          "embedded_keys": []
+        },
+        "salesbots": {
+          "pack_items": 1,
+          "pages": 1,
+          "first_type": "object",
+          "first_keys": [
+            "kommo_base_url"
+          ],
+          "embedded_keys": []
+        },
+        "leads_sample": {
+          "pack_items": 1,
+          "pages": 1,
+          "first_type": "object",
+          "first_keys": [
+            "kommo_base_url"
+          ],
+          "embedded_keys": []
+        },
+        "conversation_samples": {
+          "pack_items": 1,
+          "pages": 10,
+          "first_type": "object",
+          "first_keys": [
+            "sample_id",
+            "session_hash",
+            "message_count",
+            "human_count",
+            "assistant_count",
+            "first_message_id",
+            "last_message_id",
+            "transcript"
+          ],
+          "embedded_keys": []
+        }
+      }
+    },
+    "_metadata": {
+      "exported_at": "2026-05-03T17:26:34.031Z",
+      "source": "Kommo API v4",
+      "counts": {
+        "pipelines": 0,
+        "stages": 0,
+        "custom_fields": 0,
+        "tags": 0,
+        "salesbots": 0,
+        "leads_sample": 0,
+        "conversation_samples": 10
+      }
+    }
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "wf": "W9",
+  "descripcion": "agrega a la lista blanca la lectura de hpf_estado_sesion (tabla nueva del fix del evento persistente)",
+  "ediciones": [
+    {
+      "nodo": "Elegir consulta",
+      "campo": "parameters.jsCode",
+      "anchor": "  // Estado de la cola de seguimientos de una sesión.\n  seg_fila: `SELECT * FROM hpf_seguimientos WHERE session_id = $1`,",
+      "reemplazo": "  // Estado de la cola de seguimientos de una sesión.\n  seg_fila: `SELECT * FROM hpf_seguimientos WHERE session_id = $1`,\n\n  // El evento que el lead eligió, persistido por W6. Es la memoria que antes no\n  // existía: sin ella el agente Products re-adivinaba el evento en cada turno y\n  // derrapaba a \"Boda\", así que una conversación de XV recibía fichas de Boda.\n  estado_sesion: `SELECT session_id, evento, actualizado_at\n                  FROM hpf_estado_sesion WHERE session_id LIKE $1\n                  ORDER BY actualizado_at DESC LIMIT 25`,"
+    }
+  ]
+}

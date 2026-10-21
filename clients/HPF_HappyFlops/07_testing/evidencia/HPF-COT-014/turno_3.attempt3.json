@@ -1,0 +1,72 @@
+{
+  "probe_id": "sess_hpf_cot_014_1785958737#313001bda560",
+  "session_id": "sess_hpf_cot_014_1785958737",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "35 cilindros, cp 44680",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 60.1,
+  "version_antes": "cff6a505-9b93-437e-8535-df2be25e399f",
+  "version_despues": "cff6a505-9b93-437e-8535-df2be25e399f",
+  "capturado_utc": "2026-08-05T19:42:33.848246+00:00",
+  "execution_id": "990059",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T19:41:28.270Z",
+  "stoppedAt": "2026-08-05T19:42:27.292Z",
+  "n_esperadas": 2,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Gracias por los datos! El mínimo para los cilindros personalizados es de 40 piezas",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "Si gusta ajustar la cantidad, con gusto le cotizo el total con envío incluido. Le gustaría pedir 40 cilindros?",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 192,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2172,
+      "chat_id": 6390727286,
+      "texto_entregado": "Gracias por los datos! El mínimo para los cilindros personalizados es de 40 piezas",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 255,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 2173,
+      "chat_id": 6390727286,
+      "texto_entregado": "Si gusta ajustar la cantidad, con gusto le cotizo el total con envío incluido. Le gustaría pedir 40 cilindros?",
+      "error": null
+    }
+  ],
+  "n_entregadas": 2,
+  "partes_post": [],
+  "textos_post": [],
+  "cero_partes": false,
+  "agente": {
+    "output": "Gracias por los datos! El mínimo para los cilindros personalizados es de 40 piezas. Si gusta ajustar la cantidad, con gusto le cotizo el total con envío incluido. ¿Le gustaría pedir 40 cilindros?",
+    "tools": [
+      "CALCULAR_ENVIO"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-COT-014"
+}

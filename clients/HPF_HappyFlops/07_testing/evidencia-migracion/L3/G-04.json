@@ -1,0 +1,44 @@
+{
+  "caso": "G-04",
+  "titulo": "update_stage por nombre de etapa",
+  "resultado": "CORROBORADO",
+  "detalle": "3 etapas movidas y releídas OK (acepta nombre, no sólo UUID)",
+  "pasos": [
+    {
+      "etapa": "Cotizado",
+      "req": {
+        "op": "update_stage",
+        "args": {
+          "opportunityId": "vzYAb3P86uJ08CI9jKyV",
+          "etapa": "Cotizado"
+        }
+      },
+      "http": 200,
+      "stage_leido": "96fa0ade-c853-4db3-97f4-56d58d69af8c"
+    },
+    {
+      "etapa": "Ventas Perdidas",
+      "req": {
+        "op": "update_stage",
+        "args": {
+          "opportunityId": "vzYAb3P86uJ08CI9jKyV",
+          "etapa": "Ventas Perdidas"
+        }
+      },
+      "http": 200,
+      "stage_leido": "6abfe419-adf2-4df5-87c5-ef4f62e01464"
+    },
+    {
+      "etapa": "Lead Nuevo",
+      "req": {
+        "op": "update_stage",
+        "args": {
+          "opportunityId": "vzYAb3P86uJ08CI9jKyV",
+          "etapa": "Lead Nuevo"
+        }
+      },
+      "http": 200,
+      "stage_leido": "cf8fc770-81b1-422c-8394-d00bfb97a3f0"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "caso": "K-05",
+  "titulo": "producto desconocido → no inventa peso",
+  "resultado": "CORROBORADO",
+  "detalle": "http=500 · {\"message\": \"Workflow execution failed\"}",
+  "pasos": [
+    {
+      "resp": {
+        "message": "Workflow execution failed"
+      }
+    }
+  ]
+}

@@ -1,0 +1,193 @@
+{
+  "name": "sys-tool-consultar-aplicacion-v1",
+  "nodes": [
+    {
+      "id": "6a503720-2a98-5396-b4c2-4b57369bba49",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"descripcion\": \"imprimir gorras\",\n  \"sustrato_mencionado\": \"\",\n  \"session_id\": \"\"\n}"
+      }
+    },
+    {
+      "id": "c6d30ec1-dc50-52b4-b354-0a2777e3ce44",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "const args = $input.first().json;\nif (!args.descripcion || String(args.descripcion).trim() === '') {\n  return [{ json: { status: 'ERROR', _skip: true, message_to_agent: 'Faltó descripcion del uso.' } }];\n}\nreturn [{ json: args }];"
+      }
+    },
+    {
+      "id": "322db698-3543-5e10-98c8-9b555df04dfc",
+      "name": "List Aplicaciones",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        300
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "3zohdTBWzW8UUN6P",
+          "name": "Airtable SYS"
+        }
+      },
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": "appMD3g2HWxzBaZAM"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": "tblxDluOqsEX97UC8"
+        },
+        "filterByFormula": "={{ 'TRUE()' }}",
+        "limit": 50,
+        "options": {}
+      }
+    },
+    {
+      "id": "7394650d-cee0-599a-9872-3d0c30eeb807",
+      "name": "Format Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "const apps = $input.all().map(i => i.json);\nconst args = $('Execute Workflow Trigger').first().json;\nconst query = String(args.descripcion).toLowerCase();\n\nfunction score(app) {\n  const keywords = String(app['Keywords cliente'] || '').toLowerCase().split(/[,;]+/).map(k => k.trim()).filter(Boolean);\n  const nombreApp = String(app['Aplicación'] || '').toLowerCase();\n  let s = 0;\n  for (const kw of keywords) {\n    if (kw && query.includes(kw)) s += 2;\n  }\n  // Boost si el nombre de la aplicación coincide con palabras de la query\n  const palabrasNombre = nombreApp.split(/\\s+/);\n  for (const p of palabrasNombre) {\n    if (p.length > 3 && query.includes(p)) s += 1;\n  }\n  return s;\n}\n\nconst scored = apps.map(a => ({ app: a, s: score(a) })).filter(x => x.s >= 1).sort((a, b) => b.s - a.s);\n\nif (scored.length === 0) {\n  return [{ json: {\n    status: 'NOT_FOUND',\n    data: null,\n    message_to_agent: `No encontré aplicación que matchee \"${args.descripcion}\". Sugerí pedir más detalle (sobre qué material, qué tipo de producto final).`,\n    trace_id: $execution.id\n  } }];\n}\n\nconst best = scored[0].app;\nreturn [{ json: {\n  status: 'RESOLVED',\n  data: {\n    aplicacion_match: best['Aplicación'] || '',\n    categoria: best['Categoría'] || '',\n    tecnologias_recomendadas: best['Tecnologías recomendadas'] || [],\n    sustratos_tipicos: best['Sustratos típicos'] || [],\n    notas_para_agente: best['Notas para asesoramiento'] || ''\n  },\n  message_to_agent: `Aplicación detectada: ${best['Aplicación']}. Tecnologías recomendadas: ${(best['Tecnologías recomendadas'] || []).join(', ')}.`,\n  trace_id: $execution.id\n} }];"
+      }
+    },
+    {
+      "id": "f8ad59ed-7a35-578c-8854-adfb8ce764b7",
+      "name": "Log to sys_tool_calls",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        960,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sys_tool_calls (session_id, tool_name, input_payload, output_payload, status, duration_ms)\nVALUES ($1, 'consultar-aplicacion', $2::jsonb, $3::jsonb, $4, $5)",
+        "options": {
+          "queryReplacement": "={{ [$('Execute Workflow Trigger').first().json.session_id || 'unknown', JSON.stringify($('Execute Workflow Trigger').first().json), JSON.stringify($json), $json.status || 'success', $json.duration_ms || 0] }}"
+        },
+        "continueOnFail": true
+      },
+      "continueOnFail": true,
+      "notes": "Log a sys_tool_calls. continueOnFail=true para no romper la tool si Postgres falla."
+    },
+    {
+      "id": "e1fee014-2950-5236-82a0-05264ab8af29",
+      "name": "Return Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1200,
+        300
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $('Format Output').item.json }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "List Aplicaciones",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Aplicaciones": {
+      "main": [
+        [
+          {
+            "node": "Format Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Output": {
+      "main": [
+        [
+          {
+            "node": "Log to sys_tool_calls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to sys_tool_calls": {
+      "main": [
+        [
+          {
+            "node": "Return Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "SYS"
+    },
+    {
+      "name": "F4"
+    },
+    {
+      "name": "tool"
+    }
+  ],
+  "versionId": "46221a7b-a97e-4012-816a-e754a9d44e0d"
+}

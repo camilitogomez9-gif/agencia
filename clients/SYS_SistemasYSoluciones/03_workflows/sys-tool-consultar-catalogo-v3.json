@@ -1,0 +1,481 @@
+{
+  "name": "sys-tool-consultar-catalogo-v3",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"query\": \"impresoras HUENU UV de gran formato\",\n  \"session_id\": \"diag-001\"\n}"
+      },
+      "id": "trg-001",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const args = $input.first().json;\nconst raw = String(args.query || '').trim();\nconst sessionId = String(args.session_id || 'unknown');\n\nif (!raw) {\n  return [{ json: { _skip: true, status: 'NOT_FOUND', message_to_agent: 'Faltó la consulta. Pedile al cliente más detalle.', trace_id: $execution.id } }];\n}\n\nconst q = raw.toLowerCase();\n\n// Detectar intent\nlet intent = 'equipo';\nif (/usad|refurbish|reaco|bizhub|accurio|konica\\s*minolt/i.test(q)) {\n  intent = 'inventario';\n} else if (/imprim|estamp|gorra|remera|bandera|wrap|cartel|vinil|sticker|adhesi|stand|prend|tela|algodon|polyester|aplicacion|sublimacion/i.test(q) && !/huenu|dlican|teneth|hanrun|xenons|sinajet|riso/i.test(q)) {\n  intent = 'aplicacion';\n}\n\n// Extraer hints\nconst brands = ['huenu','dlican','teneth','hanrun','xenons','riso','sinajet'];\nconst brand = brands.find(b => q.includes(b)) || '';\nconst marca = brand ? brand.toUpperCase() : '';\n\nconst techMap = {\n  'dtf textil': 'DTF Textil',\n  'dtf uv': 'DTF UV',\n  'sublim': 'Sublimación',\n  'eco-solvente': 'Eco-Solvente',\n  'eco solvente': 'Eco-Solvente',\n  'solvente': 'Solvente',\n  'gran formato': 'Gran Formato',\n  'idl': 'IDL Láser',\n  'laser': 'IDL Láser',\n  'corte': 'Corte',\n  'plotter': 'Corte',\n};\nlet tecnologia = '';\nfor (const [k, v] of Object.entries(techMap)) {\n  if (q.includes(k)) { tecnologia = v; break; }\n}\nif (!tecnologia && /\\buv\\b/i.test(q)) tecnologia = 'UV';\nif (!tecnologia && /\\bdtf\\b/i.test(q)) tecnologia = 'DTF Textil';\n\nreturn [{\n  json: {\n    intent,\n    query_raw: raw,\n    query_lower: q,\n    session_id: sessionId,\n    marca,\n    tecnologia,\n    trace_id: $execution.id\n  }\n}];"
+      },
+      "id": "vld-001",
+      "name": "Classify Intent",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "skip-check",
+              "leftValue": "={{ $json._skip }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-skip",
+      "name": "IF skip?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ ({ status: 'NOT_FOUND', data: null, message_to_agent: $('Classify Intent').first().json.message_to_agent, trace_id: $('Classify Intent').first().json.trace_id }) }}",
+        "options": {}
+      },
+      "id": "skp-001",
+      "name": "Return NOT_FOUND (skip)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -240,
+        80
+      ],
+      "notes": "v2 — Fix B: expresión devuelve objeto directo (antes usaba JSON.stringify que devolvía string)."
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "id": "intent-eq-aplicacion",
+                    "leftValue": "={{ $json.intent }}",
+                    "rightValue": "aplicacion",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "aplicacion"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "id": "intent-eq-inventario",
+                    "leftValue": "={{ $json.intent }}",
+                    "rightValue": "inventario",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "inventario"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "id": "intent-eq-equipo",
+                    "leftValue": "={{ $json.intent }}",
+                    "rightValue": "equipo",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "equipo"
+            }
+          ]
+        },
+        "fallbackOutput": "none",
+        "options": {}
+      },
+      "id": "swt-001",
+      "name": "Switch by intent",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appMD3g2HWxzBaZAM",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblxDluOqsEX97UC8",
+          "mode": "id"
+        },
+        "filterByFormula": "=OR(SEARCH(LOWER(\"{{ $('Classify Intent').first().json.query_lower }}\"), LOWER({Nombre})), SEARCH(LOWER(\"{{ $('Classify Intent').first().json.query_lower }}\"), LOWER(ARRAYJOIN({Sustratos tipicos}))))",
+        "limit": 5,
+        "options": {}
+      },
+      "id": "atb-apl",
+      "name": "Airtable: Aplicaciones",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        100
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "3zohdTBWzW8UUN6P",
+          "name": "Airtable SYS"
+        }
+      },
+      "continueOnFail": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appMD3g2HWxzBaZAM",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbly3RP2QzBUnxdem",
+          "mode": "id"
+        },
+        "filterByFormula": "={{ (() => { const q = ($('Classify Intent').first().json.query_lower || '').replace(/\"/g, ''); if (!q) return 'TRUE()'; return `OR(SEARCH(LOWER(\"${q}\"), LOWER({Modelo})), SEARCH(LOWER(\"${q}\"), LOWER({Marca})), SEARCH(LOWER(\"${q}\"), LOWER({Línea})))`; })() }}",
+        "limit": 10,
+        "options": {}
+      },
+      "id": "atb-inv",
+      "name": "Airtable: Inventario Konica",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        500
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "3zohdTBWzW8UUN6P",
+          "name": "Airtable SYS"
+        }
+      },
+      "continueOnFail": true,
+      "alwaysOutputData": true,
+      "notes": "v3 — Fix F6: filterByFormula reescrito limpio (antes era malformado con `=` extra y string literal `'={{ $json.tecnologia }}'`). alwaysOutputData=true para que el flow continue si no hay match (Format Output detecta y devuelve NOT_FOUND)."
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appMD3g2HWxzBaZAM",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblHO7kWEbFBVTWQn",
+          "mode": "id"
+        },
+        "view": {
+          "__rl": true,
+          "value": "viwCUJCvUbuDFXKqA",
+          "mode": "id"
+        },
+        "filterByFormula": "={{ (() => { const c = $('Classify Intent').first().json; const f = []; if (c.marca) f.push('{Marca} = \"' + c.marca + '\"'); if (c.tecnologia) f.push('FIND(\"' + c.tecnologia + '\", ARRAYJOIN({Tecnología}))>0'); if (!f.length) f.push('OR(SEARCH(LOWER(\"' + c.query_lower + '\"), LOWER({Modelo})), SEARCH(LOWER(\"' + c.query_lower + '\"), LOWER({Marca})))'); return '=AND(' + f.join(', ') + ')'; })() }}",
+        "limit": 5,
+        "options": {}
+      },
+      "id": "atb-eqp",
+      "name": "Airtable: Equipos",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        300
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "3zohdTBWzW8UUN6P",
+          "name": "Airtable SYS"
+        }
+      },
+      "continueOnFail": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// v3 — Capa de fixes F1+F5+F9 del bugfix Format Output.\n// F1: filtra records vacíos (Airtable con alwaysOutputData devuelve [{}] cuando no hay match).\n// F5: ramifica por intent — cada tabla tiene shape diferente (Equipos, Aplicaciones, Inventario Konica).\n// F9: usa el campo Lookup \"Nombre (from Tecnología)\" para devolver nombres en vez de record IDs.\n\nconst ctx = $('Classify Intent').first().json;\n// F1: filtrar records vacíos. Un record válido debe tener id Y al menos un campo identificador.\nconst rows = $input.all()\n  .map(i => i.json)\n  .filter(r => r && r.id && (r['Modelo'] || r['Aplicación'] || r['Nombre'] || r['Marca']));\n\nif (rows.length === 0) {\n  return [{ json: {\n    status: 'NOT_FOUND',\n    data: null,\n    message_to_agent: `No encontré coincidencias en el catálogo para \"${ctx.query_raw}\" (intent: ${ctx.intent}). Si el cliente quiere verificar, derivá al comercial.`,\n    trace_id: ctx.trace_id,\n    intent: ctx.intent\n  } }];\n}\n\n// F5: ramificar por intent\nlet items = [];\nif (ctx.intent === 'aplicacion') {\n  items = rows.slice(0, 5).map(r => ({\n    aplicacion: r['Aplicación'] || '',\n    categoria: r['Categoría'] || '',\n    sustratos_tipicos: r['Sustratos típicos'] || r['Sustratos tipicos'] || [],\n    keywords_match: r['Keywords cliente'] || '',\n    tecnologias_recomendadas_nombres: r['Nombre (from Tecnologías recomendadas)'] || []\n  })).filter(it => it.aplicacion);\n} else if (ctx.intent === 'inventario') {\n  items = rows.slice(0, 5).map(r => ({\n    modelo: r['Modelo'] || '',\n    marca: r['Marca'] || '',\n    linea: r['Línea'] || '',\n    contador_copias: r['Contador de copias'] || null,\n    estado: r['Estado'] || '',\n    precio_referencia: r['Precio referencia'] || null,\n    notas: r['Notas'] || ''\n  })).filter(it => it.modelo);\n} else {\n  // intent === 'equipo' (default)\n  items = rows.slice(0, 5).map(r => ({\n    modelo: r['Modelo'] || '',\n    marca: r['Marca'] || '',\n    // F9: usar Lookup para nombres en vez de record IDs\n    tecnologia: r['Nombre (from Tecnología)'] || [],\n    ancho: r['Ancho'] || '',\n    formato: r['Formato'] || '',\n    descripcion: r['Descripción corta'] || r['Descripcion corta'] || '',\n    disponibilidad: r['Disponibilidad zona'] || [],\n    cabezales_tipo: r['Cabezales tipo'] || ''\n  })).filter(it => it.modelo);\n  // Priorizar impresoras sobre accesorios (Plancha/Horno/Purificador)\n  const isAccesorio = (it) => /plancha|horno|purificador|heat\\s*press/i.test(String(it.formato) + ' ' + String(it.modelo));\n  const impresoras = items.filter(it => !isAccesorio(it));\n  const accesorios = items.filter(it => isAccesorio(it));\n  items = [...impresoras, ...accesorios];\n}\n\nif (items.length === 0) {\n  return [{ json: {\n    status: 'NOT_FOUND',\n    data: null,\n    message_to_agent: `No encontré items concretos para \"${ctx.query_raw}\" (intent: ${ctx.intent}). Pedile al cliente más detalle o derivá al comercial.`,\n    trace_id: ctx.trace_id,\n    intent: ctx.intent\n  } }];\n}\n\nreturn [{ json: {\n  status: 'RESOLVED',\n  data: { intent: ctx.intent, total: items.length, items },\n  message_to_agent: `Encontré ${items.length} match(es) en catálogo (intent: ${ctx.intent}). Integrá los datos en tu respuesta usando los nombres y especificaciones. No inventes specs que no estén acá.`,\n  trace_id: ctx.trace_id\n} }];"
+      },
+      "id": "fmt-001",
+      "name": "Format Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "notes": "v3 — F1+F5+F9: filtra records vacíos, ramifica por intent (equipo/aplicacion/inventario), usa Lookup 'Nombre (from Tecnología)' para nombres de tecnología, prioriza impresoras sobre accesorios."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sys_tool_calls (session_id, tool_name, input_payload, output_payload, status, duration_ms) VALUES ($1, 'consultar-catalogo', $2::jsonb, $3::jsonb, $4, $5)",
+        "options": {
+          "queryReplacement": "={{ [$('Classify Intent').first().json.session_id || 'unknown', JSON.stringify($('Execute Workflow Trigger').first().json), JSON.stringify($json), $json.status || 'success', 0] }}"
+        }
+      },
+      "id": "log-001",
+      "name": "Log to sys_tool_calls",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        480,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "cQLxF5deDtmo4HTV",
+          "name": "Supabase SYS"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $('Return NOT_FOUND (skip)').isExecuted ? $('Return NOT_FOUND (skip)').first().json : $('Format Output').first().json }}",
+        "options": {}
+      },
+      "id": "ret-001",
+      "name": "Return Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        300
+      ],
+      "notes": "v3 — F3: cubre ambas ramas (skip por query vacía + happy path). Antes crasheaba con 'Format Output hasn't been executed' cuando vino por skip."
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Classify Intent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Intent": {
+      "main": [
+        [
+          {
+            "node": "IF skip?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF skip?": {
+      "main": [
+        [
+          {
+            "node": "Return NOT_FOUND (skip)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch by intent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Return NOT_FOUND (skip)": {
+      "main": [
+        [
+          {
+            "node": "Log to sys_tool_calls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch by intent": {
+      "main": [
+        [
+          {
+            "node": "Airtable: Aplicaciones",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Airtable: Inventario Konica",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Airtable: Equipos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable: Aplicaciones": {
+      "main": [
+        [
+          {
+            "node": "Format Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable: Inventario Konica": {
+      "main": [
+        [
+          {
+            "node": "Format Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable: Equipos": {
+      "main": [
+        [
+          {
+            "node": "Format Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Output": {
+      "main": [
+        [
+          {
+            "node": "Log to sys_tool_calls",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to sys_tool_calls": {
+      "main": [
+        [
+          {
+            "node": "Return Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3fae3b3f-591a-474b-ab49-dc460a943c1d",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": [
+    {
+      "name": "sys"
+    },
+    {
+      "name": "tool"
+    },
+    {
+      "name": "nuclear"
+    }
+  ],
+  "id": "oQtLMujJBHlxZTTJ"
+}

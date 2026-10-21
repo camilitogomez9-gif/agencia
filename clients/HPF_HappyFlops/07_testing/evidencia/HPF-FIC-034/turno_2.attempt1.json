@@ -1,0 +1,128 @@
+{
+  "probe_id": "sess_hpf_fic_034_1785953655#43bdb789e4a8",
+  "session_id": "sess_hpf_fic_034_1785953655",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "quiero kit anticruda",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 8.1,
+  "version_antes": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "version_despues": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "capturado_utc": "2026-08-05T18:14:48.347056+00:00",
+  "execution_id": "989500",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T18:14:35.875Z",
+  "stoppedAt": "2026-08-05T18:14:42.835Z",
+  "n_esperadas": 5,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Así es, tenemos el kit anticruda para boda! Es un recuerdito muy práctico y divertido para tus invitados",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "✨ Kit anticruda personalizado\n🎉 Ideal para cualquier tipo de evento\n🛍️ Costal de tela personalizado a 1 tinta\n📏 Medidas: 16 x 22 cm\n\n💡 Solo incluye el costal, tú lo llenas con los productos que prefieras.\n\n💰 Precio promo: $10 c/u\n📦 Pedido mínimo de 35 piezas.",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3df9c6f6a920d2e198.png",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 2,
+      "message_part": "Mira este video para que veas cómo se ve 🎥",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701849cf81b06f0580540f.mp4"
+    },
+    {
+      "idx": 3,
+      "message_part": "Te dejo el catalogo de frases que tenemos para los *ANTICRUDAS*",
+      "photo_url": "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a70185232db2dd1572c0a7a.jpeg",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 4,
+      "message_part": "¿Le interesa sumarlos a la cotización?\nDígame:\n- Cantidad\n- Código postal\n\n¡Gracias!",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 0,
+      "ms": 264,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1832,
+      "chat_id": 6390727286,
+      "texto_entregado": "✨ Kit anticruda personalizado\n🎉 Ideal para cualquier tipo de evento\n🛍️ Costal de tela personalizado a 1 tinta\n📏 Medidas: 16 x 22 cm\n\n💡 Solo incluye el costal, tú lo llenas con los productos que prefieras.\n\n💰 Precio promo: $10 c/u\n📦 Pedido mínimo de 35 piezas.",
+      "error": null
+    },
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 1,
+      "ms": 217,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1834,
+      "chat_id": 6390727286,
+      "texto_entregado": "Te dejo el catalogo de frases que tenemos para los *ANTICRUDAS*",
+      "error": null
+    },
+    {
+      "emisor": "Send Video (Telegram)",
+      "run": 0,
+      "ms": 251,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1833,
+      "chat_id": 6390727286,
+      "texto_entregado": "Mira este video para que veas cómo se ve 🎥",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 238,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1831,
+      "chat_id": 6390727286,
+      "texto_entregado": "Así es, tenemos el kit anticruda para boda! Es un recuerdito muy práctico y divertido para tus invitados",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 204,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1835,
+      "chat_id": 6390727286,
+      "texto_entregado": "¿Le interesa sumarlos a la cotización?\nDígame:\n- Cantidad\n- Código postal\n\n¡Gracias!",
+      "error": null
+    }
+  ],
+  "n_entregadas": 5,
+  "cero_partes": false,
+  "agente": {
+    "output": "Así es, tenemos el kit anticruda para boda! Es un recuerdito muy práctico y divertido para tus invitados. ¿Cuántos kits te gustaría cotizar y a qué código postal sería el envío?",
+    "tools": [
+      "IDENTIFICAR_EVENTO",
+      "MOSTRAR_PRODUCTOS"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-FIC-034"
+}

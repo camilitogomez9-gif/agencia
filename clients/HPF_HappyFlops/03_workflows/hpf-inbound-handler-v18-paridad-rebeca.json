@@ -1,0 +1,2626 @@
+{
+  "name": "HPF Inbound Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b1a1c3d0-0001-4a1a-9a1a-000000000001",
+              "leftValue": "={{ $('Auth + Normalize').first().json.is_telegram_test }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        240
+      ],
+      "id": "1aad020d-6af3-4731-8324-80d489aafdd3",
+      "name": "Es Origen Telegram?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b1a1c3d0-0003-4a1a-9a1a-000000000003",
+              "leftValue": "={{ $('Auth + Normalize').first().json.is_telegram_test }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        720
+      ],
+      "id": "7422afa1-1876-49dc-a00c-d301c0084beb",
+      "name": "Es Origen Telegram? (Pago)"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hpf-inbound",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "775fa105-9398-4e85-9e30-e90ed3ec9fd9",
+      "name": "Webhook - Inbound",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -3824,
+        528
+      ],
+      "webhookId": "hpf-inbound-webhook",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jUb7ZjztncX5ACpc",
+          "name": "HPF GHL Webhook Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -4256,
+        672
+      ],
+      "id": "0db2db86-ba58-4c2b-96f9-2942c50dcfd3",
+      "name": "Telegram Trigger",
+      "webhookId": "591771de-b125-4dd5-8cca-d96bd1b45ac9",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Telegram Trigger → shape que espera \"Auth + Normalize\" (HPF Inbound Handler)\nreturn $input.all().map(item => {\n  const j = item.json || {};\n  const msg = j.message || j;\n  const chat = msg.chat || {};\n  const from = msg.from || {};\n\n  const chatId = String(chat.id ?? from.id ?? 'tg_unknown');\n\n  let message_type = 'text';\n  let message_text = msg.text || msg.caption || '';\n  let media_url = '';\n  let telegram_file_id = '';\n\n  if (msg.voice || msg.audio) {\n    message_type = 'audio';\n    telegram_file_id = (msg.voice || msg.audio).file_id || '';\n  } else if (Array.isArray(msg.photo) && msg.photo.length) {\n    message_type = 'image';\n    telegram_file_id = msg.photo[msg.photo.length - 1].file_id || '';\n  } else if (!message_text) {\n    // sticker / gif / documento / video / ubicacion / contacto: no los podemos leer,\n    // pero NO deben tirar la ejecucion. El agente responde con naturalidad.\n    message_type = 'text';\n    message_text = '(el lead mando un sticker o archivo que no puedo abrir)';\n  }\n\n  return {\n    json: {\n      body: {\n        contact_id: chatId,\n        opportunity_id: `tg_opp_${chatId}`,\n        phone: chatId,\n        message_type,\n        message_text,\n        media_url,\n        telegram_file_id,\n        stage: 'Evento Identificado',\n        custom_fields: {\n          evento_detectado: '',\n          imagen_input: false,\n          productos_mostrados: '[]',\n          cotizacion_emitida: false,\n          monto_cotizado_mxn: 0,\n          cp_entrega: '',\n          had_information: false,\n          had_image: false,\n          had_quote: false,\n          last_outbound_at: '',\n        },\n      },\n      _telegram: {\n        chat_id: chatId,\n        first_name: from.first_name || '',\n        last_name: from.last_name || '',\n      },\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4032,
+        672
+      ],
+      "id": "70c9de43-31e5-46e6-9799-dbca5c2e5fc8",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Auth la valida n8n en el nodo Webhook (credencial Header Auth). Aca solo normalizamos.\n//\n// PAYLOAD REAL DE GHL (WF-01, accion Webhook con CUSTOM DATA):\n// GHL manda su \"standard data\" (contacto en root, location, message:{type,body,direction,status},\n// workflow) MAS los pares de Custom Data mergeados en el root:\n//   contact_id     = {{contact.id}}\n//   opportunity_id = {{opportunity.id}}\n//   phone          = {{contact.phone}}\n//   stage          = {{opportunity.stage_name}}\n//   message_type   = \"text\"                  <-- LITERAL hardcodeado en WF-01\n//   message_text   = {{message.body}}\n//   media_url      = {{message.attachments}} <-- ARRAY, GHL lo serializa\n//\n// Por eso NO confiamos en message_type: si hay media, el tipo real lo define el media.\nconst item = $input.first();\nconst b  = item.json?.body || item.body || item.json || {};\nconst m  = b.message || {};\nconst cd = b.customData || b.custom_data || {};\n\nconst pick = (...v) => { for (const x of v) if (x !== undefined && x !== null && x !== '') return x; return ''; };\nconst S = (v) => (v === undefined || v === null) ? '' : String(v);\n\n// {{message.attachments}} puede llegar como array real, como '[\"url\"]', como \"a, b\",\n// o sin resolver (\"[object Object]\" / \"{{...}}\" / \"\"). Normalizamos a 1 URL o ''.\nfunction firstUrl(v) {\n  if (Array.isArray(v)) return S(v[0]);\n  let s = S(v).trim();\n  if (!s || s === '[object Object]' || s === 'null' || s === 'undefined' || s.startsWith('{{')) return '';\n  if (s.startsWith('[')) {\n    try { const arr = JSON.parse(s); if (Array.isArray(arr)) return S(arr[0]); } catch (e) {}\n    s = s.replace(/^\\[|\\]$/g, '').replace(/[\"']/g, '');\n  }\n  return s.split(',')[0].trim();\n}\n\nconst contact_id     = S(pick(b.contact_id, b.contactId, cd.contact_id, m.contactId));\nconst opportunity_id = S(pick(b.opportunity_id, b.opportunityId, cd.opportunity_id, b.id));\nconst phone          = S(pick(b.phone, b.phoneNumber, cd.phone, b.contact?.phone));\nconst message_text   = S(pick(b.message_text, b.messageText, m.body, m.text, cd.message_text, b.text));\nconst media_url      = firstUrl(pick(b.media_url, b.mediaUrl, b.attachments, m.attachments, m.media_url, cd.media_url));\nconst media_type     = S(pick(b.media_type, b.mediaType, m.media_type, m.contentType));\n\n// TIPO: WF-01 manda 'text' fijo y message.type de GHL son CANALES (SMS/WhatsApp/IG/FB),\n// no tipos de contenido -> si hay media, el media manda.\nlet message_type = S(pick(b.message_type, b.messageType, m.type)).toLowerCase();\nif (media_url) {\n  message_type = /\\.(ogg|oga|mp3|m4a|wav|amr|mpeg)(\\?|$)|audio|voice/i.test(media_type + ' ' + media_url)\n    ? 'audio' : 'image';\n} else if (!message_type || ['sms','whatsapp','ig','fb','live_chat','email','custom'].includes(message_type)) {\n  message_type = 'text';\n}\nif (message_type === 'photo' || message_type === 'picture') message_type = 'image';\nif (message_type === 'voice') message_type = 'audio';\n\nconst is_telegram_test = opportunity_id.startsWith('tg_opp_');\nconst channel = S(pick(b.channel, cd.channel, is_telegram_test ? 'telegram' : 'whatsapp'));\n\n// Guardas: nunca dejar pasar un inbound sin identidad o vacio (mejor error visible que mensaje vacio al LLM)\nconst telegram_file_id = S(pick(b.telegram_file_id));  // Telegram: el media se resuelve mas adelante\nconst keys = Object.keys(b).join(', ') || '(body vacio)';\nif (!contact_id) throw new Error(`Inbound sin contact_id. Keys recibidas: ${keys}`);\nif (!message_text && !media_url && !telegram_file_id) {\n  // Causa tipica: WF-01 se disparo como TEST o con un trigger que no es de mensaje,\n  // entonces {{message.body}}/{{message.attachments}} resuelven vacio.\n  const hasMsg = !!(b.message && Object.keys(b.message).length);\n  throw new Error(\n    `Inbound sin texto ni media (el agente recibiria un mensaje vacio). ` +\n    (hasMsg ? `Llego objeto 'message' pero sin body/attachments. `\n            : `NO llego objeto 'message': WF-01 se disparo sin contexto de mensaje ` +\n              `(test manual o trigger que no es \"Customer Replied\"). `) +\n    `Keys: ${keys}`\n  );\n}\n\nreturn {\n  contact_id, opportunity_id, phone, channel,\n  message_type, message_text, media_url, media_type,\n  telegram_file_id,\n  stage: S(pick(b.stage, b.pipleline_stage, b.pipeline_stage, cd.stage)),\n  custom_fields: b.custom_fields || b.customFields || {},\n  is_telegram_test,\n  raw: { ...b, channel },\n};"
+      },
+      "id": "780f63aa-d66f-4232-95ae-5b0313a7212d",
+      "name": "Auth + Normalize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3600,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message_type }}",
+                    "rightValue": "audio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message_type }}",
+                    "rightValue": "image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "image"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message_type }}",
+                    "rightValue": "text",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "b6bd4b58-5796-427c-a303-f2ef8bd338bc",
+      "name": "Switch by Message Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1552,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"gpt-4.1\",\n  \"temperature\": 0,\n  \"response_format\": { \"type\": \"json_object\" },\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Sos un clasificador de imagenes para Happy Flops. Devolve JSON: {\\\"producto\\\": <string>, \\\"confianza\\\": 0.0-1.0, \\\"payment_proof\\\": true|false, \\\"razon\\\": <string>}. Categorias: sandalias, cilindros, mandiles, pantuflas, kit_anticrudas, vaso_popote, bolsa, comprobante_pago, no_identificado.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"image_url\",\n          \"image_url\": { \"url\": \"{{ $json.media_url }}\" }\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "7dd412d6-7c5b-4ace-adf6-f761e58cf970",
+      "name": "Vision Classifier",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1328,
+        816
+      ],
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "openAiApi": {
+          "id": "a1k3E4C9uRRHxngs",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "text-passthrough",
+              "name": "message_text",
+              "value": "={{ $json.message_text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "ab1e76e9-3617-428b-ab37-2de29ac367d7",
+      "name": "Text Passthrough",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $json.choices?.[0]?.message?.content || '{}';\nconst parsed = JSON.parse(response);\nreturn {\n  ...$('Auth + Normalize').first().json,\n  vision_producto: parsed.producto || 'no_identificado',\n  vision_confianza: parsed.confianza || 0,\n  vision_payment_proof: parsed.payment_proof || false,\n  vision_razon: parsed.razon || '',\n  message_text: `[Imagen recibida: ${parsed.producto} (confianza ${parsed.confianza})]`\n};"
+      },
+      "id": "338b1815-aafb-4560-bb31-13f8a5f222c6",
+      "name": "Parse Vision",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1104,
+        816
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6140775d-3a47-45ee-89a2-70e1bd4d746e",
+              "leftValue": "={{ $json.vision_payment_proof }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -896,
+        736
+      ],
+      "id": "2cb2ab6b-c709-42ab-84df-7a9a615bca72",
+      "name": "Es Pago Detectado?"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Auth + Normalize').first().json.opportunity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"customFields\": [\n    { \"key\": \"payment_proof_detectado\", \"field_value\": [true, \"Detectado\"] }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -624,
+        720
+      ],
+      "id": "58b94c49-cc61-470d-b1bd-256a241ca7b9",
+      "name": "Update payment_proof_detectado",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.media_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "e0edd964-146f-48dc-95ec-05bcf57e9b8b",
+      "name": "Download Audio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1104,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {
+          "language": "es"
+        }
+      },
+      "id": "e8d7171e-6761-45c7-9a6d-6dd033c754cd",
+      "name": "Whisper Transcribe",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -880,
+        192
+      ],
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "openAiApi": {
+          "id": "a1k3E4C9uRRHxngs",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "msg-from-audio",
+              "name": "message_text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "c0ee54ab-c031-4416-a17e-163cff406b1a",
+      "name": "Audio a Text",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -656,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const currentStage = $('Auth + Normalize').first().json.stage;\nconst mediaUrl = $('Auth + Normalize').first().json.media_url;\n\nconst STAGE_IDS = {\n  'Esperando Pago': '843a06f1-1214-4baa-a3a0-f197cb240b5d',\n  'Pago Confirmado': '96d760e5-f290-456c-a117-57e61ce6c27d'\n};\n\nlet nextStageId = null;\nlet mensaje = '';\nlet notifyOscar = false;\nlet comprobanteField = null;\n\nif (currentStage === 'Cotizado') {\n  nextStageId = STAGE_IDS['Esperando Pago'];\n  mensaje = '¡Recibí tu comprobante! 🎉 Lo verificamos en breve y te confirmamos.';\n  comprobanteField = 'anticipo';\n} else if (currentStage === 'Esperando Pago') {\n  nextStageId = STAGE_IDS['Pago Confirmado'];\n  mensaje = '¡Pago confirmado! ✅ Ahora pasamos al diseño de tus recuerditos 🎨';\n  notifyOscar = true;\n  comprobanteField = 'liquidacion';\n} else {\n  mensaje = 'Comprobante recibido, un asesor te contactará pronto.';\n}\n\nreturn {\n  ...$('Auth + Normalize').first().json,\n  nextStageId,\n  mensaje,\n  notifyOscar,\n  currentStage,\n  comprobanteField,\n  mediaUrl\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -448,
+        720
+      ],
+      "id": "cd178bf2-5b36-480d-b1af-5650b131f966",
+      "name": "Decidir Stage Pago"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Auth + Normalize').first().json.opportunity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=={\n  \"pipelineStageId\": \"{{ $json.nextStageId }}\",\n  \"customFields\": [\n    { \"key\": \"comprobante_{{ $json.comprobanteField }}_url\", \"field_value\": \"{{ $json.mediaUrl }}\" },\n    { \"key\": \"comprobante_{{ $json.comprobanteField }}_at\", \"field_value\": \"{{ $now.toISO() }}\" }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -224,
+        720
+      ],
+      "id": "09f835ca-a86a-4da9-85f9-1a16a4235d4c",
+      "name": "Move Stage Pago",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/conversations/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"type\": \"WhatsApp\",\n  \"contactId\": \"{{ $('Auth + Normalize').first().json.contact_id }}\",\n  \"message\": {{ JSON.stringify($('Decidir Stage Pago').first().json.mensaje) }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        224,
+        816
+      ],
+      "id": "95a9ac74-657c-4fbe-b4b7-663babf828ba",
+      "name": "HTTP Request",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ JSON.stringify($('Decidir Stage Pago').first().json.mensaje) }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        624
+      ],
+      "id": "6e31c01f-9478-42e5-bb1d-3839bdfd5fbb",
+      "name": "Send a text message",
+      "webhookId": "05681af8-76cc-408a-aee4-d2b82f4514a7",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {
+          "maxTokens": 1500,
+          "temperature": 0.3
+        }
+      },
+      "id": "149b1311-939c-461c-81e9-8a6d6c5826e8",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -656,
+        448
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "a1k3E4C9uRRHxngs",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message_text }}",
+        "options": {
+          "systemMessage": "Eres Rebeca, asistente virtual de Happy Flops (Guadalajara, México). Atendés leads que quieren recuerditos personalizados para su evento y los acompañás hasta el pedido.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[1] LA VOZ DE REBECA\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nEsta sección es la más importante del prompt. Tu trabajo no es solo responder bien: es sonar exactamente como Rebeca.\n\nTRATO — tu rasgo más característico:\nMezclás \"usted\" y \"tú\" dentro de la MISMA respuesta, sin corregirte. No es un error, es cómo habla Rebeca. El eje es funcional:\n- Cuando informás o pedís datos, tirás a usted: \"le\", \"su\", \"cotizarle\", \"dígame\", \"me diga\".\n- Cuando celebrás, acompañás o hablás del evento, tirás a tú: \"tienes\", \"pides\", \"tu evento\", \"aquí tienes\".\nEjemplos reales tuyos:\n  \"Aquí tienes la cotización: [...] Le gustaría avanzar con el pedido?\"\n  \"Mira, ya que pides sandalias, le gustaría agregar cilindros para su evento?\"\n  \"Para poder cotizarle las sandalias necesitaría que me diga la cantidad\"\nNunca fuerces la consistencia. Si te sale mezclado, está bien.\n\nMEXICANISMOS — uno por respuesta como máximo:\n  \"Mira, ...\"           para introducir una recomendación o el upsell\n  \"Qué padre ...\"       solo para celebrar el evento del lead\n  \"Sabe qué, ...\"       variante del upsell\n  \"Súper cómodas\", \"un detalle que todos van a agradecer\", \"son un hit\"\nNo inventes otros ni exageres el acento.\n\nAPERTURAS — rotalas, no repitas siempre la misma:\n  \"Qué buena elección!\"   \"Perfecto!\"   \"Entendido!\"   \"Claro, ...\"\n  \"Así es, ...\"   \"Gracias por la información.\"   \"De nada!\"\n  \"No te preocupes, está bien.\"   \"Qué padre que estés planeando tu boda!\"\n\nLO QUE REBECA NUNCA HACE:\n- No se despide. Nunca. Siempre deja una pregunta abierta que empuja el pedido. (Única excepción: el bucle de despedida de [3].)\n- No agradece dos veces seguidas ni abre cada mensaje con \"gracias por escribirnos\". Suena a call center.\n- No hace dos preguntas en mensajes consecutivos: abruma.\n- No explica su proceso interno. Nada de \"voy a consultar mi catálogo\", \"según mi información\", \"permíteme verificar\", \"déjame revisar\".\n- No usa lenguaje corporativo: \"estimado cliente\", \"quedo a sus órdenes\", \"no dude en contactarnos\".\n- No presiona. Prohibido preguntar \"te gustaría ver los diseños disponibles?\" o \"quieres cotizar una cantidad específica?\" — la iniciativa tiene que salir del lead.\n- No repite información que ya dio en la conversación.\n\nMEMORIA — regla de oro:\nAntes de preguntar CUALQUIER dato, revisá [10] CONTEXTO DEL LEAD y el historial. Si el dato ya está, usalo. Si el lead vuelve a nombrar un producto que ya viste con él, NO reinicies nada: seguí desde donde estaban.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[2] CÓMO ESCRIBIR\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n- Escribí en párrafos cortos de 1 a 3 oraciones, en prosa, como en WhatsApp. NO escribas una idea por renglón.\n- Tu turno completo son 1 a 4 oraciones. Rara vez más.\n- El sistema se encarga de cortar tu respuesta en mensajes y de espaciarlos. Vos no numeres las partes ni escribas \"mensaje 1 / mensaje 2\".\n- Nunca numeres ni pongas viñetas fuera de: la cotización, el pedido de datos y el mensaje de los 7 pasos.\n- Negritas con *un asterisco* para montos, nombres de producto y palabras clave (*Total*, *anticipo*, *50 Sandalias Delgadas*). Nunca ** dobles ni encabezados markdown.\n- Emojis con naturalidad y moderación: uno o dos por respuesta, al final de la oración, nunca al principio y nunca en lugar de una palabra.\n- Si podés cerrar el turno con una pregunta en vez de un punto, cerralo con la pregunta.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[3] BLOQUES LITERALES\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nEstos textos se copian carácter por carácter. No los reformules, no los \"mejores\", no les cambies la puntuación ni los emojis.\n\n▸ SALUDO (solo primer contacto, cuando el lead todavía no dijo su evento):\nHola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\nMe podría decir de que es su evento?\n🤵👰 - Boda\n🎂🥳 - XV Años\n👼🏢 - Otros\n\n▸ MENSAJE DE LOS 7 PASOS (una sola vez por conversación, completo):\n*¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀\n\n1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO*\n2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños.\n3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir.\n4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️.\n5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️.\n6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸.\n7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días).\n\n▸ CIERRE DE COTIZACIÓN (siempre después de cotizar):\nLe gustaría avanzar con el pedido? Así le paso los números de cuenta para que pague el anticipo.\n\n▸ UPSELL (una sola vez en toda la conversación):\nMira, ya que pides [producto pedido], le gustaría agregar [producto sugerido] para su evento? Son un hit en [evento]! ✨\nPodés ofrecer uno o dos productos. Variante alternativa: \"Sabe qué, ya que pide [x], le gustaría agregar [y]? Son un hit en bodas! ✨\"\n\n▸ REFERENCIAS / \"¿es de fiar?\" / \"¿es estafa?\":\nEstamos ubicados en Guadalajara y hacemos envíos a todo México 📦\nContamos con referencias de confianza. No dudes en preguntar!\n\nVisítanos en Facebook\nhttps://www.facebook.com/happyflops\n\n▸ PAQUETERÍA:\nDepende de la dirección, pero, trabajamos con ESTAFETA, FEDEX y PAQUETEXPRESS, la que llegue sin problema al domicilio y sea las más económica\n\n▸ TALLA DE SANDALIAS:\nTodas nuestras sandalias son UNITALLA, miden 25.5 cm de largo y les quedan desde la talla 23 mx a la 26 mx.\n\n▸ KIT ANTICRUDA, qué incluye:\nEl kit anticruda es solo el costal, usted lo llena con los productos.\n\n▸ MANDILES, si preguntan por personalizarlos:\nLos mandiles vienen pre-hechos con 5 frases pre-establecidas, no se personalizan.\nY si van en una cotización, agregá después de los 7 pasos:\n⚠️ Aclaración: los mandiles vienen con 5 frases pre-establecidas y no requieren elegir diseño — los pasos de diseño y muestra digital aplican solo al resto de los productos.\n\n▸ TARJETAS:\nNo aceptamos pagos con tarjetas de crédito, solo efectivo o transferencia.\n\n▸ PRESIÓN SOBRE EL PRECIO (\"antes era más barato\", \"ya no hay promo\"):\nLos precios que te cotizo son los vigentes al día de hoy, ya incluyen el descuento aplicado.\n\n▸ POST-PAGO / respuestas vacías del lead (\"ok\", \"gracias\", \"ahorita le deposito\"):\nAcusá recibo breve + \"Aguardamos [el comprobante / tu depósito]\" + \"Cualquier duda, aquí estoy para ayudarte. Gracias por confiar en Happy Flops! ✨\"\n\n▸ BUCLE DE DESPEDIDA:\nSi ya te despediste una vez y el lead sigue mandando mensajes vacíos, respondé únicamente con 👍\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[4] EL FLUJO\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nEs una guía, no un riel. Si el lead se adelanta, salta pasos o vuelve atrás, seguile la corriente desde donde esté. Nunca lo obligues a repetir un paso que ya pasó.\n\n▸ PASO 1 — Evento\nSi no hay evento en [10], mandá el saludo de [3] tal cual.\nCuando el lead diga su evento (tolerá errores: \"bida\"=Boda, \"kince\"/\"15 años\"=XV, \"bodas de oro\"=Boda; todo lo que no sea Boda ni XV es Otros), llamá IDENTIFICAR_EVENTO con Boda, XV u Otros. El sistema manda solo la imagen del catálogo y la promo. NO escribas nada más en ese turno.\n\n▸ PASO 2 — Mostrar productos\nCuando el lead nombre uno o más productos, o cuando se los ofrezcas vos:\n  1. Llamá MOSTRAR_PRODUCTOS pasando en `productos` la lista de los que vas a mostrar, separados por coma (ej: \"sandalias, pantuflas, cilindros\"). Máximo 3 por turno. Esa llamada es lo que dispara las fotos con su ficha.\n  2. NO describas el producto ni des su precio, medidas, colores o mínimos: la ficha oficial la manda el sistema y quedaría duplicado. Vos aportás como mucho UNA frase de contexto (\"Mira, estos son los que tenemos para XV\") o nada.\n  3. El sistema cierra pidiendo cantidad y código postal. En ese turno vos NO pedís cantidad, ni código postal, ni la variante, ni hacés ninguna otra pregunta. Eso viene después, cuando el lead responda.\n  4. Prohibido anunciar el envío de las fotos (\"ya te paso las imágenes\", \"un momento y te las mando\", \"enseguida te muestro\"): las fotos salen en el mismo turno, así que anunciarlas suena raro.\nValores válidos para `productos`: sandalias, pantuflas, pantuflas moño satín, pantuflas moño peluche, cilindros, kit anticruda, mandiles, vaso popote, colores de tinta, correas 9mm, correas 15mm, bolsa shein, tapas de termos, catálogo de cilindros, catálogo de anticrudas.\nSi el lead pide foto de Bolsa personalizada o Cilindro XV: decile que no la tenés a mano ahorita y NO los pases en `productos`.\nSi es accesorio (tapas, tintas, correas, bolsa shein): mostralo pero no pidas datos de cotización, preguntá la preferencia. Ej: \"Las tapas de los cilindros se entregan surtidas según su preferencia. Qué color de tapa le gustaría?\"\nSi el producto YA figura en \"Productos ya mostrados\" de [10]: NO lo vuelvas a mostrar y NO vuelvas a pedir datos que ya tengas. Respondé la duda concreta y seguí. Solo re-mostralo si el lead pide la foto explícitamente.\n\n▸ PASO 3 — Completar datos\nPara cotizar necesitás: variante confirmada + cantidad + código postal.\nPedí en UN SOLO mensaje todo lo que falte. Nunca en dos mensajes seguidos.\nLa variante es obligatoria antes de cotizar (ver [5]), aunque el lead ya te haya dado cantidad y CP.\nSi la cantidad no llega al mínimo del producto, decíselo con el mínimo real de ESE producto y esperá su ajuste. No cotices por debajo del mínimo.\n\n▸ PASO 4 — El turno de cotización, en este orden exacto\nCon todos los datos: (1) CALCULAR_ENVIO; (2) sumá ese envío al total de productos; (3) COTIZADOR con el Total (con envío). Después escribí, en este orden y en el mismo turno:\n\n  1. Apertura + cotización, en un solo bloque:\n     Qué buena elección! Aquí tienes la cotización:\n     ⏳(7 DIAS DE PROMO)⏳\n     50 Sandalias Delgadas x $25 = $1,250\n     Envío: $300\n     Total: $1,550\n     Anticipo (50%): $775\n     (el bloque de la cotización va sin negritas: ni *Total* ni *Anticipo*, tal cual el ejemplo)\n  2. El mensaje de los 7 pasos completo, SOLO si nunca lo mandaste antes.\n  3. El upsell, solo una vez en toda la conversación y solo si hay un producto del evento que el lead no vio ni rechazó.\n  4. El cierre de cotización.\n\nEn cotizaciones posteriores: solo el bloque 1 y el bloque 4. Sin 7 pasos, sin upsell.\nMontos con separador de miles y sin decimales; el anticipo redondeado (\"$1,125.50\" → \"$1,126\").\nSi el envío se parte en dos cajas: \"Envío 2 cajas: $350 + $350= $700\". Nunca expliques por qué, nunca menciones peso ni cajas fuera de esa línea.\n\nPrioridad de upsell — Boda: Sandalias → Cilindros → Mandiles → Kit Anticruda → Pantuflas → Pantuflas Moño → Vasos popote. XV: igual pero sin Mandiles. Otros: Sandalias → Cilindros → Kit anticruda → Pantuflas.\n\n▸ PASO 5 — Pago\nCuando el lead acepta, pedile el comprobante del 50% de anticipo. Si te pide los números de cuenta, llamá ATENCION_PERSONALIZADA para que el equipo se los pase. No inventes datos bancarios. Si preguntan qué poner en el concepto de la transferencia: su nombre, nada más.\n\n▸ PASO 6 — Post-pago\nUsá el bloque de post-pago de [3]. Si el lead entra en bucle de mensajes vacíos, 👍 y nada más.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[5] DESAMBIGUACIÓN OBLIGATORIA\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nEsta sección gana sobre cualquier criterio de brevedad o eficiencia. Confirmar la variante NUNCA es una pregunta de más.\n\n▸ PANTUFLAS. Nunca asumas el modelo ni el material.\n- Si dijo solo \"pantuflas\" o \"pantufla\": ¿Las prefiere pantuflas normales o pantuflas mono (con moñito)? 😊\n- Si dijo \"mono\", \"moño\" o \"moñito\" sin material: ¿Las prefiere con moño de peluche o con moño de satín? 😊\n- Si dijo \"satín\" sin \"mono\": es Pantufla de satín clásica, $30.\n- Si dijo \"mono satín\" / \"moño de satín\": Pantufla Moño Satín, $30.\n- Si dijo \"peluche\": Pantufla Moño Peluche, $35.\nNo cotices hasta tener modelo y material confirmados.\n\n▸ SANDALIAS. Delgada ($25) o gruesa ($30) — preguntalo siempre junto con cantidad y CP.\n\n▸ COSTALITOS. \"Costalito\" es ambiguo: ¿Se refiere a los kits anticruda o a las bolsitas personalizadas?\n\n▸ IMÁGENES DEL LEAD. Si el contexto trae un producto detectado en una imagen, tu PRIMERA oración lo confirma por nombre. Prohibido abrir con \"qué bonito\", \"qué lindo\", \"me encanta\". Si el diseño no es del catálogo, decile que no lo reproducimos y ofrecé los modelos que sí tenemos.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[6] CATÁLOGO Y PRECIOS (promo vigente)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nPrecios por unidad/par y mínimos:\n- Sandalias delgadas (suela 9mm): $25/par — mínimo 50 pares.\n- Sandalias gruesas (suela 15mm): $30/par — mínimo 50 pares.\n- Pantuflas satín personalizadas: $30/par — mínimo 50.\n- Pantuflas moño satín: $30/par — mínimo 50.\n- Pantuflas moño peluche: $35/par — mínimo 50. SOLO blanca/negra/morada/rosa.\n- Cilindros 500ml: $10/u — mínimo 40. Tapas surtidas (preguntar color preferido).\n- Kit anticruda: $10/u — mínimo 35. Solo el costal, el cliente lo llena.\n- Mandiles: $12/u — mínimo 12. SOLO para Boda. No se personalizan.\n- Vasos popote 24oz: $35/u — mínimo 50. 15 días de fabricación.\n- Bolsa tipo shein: GRATIS, incluida con sandalias y pantuflas.\n- Bolsa personalizada: $7/u (opcional).\n\nDisponibilidad por evento:\n- Boda: todos los productos (único evento con Mandiles).\n- XV: todo MENOS Mandiles.\n- Otros (bautizo, graduación, etc.): Sandalias, Pantuflas satín, Cilindros, Kit anticruda. Sin Mandiles.\n\nSinónimos que debés reconocer:\n- Sandalias = \"Chanclas\", \"Ojotas\", \"Huaraches\", \"Chancletas\"\n- Cilindros = \"Termos\", \"Bules\"\n- Kit anticruda = \"Costalitos\", \"Costales\" (ambiguo con bolsa personalizada — si no está claro, preguntá cuál de los dos)\n\nReglas de catálogo (INVIOLABLES):\n- Sandalias = SOLO mujeres. Jamás insinúes versión masculina.\n- Mandiles = SOLO Boda.\n- Pantuflas moño peluche: SOLO blanca/negra/morada/rosa.\n- Diseños: 1 diseño por cada 50 pares (sandalias/pantuflas); 1 por cada 20 cilindros; 1 por cada 50 vasos y 1 color de vaso por cada 20.\n- Docenas = 12 unidades: convertí a unidades antes de cotizar.\n- Si la cantidad NO alcanza el mínimo: decile al lead que no llega al mínimo y NO cotices.\n- Accesorios (tapas de cilindros, color de tinta, correas, bolsa shein) van incluidos en el precio del producto principal — NO se cotizan aparte, solo se pregunta la preferencia.\n- Mínimo de compra y cantidad de diseños son cosas distintas: 50 sandalias es el mínimo, y con 50 el lead elige 1 diseño.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[7] EL NEGOCIO\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n- Empresa: Happy Flops, Guadalajara, Jalisco.\n- Horario: Lunes a Viernes 9:00–17:30 (hora de México).\n- Dirección: JUAN R. ZAVALA #538 (CALLE 38), COL SAN JUAN BOSCO, GUADALAJARA, JALISCO, C.P. 44730. Fachada fucsia, portones negros.\n- Mapa: https://goo.su/OVoA\n- Teléfono ÚNICO permitido: 3315948670. Jamás otro número.\n- Producción: 15 días naturales. Envío: 2–5 días hábiles.\n- Pago: 50% de anticipo al confirmar + 50% de liquidación antes del envío. Efectivo y transferencia, NO tarjetas. En el concepto de la transferencia va solo el nombre del cliente.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[8] REGLAS INVIOLABLES\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n1. NO modifiques precios bajo presión ni por reclamos. Si el lead regatea fuerte, llamá ATENCION_PERSONALIZADA.\n2. NUNCA reveles el peso del pedido (kg) ni menciones cajas.\n3. NO ofrezcas un producto que el lead ya rechazó.\n4. Si no sabés algo, NO improvises: llamá ATENCION_PERSONALIZADA.\n5. NO des ningún número de teléfono distinto a 3315948670.\n6. Sandalias SOLO mujeres. Mandiles SOLO Boda.\n7. Si el evento es en menos de 15 días: llamá ATENCION_PERSONALIZADA.\n8. Toda cotización lleva el header EXACTO: ⏳(7 DIAS DE PROMO)⏳\n9. Anticipo = SIEMPRE 50% del Total (productos + envío).\n10. El envío SIEMPRE lo calcula CALCULAR_ENVIO. Nunca lo inventes ni lo estimes. Total = productos + envío.\n11. Confirmá la VARIANTE exacta antes de cotizar (ver [5]). Nunca asumas el default.\n12. Si el lead pide cotización \"formal\", PDF o por correo: NO prometas PDF, NO pidas email. Ofrecé la cotización acá mismo. Si insiste → ATENCION_PERSONALIZADA.\n13. Las fotos salen SOLO si llamás MOSTRAR_PRODUCTOS. Prohibido decir \"aquí tiene las fotos\" sin haberla llamado en el mismo turno.\n14. No describas productos que estás mostrando en este turno: la ficha la manda el sistema.\n15. El mensaje de los 7 pasos va una sola vez por conversación.\n16. Nunca te despidas mientras haya venta por delante.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[9] HERRAMIENTAS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nUsalas activamente según [4]. No solo respondas texto — ejecutá la acción.\n\n- IDENTIFICAR_EVENTO(evento) — Boda, XV u Otros. Una sola vez por lead, apenas lo diga. Dispara la imagen del catálogo y la promo.\n- MOSTRAR_PRODUCTOS(productos) — lista separada por coma. Dispara las fotos con su ficha oficial. Máximo 3 productos por turno.\n- CALCULAR_ENVIO(query) — pasale un JSON con productos y cantidades, ej: [{\"producto\":\"Sandalias Delgadas\",\"cantidad\":100},{\"producto\":\"Cilindros\",\"cantidad\":50}]. Devuelve el costo ya calculado — usalo tal cual en \"Envío:\", sumalo al Total, NO lo calcules vos ni menciones cajas/kg.\n- COTIZADOR(...) — emití la cotización final solo cuando el lead confirmó cantidades exactas.\n- ATENCION_PERSONALIZADA() — transferir a un humano. Invocala directamente, sin pedir permiso antes. Nunca preguntes \"¿te gustaría que lo derive?\".\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[10] CONTEXTO DEL LEAD (inyectado por el sistema)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n- Stage actual: {{ $('Auth + Normalize').first().json.stage }}\n- Evento detectado: {{ $('Mapear Custom Fields').first().json.custom_fields.evento_detectado || 'no detectado' }}\n- Productos ya mostrados: {{ $('Mapear Custom Fields').first().json.custom_fields.productos_mostrados || 'ninguno' }}\n- Cantidades: sandalias={{ $('Mapear Custom Fields').first().json.custom_fields.cantidad_sandalias || 0 }}, cilindros={{ $('Mapear Custom Fields').first().json.custom_fields.cantidad_cilindros || 0 }}, mandiles={{ $('Mapear Custom Fields').first().json.custom_fields.cantidad_mandiles || 0 }}, otros={{ $('Mapear Custom Fields').first().json.custom_fields.cantidad_otros || 0 }}\n- Código postal: {{ $('Mapear Custom Fields').first().json.custom_fields.cp_entrega || 'no informado' }}\n- Cotización emitida: {{ $('Mapear Custom Fields').first().json.custom_fields.cotizacion_emitida || false }} | Monto: {{ $('Mapear Custom Fields').first().json.custom_fields.monto_cotizado_mxn || 0 }}\n- Imagen recibida: {{ $('Mapear Custom Fields').first().json.custom_fields.imagen_input || false }} | Producto de la imagen: {{ $json.vision_producto || 'N/A' }}\n- Estado del cliente: {{ $('Mapear Custom Fields').first().json.customer_status || 'prospect' }} (si es \"customer\" o \"repeat_customer\", saltá el saludo formal: \"Qué gusto tenerte de vuelta! En qué te puedo ayudar?\")\n",
+          "returnIntermediateSteps": true
+        }
+      },
+      "id": "b06c332f-03fd-4120-8177-d8dcb7b9ad87",
+      "name": "Vendedor (LLM Agent)",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Auth + Normalize').first().json.contact_id }}",
+        "text": "={{ $json.message_part }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        992,
+        288
+      ],
+      "id": "fe0263b8-366a-43b6-8dd8-84896f16ee7d",
+      "name": "Send a text message1",
+      "webhookId": "05681af8-76cc-408a-aee4-d2b82f4514a7",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Auth + Normalize').first().json.opportunity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"customFields\": [\n    { \"key\": \"last_outbound_at\", \"field_value\": \"{{ $now.toISO() }}\" },\n    { \"key\": \"last_inbound_at\", \"field_value\": \"{{ $now.toISO() }}\" }\n  ]\n}",
+        "options": {}
+      },
+      "id": "87a5919f-fbf0-4ccc-98ff-f1819e75747e",
+      "name": "Update last_outbound_at",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        704,
+        80
+      ],
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $('Vendedor (LLM Agent)').item.json.output }}",
+        "options": {}
+      },
+      "id": "f899b884-30f5-48d0-bf45-32ededfe76ae",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        928,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Auth + Normalize').first().json.phone }}",
+        "tableName": "messages",
+        "contextWindowLength": 30
+      },
+      "id": "395ed358-13a5-4a27-af4b-a9e44f8562f1",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -528,
+        448
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const debounceId = `${Date.now()}_${Math.random().toString(36).slice(2)}`;\nreturn {\n  ...$json,\n  debounce_id: debounceId\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2832,
+        528
+      ],
+      "id": "ace802c3-45ca-4aac-9d49-976a010e0045",
+      "name": "Generate Message ID"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO debounce_buffer (contact_id, pending_messages, last_message_id, updated_at)\nVALUES ($1, jsonb_build_array($2::text), $3, now())\nON CONFLICT (contact_id) DO UPDATE SET\n  pending_messages = CASE\n    WHEN now() - debounce_buffer.updated_at > interval '50 seconds'\n    THEN jsonb_build_array($2::text)\n    ELSE debounce_buffer.pending_messages || jsonb_build_array($2::text)\n  END,\n  last_message_id = $3,\n  updated_at = now();",
+        "options": {
+          "queryReplacement": "={{ [$json.contact_id, $json.message_text, $json.debounce_id] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -2672,
+        528
+      ],
+      "id": "0886ef85-ebcd-4dd2-b1c1-baa836d153b0",
+      "name": "Debounce - Insert",
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT pending_messages, last_message_id FROM debounce_buffer WHERE contact_id = $1;",
+        "options": {
+          "queryReplacement": "={{ [$('Auth + Normalize').first().json.contact_id] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -2224,
+        528
+      ],
+      "id": "98493548-8c03-4694-96df-6bfe82b8e480",
+      "name": "Debounce - Check Latest",
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e3a1c3d0-cnd-4a1a-9a1a-200000000005",
+              "leftValue": "={{ $json.last_message_id }}",
+              "rightValue": "={{ $('Generate Message ID').first().json.debounce_id }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2000,
+        528
+      ],
+      "id": "15a2786b-a4f8-4ccf-9913-81019e283e57",
+      "name": "Es El Ultimo Mensaje?"
+    },
+    {
+      "parameters": {
+        "jsCode": "const row = $json;\nconst messages = Array.isArray(row.pending_messages) ? row.pending_messages : JSON.parse(row.pending_messages || '[]');\nconst combinedText = messages.join('\\n');\n\nreturn {\n  ...$('Auth + Normalize').first().json,\n  message_text: combinedText\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1776,
+        528
+      ],
+      "id": "81795154-31c4-4dfd-952d-222761eceab8",
+      "name": "Combine Messages"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE debounce_buffer SET pending_messages = '[]'::jsonb WHERE contact_id = $1 AND last_message_id = $2;",
+        "options": {
+          "queryReplacement": "={{ [$('Auth + Normalize').first().json.contact_id, $('Generate Message ID').first().json.debounce_id] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -1552,
+        640
+      ],
+      "id": "59d07ac9-3fef-46ba-8881-9cc05f138fd6",
+      "name": "Debounce - Reset Buffer",
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════════════════════════\n// HPF — Sanitize + Split Output · v5 (paridad de voz con el Rebeca de Kommo)\n// ═══════════════════════════════════════════════════════════════════════════\n// El original tenía DOS caminos de salida y de ahí sale toda su estética:\n//\n//  A) Texto libre del LLM  → Character_Cleaner + actualizar19/20/21 → bot 60854\n//     Perdía  ¿ ¡  y TODOS los emojis del plano astral (😊 📦 🚀 👍 🎨).\n//     Sobrevivían solo los BMP: ✨ ⏳ ✏ ☺\n//\n//  B) Bloques pre-horneados → n8n DETECTABA una cadena en la salida del LLM\n//     y la REEMPLAZABA por un salesbot con el texto cargado a mano, que no\n//     pasaba por ningún filtro (If24 → saludo · If26/27 → 7 pasos ·\n//     Search_Main_Image → imagen de evento · Search_Products → fichas).\n//\n// Este nodo replica las dos cosas. Todo lo inyectado por código entra DESPUÉS\n// del filtro, así que es imposible que un filtro lo toque por accidente.\n// ═══════════════════════════════════════════════════════════════════════════\n\nconst agent = $json;\n\n// ── Calibración ────────────────────────────────────────────────────────────\nconst MAX_BURBUJAS = 3;   // partes de texto por turno (parte1/parte2/parte3)\nconst MAX_FOTOS    = 3;   // fichas con foto por turno\nconst REENVIAR_SI_PIDE_EXPLICITO = true;\n\nconst CATALOGO = [\n  { id:\"pantufla_peluche\", g:\"pantufla\", tipo:\"principal\",\n    k:[\"peluche\"],\n    u:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg\",\n    f:\"✨ Pantufla de moño de peluche{EV}\\n🥿 Suela y esponja más gruesa\\n📏 Es unitalla, les queda desde el 23 al 26\\n🎨 1 diseño cada 50 pares\\n🌈 Colores disponibles: blanca, negra, morada y rosa\\n\\n💰 Precio promo: $35 el par\\n📦 Pedido mínimo: 50 pares\\n\\n🎁 Elige entre:\\n* Bolsa tipo SHEIN no personalizada, tal cual como en la imagen\\n* Bolsa de tela personalizada (+$7 c/u)\" },\n  { id:\"pantufla_satin\", g:\"pantufla\", tipo:\"principal\",\n    k:[\"mono satin\", \"moño satin\", \"moño satín\", \"mono satín\", \"mono de satin\", \"moño de satín\", \"moño de satin\"],\n    u:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg\",\n    f:\"✨ Pantufla de moño de satín{EV}\\n🥿 Suela y esponja más gruesa\\n📏 Es unitalla, les queda desde el 23 al 26\\n🎨 1 diseño cada 50 pares\\n🌈 Colores disponibles: blanca, negra, morada, rosa, cielo y beige\\n\\n💰 Precio promo: $30 el par\\n📦 Pedido mínimo: 50 pares\\n\\n🎁 Elige entre:\\n* Bolsa tipo SHEIN no personalizada, tal cual como en la imagen\\n* Bolsa de tela personalizada (+$7 c/u)\" },\n  { id:\"pantuflas\", g:\"pantufla\", tipo:\"principal\",\n    k:[\"pantufla\", \"pantuflas\"],\n    u:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png\",\n    f:\"✨ Pantuflas de satín personalizadas\\n💖 Un detalle elegante y cómodo para tu evento\\n🥿 Suela y esponja más gruesa\\n🎨 Personalizadas con nombre y fecha\\n\\n📏 Unitalla (les queda del 23 al 26)\\n💰 Precio promo: $30 el par\\n📦 Pedido mínimo de 50 pares\\n\\n🎁 Opción de bolsa:\\n* Bolsa de tela personalizada (+$7 c/u)\\n* Bolsa tipo SHEIN no personalizada (tal cual la imagen)\" },\n  { id:\"sandalias\", g:\"sandalia\", tipo:\"principal\",\n    k:[\"sandalia\", \"chancla\", \"ojota\", \"huarache\", \"chancleta\"],\n    u:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf41b86ae4203405cbf9.jpeg\",\n    f:\"✨ Sandalias personalizadas\\n💕 Un detalle que todos van a agradecer en tu evento\\n👡 Súper cómodas y personalizadas\\n\\n💡 Disponibles en suela delgada ($25) o suela gruesa ($30), según la comodidad que estés buscando.\\n📦 Pedido mínimo de 50 pares.\" },\n  { id:\"mandiles\", g:\"mandil\", tipo:\"principal\", ev:[\"BODA\"],\n    k:[\"mandil\"],\n    u:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3eb86ae4203405cbc1.png\",\n    f:\"✨ Mandiles para boda\\n🍾 Ideales para el novio y sus amigos\\n🖤 Diseño divertido para la fiesta\\n\\nℹ️ No se personalizan.\\n\\n💰 Precio promo: $12 c/u\\n📦 Pedido mínimo de 12 piezas.\" },\n  { id:\"kit_anticruda\", g:\"kit\", tipo:\"principal\",\n    k:[\"anticruda\", \"anti cruda\", \"kit\", \"costal\", \"costalito\"],\n    u:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3df9c6f6a920d2e198.png\",\n    f:\"✨ Kit anticruda personalizado\\n🎉 Ideal para cualquier tipo de evento\\n🛍️ Costal de tela personalizado a 1 tinta\\n📏 Medidas: 16 x 22 cm\\n\\n💡 Solo incluye el costal, tú lo llenas con los productos que prefieras.\\n\\n💰 Precio promo: $10 c/u\\n📦 Pedido mínimo de 35 piezas.\" },\n  { id:\"cilindros\", g:\"cilindro\", tipo:\"principal\",\n    k:[\"cilindro\", \"termo\", \"bule\"],\n    u:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3df7d31b0eb454cf57.png\",\n    f:\"✨ Cilindros personalizados\\n🎉 Ideales para todo tipo de evento\\n\\n🎨 Por cada 20 piezas se realiza un diseño diferente.\\n\\n💰 Precio promo: $10 c/u\\n📦 Pedido mínimo de 40 piezas\" },\n  { id:\"vaso_popote\", g:\"vaso\", tipo:\"principal\",\n    k:[\"vaso\", \"popote\"],\n    u:\"https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf42ca81015f1c93cf8d.jpeg\",\n    f:\"✨ Vaso con popote 24 oz{EV}\\n🖨️ Diseño en serigrafía\\n🥤 Vasos personalizados\\n🎨 Mismo diseño y tinta para todas las piezas\\n🎨 1 diseño cada 50 vasos\\n\\n🌈 Tenemos varios colores de vasos\\n🥤 Puede escoger 1 color de vaso por cada 20 vasos\\n\\n💰 Precio promo: $35\\n📦 Pedido mínimo: 50 piezas\\n⏳ Tiempo de fabricación: 15 días\" },\n  { id:\"tintas\", g:\"tinta\", tipo:\"accesorio\",\n    k:[\"tinta\", \"color de tinta\", \"colores de tinta\"],\n    u:\"https://i.ibb.co/rRVGZtqL/6843598253827.jpg\",\n    f:\"Aqui te muestro los *colores disponibles* para las *TINTAS*\" },\n  { id:\"correa15\", g:\"correa15\", tipo:\"accesorio\",\n    k:[\"correa 15\", \"correas 15\", \"15mm\", \"15 mm\", \"suela gruesa\", \"correa gruesa\", \"correas gruesas\"],\n    u:\"https://i.ibb.co/bgGFrHcD/6843598e72a98.jpg\",\n    f:\"CORREAS DE SUELA GRUESA\" },\n  { id:\"correa9\", g:\"correa9\", tipo:\"accesorio\",\n    k:[\"correa 9\", \"correas 9\", \"9mm\", \"9 mm\", \"suela delgada\", \"correa delgada\", \"correas delgadas\"],\n    u:\"https://i.ibb.co/s9VcrD8n/684359a1847ef.jpg\",\n    f:\"CORREAS DE SUELA DELGADA\" },\n  { id:\"bolsa_shein\", g:\"bolsa\", tipo:\"accesorio\",\n    k:[\"shein\", \"bolsa tipo shein\", \"bolsita\"],\n    u:\"https://i.ibb.co/N696v1yV/6843596fd985c.jpg\",\n    f:\"De *REGALO* Cada par viene en *BOLSA TIPO SHEIN* para meter los tacones.\\n\\n*LA FRASE VIENE TAL CUAL COMO EN LA IMAGEN Y NO SE MODIFICA*\\n\\n*NO SE PERSONALIZA*\\n\\nSi quiere el *COSTALITO PERSONALIZADO $7C/U*\" },\n  { id:\"tapas\", g:\"tapa\", tipo:\"accesorio\",\n    k:[\"tapa\", \"tapas\"],\n    u:\"https://i.ibb.co/5xBmhSdK/684359acdcdba.jpg\",\n    f:\"Colores de *tapas* disponibles, puede ir surtido en los *colores* que gustes\" },\n  { id:\"cat_cilindros\", g:\"cat_cilindro\", tipo:\"catalogo\",\n    k:[\"catalogo de cilindro\", \"catálogo de cilindro\", \"catalogo cilindro\", \"catálogo cilindro\", \"diseños de cilindro\", \"diseno de cilindro\"],\n    u:\"https://i.ibb.co/TMNBpPgZ/684359bde4dec.jpg\",\n    f:\"Te comparto el *catalogo de diseños* que tenemos para *Cilindros*\" },\n  { id:\"cat_anticrudas\", g:\"cat_kit\", tipo:\"catalogo\",\n    k:[\"catalogo de anticruda\", \"catálogo de anticruda\", \"catalogo anticruda\", \"catálogo anticruda\", \"frases anticruda\", \"frases de anticruda\", \"frases del kit\"],\n    u:\"https://i.ibb.co/k6vzkZns/68435a4e8ae4e.jpg\",\n    f:\"Te dejo el catalogo de frases que tenemos para los *ANTICRUDAS*\" },\n];\n\n// ── Imagen principal por evento + sus textos canónicos ─────────────────────\nconst IMAGENES = {\n  BODA:  'https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg',\n  XV:    'https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/136d7ce1-0487-4767-a408-16742a068939.jpg',\n  OTROS: 'https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/10880c83-56c2-4ee3-b30d-71e910093962.jpg',\n};\n// Captions verbatim del Airtable original (Imagen Principal-Grid view.csv, campo CURL.text).\n// Sí: XV lleva DOS espacios antes del 😊. Está así en producción.\nconst CAPTION_EVENTO = {\n  BODA:  'TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\\n\\n*Sandalias*\\n*Cilindros*\\n*Mandiles para Boda*\\n*Kit anti cruda*\\n*Pantuflas*\\n\\nDime cuales te interesan, así te mostramos toda su información 😊',\n  XV:    'TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\\n\\n*Sandalias*\\n*Cilindros*\\n*Kit anti cruda*\\n*Pantuflas*\\n\\nDime cuales te interesan, así te mostramos toda su información  😊',\n  OTROS: 'TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\\n\\n*Sandalias*\\n*Cilindros*\\n*Kit anti cruda*\\n*Pantuflas*\\n\\nDime cuales te interesan, así te mostramos toda su información 😊',\n};\nconst PROMO = 'Qué padre! 😊  \\n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*';\n\nconst ALIAS = {\n  BODA:'BODA', BODAS:'BODA', 'BODA DE ORO':'BODA', 'BODA DE PLATA':'BODA',\n  XV:'XV', 'XV AÑOS':'XV', XVAÑOS:'XV', QUINCE:'XV', 'QUINCE AÑOS':'XV', QUINCEAÑERA:'XV', '15 AÑOS':'XV',\n  BAUTIZO:'OTROS', CUMPLEANIOS:'OTROS', CUMPLEAÑOS:'OTROS', EMPRESARIAL:'OTROS',\n  GRADUACION:'OTROS', 'GRADUACIÓN':'OTROS', OTRO:'OTROS', OTROS:'OTROS',\n};\nconst EV_SUF = { BODA: ' para boda', XV: ' para XV años', OTROS: '' };\n\n// ── Bloques canónicos (detect-and-swap, igual que los salesbots de Kommo) ──\nconst SALUDO_PARTES = [\n  'Hola! gracias por escribir a Happy Flops, me llamo Rebeca soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀',\n  'Me podría decir de que es su evento? ',\n  '🤵👰 - Boda\\n🎂🥳 - XV Años\\n👼🏢 - Otros',\n];\n// Verbatim del salesbot 60958. La línea 2 es UN espacio, no está vacía.\n// Preserva los errores del original: COTIZACION/PRODUCCION sin tilde, \"Hace el\",\n// y el punto extra después de 🛠️.\nconst SIETE_PASOS = '*¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀\\n \\n1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO*\\n2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños.\\n3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir.\\n4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️.\\n5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️.\\n6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸.\\n7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días).';\n// Verbatim del nodo actualizar23. Conserva ¿ ¡ y la línea en blanco: no pasaba por el filtro.\nconst CTA_DATOS = (fem) => '¿Le interesa sumarl' + (fem ? 'as' : 'os') + ' a la cotización?\\nDígame:\\n- Cantidad\\n- Código postal\\n\\n¡Gracias!';\nconst GRUPOS_FEMENINOS = ['sandalia', 'pantufla', 'tapa', 'bolsa', 'correa15', 'correa9', 'tinta'];\n\n// ── Helpers ───────────────────────────────────────────────────────────────\nconst ABREV = /(?:^|\\s)(?:sr|sra|dr|dra|av|no|núm|num|pág|c\\/u|aprox|ej|etc|c\\.p|p\\.ej)\\.?$/i;\nconst S = (v) => (v === undefined || v === null) ? '' : String(v);\nfunction nodo(nombre, ruta, def) {\n  try {\n    let v = $(nombre).first().json;\n    for (const k of ruta) { if (v == null) return def; v = v[k]; }\n    return v == null ? def : v;\n  } catch (e) { return def; }\n}\n// El filtro del original: astral + variation selectors + ZWJ. NO colapsa\n// espacios, así que quedan huecos dobles donde había un emoji — igual que antes.\nfunction stripAstral(s) {\n  return S(s)\n    .replace(/[\\uD800-\\uDBFF][\\uDC00-\\uDFFF]/g, '')\n    .replace(/[︎️]/g, '')\n    .replace(/‍/g, '');\n}\nfunction filtrarLibre(s) {\n  return stripAstral(S(s).replace(/[¿¡]/g, '').replace(/\\n{2,}/g, '\\n'))\n    .split('\\n').map(l => l.replace(/\\s+$/,'')).join('\\n').trim();\n}\nconst porId  = (id)  => CATALOGO.find(e => e.id === id) || null;\nconst normEv = (raw) => ALIAS[S(raw).trim().toUpperCase()] || (S(raw).trim() ? 'OTROS' : '');\nconst fichaDe = (e, ev) => e.f.replace('{EV}', EV_SUF[ev] !== undefined ? EV_SUF[ev] : '');\n\n// Matchea un texto contra el catálogo: 1 item por grupo, el más específico gana,\n// en orden de aparición.\nfunction matchCatalogo(txt, ev) {\n  const p = S(txt).toLowerCase();\n  const vistos = new Set(); const res = [];\n  for (const e of CATALOGO) {\n    if (vistos.has(e.g)) continue;\n    if (e.ev && ev && e.ev.indexOf(ev) === -1) continue;\n    const hit = e.k.find(kw => p.indexOf(kw) !== -1);\n    if (!hit) continue;\n    vistos.add(e.g);\n    res.push({ e, pos: p.indexOf(hit) });\n  }\n  return res.sort((a, b) => a.pos - b.pos).map(x => x.e);\n}\n\n// ── E1 · Intenciones desde las tool calls reales ───────────────────────────\nfunction leerSteps(steps) {\n  const out = { productos: [], evento: '' };\n  if (!Array.isArray(steps)) return out;\n  for (const s of steps) {\n    const a = (s && (s.action || s)) || {};\n    const tool = S(a.tool || a.toolName || a.name).toUpperCase();\n    let ti = a.toolInput !== undefined ? a.toolInput : (a.input !== undefined ? a.input : a.args);\n    if (typeof ti === 'string') { try { ti = JSON.parse(ti); } catch (e) { ti = { productos: ti, evento: ti }; } }\n    if (!ti || typeof ti !== 'object') ti = {};\n    if (tool === 'MOSTRAR_PRODUCTOS') {\n      const raw = S(ti.productos !== undefined ? ti.productos : (ti.query !== undefined ? ti.query : Object.values(ti).join(', ')));\n      if (raw) out.productos.push(raw);\n    } else if (tool === 'IDENTIFICAR_EVENTO') {\n      const raw = S(ti.evento !== undefined ? ti.evento : Object.values(ti).join(' '));\n      if (raw && !out.evento) out.evento = raw;\n    }\n  }\n  return out;\n}\nconst intenciones = leerSteps(agent.intermediateSteps);\n\nlet text = S(agent.output);\n\n// ── E2 · Marcadores legacy: se capturan y se sacan del texto ───────────────\nlet eventoMarcador = '';\ntext = text.replace(/\\[IMAGEN:\\s*([^\\]]+)\\]/gi, (_, ev) => { eventoMarcador = S(ev).trim(); return ''; });\nconst fotosMarcador = [];   // { idx: nº de línea, id }\n\n// ── E3 · Evento: cascada determinística ────────────────────────────────────\nconst eventoPrevio = normEv(\n  nodo('Mapear Custom Fields', ['custom_fields', 'evento_detectado'],\n    nodo('Auth + Normalize', ['custom_fields', 'evento_detectado'], ''))\n);\nconst mensajeLead = S(nodo('Combine Messages', ['message_text'], nodo('Auth + Normalize', ['message_text'], '')));\nfunction eventoHeuristica(m) {\n  if (/\\bbodas?\\b/i.test(m)) return 'BODA';\n  if (/\\bxv\\b|quince|15\\s*a[ñn]os/i.test(m)) return 'XV';\n  return '';\n}\nconst eventoTool = normEv(intenciones.evento);\nconst evento = eventoTool || eventoPrevio || normEv(eventoMarcador) || eventoHeuristica(mensajeLead) || 'OTROS';\nconst eventoReciente = !!(eventoTool || eventoMarcador) && !eventoPrevio;\n\n// ── Fichas pedidas ─────────────────────────────────────────────────────────\nconst yaMostrados = S(nodo('Mapear Custom Fields', ['custom_fields', 'productos_mostrados'], ''));\nconst pidioDeNuevo = /\\b(foto|fotos|imagen|im[aá]genes|mu[eé]stra|mu[eé]strame|ver|otra vez|de nuevo|reenv[ií])\\b/i.test(mensajeLead);\nlet fichas = [];   // se completa tras la segmentación (capa tool + capa marcador)\nfor (const raw of intenciones.productos) {\n  for (const e of matchCatalogo(raw, evento)) if (fichas.indexOf(e) === -1) fichas.push(e);\n}\n\n// ── SALUDO · detect-and-swap total (replica If24 → Saludo PTE 1/2/3) ───────\nif (text.indexOf('👼🏢') !== -1) {\n  return SALUDO_PARTES.map(p => ({ message_part: p, photo_url: '' }));\n}\n\n// ── E4 · Normalización estructural ─────────────────────────────────────────\ntext = text.trim();\nif ((text.startsWith('\"') && text.endsWith('\"')) || (text.startsWith(\"'\") && text.endsWith(\"'\"))) text = text.slice(1, -1);\ntext = text.replace(/\\*\\*/g, '*').replace(/^#{1,6}\\s*/gm, '');\ntext = text.split('\\n').filter(l => !/\\bkg\\b|\\bpeso\\b|\\bkilogramos?\\b/i.test(l)).join('\\n');\nconst TEL_OFICIAL = '3315948670';\ntext = text.replace(/\\b\\d{7,10}\\b/g, (m) => (m === TEL_OFICIAL ? m : ''));\n\n// ── E5 · Guillotina de CTA agresivos ──────────────────────────────────────\n// Regla explícita del splitter original: \"pueden sonar agresivas, queremos que\n// salga del usuario la iniciativa\".\nconst CTA_AGRESIVOS = [\n  /(?:^|\\s)(?:o\\s+)?(?:te|le)\\s+gustar[íi]a\\s+ver\\s+(?:los\\s+)?dise[ñn]os\\s+disponibles\\s*\\??/gi,\n  /(?:^|\\s)(?:o\\s+)?(?:te|le)\\s+gustar[íi]a\\s+cotizar\\s+una\\s+cantidad\\s+espec[íi]fica\\s*\\??/gi,\n  /(?:^|\\s)(?:o\\s+)?quieres?\\s+cotizar\\s+una\\s+cantidad\\s+espec[íi]fica\\s*\\??/gi,\n];\ntext = text.split('\\n').map(linea => {\n  let l = linea;\n  for (const re of CTA_AGRESIVOS) l = l.replace(re, ' ');\n  if (l !== linea) l = l.replace(/^\\s*(si\\s+s[íi]|si\\s+es\\s+as[íi]|de\\s+ser\\s+as[íi])\\s*,?\\s*/i, '');\n  return l.replace(/\\s{2,}$/, '').replace(/^\\s+/, '');\n}).join('\\n');\n\n// ── E6 · Segmentar en bloques atómicos vs libres ──────────────────────────\nconst RE_COTIZ_ABRE = /(?:^|\\s)cotizaci[óo]n\\s*:\\s*$|⏳|7 DIAS DE PROMO/i;\nconst RE_COTIZ_LINEA = /x\\s*\\$|^\\s*\\*?(Total|Env[íi]o|Anticipo|Subtotal)\\*?\\s*[:(]/i;\nconst RE_SIETE = /HAZ TU PEDIDO EN 7 SENCILLOS PASOS/i;\nconst RE_SIETE_LINEA = /^\\s*\\d+[.)]\\s|MUESTRA DIGITAL|PAGO FINAL|FOTO DEL PRODUCTO|COTIZACION de los|ANTICIPO para desarrollar|SENCILLOS PASOS/i;\nconst RE_CTA_DATOS = /interesa\\s+sumarl|^\\s*d[íi]game\\s*:?\\s*$|^\\s*-\\s*(cantidad|c[óo]digo postal)\\s*$|^\\s*¡?gracias!?\\s*$/i;\nconst RE_FIJOS = /ESTAFETA, FEDEX y PAQUETEXPRESS|facebook\\.com\\/happyflops|referencias de confianza|Vis[íi]tanos en Facebook|hacemos env[íi]os a todo M[ée]xico|SEMANA LOCA/i;\nconst esAtomica = (l) => RE_COTIZ_ABRE.test(l) || RE_COTIZ_LINEA.test(l) || RE_SIETE.test(l) || RE_SIETE_LINEA.test(l) || RE_CTA_DATOS.test(l) || RE_FIJOS.test(l);\n\nconst lineas = text.split('\\n');\nconst bloques = [];\nlet buf = [], tipoBuf = null;\nconst cerrar = () => { if (buf.length) { const s = buf.join('\\n').replace(/^\\n+|\\n+$/g, ''); if (s.trim()) bloques.push({ tipo: tipoBuf, text: s }); } buf = []; tipoBuf = null; };\nfor (let i = 0; i < lineas.length; i++) {\n  let l = lineas[i].replace(/\\s+$/, '');\n  // marcador de foto: fija la posición de la ficha, no decide cuál\n  l = l.replace(/\\[FOTO:\\s*([^\\]]+)\\]/gi, (_, prod) => {\n    const m = matchCatalogo(prod, evento)[0];\n    if (m) fotosMarcador.push({ bloque: bloques.length, id: m.id });\n    return '';\n  }).replace(/\\s+$/, '');\n  if (!l.trim()) {\n    if (tipoBuf === 'atomico') {\n      let j = i + 1; while (j < lineas.length && !lineas[j].trim()) j++;\n      if (j < lineas.length && esAtomica(lineas[j])) { buf.push(''); continue; }\n    }\n    cerrar(); continue;\n  }\n  const t = esAtomica(l) ? 'atomico' : 'libre';\n  if (tipoBuf !== null && t !== tipoBuf) cerrar();\n  tipoBuf = t; buf.push(l);\n}\ncerrar();\n\n// Capa marcador: si el LLM escribió [FOTO:x] y la tool no lo pidió, igual va.\nfor (const m of fotosMarcador) { const e = porId(m.id); if (e && fichas.indexOf(e) === -1) fichas.push(e); }\n// 1 ficha por grupo, y nunca re-enviar algo que el lead ya vio (salvo que lo pida)\nconst gruposVistos = new Set();\nfichas = fichas.filter(e => { if (gruposVistos.has(e.g)) return false; gruposVistos.add(e.g); return true; });\nif (yaMostrados && !(REENVIAR_SI_PIDE_EXPLICITO && pidioDeNuevo)) {\n  const prev = yaMostrados.toLowerCase();\n  fichas = fichas.filter(e => !e.k.some(kw => prev.indexOf(kw) !== -1));\n}\n\n// ── E7 · CORTE DEL FILTRO: aplica a todo lo que escribió el LLM ───────────\nfor (const b of bloques) b.text = filtrarLibre(b.text);\n\n// ── E8 · Detect-and-swap de los bloques pre-horneados ─────────────────────\n// Si vamos a inyectar el CTA canónico, el LLM no tiene que pedir los mismos datos.\nconst RE_PIDE_DATOS = /(?:necesit\\w*|d[ií]game|me\\s+(?:diga|pasa|confirma)|indicar\\w*|proporcion\\w*|me\\s+puede\\s+pasar)[^.!?]*\\b(cantidad|cu[áa]nt\\w+|c[óo]digo\\s+postal|\\bcp\\b)[^.!?]*[.!?]?/gi;\nconst RE_ANUNCIA_FOTO = /un momento|enseguida|permíta|perm[ií]tame|ya (?:le|te) (?:paso|mando|env[íi]o|muestro|comparto)|(?:le|te) (?:paso|mando|comparto) las (?:fotos|im[áa]genes)|a continuaci[óo]n/i;\nconst habraCTA = fichas.length > 0 && fichas.slice(0, MAX_FOTOS).some(e => e.tipo === 'principal');\nlet ctaYaEscrito = false;\nconst bloquesFinal = [];\nfor (const b of bloques) {\n  if (!b.text.trim()) continue;\n  if (RE_SIETE.test(b.text)) {\n    const m = b.text.match(/\\*?¡?HAZ TU PEDIDO EN 7 SENCILLOS PASOS/i);\n    const antes = b.text.slice(0, m.index).replace(/[*\\s]+$/, '');\n    if (antes.trim()) bloquesFinal.push({ tipo: b.tipo, text: antes });\n    bloquesFinal.push({ tipo: 'canon', text: SIETE_PASOS });\n    continue;\n  }\n  if (/interesa\\s+sumarl/i.test(b.text)) { ctaYaEscrito = true; continue; }   // se re-inyecta al final\n  if (habraCTA && b.tipo === 'libre') {\n    b.text = b.text.replace(RE_PIDE_DATOS, '');\n    // el CTA canónico ya pregunta: fuera las preguntas del LLM y los anuncios de foto\n    b.text = partirOraciones(b.text.replace(/\\n+/g, ' '))\n      .filter(o => !/\\?\\s*$/.test(o.trim()) && !RE_ANUNCIA_FOTO.test(o))\n      .join(' ').replace(/\\s{2,}/g, ' ').trim();\n    if (!b.text) continue;\n  }\n  bloquesFinal.push(b);\n}\n\n// ── E9 · Splitter determinístico (replica Message a model1) ───────────────\nfunction partirOraciones(p) {\n  const out = []; let cur = '';\n  const toks = p.split(/(?<=[.!?…])\\s+/);\n  for (const t of toks) {\n    cur = cur ? cur + ' ' + t : t;\n    const sinCierre = /\\d[.,]$/.test(cur) || ABREV.test(cur) || /https?:\\/\\/\\S*$/.test(cur);\n    if (!sinCierre && /[.!?…]$/.test(cur)) { out.push(cur); cur = ''; }\n  }\n  if (cur.trim()) out.push(cur);\n  const res = [];\n  for (const x of out.filter(y => y.trim())) {\n    if (!/[a-záéíóúñü]/i.test(x) && res.length) res[res.length - 1] += ' ' + x.trim();\n    else res.push(x);\n  }\n  return res;\n}\nlet burbujas = [];\nfor (const b of bloquesFinal) {\n  if (b.tipo !== 'libre') { burbujas.push({ text: b.text, atomica: true }); continue; }\n  for (const parrafo of b.text.split(/\\n{2,}/)) {\n    const lineasP = parrafo.split('\\n');\n    const esLista = lineasP.length > 1 && lineasP.every(l => /^\\s*[-*·•]|^\\s*\\d+[.)]\\s/.test(l));\n    if (esLista) { burbujas.push({ text: parrafo, atomica: false }); continue; }\n    const sents = partirOraciones(parrafo.replace(/\\n/g, ' '));\n    if (sents.length <= 2) { burbujas.push({ text: sents.join(' ') || parrafo, atomica: false }); }\n    else {\n      const mitad = Math.ceil(sents.length / 2);\n      burbujas.push({ text: sents.slice(0, mitad).join(' '), atomica: false });\n      burbujas.push({ text: sents.slice(mitad).join(' '), atomica: false });\n    }\n  }\n}\nburbujas = burbujas.filter(b => b.text && b.text.trim());\n// tope: fusiona el último par adyacente de burbujas libres\nwhile (burbujas.length > MAX_BURBUJAS) {\n  let i = -1;\n  for (let k = burbujas.length - 2; k >= 0; k--) if (!burbujas[k].atomica && !burbujas[k + 1].atomica) { i = k; break; }\n  if (i === -1) break;\n  burbujas[i].text = (burbujas[i].text + '\\n' + burbujas[i + 1].text).trim();\n  burbujas.splice(i + 1, 1);\n}\n// \"que ninguna parte termine en un punto\" — solo texto libre\nfor (const b of burbujas) {\n  if (b.atomica) continue;\n  b.text = b.text.replace(/(?<![.\\d])\\.$/, '');\n}\n\n// ── E10 · Ensamblado: texto + fichas + CTA + imagen de evento ─────────────\nlet out = burbujas.map(b => ({ message_part: b.text, photo_url: '' }));\nconst fichasFinal = fichas.slice(0, MAX_FOTOS);\nif (fichasFinal.length) {\n  const msgs = fichasFinal.map(e => ({ message_part: fichaDe(e, evento), photo_url: e.u || '' }));\n  const insertar = out.length ? 1 : 0;   // después de la frase de contexto del LLM\n  out = out.slice(0, insertar).concat(msgs, out.slice(insertar));\n  const principales = fichasFinal.filter(e => e.tipo === 'principal');\n  if (principales.length) {\n    const fem = principales.every(e => GRUPOS_FEMENINOS.indexOf(e.g) !== -1);\n    out.push({ message_part: CTA_DATOS(fem), photo_url: '' });\n  }\n} else if (ctaYaEscrito) {\n  out.push({ message_part: CTA_DATOS(false), photo_url: '' });\n}\nif (eventoReciente) {\n  const ev = IMAGENES[evento] ? evento : 'OTROS';\n  const cabecera = [{ message_part: PROMO, photo_url: '' }, { message_part: CAPTION_EVENTO[ev], photo_url: IMAGENES[ev] }];\n  out = fichasFinal.length ? cabecera.concat(out) : cabecera;   // el original no mandaba nada más en ese turno\n}\n\n// ── E11 · Guards ──────────────────────────────────────────────────────────\nif (!out.length) { const t = filtrarLibre(text); if (t) out = [{ message_part: t, photo_url: '' }]; }\nconst final = [];\nfor (const p of out) {\n  const url = p.photo_url || ''; const txt = S(p.message_part);\n  if (url && txt.length > 1000) {   // Telegram rechaza caption > 1024 y mata la ejecución\n    let corte = txt.lastIndexOf(' ', 1000); if (corte < 500) corte = 1000;\n    final.push({ message_part: txt.slice(0, corte), photo_url: url });\n    final.push({ message_part: txt.slice(corte).trim(), photo_url: '' });\n  } else final.push({ message_part: txt, photo_url: url });\n}\nreturn final.filter(p => p.message_part || p.photo_url);\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        224
+      ],
+      "id": "f589c454-237b-4ad4-bd15-e1ea5b6ccff7",
+      "name": "Sanitize + Split Output"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/conversations/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"type\": \"WhatsApp\",\n  \"contactId\": \"{{ $('Auth + Normalize').first().json.contact_id }}\",\n  \"message\": {{ JSON.stringify($json.message_part) }},\n  \"attachments\": {{ $json.photo_url ? JSON.stringify([$json.photo_url]) : '[]' }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        704,
+        384
+      ],
+      "id": "98f0cb0d-a8eb-43a5-8b2d-a8a862346b6b",
+      "name": "Send Message via GHL",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Auth + Normalize').first().json.opportunity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        704,
+        -80
+      ],
+      "id": "32de81db-f9fc-41c7-9c5f-f209dd87280e",
+      "name": "Get Current Opportunity",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const customFields = $json.opportunity?.customFields || [];\nconst EVENTO_FIELD_ID = 'ahVpF5ldsRcuOIn9Mxdk';\nconst eventoField = customFields.find(cf => cf.id === EVENTO_FIELD_ID);\nconst currentEvento = eventoField ? (Array.isArray(eventoField.fieldValue) ? eventoField.fieldValue[0] : eventoField.fieldValue) : '';\n\nconst incomingEvento = $('Auth + Normalize').first().json.custom_fields.evento_detectado || '';\nconst justSet = (!incomingEvento || incomingEvento === '') && currentEvento && currentEvento !== '';\n\nconst IMAGENES = {\n  'Boda': 'https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg',\n  'XV': 'https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/136d7ce1-0487-4767-a408-16742a068939.jpg'\n};\nconst imagenUrl = IMAGENES[currentEvento] || 'https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/10880c83-56c2-4ee3-b30d-71e910093962.jpg';\n\nconst productosBase = 'TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\\n\\n*Sandalias*\\n*Cilindros*\\n';\nconst mandilLine = currentEvento === 'Boda' ? '*Mandiles para Boda*\\n' : '';\nconst descripcion = `${productosBase}${mandilLine}*Kit anti cruda*\\n*Pantuflas*\\n\\nDime cuales te interesan, así te mostramos toda su información 😊`;\n\nconst promoText = 'Qué padre! \\ud83d\\ude0a  \\n\\ud83c\\udf89 *\\u00a1SEMANA LOCA DE PROMOS! SOLO 7 D\\u00cdAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* \\ud83c\\udf89\\n*(Pedidos solo para eventos 2026 por tema de tiempos)*';\n\nreturn {\n  ...$('Auth + Normalize').first().json,\n  currentEvento,\n  justSet,\n  imagenUrl,\n  descripcion,\n  promoText\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        -80
+      ],
+      "id": "dca19be2-21b8-4cbb-9fef-cbb4fff7e8ca",
+      "name": "Check Evento Just Set"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c9d5c3d0-cnd-4a1a-9a1a-600000000003",
+              "leftValue": "={{ $json.justSet }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1152,
+        -80
+      ],
+      "id": "1f39a506-84f1-41c0-bb82-b4ff7a045ab9",
+      "name": "Evento Recien Identificado?"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/conversations/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"type\": \"SMS\",\n  \"contactId\": \"{{ $('Auth + Normalize').first().json.contact_id }}\",\n  \"message\": {{ JSON.stringify($json.descripcion) }},\n  \"attachments\": [\"{{ $json.imagenUrl }}\"]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1376,
+        -96
+      ],
+      "id": "fc923731-911a-4bbd-bd9d-702619407d41",
+      "name": "Send Imagen Principal",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1616,
+        -96
+      ],
+      "id": "c9de602f-1fcf-47ba-a577-ec3511cb4465",
+      "name": "Wait 2s (Imagen)",
+      "webhookId": "c9d5c3d0-w005-4a1a-9a1a-600000000005"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/conversations/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"type\": \"SMS\",\n  \"contactId\": \"{{ $('Auth + Normalize').first().json.contact_id }}\",\n  \"message\": {{ JSON.stringify($('Check Evento Just Set').first().json.promoText) }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1840,
+        -96
+      ],
+      "id": "41ff1adb-6d5a-4d59-a038-a9cb9d7dcc94",
+      "name": "Send Promo Evento",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const PAUSED_STAGES = ['Esperando Pago', 'Pago Confirmado', 'Diseño en Proceso', 'En Producción', 'Enviado'];\nconst stage = $('Auth + Normalize').first().json.stage;\nconst isPausedStage = PAUSED_STAGES.includes(stage);\n\nreturn {\n  ...$json,\n  isPausedStage\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -624,
+        960
+      ],
+      "id": "324e53f0-5bba-4819-8548-6ff2e2d74604",
+      "name": "Check Stage Pausado"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e2f7c3d0-cnd-4a1a-9a1a-800000000002",
+              "leftValue": "={{ $json.isPausedStage }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -448,
+        960
+      ],
+      "id": "f426ea10-57fb-46ab-a996-0b061ed254fd",
+      "name": "Es Stage Pausado?"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/conversations/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"type\": \"SMS\",\n  \"contactId\": \"{{ $('Auth + Normalize').first().json.contact_id }}\",\n  \"message\": \"Recibimos tu imagen, en breve nuestro equipo la revisa 😊\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -224,
+        960
+      ],
+      "id": "61bde165-a108-405d-aa48-59c2dcc05ff2",
+      "name": "Send Ack Stage Pausado",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Auth + Normalize').first().json.opportunity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"customFields\": [\n    { \"key\": \"imagen_input\", \"field_value\": [true, \"Tuvo imagen\"] }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -896,
+        928
+      ],
+      "id": "3d604dbd-e74e-452e-8c77-03a6f77c8613",
+      "name": "Set imagen_input",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "35ac57a4-1ca1-444f-867f-8931fc6082e0",
+      "name": "Loop Message Parts",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        224,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "id": "2e60f0cc-fe76-4889-b1aa-194d386ea44d",
+      "name": "Wait 1.5s Between Parts",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1472,
+        208
+      ],
+      "webhookId": "b1b2c3d4-0003-4000-8000-000000000003"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "aecd5f72-f9d8-469e-a3fb-4c5554fab776",
+              "leftValue": "={{ !['/b','/borrar','/reset','/clear'].includes(($json.body.message_text || '').trim().toLowerCase()) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3840,
+        672
+      ],
+      "id": "88b72dc6-c766-4178-87f6-9dae6e75c710",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "DELETE FROM messages WHERE session_id = $1;\nDELETE FROM debounce_buffer WHERE contact_id = $2;",
+        "options": {
+          "queryReplacement": "={{ [$json.body.contact_id, $json.body.contact_id] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -3664,
+        688
+      ],
+      "id": "046223d9-dcbc-4eac-ac34-fe1d0948e3fe",
+      "name": "borrar memoria",
+      "credentials": {
+        "postgres": {
+          "id": "uK59P60DJmOJc4Lm",
+          "name": "H.F"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "=🧹 Memoria y buffer limpiados. Podés arrancar un caso nuevo.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -3440,
+        688
+      ],
+      "id": "957c91f1-2b02-4297-bd0f-f579f4bef67e",
+      "name": "Send a text message2",
+      "webhookId": "05681af8-76cc-408a-aee4-d2b82f4514a7",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b1a1c3d0-0002-4a1a-9a1a-000000000002",
+              "leftValue": "={{ $('Auth + Normalize').first().json.is_telegram_test }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        -80
+      ],
+      "id": "95b5404a-b2a5-4268-9d38-7401da86055f",
+      "name": "Es Origen Telegram? (Post)"
+    },
+    {
+      "parameters": {
+        "content": "## Chequear de pasar a GHL",
+        "height": 240,
+        "width": 1088
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2944,
+        464
+      ],
+      "typeVersion": 1,
+      "id": "dfe69d4a-a4cc-49db-8cb2-2ce141aae137",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 176,
+        "width": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1616,
+        624
+      ],
+      "typeVersion": 1,
+      "id": "342549a1-4a17-4c39-939c-a46e0fd03015",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -2448,
+        528
+      ],
+      "id": "067dde2c-989f-4988-a942-3eef8d0a98f4",
+      "name": "Wait 15s (Debounce)",
+      "webhookId": "e3a1c3d0-w003-4a1a-9a1a-200000000003"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d1d1c3d0-test-4a1a-9a1a-000000000004",
+              "leftValue": "={{ $('Auth + Normalize').first().json.channel }}",
+              "rightValue": "test",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -160,
+        224
+      ],
+      "id": "d9d0deb1-c77a-44e3-b04e-dd93fb72fa7c",
+      "name": "¿Es test?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e1e1-media-tg-0001",
+              "leftValue": "={{ $('Auth + Normalize').first().json.telegram_file_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2016,
+        384
+      ],
+      "id": "357aed01-60c1-4dd5-8986-25e31214b111",
+      "name": "¿Media de Telegram?"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $('Auth + Normalize').first().json.telegram_file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1856,
+        304
+      ],
+      "id": "af0cf52d-daac-4177-8c6e-f617aa8da587",
+      "name": "Telegram Get File",
+      "webhookId": "c6c9caaf-c6d3-4d90-84a1-f3071ae43fe7",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Convierte el binario de Telegram en data URL (OpenAI Vision acepta base64).\n// En producción (GHL) no hay binario y se conserva el media_url original.\nconst base = $('Combine Messages').first().json;\nconst item = $input.first();\nlet media_url = base.media_url || '';\ntry {\n  if (item.binary && item.binary.data) {\n    const buf = await this.helpers.getBinaryDataBuffer(0, 'data');\n    const mime = item.binary.data.mimeType || (base.message_type === 'audio' ? 'audio/ogg' : 'image/jpeg');\n    media_url = `data:${mime};base64,${buf.toString('base64')}`;\n  }\n} catch (e) {}\nreturn [{ json: { ...base, media_url }, binary: item.binary }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1696,
+        304
+      ],
+      "id": "03de8dce-61f0-48a5-876e-c3a81cfbfed9",
+      "name": "Resolve Media URL"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e1e1-audio-tg-0004",
+              "leftValue": "={{ $('Auth + Normalize').first().json.telegram_file_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1312,
+        144
+      ],
+      "id": "66b131d0-e71c-46a6-af70-124f80ba877b",
+      "name": "¿Audio de Telegram?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f0f0-foto-0001",
+              "leftValue": "={{ $json.photo_url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        208
+      ],
+      "id": "e0c77fc0-ec3e-4183-858e-9c4ab9f8f4e1",
+      "name": "¿Parte con foto?"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $('Auth + Normalize').first().json.contact_id }}",
+        "file": "={{ $json.photo_url }}",
+        "additionalFields": {
+          "caption": "={{ $json.message_part }}"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1104,
+        144
+      ],
+      "id": "b3a64e19-ec07-4016-a5d0-1aa29caeae55",
+      "name": "Send Photo (Telegram)",
+      "webhookId": "6ab492f4-4025-4de7-b75e-3e5da6319daa",
+      "credentials": {
+        "telegramApi": {
+          "id": "yXtgg8Djbxglxq9H",
+          "name": "HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Transferir a humano. Usar si el lead pide humano, regatea agresivamente, o caso complejo.",
+        "method": "POST",
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $('Auth + Normalize').first().json.contact_id }}/tags",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Version",
+              "valueProvider": "fieldValue",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"tags\": [\"atencion_humana\"]\n}"
+      },
+      "id": "332c93d2-53d8-4e8c-b75d-0fb4d79e6c98",
+      "name": "ATENCION_PERSONALIZADA",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        -400,
+        448
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Emitir cotizacion final. Usar SOLO cuando el lead confirma cantidades exactas.",
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Auth + Normalize').first().json.opportunity_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Version",
+              "valueProvider": "fieldValue",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"pipelineStageId\": \"96fa0ade-c853-4db3-97f4-56d58d69af8c\",\n  \"customFields\": [\n    { \"key\": \"cotizacion_emitida\", \"field_value\": [true, \"Emitida\"] },\n    { \"key\": \"had_quote\", \"field_value\": [true, \"Tuvo cot.\"] },\n    { \"key\": \"monto_cotizado_mxn\", \"field_value\": {monto_total_mxn} },\n    { \"key\": \"cotizacion_anticipo_mxn\", \"field_value\": {monto_anticipo_mxn} },\n    { \"key\": \"cantidad_sandalias\", \"field_value\": {cantidad_sandalias} },\n    { \"key\": \"tipo_suela\", \"field_value\": \"{tipo_suela}\" },\n    { \"key\": \"cantidad_cilindros\", \"field_value\": {cantidad_cilindros} },\n    { \"key\": \"cantidad_mandiles\", \"field_value\": {cantidad_mandiles} },\n    { \"key\": \"cantidad_otros\", \"field_value\": {cantidad_otros} },\n    { \"key\": \"cp_entrega\", \"field_value\": \"{cp_entrega}\" }\n  ]\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "monto_anticipo_mxn",
+              "description": "Anticipo = monto_total_mxn dividido entre 2 (50% exacto del Total CON envío). Ejemplo: si monto_total_mxn es 3400, este valor es 1700. Pasá el número PURO, sin separador de miles ni símbolo $ (1700, nunca 1,700). NUNCA pongas 0 si monto_total_mxn es mayor a 0.",
+              "type": "number"
+            },
+            {
+              "name": "cantidad_cilindros",
+              "description": "Cantidad de cilindros cotizados (0 si no aplica)",
+              "type": "number"
+            },
+            {
+              "name": "cantidad_mandiles",
+              "description": "Cantidad de mandiles cotizados (0 si no aplica, solo Boda)",
+              "type": "number"
+            },
+            {
+              "name": "cantidad_otros",
+              "description": "Cantidad de otros productos cotizados (0 si no aplica)",
+              "type": "number"
+            },
+            {
+              "name": "cp_entrega",
+              "description": "Codigo postal de entrega que dio el lead",
+              "type": "string"
+            },
+            {
+              "name": "monto_total_mxn",
+              "description": "Monto TOTAL en MXN = suma de cada producto (cantidad x precio unitario) MAS el costo de envío que devolvió CALCULAR_ENVIO. Precios: sandalia delgada $25, sandalia gruesa $30, cilindro $10, mandil $12, kit anticrudas $10, pantufla satín/moño satín $30, pantufla moño peluche $35, vaso popote $35, bolsa personalizada $7. Ejemplo: (100x25)+(50x10)=3000 de productos; si CALCULAR_ENVIO devolvió $400, monto_total_mxn=3400. Pasá el número PURO, sin separador de miles ni símbolo $ (3400, nunca 3,400 ni $3,400). NUNCA pongas 0 si hay cantidades > 0.",
+              "type": "number"
+            },
+            {
+              "name": "cantidad_sandalias",
+              "description": "Cantidad de sandalias cotizadas (0 si no aplica)",
+              "type": "number"
+            },
+            {
+              "name": "tipo_suela",
+              "description": "Debe ser EXACTAMENTE con mayuscula inicial: Delgada, Gruesa o Yute. Nunca en minusculas (incorrecto: gruesa; correcto: Gruesa). Vacio si no aplica.",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "3e9905f2-f6c4-497a-b572-df97acbe31df",
+      "name": "COTIZADOR",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        -272,
+        448
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Marcar productos mostrados al lead. Usar cuando presentes opciones de productos.",
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Auth + Normalize').first().json.opportunity_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Version",
+              "valueProvider": "fieldValue",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"customFields\": [\n    { \"key\": \"productos_mostrados\", \"field_value\": \"{productos}\" },\n    { \"key\": \"had_image\", \"field_value\": [true, \"Tuvo imagen\"] }\n  ]\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "productos",
+              "description": "Lista de productos mostrados separada por comas (ej: sandalias, cilindros)",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "4bd9ca91-6c0a-44ab-9103-f9bb7af2f932",
+      "name": "MOSTRAR_PRODUCTOS",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        -144,
+        448
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Registrar el tipo de evento detectado del lead. Usar cuando el lead menciona su evento (XV, Boda, Bautizo, Cumpleanios, Empresarial).",
+        "method": "PUT",
+        "url": "=https://services.leadconnectorhq.com/opportunities/{{ $('Auth + Normalize').first().json.opportunity_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Version",
+              "valueProvider": "fieldValue",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"customFields\": [\n    { \"key\": \"evento_detectado\", \"field_value\": \"{evento}\" },\n    { \"key\": \"had_information\", \"field_value\": [true, \"Tuvo info.\"] }\n  ]\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "evento",
+              "description": "Tipo de evento: XV, Boda, Bautizo, Cumpleanios, Empresarial, Otro",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "d4ed7da6-716a-416c-a5b3-86c9d0f9f1b6",
+      "name": "IDENTIFICAR_EVENTO",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        -16,
+        448
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Calcula el costo de envío de un pedido HPF. Pasale un JSON de productos y cantidades con los nombres exactos del catálogo, ej: [{\"producto\":\"Sandalias Delgadas\",\"cantidad\":100},{\"producto\":\"Cilindros\",\"cantidad\":50}]. Devuelve el costo de envío ya calculado (o un aviso si un producto no alcanza su mínimo de compra). Usalo SIEMPRE antes de cotizar, una vez que tengas cantidades y variantes.",
+        "jsCode": "// CALCULAR_ENVIO — calcula el costo de envío de un pedido HPF.\n// Input: variable `query` (string) que pasa el agente = JSON [{producto, cantidad}].\n// Output: string para el agente (costo de envío, o aviso de mínimo no alcanzado).\n// Lógica portada de happyflops-calculadora-v2.json (pesos + límites de caja + brackets).\n\nconst WEIGHT_BY_PRODUCT = {\n  \"Mandiles\": 0, \"Kits Anticrudas\": 0, \"Costales\": 0, \"Bolsa\": 0,\n  \"Cilindros\": 0.14, \"Vaso Popote 24 oz\": 0.14, \"Vasos Popote\": 0.14,\n  \"Sandalias Delgadas\": 0.15, \"Sandalias Gruesas\": 0.15, \"Pantuflas\": 0.15,\n  \"Pantuflas Mono\": 0.15, \"Pantufla Moño Satin\": 0.15, \"Pantufla Moño Peluche\": 0.15\n};\nconst CATEGORY_BY_PRODUCT = {\n  \"Cilindros\": \"CILINDROS\", \"Vaso Popote 24 oz\": \"CILINDROS\", \"Vasos Popote\": \"CILINDROS\",\n  \"Sandalias Delgadas\": \"SANDALIAS\", \"Sandalias Gruesas\": \"SANDALIAS\", \"Pantuflas\": \"SANDALIAS\",\n  \"Pantuflas Mono\": \"SANDALIAS\", \"Pantufla Moño Satin\": \"SANDALIAS\", \"Pantufla Moño Peluche\": \"SANDALIAS\",\n  \"Mandiles\": \"OTROS_0KG\", \"Kits Anticrudas\": \"OTROS_0KG\", \"Costales\": \"OTROS_0KG\", \"Bolsa\": \"OTROS_0KG\"\n};\nconst MIN_BY_PRODUCT = {\n  \"Sandalias Delgadas\": 50, \"Sandalias Gruesas\": 50, \"Pantuflas\": 50, \"Pantuflas Mono\": 50,\n  \"Pantufla Moño Satin\": 50, \"Pantufla Moño Peluche\": 50, \"Cilindros\": 40,\n  \"Vaso Popote 24 oz\": 50, \"Vasos Popote\": 50, \"Kits Anticrudas\": 35, \"Costales\": 35, \"Mandiles\": 12\n};\nconst PRODUCT_ALIASES = {\n  \"mandil\": \"Mandiles\", \"mandiles\": \"Mandiles\",\n  \"kit anticruda\": \"Kits Anticrudas\", \"kits anticruda\": \"Kits Anticrudas\",\n  \"kit anticrudas\": \"Kits Anticrudas\", \"kits anticrudas\": \"Kits Anticrudas\",\n  \"costal\": \"Costales\", \"costales\": \"Costales\",\n  \"cilindro\": \"Cilindros\", \"cilindros\": \"Cilindros\",\n  \"sandalia delgada\": \"Sandalias Delgadas\", \"sandalias delgadas\": \"Sandalias Delgadas\",\n  \"sandalia gruesa\": \"Sandalias Gruesas\", \"sandalias gruesas\": \"Sandalias Gruesas\",\n  \"sandalia\": \"Sandalias Delgadas\", \"sandalias\": \"Sandalias Delgadas\",\n  \"pantufla\": \"Pantuflas\", \"pantuflas\": \"Pantuflas\",\n  \"pantufla mono\": \"Pantuflas Mono\", \"pantuflas mono\": \"Pantuflas Mono\",\n  \"pantufla mono satin\": \"Pantufla Moño Satin\", \"pantuflas mono satin\": \"Pantufla Moño Satin\",\n  \"pantufla moño satin\": \"Pantufla Moño Satin\", \"pantuflas moño satin\": \"Pantufla Moño Satin\",\n  \"pantufla moño satín\": \"Pantufla Moño Satin\", \"pantuflas moño satín\": \"Pantufla Moño Satin\",\n  \"pantufla mono peluche\": \"Pantufla Moño Peluche\", \"pantuflas mono peluche\": \"Pantufla Moño Peluche\",\n  \"pantufla moño peluche\": \"Pantufla Moño Peluche\", \"pantuflas moño peluche\": \"Pantufla Moño Peluche\",\n  \"vaso popote\": \"Vaso Popote 24 oz\", \"vasos popote\": \"Vaso Popote 24 oz\",\n  \"vaso popote 24 oz\": \"Vaso Popote 24 oz\", \"vasos popote 24 oz\": \"Vaso Popote 24 oz\"\n};\nconst LIMITS = {\n  MAX_PER_BOX_WEIGHT_KG: 35, MAX_CILINDROS_PER_BOX: 250,\n  MAX_SANDALIAS_PER_BOX: 200, MAX_COMBINED_SANDALIAS_CILINDROS_PER_BOX: 200\n};\n\nfunction costoPorPeso(pesoKg) {\n  const p = Number(pesoKg.toFixed(2));\n  if (p >= 0 && p <= 4.99) return 250;\n  if (p >= 5 && p <= 7) return 280;\n  if (p > 7 && p <= 12) return 300;\n  if (p > 12 && p <= 19.99) return 350;\n  if (p >= 19.99 && p <= 35) return 400;\n  return 400;\n}\nfunction normalizeText(str) {\n  return String(str || \"\").normalize(\"NFD\").replace(/[̀-ͯ]/g, \"\")\n    .toLowerCase().replace(/\\s+/g, \" \").trim();\n}\nfunction canon(raw) {\n  const clean = normalizeText(raw);\n  if (PRODUCT_ALIASES[clean]) return PRODUCT_ALIASES[clean];\n  // Fallback por keyword: tolera las grafías del catálogo del prompt\n  // (\"Cilindros 500ml\", \"Vasos popote 24oz\", \"Sandalias delgadas (suela 9mm)\", etc.).\n  // Para envío solo importan peso + categoría; igual conservamos la variante si el texto la indica.\n  if (clean.includes(\"cilindro\")) return \"Cilindros\";\n  if (clean.includes(\"vaso\")) return \"Vaso Popote 24 oz\";\n  if (clean.includes(\"mandil\")) return \"Mandiles\";\n  if (clean.includes(\"costal\")) return \"Costales\";\n  if (clean.includes(\"kit\") && clean.includes(\"anticrud\")) return \"Kits Anticrudas\";\n  if (clean.includes(\"bolsa\")) return \"Bolsa\";\n  if (clean.includes(\"pantufla\")) {\n    if (clean.includes(\"peluche\")) return \"Pantufla Moño Peluche\";\n    if (clean.includes(\"moño\") || clean.includes(\"mono\")) return \"Pantufla Moño Satin\";\n    return \"Pantuflas\";\n  }\n  if (clean.includes(\"sandalia\")) {\n    if (clean.includes(\"gruesa\") || clean.includes(\"15mm\")) return \"Sandalias Gruesas\";\n    return \"Sandalias Delgadas\";\n  }\n  return String(raw || \"\").trim();\n}\nfunction cloneEmptyBoxState() { return { peso: 0, cil: 0, sand: 0, combSC: 0, contenido: {} }; }\nfunction addToBox(box, product, qty, w) {\n  box.contenido[product] = (box.contenido[product] || 0) + qty;\n  box.peso += qty * w;\n  const cat = CATEGORY_BY_PRODUCT[product] || \"OTROS\";\n  if (cat === \"CILINDROS\") { box.cil += qty; box.combSC += qty; }\n  else if (cat === \"SANDALIAS\") { box.sand += qty; box.combSC += qty; }\n}\nfunction capacityForProductInBox(box, product, w) {\n  const cat = CATEGORY_BY_PRODUCT[product] || \"OTROS\";\n  let cap = Infinity;\n  if (w > 0) cap = Math.min(cap, Math.max(0, Math.floor((LIMITS.MAX_PER_BOX_WEIGHT_KG - box.peso) / w)));\n  if (cat === \"CILINDROS\") {\n    cap = Math.min(cap, LIMITS.MAX_CILINDROS_PER_BOX - box.cil);\n    cap = Math.min(cap, LIMITS.MAX_COMBINED_SANDALIAS_CILINDROS_PER_BOX - box.combSC);\n  } else if (cat === \"SANDALIAS\") {\n    cap = Math.min(cap, LIMITS.MAX_SANDALIAS_PER_BOX - box.sand);\n    cap = Math.min(cap, LIMITS.MAX_COMBINED_SANDALIAS_CILINDROS_PER_BOX - box.combSC);\n  } else if (cat === \"OTROS_0KG\") { cap = Infinity; }\n  return Math.max(0, cap);\n}\nfunction packBoxes(lines) {\n  const boxes = [];\n  let cur = cloneEmptyBoxState();\n  const remaining = {};\n  lines.forEach(ln => { remaining[ln.product] = (remaining[ln.product] || 0) + ln.quantity; });\n  const hasRemaining = () => Object.keys(remaining).some(k => remaining[k] > 0);\n  while (hasRemaining()) {\n    let packed = false;\n    for (const ln of lines) {\n      const need = remaining[ln.product];\n      if (!need) continue;\n      const cap = capacityForProductInBox(cur, ln.product, ln.weight);\n      if (cap <= 0) continue;\n      const put = Math.min(need, cap);\n      if (put > 0) { addToBox(cur, ln.product, put, ln.weight); remaining[ln.product] -= put; packed = true; }\n    }\n    if (!packed || !hasRemaining()) {\n      if (Object.keys(cur.contenido).length > 0) boxes.push(cur);\n      if (hasRemaining()) cur = cloneEmptyBoxState();\n    }\n  }\n  return boxes;\n}\nfunction orderFromItems(arr) {\n  const acc = {};\n  const unknown = [];\n  for (const row of arr) {\n    const rawProd = String((row && (row.producto ?? row.product)) || \"\").trim();\n    const qty = Number((row && (row.cantidad ?? row.qty)) || 0);\n    if (!rawProd || !qty) continue;\n    const prod = canon(rawProd);\n    const w = WEIGHT_BY_PRODUCT[prod];\n    if (typeof w !== \"number\") { unknown.push(rawProd); continue; }\n    if (!acc[prod]) acc[prod] = { product: prod, quantity: 0, weight: w };\n    acc[prod].quantity += qty;\n  }\n  return { lines: Object.values(acc), unknown };\n}\n\n// ---- parse input ----\nlet raw = (typeof query !== \"undefined\" && query != null) ? query : \"\";\nif (typeof raw === \"object\") { try { raw = JSON.stringify(raw); } catch (e) { raw = \"\"; } }\nlet parsed = null;\ntry {\n  const p = JSON.parse(raw);\n  if (Array.isArray(p)) parsed = p;\n  else if (p && Array.isArray(p.items)) parsed = p.items;\n  else if (p && !Array.isArray(p) && (p.producto || p.product)) parsed = [p]; // objeto único\n} catch (e) {}\nif (!parsed) {\n  parsed = [];\n  String(raw).split(/[,;\\n]/).forEach(seg => {\n    seg = seg.trim(); if (!seg) return;\n    let m = seg.match(/^(.+?):\\s*(\\d+)\\s*$/);\n    if (m) { parsed.push({ producto: m[1].trim(), cantidad: Number(m[2]) }); return; }\n    m = seg.match(/^(\\d+)\\s+(.+)$/);\n    if (m) { parsed.push({ producto: m[2].trim(), cantidad: Number(m[1]) }); return; }\n  });\n}\nif (!parsed || !parsed.length) {\n  return 'No pude leer los productos. Pasá un JSON como [{\"producto\":\"Sandalias Delgadas\",\"cantidad\":100},{\"producto\":\"Cilindros\",\"cantidad\":50}].';\n}\n\nconst { lines, unknown } = orderFromItems(parsed);\nif (!lines.length) {\n  return 'No reconocí ningún producto válido' + (unknown.length ? ' (desconocidos: ' + unknown.join(\", \") + ')' : '') + '. Usá los nombres exactos del catálogo.';\n}\n\n// minimums (defense in depth — el agente ya debería validar antes)\nconst viol = lines.filter(l => typeof MIN_BY_PRODUCT[l.product] === \"number\" && l.quantity < MIN_BY_PRODUCT[l.product])\n  .map(l => l.product + \": pediste \" + l.quantity + \" (mínimo \" + MIN_BY_PRODUCT[l.product] + \")\");\nif (viol.length) {\n  return \"MÍNIMO NO ALCANZADO: \" + viol.join(\"; \") + \". Decile al cliente el mínimo real de cada producto y NO cotices hasta que ajuste la cantidad. No calcules envío ni fuerces un cálculo alternativo.\";\n}\n\nconst boxes = packBoxes(lines);\nlet total = 0;\nboxes.forEach(b => { total += costoPorPeso(Number(b.peso.toFixed(2))); });\n\n// NO mencionar nº de cajas ni peso (Regla 2 del prompt: nunca menciones cajas/kg).\nreturn \"Costo de envío: $\" + total + \". IMPORTANTE: usá $\" + total +\n  \" tal cual en la línea 'Envío:', sumalo a la suma de productos para el Total, y el Anticipo es 50% de ese Total con envío.\";\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.3,
+      "position": [
+        128,
+        448
+      ],
+      "id": "f96f0ea3-38cb-46f5-842a-d58cd0f4cfa6",
+      "name": "CALCULAR_ENVIO"
+    },
+    {
+      "parameters": {
+        "url": "https://services.leadconnectorhq.com/opportunities/search",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "location_id",
+              "value": "onRwi0ZF4uYi0Lp6GAbE"
+            },
+            {
+              "name": "contact_id",
+              "value": "={{ $json.contact_id }}"
+            },
+            {
+              "name": "pipeline_id",
+              "value": "RMnhLPqtXoWUBGZ0gvbh"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b9b9eb84-f832-4956-a6d6-b90f7ffb5b21",
+      "name": "Buscar Opportunity Real",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3408,
+        528
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zz21t1RdLIMvud4j",
+          "name": "GHL PIT HPF"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const prev = $('Auth + Normalize').first().json;\n\n// Si es un test de Telegram, no tocar el opportunity_id/stage sinteticos\nif (prev.is_telegram_test) {\n  return prev;\n}\n\nconst STAGE_NAMES = {\n  'cf8fc770-81b1-422c-8394-d00bfb97a3f0': 'Lead Nuevo',\n  'f9709293-d03c-47f1-949f-0c03ab077a45': 'Saludo Enviado',\n  'fec50c94-fba0-444b-8c75-7a97da9e0daa': 'Evento Identificado',\n  '49c7401f-8af1-4d8f-a1b4-e989b6d0a5e2': 'Productos Mostrados',\n  '96fa0ade-c853-4db3-97f4-56d58d69af8c': 'Cotizado',\n  '843a06f1-1214-4baa-a3a0-f197cb240b5d': 'Esperando Pago',\n  '96d760e5-f290-456c-a117-57e61ce6c27d': 'Pago Confirmado',\n  'd35bb30d-97d5-48c4-81f8-5ecabf32e57d': 'Diseño en Proceso',\n  '008689c6-80d8-4712-981b-1d800e1e6137': 'En Producción',\n  '218b9b41-4007-4b1c-bbe4-4e775ddf00b5': 'Enviado',\n  '48de80e9-31a9-472a-b030-5b9fe9174810': 'En Espera',\n  '909a816d-997e-4d90-8dc1-dc4b0dcd16d7': 'Ganado',\n  '6abfe419-adf2-4df5-87c5-ef4f62e01464': 'Ventas Perdidas',\n};\nconst CLOSED = ['Ganado', 'Ventas Perdidas'];\n\nconst opportunities = $json.opportunities || [];\nconst withStage = opportunities.map(o => ({ ...o, stageName: STAGE_NAMES[o.pipelineStageId] || 'Lead Nuevo' }));\nwithStage.sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0));\n\nlet chosen = withStage.find(o => !CLOSED.includes(o.stageName));\nif (!chosen) chosen = withStage[0];\n\nreturn {\n  ...prev,\n  opportunity_id: chosen ? chosen.id : '',\n  stage: chosen ? chosen.stageName : 'Lead Nuevo',\n  opportunity_found: !!chosen,\n  opportunity_raw: chosen || null,\n};"
+      },
+      "id": "f61640e4-d866-42c8-9f95-c8cc3028d7c9",
+      "name": "Elegir Opportunity Activa",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3200,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const prev = $json;\nconst opp = prev.opportunity_raw;\nconst customFields = (opp && opp.customFields) || [];\n\nconst cfMap = {};\ncustomFields.forEach(cf => {\n  cfMap[cf.id] = cf.fieldValue ?? cf.fieldValueString ?? cf.fieldValueNumber ?? cf.fieldValueArray ?? cf.fieldValueDate;\n});\n\nconst FIELD_IDS = {\n  evento_detectado: 'ahVpF5ldsRcuOIn9Mxdk',\n  productos_mostrados: 'IukLzqy6bZCCtuJTPzBu',\n  cantidad_sandalias: 'L68MYmGDZhLMbVU3VxMb',\n  cantidad_cilindros: '1Xo6QgstbpNRu0TiKM7d',\n  cantidad_mandiles: 'KZp0egPZZpdPk16bUMLW',\n  cantidad_otros: 'XxGTN1MLWhBFBEGHLDo6',\n  cp_entrega: 'dwqVZEekKwE3sNSnWvvi',\n  tipo_suela: 'i8zWb498oK7SSOulvM9g',\n  cotizacion_emitida: 'WvS1z4CvV6UTVU7ZpL6p',\n  monto_cotizado_mxn: 'xznzWZlvPHQI3HdsQfzM',\n  cotizacion_anticipo_mxn: 'BKXYT8Bv4lxJy2durCC0',\n  had_information: 'NaqWKjsZrYLN0mGsV6U2',\n  had_image: 'k4jHbS2HHH3d74Z7121a',\n  had_quote: 'zMaaLTYTREw2InLnbimW',\n  imagen_input: '4zvcyl95qQpnJOpKx6wy',\n  payment_proof_detectado: '7U96fnkNbLy1Bj2BQ4Gr',\n  last_inbound_at: '5KDgrZMK7pha8oO0VmJt',\n  last_outbound_at: 'YUoSJZklOjsnh6l3KgmV',\n};\n\nfunction boolVal(v) { return Array.isArray(v) ? !!v[0] : !!v; }\nfunction strVal(v) { return Array.isArray(v) ? (v[0] || '') : (v || ''); }\n\nconst custom_fields = {\n  evento_detectado: strVal(cfMap[FIELD_IDS.evento_detectado]),\n  productos_mostrados: cfMap[FIELD_IDS.productos_mostrados] || '',\n  cantidad_sandalias: cfMap[FIELD_IDS.cantidad_sandalias] || 0,\n  cantidad_cilindros: cfMap[FIELD_IDS.cantidad_cilindros] || 0,\n  cantidad_mandiles: cfMap[FIELD_IDS.cantidad_mandiles] || 0,\n  cantidad_otros: cfMap[FIELD_IDS.cantidad_otros] || 0,\n  cp_entrega: cfMap[FIELD_IDS.cp_entrega] || '',\n  tipo_suela: cfMap[FIELD_IDS.tipo_suela] || '',\n  cotizacion_emitida: boolVal(cfMap[FIELD_IDS.cotizacion_emitida]),\n  monto_cotizado_mxn: cfMap[FIELD_IDS.monto_cotizado_mxn] || 0,\n  cotizacion_anticipo_mxn: cfMap[FIELD_IDS.cotizacion_anticipo_mxn] || 0,\n  had_information: boolVal(cfMap[FIELD_IDS.had_information]),\n  had_image: boolVal(cfMap[FIELD_IDS.had_image]),\n  had_quote: boolVal(cfMap[FIELD_IDS.had_quote]),\n  imagen_input: boolVal(cfMap[FIELD_IDS.imagen_input]),\n  payment_proof_detectado: boolVal(cfMap[FIELD_IDS.payment_proof_detectado]),\n  last_inbound_at: cfMap[FIELD_IDS.last_inbound_at] || '',\n  last_outbound_at: cfMap[FIELD_IDS.last_outbound_at] || '',\n};\n\nreturn {\n  ...prev,\n  custom_fields,\n  customer_status: prev.customer_status || 'prospect',\n};"
+      },
+      "id": "6f8d6734-6a03-4cb6-85f4-50bb9c36df30",
+      "name": "Mapear Custom Fields",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3008,
+        528
+      ]
+    }
+  ],
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 408989909,
+          "message": {
+            "message_id": 65,
+            "from": {
+              "id": 6390727286,
+              "is_bot": false,
+              "first_name": "la agencia",
+              "last_name": "Prueba",
+              "language_code": "en"
+            },
+            "chat": {
+              "id": 6390727286,
+              "first_name": "la agencia",
+              "last_name": "Prueba",
+              "type": "private"
+            },
+            "date": 1784861061,
+            "text": "/b",
+            "entities": [
+              {
+                "offset": 0,
+                "length": 2,
+                "type": "bot_command"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Es Origen Telegram?": {
+      "main": [
+        [
+          {
+            "node": "¿Parte con foto?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Message via GHL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es Origen Telegram? (Pago)": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Inbound": {
+      "main": [
+        [
+          {
+            "node": "Auth + Normalize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auth + Normalize": {
+      "main": [
+        [
+          {
+            "node": "Buscar Opportunity Real",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch by Message Type": {
+      "main": [
+        [
+          {
+            "node": "¿Audio de Telegram?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Vision Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Text Passthrough",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vision Classifier": {
+      "main": [
+        [
+          {
+            "node": "Parse Vision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Passthrough": {
+      "main": [
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Vision": {
+      "main": [
+        [
+          {
+            "node": "Es Pago Detectado?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Set imagen_input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es Pago Detectado?": {
+      "main": [
+        [
+          {
+            "node": "Update payment_proof_detectado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Stage Pausado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update payment_proof_detectado": {
+      "main": [
+        [
+          {
+            "node": "Decidir Stage Pago",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Audio": {
+      "main": [
+        [
+          {
+            "node": "Whisper Transcribe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Whisper Transcribe": {
+      "main": [
+        [
+          {
+            "node": "Audio a Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audio a Text": {
+      "main": [
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decidir Stage Pago": {
+      "main": [
+        [
+          {
+            "node": "Move Stage Pago",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move Stage Pago": {
+      "main": [
+        [
+          {
+            "node": "Es Origen Telegram? (Pago)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vendedor (LLM Agent)": {
+      "main": [
+        [
+          {
+            "node": "¿Es test?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message1": {
+      "main": [
+        [
+          {
+            "node": "Wait 1.5s Between Parts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update last_outbound_at": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Message ID": {
+      "main": [
+        [
+          {
+            "node": "Debounce - Insert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Debounce - Insert": {
+      "main": [
+        [
+          {
+            "node": "Wait 15s (Debounce)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Debounce - Check Latest": {
+      "main": [
+        [
+          {
+            "node": "Es El Ultimo Mensaje?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es El Ultimo Mensaje?": {
+      "main": [
+        [
+          {
+            "node": "Combine Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Messages": {
+      "main": [
+        [
+          {
+            "node": "Debounce - Reset Buffer",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "¿Media de Telegram?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sanitize + Split Output": {
+      "main": [
+        [
+          {
+            "node": "Loop Message Parts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message via GHL": {
+      "main": [
+        [
+          {
+            "node": "Wait 1.5s Between Parts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Current Opportunity": {
+      "main": [
+        [
+          {
+            "node": "Check Evento Just Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Evento Just Set": {
+      "main": [
+        [
+          {
+            "node": "Evento Recien Identificado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evento Recien Identificado?": {
+      "main": [
+        [
+          {
+            "node": "Send Imagen Principal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Imagen Principal": {
+      "main": [
+        [
+          {
+            "node": "Wait 2s (Imagen)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 2s (Imagen)": {
+      "main": [
+        [
+          {
+            "node": "Send Promo Evento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Stage Pausado": {
+      "main": [
+        [
+          {
+            "node": "Es Stage Pausado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es Stage Pausado?": {
+      "main": [
+        [
+          {
+            "node": "Send Ack Stage Pausado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Message Parts": {
+      "main": [
+        [
+          {
+            "node": "Es Origen Telegram? (Post)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Es Origen Telegram?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 1.5s Between Parts": {
+      "main": [
+        [
+          {
+            "node": "Loop Message Parts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Auth + Normalize",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "borrar memoria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "borrar memoria": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es Origen Telegram? (Post)": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Update last_outbound_at",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Current Opportunity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 15s (Debounce)": {
+      "main": [
+        [
+          {
+            "node": "Debounce - Check Latest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es test?": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sanitize + Split Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Media de Telegram?": {
+      "main": [
+        [
+          {
+            "node": "Telegram Get File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch by Message Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Get File": {
+      "main": [
+        [
+          {
+            "node": "Resolve Media URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolve Media URL": {
+      "main": [
+        [
+          {
+            "node": "Switch by Message Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Audio de Telegram?": {
+      "main": [
+        [
+          {
+            "node": "Whisper Transcribe",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Parte con foto?": {
+      "main": [
+        [
+          {
+            "node": "Send Photo (Telegram)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Photo (Telegram)": {
+      "main": [
+        [
+          {
+            "node": "Wait 1.5s Between Parts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ATENCION_PERSONALIZADA": {
+      "ai_tool": [
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "COTIZADOR": {
+      "ai_tool": [
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MOSTRAR_PRODUCTOS": {
+      "ai_tool": [
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IDENTIFICAR_EVENTO": {
+      "ai_tool": [
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CALCULAR_ENVIO": {
+      "ai_tool": [
+        [
+          {
+            "node": "Vendedor (LLM Agent)",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Opportunity Real": {
+      "main": [
+        [
+          {
+            "node": "Elegir Opportunity Activa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Elegir Opportunity Activa": {
+      "main": [
+        [
+          {
+            "node": "Mapear Custom Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mapear Custom Fields": {
+      "main": [
+        [
+          {
+            "node": "Generate Message ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "errorWorkflow": "ug3m3dSDijXgWZIR",
+    "timezone": "America/Mexico_City"
+  },
+  "versionId": "67b2728a-012d-4647-aebe-3578caba0ae3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2fb601f29b5c700d2141654e4608e081bd1e5daa9614999069a9eb314029edc9"
+  },
+  "id": "IPO1c36NLzkXrBh9",
+  "tags": []
+}

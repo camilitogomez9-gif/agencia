@@ -1,0 +1,191 @@
+{
+  "name": "Heber Vera | Metricas Semanales",
+  "nodes": [
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Eres un analista experto en atención al cliente y comunicación comercial. Recibes un conjunto de mensajes intercambiados entre una peluquería y sus clientes durante la última semana. Cada mensaje tiene las propiedades: Fecha y Hora, ID, Mensaje.\n\n{{ $json.message }}\n\n\nTu tarea es analizar los mensajes y extraer las siguientes métricas, junto con observaciones e insights relevantes para la peluquería. \n\nLas métricas a calcular son:\n\na. Mensajes y citas  \n   i. Conversaciones totales (cantidad total de hilos de conversación únicos con clientes).  \n   ii. Clientes agendados (todas las conversaciones en las que se haya enviado un enlace de reserva).  \n   iii. Tasa de conversión mensaje → agenda (%) (porcentaje de conversaciones que terminaron con una cita agendada respecto del total de conversaciones iniciadas).\n\nb. Métricas cualitativas y de voz del cliente  \n   i. Temas emergentes en mensajes (identificar y agrupar mensajes por temas principales como: precios, disponibilidad, demora, calidad, atención, promociones, etc.).  \n   ii. Motivos de cancelación categorizados (clasificar las causas expresadas en mensajes de cancelación: cambio de horario, urgencia, precio, mal servicio, etc.). En caso de que no se identifiquen cancelaciones, entonces directamente no incluyas el dato en el mensaje.  \n   iii. Expectativas no cubiertas (detectar menciones de frustración, decepción o insatisfacción con el servicio, el resultado o la atención).\n\nc. Datos para segmentación y personalización  \n   i. Servicio más solicitado (servicio o tipo de cita más mencionado o agendado: corte, color, tratamiento, etc.).  \n   ii. Personal más solicitado (nombre o estilista más mencionado o pedido en las conversaciones).\n\nAdemás de calcular las métricas anteriores, genera insights adicionales o recomendaciones sobre comunicación, atención al cliente o eficiencia operativa cuando surjan patrones relevantes. El único objetivo de estos insights o recomendaciones es mejorar el funcionamiento del agente encargado del manejo de mensajes.\n\nTu salida debe ser un único objeto JSON con este formato:\n\n{\n  \"mensaje_telegram\": \"📊 *Resumen semanal del Agente de IA*  \n\n💬 **Mensajes y citas**\n• Conversaciones totales: X  \n• Clientes agendados: X  \n• Tasa de conversión mensaje → agenda: X%   \n\n🗣️ **Voz del cliente**  \n• Temas emergentes: tema1, tema2, tema3  \n• Motivos de cancelación: motivo1, motivo2  \n• Expectativas no cubiertas: resumen breve  \n\n🧴 **Servicios y personal**  \n• Servicio más solicitado: X  \n• Personal más solicitado: X  \n\n💡 **Ideas importantes:**  \n- Insight 1  \n- Insight 2  \n\n✏️ **Recomendaciones para la operación:**\n- Mejora 1  \n- Mejora 2\"\n}\n\nRequisitos del mensaje:\n- Redactado en lenguaje profesional, claro y conciso.  \n- Visualmente estructurado para lectura directa en Telegram (usa saltos de línea, emojis moderados y negritas Markdown).  \n- Devuelve **únicamente** el objeto JSON, sin texto adicional ni explicaciones fuera del campo \"mensaje_telegram\".",
+              "role": "system"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        576,
+        352
+      ],
+      "id": "09ff31b6-898f-4964-bad2-dd8740139d22",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Fa3aaCsYTBS79y3Y",
+          "name": "OpenAI la agencia®"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        352
+      ],
+      "id": "28187e0f-c873-4e68-921a-d66134816e49",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1oi-X2mk71z48pkkENRoT9YoQvAS_PQVEi-ANkTVAzdY",
+          "mode": "list",
+          "cachedResultName": "Heber Historial",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1oi-X2mk71z48pkkENRoT9YoQvAS_PQVEi-ANkTVAzdY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1oi-X2mk71z48pkkENRoT9YoQvAS_PQVEi-ANkTVAzdY/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        128,
+        352
+      ],
+      "id": "39472c18-9fac-429c-97f7-fec68b518cca",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "6390727286",
+        "text": "={{ $json.message.content.mensaje_telegram }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        928,
+        352
+      ],
+      "id": "27fbcd6d-7b05-44c1-b09f-cc75b403458e",
+      "name": "Send a text message",
+      "webhookId": "40307cb7-c41a-442d-a4c1-3c7d0402d543",
+      "retryOnFail": false,
+      "credentials": {
+        "telegramApi": {
+          "id": "V5k84z3AjQc9Y5yg",
+          "name": "botla agencia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Nodo Code (n8n)\n// 1. Filtra los items cuya \"Fecha y Hora\" cae dentro de la última semana.\n// 2. Unifica los objetos filtrados en un solo texto para el nodo Message-a-Model.\n\nconst now = new Date();\nconst oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);\n\nfunction parseFechaHora(fechaHoraRaw) {\n  if (!fechaHoraRaw || typeof fechaHoraRaw !== 'string') return null;\n\n  const parts = fechaHoraRaw.split(',');\n  if (parts.length === 0) return null;\n\n  const fechaPart = parts[0].trim();\n  const horaPart = (parts.slice(1).join(',') || '').trim();\n\n  const fechaTokens = fechaPart.split('/').map(t => t.trim());\n  if (fechaTokens.length !== 3) return null;\n  const dia = parseInt(fechaTokens[0], 10);\n  const mes = parseInt(fechaTokens[1], 10) - 1;\n  const anio = parseInt(fechaTokens[2], 10);\n  if (Number.isNaN(dia) || Number.isNaN(mes) || Number.isNaN(anio)) return null;\n\n  let horaStr = horaPart.replace(/\\s+/g, ' ').trim();\n  horaStr = horaStr.replace(/a\\.?\\s?m\\.?/ig, 'AM');\n  horaStr = horaStr.replace(/p\\.?\\s?m\\.?/ig, 'PM');\n\n  const ampmMatch = horaStr.match(/\\b(AM|PM)\\b/i);\n  const ampm = ampmMatch ? ampmMatch[1].toUpperCase() : null;\n  const timeOnly = horaStr.replace(/\\b(AM|PM)\\b/i, '').trim();\n\n  const timeTokens = timeOnly.split(':').map(t => t.trim()).filter(t => t !== '');\n  let hh = 0, mm = 0, ss = 0;\n  if (timeTokens.length >= 1) hh = parseInt(timeTokens[0], 10) || 0;\n  if (timeTokens.length >= 2) mm = parseInt(timeTokens[1], 10) || 0;\n  if (timeTokens.length >= 3) ss = parseInt(timeTokens[2], 10) || 0;\n\n  if (ampm) {\n    if (ampm === 'AM' && hh === 12) hh = 0;\n    if (ampm === 'PM' && hh < 12) hh += 12;\n  }\n\n  return new Date(anio, mes, dia, hh, mm, ss);\n}\n\n// Validar input\nif (!Array.isArray(items)) return [];\n\n// Filtrar items dentro de la última semana\nconst filteredItems = items.filter(it => {\n  const raw = it?.json?.[\"Fecha y Hora\"];\n  const fecha = parseFechaHora(raw);\n  if (!fecha || Number.isNaN(fecha.getTime())) return false;\n  return fecha >= oneWeekAgo && fecha <= now;\n});\n\n// Si no hay resultados, devolver un mensaje indicando eso\nif (filteredItems.length === 0) {\n  return [{ json: { message: \"No se encontraron mensajes en la última semana.\" } }];\n}\n\n// Construir mensaje unificado\nconst combinedText = filteredItems.map(it => {\n  const id = it.json.Id || 'Sin ID';\n  const fecha = it.json[\"Fecha y Hora\"] || 'Sin fecha';\n  const msg = it.json.Mensaje || 'Sin mensaje';\n  return `🕒 ${fecha}\\n🆔 ${id}\\n💬 ${msg}`;\n}).join('\\n\\n---\\n\\n');\n\n// Devolver un único objeto con el texto concatenado\nreturn [\n  {\n    json: {\n      message: `Análisis de mensajes de la última semana:\\n\\n${combinedText}`\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        352,
+        352
+      ],
+      "id": "90006525-f75b-485b-a6ec-44a2f50ba83a",
+      "name": "Code in JavaScript1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Montevideo",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "8cef3033-6e20-4c94-b52e-a00f5bc1d5a1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  },
+  "id": "ocaN4dJwXZKK9EIy",
+  "tags": []
+}

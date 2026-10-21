@@ -1,0 +1,22 @@
+{
+  "caso": "A-01",
+  "titulo": "derivación: etapa + tag + aviso, con read-back",
+  "resultado": "CORROBORADO",
+  "detalle": "http=200 etapa=En Espera tag=True msg=Listo, ya avisé al equipo para que te atienda una persona.",
+  "pasos": [
+    {
+      "resp": {
+        "ok": true,
+        "contactId": "3tzzBVjsKlOF2RJjKNOL",
+        "opportunityId": "vzYAb3P86uJ08CI9jKyV",
+        "motivo": "diseño personalizado",
+        "message_to_agent": "Listo, ya avisé al equipo para que te atienda una persona."
+      },
+      "etapa": "48de80e9-31a9-472a-b030-5b9fe9174810",
+      "tags": [
+        "lead_prueba",
+        "atencion_humana"
+      ]
+    }
+  ]
+}

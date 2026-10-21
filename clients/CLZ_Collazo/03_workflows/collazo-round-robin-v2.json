@@ -1,0 +1,782 @@
+{
+  "name": "CLZ | Round-Robin Google Calendar (Matías → Fabián)",
+  "nodes": [
+    {
+      "parameters": {
+        "triggerOn": "eventCreated",
+        "calendarId": {
+          "__rl": true,
+          "value": "MATIAS_CALENDAR_ID_REPLACE",
+          "mode": "id"
+        },
+        "options": {},
+        "pollTimes": {
+          "item": [{ "mode": "everyMinute" }]
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTrigger",
+      "typeVersion": 1,
+      "position": [-1200, 400],
+      "id": "11111111-1111-4111-8111-111111111111",
+      "name": "GCal Trigger (Matías · eventCreated)",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "REPLACE_ME_MATIAS",
+          "name": "Google Calendar | Collazo Matías"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "p01", "name": "triggerEvent",  "value": "BOOKING_CREATED", "type": "string" },
+            { "id": "p02", "name": "uid",           "value": "={{ $json.id }}", "type": "string" },
+            { "id": "p03", "name": "iCalUID",       "value": "={{ $json.iCalUID ?? '' }}", "type": "string" },
+            { "id": "p04", "name": "eventTypeSlug", "value": "={{ '' }}", "type": "string" },
+            { "id": "p05", "name": "summary",       "value": "={{ $json.summary ?? 'Visita Collazo' }}", "type": "string" },
+            { "id": "p06", "name": "description",   "value": "={{ $json.description ?? '' }}", "type": "string" },
+            { "id": "p07", "name": "startTime",     "value": "={{ $json.start?.dateTime ?? $json.start?.date }}", "type": "string" },
+            { "id": "p08", "name": "endTime",       "value": "={{ $json.end?.dateTime ?? $json.end?.date }}", "type": "string" },
+            { "id": "p09", "name": "location",      "value": "={{ $json.location ?? '' }}", "type": "string" },
+            { "id": "p10", "name": "attendeeEmail", "value": "={{ $json.attendees?.[0]?.email ?? '' }}", "type": "string" },
+            { "id": "p11", "name": "attendeeName",  "value": "={{ $json.attendees?.[0]?.displayName ?? '' }}", "type": "string" },
+            { "id": "p12", "name": "attendeePhone", "value": "={{ '' }}", "type": "string" },
+            { "id": "p13", "name": "rescheduleUid", "value": "={{ '' }}", "type": "string" },
+            { "id": "p14", "name": "rawPayload",    "value": "={{ JSON.stringify($json) }}", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-960, 400],
+      "id": "22222222-2222-4222-8222-222222222222",
+      "name": "Parse Payload"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+                "conditions": [
+                  { "id": "sw-e1", "leftValue": "={{ $json.triggerEvent }}", "rightValue": "BOOKING_CREATED", "operator": { "type": "string", "operation": "equals" } }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "CREATED"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+                "conditions": [
+                  { "id": "sw-e2", "leftValue": "={{ $json.triggerEvent }}", "rightValue": "BOOKING_RESCHEDULED", "operator": { "type": "string", "operation": "equals" } }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "RESCHEDULED"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+                "conditions": [
+                  { "id": "sw-e3", "leftValue": "={{ $json.triggerEvent }}", "rightValue": "BOOKING_CANCELLED", "operator": { "type": "string", "operation": "equals" } }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "CANCELLED"
+            }
+          ]
+        },
+        "options": { "fallbackOutput": "extra" }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [-720, 400],
+      "id": "33333333-3333-4333-8333-333333333333",
+      "name": "Switch by triggerEvent"
+    },
+
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT target FROM clz_event_type_routing WHERE event_type_slug = $1 LIMIT 1;",
+        "options": {
+          "queryReplacement": "={{ [$('Parse Payload').item.json.eventTypeSlug] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [-480, 0],
+      "id": "44444444-4444-4444-8444-444444444444",
+      "name": "Get routing",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": { "id": "HRV9xsfYlr934XEB", "name": "Collazo" }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+                "conditions": [
+                  { "id": "rt-m", "leftValue": "={{ $json.target }}", "rightValue": "matias", "operator": { "type": "string", "operation": "equals" } }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "matias"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+                "conditions": [
+                  { "id": "rt-f", "leftValue": "={{ $json.target }}", "rightValue": "fabian", "operator": { "type": "string", "operation": "equals" } }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "fabian"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+                "conditions": [
+                  { "id": "rt-rr", "leftValue": "={{ $json.target }}", "rightValue": "round-robin", "operator": { "type": "string", "operation": "equals" } }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "round-robin"
+            }
+          ]
+        },
+        "options": { "fallbackOutput": "extra" }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [-240, 0],
+      "id": "55555555-5555-4555-8555-555555555555",
+      "name": "Switch by routing"
+    },
+
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO clz_event_assignment\n  (cal_com_uid, assigned_to, cal_com_event_type, start_time, end_time,\n   attendee_name, attendee_email, attendee_phone, raw_payload, status)\nVALUES ($1, 'matias', $2, $3, $4, $5, $6, $7, $8::jsonb, 'created')\nON CONFLICT (cal_com_uid) DO NOTHING\nRETURNING cal_com_uid;",
+        "options": {
+          "queryReplacement": "={{ [$('Parse Payload').item.json.uid, $('Parse Payload').item.json.eventTypeSlug, $('Parse Payload').item.json.startTime, $('Parse Payload').item.json.endTime, $('Parse Payload').item.json.attendeeName, $('Parse Payload').item.json.attendeeEmail, $('Parse Payload').item.json.attendeePhone, $('Parse Payload').item.json.rawPayload] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [0, -200],
+      "id": "66666666-6666-4666-8666-666666666666",
+      "name": "Insert assignment (matias forced)",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": { "id": "HRV9xsfYlr934XEB", "name": "Collazo" }
+      }
+    },
+
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE clz_round_robin_state\nSET last_assigned = CASE\n      WHEN last_assigned = 'matias' AND fabian_paused = FALSE THEN 'fabian'\n      WHEN last_assigned = 'fabian' AND matias_paused = FALSE THEN 'matias'\n      ELSE last_assigned\n    END,\n    total_count = total_count + 1,\n    updated_at = NOW()\nWHERE id = 1\nRETURNING last_assigned AS assigned_to, total_count;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [0, 200],
+      "id": "77777777-7777-4777-8777-777777777777",
+      "name": "Asignar RR atómico",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": { "id": "HRV9xsfYlr934XEB", "name": "Collazo" }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+          "conditions": [
+            { "id": "rr-if", "leftValue": "={{ $json.assigned_to }}", "rightValue": "fabian", "operator": { "type": "string", "operation": "equals" } }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [240, 200],
+      "id": "88888888-8888-4888-8888-888888888888",
+      "name": "IF assigned_to = fabian?"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO clz_event_assignment\n  (cal_com_uid, assigned_to, cal_com_event_type, start_time, end_time,\n   attendee_name, attendee_email, attendee_phone, raw_payload, status)\nVALUES ($1, 'matias', $2, $3, $4, $5, $6, $7, $8::jsonb, 'created')\nON CONFLICT (cal_com_uid) DO NOTHING\nRETURNING cal_com_uid;",
+        "options": {
+          "queryReplacement": "={{ [$('Parse Payload').item.json.uid, $('Parse Payload').item.json.eventTypeSlug, $('Parse Payload').item.json.startTime, $('Parse Payload').item.json.endTime, $('Parse Payload').item.json.attendeeName, $('Parse Payload').item.json.attendeeEmail, $('Parse Payload').item.json.attendeePhone, $('Parse Payload').item.json.rawPayload] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [480, 320],
+      "id": "99999999-9999-4999-8999-999999999999",
+      "name": "Insert assignment (matias RR)",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": { "id": "HRV9xsfYlr934XEB", "name": "Collazo" }
+      }
+    },
+
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO clz_event_assignment\n  (cal_com_uid, assigned_to, cal_com_event_type, start_time, end_time,\n   attendee_name, attendee_email, attendee_phone, raw_payload, status)\nVALUES ($1, 'fabian', $2, $3, $4, $5, $6, $7, $8::jsonb, 'created')\nON CONFLICT (cal_com_uid) DO NOTHING\nRETURNING cal_com_uid;",
+        "options": {
+          "queryReplacement": "={{ [$('Parse Payload').item.json.uid, $('Parse Payload').item.json.eventTypeSlug, $('Parse Payload').item.json.startTime, $('Parse Payload').item.json.endTime, $('Parse Payload').item.json.attendeeName, $('Parse Payload').item.json.attendeeEmail, $('Parse Payload').item.json.attendeePhone, $('Parse Payload').item.json.rawPayload] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [480, 80],
+      "id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "name": "Insert assignment (fabian)",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": { "id": "HRV9xsfYlr934XEB", "name": "Collazo" }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 5,
+        "unit": "seconds"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [720, 80],
+      "id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      "name": "Wait 5s (sync lag)",
+      "webhookId": "clz-rr-wait-5s"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "MATIAS_CALENDAR_ID_REPLACE",
+          "mode": "id"
+        },
+        "returnAll": false,
+        "limit": 1,
+        "options": {
+          "iCalUID": "={{ $('Parse Payload').item.json.iCalUID }}",
+          "timeMin": "={{ $('Parse Payload').item.json.startTime }}",
+          "timeMax": "={{ $('Parse Payload').item.json.endTime }}",
+          "singleEvents": true
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [960, 80],
+      "id": "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      "name": "GCal Matias getAll",
+      "alwaysOutputData": true,
+      "continueOnFail": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "REPLACE_ME_MATIAS",
+          "name": "Google Calendar | Collazo Matías"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+          "conditions": [
+            { "id": "found-id", "leftValue": "={{ $json.id }}", "rightValue": "", "operator": { "type": "string", "operation": "notEmpty", "singleValue": true } }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1200, 80],
+      "id": "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+      "name": "IF evento encontrado?"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "MATIAS_CALENDAR_ID_REPLACE",
+          "mode": "id"
+        },
+        "eventId": "={{ $('GCal Matias getAll').item.json.id }}",
+        "options": {
+          "sendUpdates": "none"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [1440, -40],
+      "id": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+      "name": "GCal Matias delete",
+      "continueOnFail": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "REPLACE_ME_MATIAS",
+          "name": "Google Calendar | Collazo Matías"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "FABIAN_CALENDAR_ID_REPLACE",
+          "mode": "id"
+        },
+        "start": "={{ $('Parse Payload').item.json.startTime }}",
+        "end": "={{ $('Parse Payload').item.json.endTime }}",
+        "additionalFields": {
+          "summary": "={{ $('Parse Payload').item.json.summary }}",
+          "description": "={{ $('Parse Payload').item.json.description + '\\n— Cliente: ' + $('Parse Payload').item.json.attendeeName + '\\n— Email: ' + $('Parse Payload').item.json.attendeeEmail + '\\n— Tel: ' + $('Parse Payload').item.json.attendeePhone + '\\n— Servicio: ' + $('Parse Payload').item.json.eventTypeSlug + '\\n— uid: ' + $('Parse Payload').item.json.uid }}",
+          "location": "={{ $('Parse Payload').item.json.location }}",
+          "sendUpdates": "none"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [1680, 80],
+      "id": "ffffffff-ffff-4fff-8fff-ffffffffffff",
+      "name": "GCal Fabian create",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "REPLACE_ME_FABIAN",
+          "name": "Google Calendar | Collazo Fabián"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE clz_event_assignment\nSET gcal_event_id_matias = $1,\n    gcal_event_id_fabian = $2,\n    updated_at = NOW()\nWHERE cal_com_uid = $3;",
+        "options": {
+          "queryReplacement": "={{ [$('GCal Matias getAll').first()?.json?.id ?? null, $('GCal Fabian create').item.json.id, $('Parse Payload').item.json.uid] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [1920, 80],
+      "id": "10101010-1010-4101-8101-101010101010",
+      "name": "Update mapping",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": { "id": "HRV9xsfYlr934XEB", "name": "Collazo" }
+      }
+    },
+
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT cal_com_uid, assigned_to, gcal_event_id_matias, gcal_event_id_fabian, start_time, end_time\nFROM clz_event_assignment\nWHERE cal_com_uid = $1 OR cal_com_uid = $2\nORDER BY created_at DESC\nLIMIT 1;",
+        "options": {
+          "queryReplacement": "={{ [$('Parse Payload').item.json.uid, $('Parse Payload').item.json.rescheduleUid] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [-480, 700],
+      "id": "20202020-2020-4202-8202-202020202020",
+      "name": "Lookup booking (RESCHEDULED)",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": { "id": "HRV9xsfYlr934XEB", "name": "Collazo" }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+          "conditions": [
+            { "id": "resched-fab", "leftValue": "={{ $json.gcal_event_id_fabian }}", "rightValue": "", "operator": { "type": "string", "operation": "notEmpty", "singleValue": true } }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-240, 700],
+      "id": "21212121-2121-4212-8212-212121212121",
+      "name": "IF estaba en Fabián?"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "FABIAN_CALENDAR_ID_REPLACE",
+          "mode": "id"
+        },
+        "eventId": "={{ $('Lookup booking (RESCHEDULED)').item.json.gcal_event_id_fabian }}",
+        "updateFields": {
+          "start": "={{ $('Parse Payload').item.json.startTime }}",
+          "end": "={{ $('Parse Payload').item.json.endTime }}",
+          "sendUpdates": "none"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [0, 600],
+      "id": "22222223-2222-4222-8222-222222222223",
+      "name": "GCal Fabian update",
+      "continueOnFail": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "REPLACE_ME_FABIAN",
+          "name": "Google Calendar | Collazo Fabián"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE clz_event_assignment\nSET cal_com_uid = $1,\n    start_time  = $2,\n    end_time    = $3,\n    status      = 'rescheduled',\n    updated_at  = NOW()\nWHERE cal_com_uid = $4 OR cal_com_uid = $1;",
+        "options": {
+          "queryReplacement": "={{ [$('Parse Payload').item.json.uid, $('Parse Payload').item.json.startTime, $('Parse Payload').item.json.endTime, $('Parse Payload').item.json.rescheduleUid] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [240, 600],
+      "id": "23232323-2323-4232-8232-232323232323",
+      "name": "Update DB (rescheduled)",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": { "id": "HRV9xsfYlr934XEB", "name": "Collazo" }
+      }
+    },
+
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT cal_com_uid, assigned_to, gcal_event_id_fabian\nFROM clz_event_assignment\nWHERE cal_com_uid = $1\nLIMIT 1;",
+        "options": {
+          "queryReplacement": "={{ [$('Parse Payload').item.json.uid] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [-480, 1100],
+      "id": "30303030-3030-4303-8303-303030303030",
+      "name": "Lookup booking (CANCELLED)",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": { "id": "HRV9xsfYlr934XEB", "name": "Collazo" }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+          "conditions": [
+            { "id": "cancel-fab", "leftValue": "={{ $json.gcal_event_id_fabian }}", "rightValue": "", "operator": { "type": "string", "operation": "notEmpty", "singleValue": true } }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-240, 1100],
+      "id": "31313131-3131-4313-8313-313131313131",
+      "name": "IF estaba en Fabián? (cancel)"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "FABIAN_CALENDAR_ID_REPLACE",
+          "mode": "id"
+        },
+        "eventId": "={{ $('Lookup booking (CANCELLED)').item.json.gcal_event_id_fabian }}",
+        "options": {
+          "sendUpdates": "none"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [0, 1000],
+      "id": "32323232-3232-4323-8323-323232323232",
+      "name": "GCal Fabian delete",
+      "continueOnFail": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "REPLACE_ME_FABIAN",
+          "name": "Google Calendar | Collazo Fabián"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE clz_event_assignment\nSET status = 'cancelled', updated_at = NOW()\nWHERE cal_com_uid = $1;",
+        "options": {
+          "queryReplacement": "={{ [$('Parse Payload').item.json.uid] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [240, 1000],
+      "id": "33333334-3333-4333-8333-333333333334",
+      "name": "Update DB (cancelled fabian)",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": { "id": "HRV9xsfYlr934XEB", "name": "Collazo" }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE clz_event_assignment\nSET status = 'cancelled', updated_at = NOW()\nWHERE cal_com_uid = $1;",
+        "options": {
+          "queryReplacement": "={{ [$('Parse Payload').item.json.uid] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [0, 1200],
+      "id": "34343434-3434-4343-8343-343434343434",
+      "name": "Update DB (cancelled matias)",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": { "id": "HRV9xsfYlr934XEB", "name": "Collazo" }
+      }
+    },
+
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [2160, 80],
+      "id": "40000000-4000-4000-8000-400000000001",
+      "name": "Fin (move done)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [240, -200],
+      "id": "40000000-4000-4000-8000-400000000002",
+      "name": "Fin (matias forced)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [720, 320],
+      "id": "40000000-4000-4000-8000-400000000003",
+      "name": "Fin (matias RR)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [480, 600],
+      "id": "40000000-4000-4000-8000-400000000004",
+      "name": "Fin (rescheduled fabian)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [0, 800],
+      "id": "40000000-4000-4000-8000-400000000005",
+      "name": "Fin (rescheduled noop)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [480, 1000],
+      "id": "40000000-4000-4000-8000-400000000006",
+      "name": "Fin (cancelled fabian)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [240, 1200],
+      "id": "40000000-4000-4000-8000-400000000007",
+      "name": "Fin (cancelled matias)"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [-480, 1500],
+      "id": "40000000-4000-4000-8000-400000000008",
+      "name": "Fin (ignored)"
+    },
+
+    {
+      "parameters": {
+        "content": "### CLZ — Round-Robin Google Calendar (v2)\n\n**Cambio v1→v2:** el trigger pasó de **Webhook cal.com** a **Google Calendar Trigger** sobre el calendar de Matías (que Collazo usa SOLO para citas de trabajo). El webhook de cal.com no se estaba activando.\n\n**Flujo:**\n1. `GCal Trigger (Matías · eventCreated)` dispara cuando se crea un evento en el calendar de Matías (polling cada 1 min).\n2. `Parse Payload` normaliza el evento GCal (`$json` plano) a campos top-level.\n3. `Switch by triggerEvent` → con GCal solo llega CREATED (triggerEvent se fija en BOOKING_CREATED).\n\n**Lane CREATED:**\n- `Get routing` lee `clz_event_type_routing` → `Switch by routing`.\n  - **matias** → insert + fin (el evento ya está en Matías, no se toca el calendar).\n  - **fabian** → MOVE flow.\n  - **round-robin** (y fallback) → `Asignar RR atómico` → IF fabian → MOVE / else insert matias.\n- MOVE flow: insert fabian → `Wait 5s` → `GCal Matias getAll` (por iCalUID) → IF found → delete Matías + create Fabián / direct create → `Update mapping`.\n\n**⚠️ Diferencias del payload GCal vs cal.com (ver Parse Payload):**\n- `uid` = `$json.id` (event id real de GCal en el calendar de Matías).\n- `eventTypeSlug` = '' (GCal NO trae tipo de servicio) → TODO cae a round-robin vía fallback. Para conservar ruteo por servicio hay que encodear el slug en el título y derivarlo en `eventTypeSlug`.\n- `attendeeEmail/Name` = del array `attendees[0]` si existe; `attendeePhone` y `rescheduleUid` = '' (GCal no los trae).\n- `startTime/endTime` = `start.dateTime ?? start.date` (soporta eventos all-day).\n\n**Caveats de scope (manual):**\n- Lanes RESCHEDULED/CANCELLED quedan inertes: el trigger `eventCreated` solo dispara en alta. Para cubrir reagendado/cancelación, agregar triggers GCal `eventUpdated` / manejo de cancel.\n- Optimización opcional: como `uid = $json.id` ya es el event id en Matías, se puede borrar el `Wait 5s` + `GCal Matias getAll` + `IF found` y usar `$('Parse Payload').item.json.uid` directo en el delete (no hay lag de sync con GCal trigger).\n- No hay loop: el trigger escucha SOLO el calendar de Matías; crear en Fabián no re-dispara.\n\n**Antes de activar:** reemplazar `MATIAS_CALENDAR_ID_REPLACE` y `FABIAN_CALENDAR_ID_REPLACE`. Vincular credenciales OAuth Matías/Fabián en cada nodo GCal (incluido el Trigger). Ejecutar `clz-round-robin-schema.sql` en Postgres Collazo.\n\nVer `06_docs/round-robin-design.md`.",
+        "height": 620,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-1200, -340],
+      "id": "50000000-5000-4000-8000-500000000001",
+      "name": "Sticky Note — README"
+    },
+    {
+      "parameters": {
+        "content": "## ⚠️ PLACEHOLDERS A REEMPLAZAR\n\n- `MATIAS_CALENDAR_ID_REPLACE` → calendar ID de Matías (Trigger + getAll + delete)\n- `FABIAN_CALENDAR_ID_REPLACE` → calendar ID de Fabián\n- credenciales `REPLACE_ME_MATIAS` y `REPLACE_ME_FABIAN` → vincular OAuth tokens reales en n8n UI\n\nFormato calendar ID:\n- `email@gmail.com` (primary)\n- `c_abcdef@group.calendar.google.com` (secondary)",
+        "height": 280,
+        "width": 380
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-620, -340],
+      "id": "50000000-5000-4000-8000-500000000002",
+      "name": "Sticky Note — Placeholders"
+    }
+  ],
+
+  "connections": {
+    "GCal Trigger (Matías · eventCreated)": {
+      "main": [[{ "node": "Parse Payload", "type": "main", "index": 0 }]]
+    },
+    "Parse Payload": {
+      "main": [[{ "node": "Switch by triggerEvent", "type": "main", "index": 0 }]]
+    },
+    "Switch by triggerEvent": {
+      "main": [
+        [{ "node": "Get routing", "type": "main", "index": 0 }],
+        [{ "node": "Lookup booking (RESCHEDULED)", "type": "main", "index": 0 }],
+        [{ "node": "Lookup booking (CANCELLED)", "type": "main", "index": 0 }],
+        [{ "node": "Fin (ignored)", "type": "main", "index": 0 }]
+      ]
+    },
+
+    "Get routing": {
+      "main": [[{ "node": "Switch by routing", "type": "main", "index": 0 }]]
+    },
+    "Switch by routing": {
+      "main": [
+        [{ "node": "Insert assignment (matias forced)", "type": "main", "index": 0 }],
+        [{ "node": "Insert assignment (fabian)", "type": "main", "index": 0 }],
+        [{ "node": "Asignar RR atómico", "type": "main", "index": 0 }],
+        [{ "node": "Asignar RR atómico", "type": "main", "index": 0 }]
+      ]
+    },
+    "Insert assignment (matias forced)": {
+      "main": [[{ "node": "Fin (matias forced)", "type": "main", "index": 0 }]]
+    },
+    "Asignar RR atómico": {
+      "main": [[{ "node": "IF assigned_to = fabian?", "type": "main", "index": 0 }]]
+    },
+    "IF assigned_to = fabian?": {
+      "main": [
+        [{ "node": "Insert assignment (fabian)", "type": "main", "index": 0 }],
+        [{ "node": "Insert assignment (matias RR)", "type": "main", "index": 0 }]
+      ]
+    },
+    "Insert assignment (matias RR)": {
+      "main": [[{ "node": "Fin (matias RR)", "type": "main", "index": 0 }]]
+    },
+
+    "Insert assignment (fabian)": {
+      "main": [[{ "node": "Wait 5s (sync lag)", "type": "main", "index": 0 }]]
+    },
+    "Wait 5s (sync lag)": {
+      "main": [[{ "node": "GCal Matias getAll", "type": "main", "index": 0 }]]
+    },
+    "GCal Matias getAll": {
+      "main": [[{ "node": "IF evento encontrado?", "type": "main", "index": 0 }]]
+    },
+    "IF evento encontrado?": {
+      "main": [
+        [{ "node": "GCal Matias delete", "type": "main", "index": 0 }],
+        [{ "node": "GCal Fabian create", "type": "main", "index": 0 }]
+      ]
+    },
+    "GCal Matias delete": {
+      "main": [[{ "node": "GCal Fabian create", "type": "main", "index": 0 }]]
+    },
+    "GCal Fabian create": {
+      "main": [[{ "node": "Update mapping", "type": "main", "index": 0 }]]
+    },
+    "Update mapping": {
+      "main": [[{ "node": "Fin (move done)", "type": "main", "index": 0 }]]
+    },
+
+    "Lookup booking (RESCHEDULED)": {
+      "main": [[{ "node": "IF estaba en Fabián?", "type": "main", "index": 0 }]]
+    },
+    "IF estaba en Fabián?": {
+      "main": [
+        [{ "node": "GCal Fabian update", "type": "main", "index": 0 }],
+        [{ "node": "Fin (rescheduled noop)", "type": "main", "index": 0 }]
+      ]
+    },
+    "GCal Fabian update": {
+      "main": [[{ "node": "Update DB (rescheduled)", "type": "main", "index": 0 }]]
+    },
+    "Update DB (rescheduled)": {
+      "main": [[{ "node": "Fin (rescheduled fabian)", "type": "main", "index": 0 }]]
+    },
+
+    "Lookup booking (CANCELLED)": {
+      "main": [[{ "node": "IF estaba en Fabián? (cancel)", "type": "main", "index": 0 }]]
+    },
+    "IF estaba en Fabián? (cancel)": {
+      "main": [
+        [{ "node": "GCal Fabian delete", "type": "main", "index": 0 }],
+        [{ "node": "Update DB (cancelled matias)", "type": "main", "index": 0 }]
+      ]
+    },
+    "GCal Fabian delete": {
+      "main": [[{ "node": "Update DB (cancelled fabian)", "type": "main", "index": 0 }]]
+    },
+    "Update DB (cancelled fabian)": {
+      "main": [[{ "node": "Fin (cancelled fabian)", "type": "main", "index": 0 }]]
+    },
+    "Update DB (cancelled matias)": {
+      "main": [[{ "node": "Fin (cancelled matias)", "type": "main", "index": 0 }]]
+    }
+  },
+
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "61a98c41-7d83-4f9b-95a8-d0f6a2c7e111",
+  "id": "clz-round-robin-v2",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "pinData": {},
+  "tags": [
+    { "name": "CLZ", "createdAt": "2026-06-10T00:00:00.000Z", "updatedAt": "2026-06-10T00:00:00.000Z", "id": "clz-tag" },
+    { "name": "google-calendar", "createdAt": "2026-06-28T00:00:00.000Z", "updatedAt": "2026-06-28T00:00:00.000Z", "id": "gcal-tag" }
+  ]
+}

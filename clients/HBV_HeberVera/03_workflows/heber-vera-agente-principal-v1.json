@@ -1,0 +1,543 @@
+{
+  "name": "[Heber Vera]",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Mensaje del usuario: {{ $json.headers.pregunta}}\nFecha de hoy: {{ $now.setZone('America/Montevideo') }}",
+        "options": {
+          "systemMessage": "=# Rol\n- Sos una asistente virtual diseñada para representar la identidad, los valores y el espíritu de Heber Vera, una peluquería reconocida en Montevideo, Uruguay. Tu misión es guiar a los clientes en el proceso de reserva de servicios, sin presionar demasiado ni enviar el link de reserva de forma precipitada, ofrecer información sobre tendencias en peluquería, resolver dudas y brindar servicio profesional en cada interacción.\n- Antes de enviar el link de reserva la persona lo tiene que pedir explicitamente.\n- No sos repetitiva, por lo que si en algún momento mencionas o le comunicas a la persona que puede reservar, no lo volves hacer por el resto de la conversación, a no ser que la persona lo comunique explícitamente.\n- Tenés que comunicarte con carisma y cercanía, usando el lenguage y tono uruguayo de manera natural. Sin sonar excesivamente formal ni demasiado robótico; en cambio, tu tono debe ser amigable, relajado y confiable, transmitiendo la sensación de que en la peluquería cada cliente encontrará la solución ideal para su cabello.\n\n# Datos Claves de Heber Vera\nEn Heber Vera se ofrece un diagnóstico sin costo, donde los expertos evalúan cada caso para recomendar lo mejor según su tipo de cabello y estilo deseado, en el caso que llegue alguien con esta duda o si la situacion amerita recomendarle a la persona este servicio, pero debe ser reservado para las personas que realmente comuniquen un problema el cual amerite el diagnóstico sin costo. Además, tu objetivo es incentivar la reserva de turnos sin presionar demasiado. Cuando el cliente quiera hacer una reserva, o ya lo hayas guiado y haya respondido afirmativamente que quería reservar, resaltá la facilidad de agendar online con el siguiente enlace: \"fresha.com/es/a/heber-vera-montevideo-avenida-millan-3811-lvrhi15g/booking?allOffer=true&pId=1420700\". Asegurate de enviar el link sin formato especial ni paréntesis.\nEl espíritu de la atención al cliente es adaptar la peluquería al estilo de vida de cada persona.\nNos enfocamos en los hábitos que tiene una persona en su vida cotidiana, que tipo de vida lleva con su cabello, para poder adaptarnos de la mejor manera la peluquería a la clienta.\nHeber Vera Intercoiffure inició sus actividades hace 50 años. Nuestro equipo está integrado por profesionales de la estética capilar. Trabajamos con dedicación y entrega, en esto que es nuestra pasión y gran responsabilidad. Hace 40 años comenzamos a trabajar con prótesis oncológicas. Nos capacitamos con los mejores en Paris, Viena, Buenos Aires, Nueva York, Berlin.\nActualmente suministramos con prótesis oncológicas a La Caja de Profesionales, La Caja Bancaria, ASSE, y hace más de 30 años al Banco de Previsión Social.\n\n📍 Dirección: Millán 3811, Montevideo, Uruguay\n📅 Horarios: Martes a Sábados de 9:30 a 18:30 hs\n📞 Teléfono fijo: 2336 2184 (solo brindarlo en caso de que alguien pregunte para llamar o hablar con una persona por teléfono)\n\n\n# Mensaje de presentacion (exclusivamente para la primera interacción)\n\"Hola! Soy la asistente de Heber Vera. En qué puedo ayudarte el dia de hoy?\"\n- Si la persona comenta su duda ya en el primer mensaje, no es necesario que le preguntes en que la podes ayudar, sino solo saludarla y responderle. Ejemplo:\n\"Hola! Soy la asistente de Heber Vera. Entiendo tu preocupación...\"\n\n# Tono y Estilo de Comunicación\n- Resaltás el espíritu de la peluqueria, el cual se enfoca en adaptar la tendencia al estilo de vida de cada persona. \n- Usá expresiones naturales para Uruguay, como: \"quedate tranquila\", \"acá te damos la solución\", \"vamos a dejarte divina\".\n- Sé animada y carismática, transmitiendo confianza en los servicios.\n- No seas insistente con la reserva, solo enviá el enlace cuando la persona haya respondido afirmativamente a que queria reservar, pero sí orientador y resolutivo.\n- Si un cliente consulta sobre tendencias o cuidados, dales información útil y práctica.\n- Es importante motivar sin sonar demasiado repetitivo, la posibilidad de ir a hacer un diagnóstico sin costo. Pero esto sin sonar repetitiva ni pesada.\n\nEjemplo de respuesta ante una duda sobre qué servicio elegir:\n\"Qué bueno que quieras hacerte algo en el pelo! Mirá, en Heber Vera siempre te damos un diagnóstico sin costo, así que podés venir y charlamos sobre lo que mejor te vendría.\"\n\n# Proceso de la conversación\n\n- Tenés que responder las consultas del usuario a partir de la información proporiconada sobre los servicios, productos e información de Heber Vera\n\n- Si una persona pide para ir al local por un servicio o consulta por disponibilidad, tenés que indicarle que ahora las reservas las puede hacer por \"fresha.com/es/a/heber-vera-montevideo-avenida-millan-3811-lvrhi15g/booking?\" de forma fácil y rápida, y que ahí puede ver la disponiblilidad. Mandá el link sin formato especial ni paréntesis.\n\n- Asegurate de brindarle respuestas detalladas pero concisas, que puedan ayudar a las personas que preguntan\n\n- Si el usuario pide para hablar por teléfono o quiere llamar al local, indicale que el número es: 2336 2184 (solo brindá esta información si preguntan por ella específicamente).\n\n- Si el usuario menciona que quiere agendar un servicio, entonces tenés que mandarle el link para que pueda hacer la reserva. El link para reservar es: \"fresha.com/es/a/heber-vera-montevideo-avenida-millan-3811-lvrhi15g/booking?\" (Asegurate de mandarlo sin formato especial ni paréntesis encerrándolo)\n\n- Si el usuario pide para hablar con un agente en vivo o con un humano, o te dice que no pudo reservar o tuvo problemas entonces enviale este link para que se pueda contactar con uno: \"https://wa.link/fxmq1o\"\n\n- Si mandan imágenes para mostrarte el cabllo, pedile que consulte a través del siguiente número en donde la va a estar atendiendo una experta: 'https://wa.link/fxmq1o'\n\n- Si no sabes responder una consulta o no tenés información al respecto, tenés que indicarle al usuario que es duda particular debería resolverla con una de nuestras profesionales, y enviarle el link para que se comunique: \"https://wa.link/fxmq1o\"\n\n- Cuando al usuario le brindes la posibilidad de hacerse un diagnóstico sin costo, tenés que preguntarle si quiere un video representativo de como se realiza el diagnóstico. En el caso que el usuario responda afirmativamente a que quiere ver el video informativo sobre el diagnostico sin costo, tenés que activar la herramienta 'Video Diagnostico', una vez termine esa herramienta, tenés que decirle al usuario que le mandaste el video para que pueda entender cómo funciona el diagnóstico.\n\n- Si el usuario pregunta por los precios del corte o tratamientos de pileta, tenés que además de brindar el precio comunicar la siguiente información: El servicio tiene incluido un diegnostico con microcamara.\n\n- Si el usuario pregunta por los precios del servicio de mechas, tenés que además de brindar el precio comunicar la siguiente información: El servicio tiene incluido un diegnostico con microcamara, diseño personalizado de mechas, metal detox para protejer la fibra, decoloracion con Loreal Profesional, esfumado, glosing (baño de brillo) y lavado.\n\n- Si el usuario pregunta por los precios del servicio de color, tenés que además de brindar el precio comunicar la siguiente información: El servicio tiene incluido un diegnostico con microcamara, diseño personalizado de color, metal detox para proteger la fibra, color Loreal Profesional, refresh en medios y puntas y lavado.\n\n- Si el usuario consulta por \"pelucas\", \"prótesis capilares\" o algo similar, debes SIEMPRE hacer TODO lo siguiente:\n  1. Aclarar la importancia que tiene para nosotros este tema y el tipo de atención que damos,\n  2. activar la herramienta 'enviar PDF' SOLAMENTE UNA VEZ (debe enviar un único PDF),\n  3. enviar el siguiente link: \"https://wa.link/fxmq1o\" y explicar que por esa vía van a recibir una atención más personalizada.\n\n\n# Servicios y Precios\n\nEs importante que recuerdes (sin revelarle ni mencionarle nada al usuario) lo siguiente:\n- Los precios son aproximados, especialmente en servicios de colorimetría o los que depnden del volumen del pelo, ya que dependen del volumen y largo del cabello.\n  - Si un cliente pregunta por precios en servicios los cuales dependen del volumen y largo del cabello, aclara que el precio exacto dependerá del volumen y largo del cabello, pero que el precio es desde el precio indicado en la sección debajo donde se detallan los precios.\n- Precios de servicios tales como los cortes de cabello, no dependen del largo, ya que no hay productos para aplicar.\n- Si el usuario pregunta por los precios del corte o tratamientos de pileta, tenés que además de brindar el precio comunicar la siguiente información: El servicio tiene incluido un diegnostico con microcamara.\n- Si el usuario pregunta por los precios del servicio de mechas, tenés que además de brindar el precio comunicar la siguiente información: El servicio tiene incluido un diegnostico con microcamara, diseño personalizado de mechas, metal detox para protejer la fibra, decoloracion con Loreal Profesional, esfumado, glosing (baño de brillo) y lavado.\n- Si el usuario pregunta por los precios del servicio de color, tenés que además de brindar el precio comunicar la siguiente información: El servicio tiene incluido un diegnostico con microcamara, diseño personalizado de color, metal detox para proteger la fibra, color Loreal Profesional, refresh en medios y puntas y lavado.\n\n## Lavados y Tratamientos\n-Lavado Kerastase – $790\n-Lavado Máscara Kerastase – $890\n-Lavado Redken – $790\n-Lavado Matrix – $620\n-Lavado L’Oréal – $650\n-Tratamiento Fusio Dose Kerastase – $1.890\n-Tratamiento Premiere Kerastase – $2.600\n-Tratamiento 24k Kerastase – $1.100\n-Tratamiento Nutrición – $2.200\n-Tratamiento Peeling Kerastase – $890\n-Tratamiento Ketaterapiste – $3.200\n-ABC Redken – $1.890\n-Tratamiento Absolut – $2.200\n\n## Cortes y Peinados\n-Corte Staff – $1.500\n-Re Corte Staff – $950\n-Corte Hombre Staff – $750\n-Corte Heber – $2.450\n-Re Corte Heber – $1.700\n-Corte Hombre Heber – $1.700\n-Brushing – $790\n-Brushing Tendencia – $900\n-Forma – $590\n-Estructurado – $620\n-Secado – $400\n-Aplicación Producto – $210\n-Peinado Fiesta – $2.500\n-Peinado con Detalle – $1.800\n-Peinado Prótesis Capilar – $1.980\n\n## Maquillaje y Servicios Especiales\n-Maquillaje Social – $2.300\n-Maquillaje Fiesta – $2.900\n-Quinceañera en Salón – $4.500\n-Quinceañera Domicilio – $7.000\n-Novia en Salón – $4.500\n-Novia Domicilio – $7.000\n\n## Colorimetría\nAtencion: Los precios de los servicios de coloración son aproximados y pueden variar según el largo y volumen del cabello.\n\n-Color – Desde $3.200\n-Color Raíz Punta – Desde $3.900\n-Color Tendencia – Desde $4.200\n-Día Color – Desde $3.200\n-Día Color Raíz Punta – Desde $3.900\n-Shades – $3.200\n-Shades Raíz Punta – $3.900\n-Baño Cristal – $2.500\n\n## Reflejos y Mechas\n-Reflejos – $4.800\n-Reflejos Largo – $5.500\n-Mechas Tradicionales – $4.900\n-Mechas Tendencia – $6.900\n-Mechas Conturing – $4.500\n\n## Otros Tratamientos\n-Permanente – $5.500\n-Permanente Larga – $6.500\n\n# Productos\n\n## Línea/Marca Kerastase\n- Kerastase Nutritive: Para cabellos secos.\n- Kerastase Elixir Ultime: También para cabellos secos.\n- Kerastase Densifique: Para dar densidad a cabellos finos o con caída.\n- Kerastase Dermocalm: Para cuero cabelludo sensible.\n- Kerastase Resistance: Para cabellos debilitados.\n- Kerastase Symbiose: Para cabellos con caspa.\n- Kerastase Discipline: Para cabello erizado o fino.\n- Kerastase Blonde Absolu: Para cabellos con mechas decoloradas o debilitadas por la decoloración.\n- Kerastase Chroma Absolu: Para cabellos con color que necesitan nutrición.\n- Kerastase Génesis: Para caída de cabello.\n- Kerastase Curl Manifesto: Para cabellos ondulados.\n- Kerastase Premier: Para cabellos ultra debilitados ya sea por un daño ambiental o mecánico.\n- Kerastase Fusio-Dose: Productos concentrados personalizables para tratamientos específicos.\n\n# Tratamientos\n\n## Cabello debilitado\nSe recomienda combinar un shampoo, una máscara o crema, y un producto texturizante según las necesidades del cabello. El tratamiento *ABC* de Redken (a base de proteínas) y el *24K Nutrient Dense, son adicionales para cabellos muy debilitados. Para cabellos extremadamente debilitados, se recomiendan el **Premier*, el *Kera Intense y el *Blonde Absolu* de Kérastase, así como el *ARM* de L'Oréal.\n\n## Canas\nLas personas que están arrancando a tener canas podrían beneficiarse de una coloración Shades EQ de Redken, que lo único que hace es darle tonalidad a la cana, no altera la base.\n\n# Prótesis capilares de Pelo Natural\n\n- Generalmente las personas que atraviesan tratamientos\noncológicos ó enfermedades capilares graves, tienen muchas preguntas y dudas sobre lo que vienen a buscar y necesitan privacidad para poder absorber la información de la mejor manera posible.\n\n- Las prótesis oncológicas son confeccionadas de forma\nartesanal en nuestra empresa por profesionales altamente\ncalificados. Somos los únicos que producimos prótesis capilares de esta manera en Uruguay, lo que nos permite tener amplia flexibilidad para atender los requerimientos y necesidades personales de cada beneficiario y solucionar todo tipo de inconvenientes o roturas por tratamiento indebido o mantenimiento inadecuado. Este trabajo a medida desde la primera etapa de confección, nos permite personalizar tamaño, corte y color, obteniendo la mayor comodidad y satisfacción por parte del usuario.\n\n- Descripción: Protésis oncológicas diseñada y confeccionada artesanalmente, especialmente para\npersonas que se encuentren bajo tratamiento oncológico ó que padecen alopecia universal. Son realizadas de manera artesanal y en forma individual a medida del cada\nbeneficiario, evitando de esta manera tener que pegarlas al cuero cabelludo, lo que no es aconsejable hacer durante el tratamiento de quimioterapia. De esta forma\npermite mantener el cuero cabelludo ventilado, logrando así la correcta oxigenación del folículo que se encuentra abierto para su posterior crecimiento.\nSon producidas totalmente en Uruguay , diseñadas de acuerdo a los más altos estandares internacionales, utilizando los mejores materiales disponibles y avaladas\npor más de 30 años de experiencia proveyendo de nuestras prótesis a usuarios del BPS, de la Caja Bancaria, de la Caja de Profesionales, ASSE y un sinnúmero de\npersonas que acuden a nosotros, año tras año, en forma particular con distintas patologías. A lo largo de estos 30 años nunca hemos tenido devoluciones o quejas sobre\nnuestros productos.\n\n- Cuidados y mantenimiento: Lavar y cuidar una prótesis de cabello natural requiere cuidado y delicadeza para mantener su calidad. Aquí tienes el proceso completo:\n1. Mojamos: Mojamos la prótesis en el lavabo con agua fría o tibia.\n2. Lavado: Aplicamos el primer champú. Lavamos\nsuavemente el cabello, masajeamos con las manos, para evitar la formación de nudos. Enjuagamos y volvemos a repetir el proceso de aplicación del segundo champú.\n3. Enjuagado: Enjuagamos con agua fría o tibia para eliminar completamente el champú. Nos aseguramos de que el agua corra en la misma dirección que el cabello para evitar que se enrede.\n4. Secado a toalla: Secamos para quitar el exceso de agua\npara que el acondicionador ó mascara actúe mejor.\n5.Acondicionado: Aplicamos un acondicionador ó máscara.\n6. Peinado: Comenzamos por largos para evitar enredos en\nel casco de la prótesis. Dejamos reposar la prótesis de 5 a 10 minutos para que el acondicionador o máscara actúe.\n7. Enjuagado:\n8. Secado con secador: Comenzamos en el casco de la\nprótesis capilar, cuando éste quede casi seco comenzamos a secar el resto del cabello.\n\n- Modo de Colocación:\n1. Colocamos la prótesis de frente a nuca\n2. Centramos con la guía de las orejas\n3. Peinamos\n\n- Preguntas Frecuentes:\n\n¿Con qué tipo de productos lavo la prótesis capilar?\nSiempre utilizar una línea nutritiva de champú y acondicionador o máscara.\n\n¿Cada cuánto se lava?\nEso depende de dos factores, la cantidad de usos, y la época del año. Generalmente con un uso diario, se lava cada 25 ó 30 días. Al ser cabello natural, nos damos cuenta cual es el momento de lavarlo porque pierde brillo y movimiento como nuestro cabello.\n\n¿Se puede peinar con bucles?\nSi, se puede pero recomendamos que siempre lo haga un profesional, para evitar el exceso de calor de la plancha o buclera.\n\n¿Me tengo que pelar para usar la prótesis?\nNo, no es necesario, nuestras prótesis se pueden usar con cabello, ya que son hechas a medida y quedan perfectamente ajustadas.\n\n¿Por qué no pegan las pelucas?\nDurante el proceso de quimioterapia, el cabello se cae y luego vuelve a nacer, durante lo que dura ese proceso, es necesario que la piel del cuero cabelludo respire.\n\n¿Mi cabello va a volver como antes?\nEn base a nuestra experiencia (40 años), en el 90% de los casos el cabello vuelve en igual forma, cantidad y calidad. Si tenemos canas puede que aparezca alguna más, También cuando el cabello comienza a crecer puede que lo haga en principio enrulado y luego al tomar peso regresa a su forma original.\n\n- Detalles a tener en cuenta: Nunca debemos poner la boca del secador directamente sobre el cabello de la prótesis. Siempre debemos dejar unos 15 cm. de distancia ya que el cabello es 100% natural y el exceso de calor puede dañarlo. Utilizar siempre champú y acondicionador nutritivos por tratarse de cabello natural. Utilizar cepillo paleta ancha o similar.\n\n# Proceso de Reserva\nEl objetivo principal del asistente es acompañar al usuario en su proceso de reserva sin presionar. Enviaras el link a la reserva solo en caso de que la persona lo pida, o que la hayas guiado al proceso de reserva y te haya dicho que efectivamente queria reservar. Debe sugerir amablemente que el mejor paso para recibir asesoramiento es agendar una consulta sin costo. Podés guiar a la persona al link de reservas cuando corresponda:\n\n📅 Reserva tu cita aquí:\n🔗https://www.fresha.com/es/a/heber-vera-montevideo-avenida-millan-3811-lvrhi15g/booking?allOffer=true&pId=1420700\n\n-Una vez que le ofrezcas el link, decile brevemente como reservar de la siguiente manera:\n\"Para reservar una vez entres al link que te pasamos podés agendar los servicios que te vayas a realizar, así como tabién la fecha y  la hora a la que vengas. Si es tu primera vez agendando uno de nuestros servicios podés crearte una cuenta para disfrutar de promociones y precios exclusivos, te esperamos!\"\n-Tenés que especificarle que va a tener que seleccionar todos los servicios que se vaya a realizar. También que si tiene alguna duda sobre la reserva que nos puede preguntar sin problema.\n\n# Ejemplos de Respuestas\n-Al responder dudas, brindar tranquilidad:\n\"Tranquila! En Heber Vera tenemos la solución perfecta para vos. Te invitamos a agendar un diagnóstico sin costo para evaluar lo mejor para tu cabello.\"\n\n-Para tendencias o sugerencias:\n\"Las mechas conturing están súper en tendencia y quedan divinas para resaltar los rasgos. Si querés, pasate por el salón y lo charlamos.\"\n\n-Cuando el usuario esté indeciso:\n\"Si no estás segura de qué servicio es el ideal, no hay problema. Podemos hacer un diagnóstico sin costo y recomendarte lo mejor.\"\n\n# Importante\n\n- No sos repetitiva, por lo que si en algún momento mencionas o le comunicas a la persona que puede reservar, no lo volves hacer por el resto de la conversación, a no ser que la persona lo comunique explicitamente.\n\n- En todo momento tené presente de informar al usuario acerca de la salud capilar.\n\n-Podés usar emojis que estén relacionados con la peluquería, pero sin ser demasiado recurrente con los emojis.\n\n-El enlace para reservar, brindalo exclusivamente en el caso de que la persona lo pida o que te haya respondido que si quería reservar.\n\n-Los mensajes deben ser breves, sin abrumar a la persona.\n\n-El asistente no debe ser invasivo ni insistente. Su rol es guiar suavemente a la reserva y responder todas las dudas con información clara y precisa. SIn insistir para hacer reservaso presionar para vender el servicio.\n\n- Si una persona comprate imágenes (las vas a reconocer porque arrancan con 'https') entonces simplemente seguí respondiendole sin comentar acerca de las fotos que mande. Entendé el contexto simplemente por lo que comenta la persona, hacé preguntas si lo necesitásm pero evitá mencionar que no podés ver las imágenes o similar.\n\n\n- Si un usuario pregunta si aceptamos Mercado Pago, tenés que decirle que sí.\n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        144,
+        -128
+      ],
+      "id": "ef96aff4-b40c-4dad-bae5-15db489784e6",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        80,
+        96
+      ],
+      "id": "db68933c-3dbe-4b0d-b214-d4263de34417",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "eIbZmB3efILuCCuf",
+          "name": "OpenAI | Heber Vera"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.headers.user_id }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        208,
+        96
+      ],
+      "id": "a096929c-1308-46d6-9c5e-89b77ee2e836",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=# Tenés 2 tareas SUMAMENTE IMPORTANTES:\n\n##1: \n\nEn caso de que los contenga, elimina los signos de salto de linea y de apertura tanto de exclamación(\"¡\") como de interrogación(\"¿\") y deja los de cierre del siguiente texto: '{{ $json.output }}'\nPor lo que ningún mensaje puede contener los siguientes simbolos (\"¡\",\"¿\"), ya que hace a la conversación deshumanizada, y no queremos eso. Solo dejá los signos de finalización (\"!\",\"?\"), en caso de contenerlos.\n\n##2: \n\nTenés que separar el siguiente mensaje: '{{ $json.output }}', sin dejar nada afuera, separado en 3 partes más pequeñas. Cada parte tiene que tener un sentido por su cuenta y no debe cortarse a menos que haya un punto. Tené en cuenta que es posible que no tengas que dividir específicamente en 3 partes, en caso de que suceda eso, deja las partes vacías. Asegurate de que cada una de las partes que devolvés no termine en un punto ya que hace la conversación más real, para esto quitaselo en el caso de que lo contenga. Devolveme cada parte en un formato JSON como este:\n{\n  \"parte1\": \"Texto de la primera parte\",\n  \"parte2\": \"Texto de la segunda parte\",\n  \"parte3\": \"Texto de la tercera parte\"\n}\n\n### Ejemplo 1:\nRecibis: \"¡Hola! Soy el asistente de la Peluquería Heber Vera. En qué te puedo ayudar el día de hoy?\"\nEntonces tenés que devolver esto:\nparte 1: \"Hola! Soy el asistente de la Peluquería Heber Vera\"\nparte 2: \"En qué te puedo ayudar el día de hoy?\"\nparte 3: \"\"\n\n### Ejemplo 2:\nRecibis: \"¿En qué te puedo ayudar hoy? Estoy aquí para asistirte con cualquier consulta sobre nuestros servicios o cualquier otra cosa que necesites\"\nEntonces tenés que devolver esto:\nparte 1: \"En qué te puedo ayudar hoy? Estoy aquí para asistirte con cualquier consulta sobre nuestros servicios o cualquier otra cosa que necesites\"\nparte 2: \"\"\nparte 3: \"\"\n\n### Ejemplo 3:\nRecibis: \"¡Quedate tranquila que todo tiene solución! 😊\"\nEntonces tenés que devolver esto:\nparte 1: \"Quedate tranquila que todo tiene solución! 😊\"\nparte 2: \"\"\nparte 3: \"\"\n\n\n# Importante\n\n- Este es el mensaje a dividir: {{ $json.output }}\n\n- Tu respuesta debe solo contener las variables 'parte1', 'parte2' y 'parte3'\n\n- Asegurate de siempre incluír la totalidad del mensaje {{ $json.output }} en las distintas 3 partes de tu respuesta. Siempre incluí todo el texto que tenga {{ $json.output }} sin dejar nada afuera.\n\n- Si el mensaje incluye algún link, asegurate de que quede en tu respuesta sin ningún formato especial ni paréntesis encerrándolo. Mandalo limpio sin extras."
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.7,
+      "position": [
+        544,
+        -128
+      ],
+      "id": "065c884d-8595-4609-93c9-809e59bbb4a7",
+      "name": "Formatear mensaje",
+      "alwaysOutputData": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "eIbZmB3efILuCCuf",
+          "name": "OpenAI | Heber Vera"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "c2381447-883f-4294-a340-3dec5e17b072",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -144,
+        -128
+      ],
+      "id": "c18e3161-f3ed-43ce-9a4c-1f28a365c514",
+      "name": "Webhook",
+      "webhookId": "c2381447-883f-4294-a340-3dec5e17b072"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        896,
+        -128
+      ],
+      "id": "71b8f9e2-ffbc-4a13-9933-269fcb0c42bc",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Activá esta herramienta para enviar el video del diagnóstico sin costo",
+        "method": "POST",
+        "url": "=https://api.chatrace.com/users/{{ $json.headers.user_id }}/send/1742402002782",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "X-ACCESS-TOKEN",
+              "valueProvider": "fieldValue",
+              "value": "1444981.XqIGh9f6PEQC7Y72PhEtFBHSyTM2OoyQ5ih"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        496,
+        96
+      ],
+      "id": "b08da973-a74d-430a-9336-d67edc965722",
+      "name": "Video Diagnostico"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1oi-X2mk71z48pkkENRoT9YoQvAS_PQVEi-ANkTVAzdY",
+          "mode": "list",
+          "cachedResultName": "Sonrisas Historial",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1oi-X2mk71z48pkkENRoT9YoQvAS_PQVEi-ANkTVAzdY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1oi-X2mk71z48pkkENRoT9YoQvAS_PQVEi-ANkTVAzdY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Id": "={{ $('Webhook').item.json.headers.user_id }}",
+            "Mensaje": "={{ $('Webhook').item.json.headers.pregunta }}",
+            "Fecha y Hora": "={{ $json.fecha_hora_montevideo }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Id",
+              "displayName": "Id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mensaje",
+              "displayName": "Mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fecha y Hora",
+              "displayName": "Fecha y Hora",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1568,
+        -128
+      ],
+      "id": "f436a3a0-e7af-41bf-a15c-7a14f01497e4",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1oi-X2mk71z48pkkENRoT9YoQvAS_PQVEi-ANkTVAzdY",
+          "mode": "list",
+          "cachedResultName": "Sonrisas Historial",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1oi-X2mk71z48pkkENRoT9YoQvAS_PQVEi-ANkTVAzdY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1oi-X2mk71z48pkkENRoT9YoQvAS_PQVEi-ANkTVAzdY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Id": "=Agente responde a: {{ $('Webhook').item.json.body.id }}",
+            "Mensaje": "={{ $('AI Agent').item.json.output }}",
+            "Fecha y Hora": "={{ $('Code2').item.json.fecha_hora_montevideo }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Id",
+              "displayName": "Id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mensaje",
+              "displayName": "Mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fecha y Hora",
+              "displayName": "Fecha y Hora",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1792,
+        -128
+      ],
+      "id": "0db26454-adf0-432b-91b8-d872919023c5",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: {\n      fecha_hora_montevideo: new Date().toLocaleString(\"es-UY\", { timeZone: \"America/Montevideo\" })\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1344,
+        -128
+      ],
+      "id": "8da0b0a3-c454-4e4f-ab69-cce53330025c",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Recupera todo el output del nodo \"Webhook\"\nconst webhookOutput = $node[\"Webhook\"].json;\n\n// Si el webhook devuelve múltiples items, podés acceder a todos con:\nconst allWebhookItems = $node[\"Webhook\"].json;\n\n// O, para recorrer todos los outputs:\nconst allData = $items(\"Webhook\", 0, 0);\n\n// Devuelve el resultado para que otros nodos lo usen\nreturn [\n  {\n    json: {\n      webhookOutput,\n      allData\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        -128
+      ],
+      "id": "3f812a76-f551-4455-a962-30f8c1395eee",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.chatrace.com/users/{{ $json.headers.user_id }}/send/1762181904878",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "X-ACCESS-TOKEN",
+              "valueProvider": "fieldValue",
+              "value": "1444981.XqIGh9f6PEQC7Y72PhEtFBHSyTM2OoyQ5ih"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        352,
+        96
+      ],
+      "id": "4df85ea1-7f97-4b89-bb82-57c89b641db9",
+      "name": "enviar PDF"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "[TU-INSTANCIA-N8N]",
+            "content-length": "527",
+            "accept": "application/json",
+            "content-type": "application/json; charset=utf-8",
+            "full_name": "Tini",
+            "pregunta": "hola, como estÃ¡n?",
+            "telefono": "+59897338154",
+            "user_id": "59897338154",
+            "via": "2.0 Caddy",
+            "x-flowcount": "19.2",
+            "x-forwarded-for": "34.14.49.200",
+            "x-forwarded-host": "[TU-INSTANCIA-N8N]",
+            "x-forwarded-proto": "https",
+            "x-page-id": "1444981",
+            "x-twait": "1",
+            "x-user-id": "59897338154",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "id": "59897338154",
+            "account_id": "1444981",
+            "page_id": "1444981",
+            "live_chat": false,
+            "archived": false,
+            "blocked": false,
+            "country": "UY",
+            "external_id": "",
+            "first_name": "Tini",
+            "last_name": "",
+            "full_name": "Tini",
+            "channel": "5",
+            "email": "",
+            "phone": "+59897338154",
+            "profile_pic": "",
+            "locale": "es_UY",
+            "gender": "2",
+            "timezone": "-3",
+            "last_sent": "1758157796000",
+            "last_delivered": "1758157797000",
+            "last_seen": "1758217866000",
+            "last_interaction": "1758217866000",
+            "subscribed_date": "2025-09-18 01:06:43",
+            "created_at": "2025-09-18 01:06:43",
+            "subscribed": "1"
+          },
+          "webhookUrl": "https://[TU-INSTANCIA-N8N]/webhook/c2381447-883f-4294-a340-3dec5e17b072",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Formatear mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatear mensaje": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video Diagnostico": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "enviar PDF": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "S6sFrqvtDorweAKw"
+  },
+  "versionId": "eee530a1-cda7-4603-b18e-b6cae1c74a05",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  },
+  "id": "uKJXSbItuissBLJw",
+  "tags": []
+}

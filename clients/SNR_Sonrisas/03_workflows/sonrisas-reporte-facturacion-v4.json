@@ -1,0 +1,1619 @@
+{
+  "name": "Sonrisas | Reporte Facturación v4",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        416
+      ],
+      "id": "7f633eaa-43a5-4486-89e4-1a456eb681a8",
+      "name": "Trigger Reporte Semanal"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ─── Calcula rango de fechas y referencias del mes corriente ───\n// Output:\n//   primerDia        → lunes ISO de la semana que contiene el día 1 del mes corriente (YYYY-MM-DD)\n//   ultimoDia        → último sábado ≤ hoy (YYYY-MM-DD)\n//   diaUnoMes        → día 1 del mes corriente (YYYY-MM-DD)\n//   mesCorriente     → YYYY-MM del mes corriente\n//   mesAnioCorriente → año del mes corriente\n//   ultimoSabado     → alias legacy de ultimoDia (por compatibilidad con templates)\n\nconst tz = 'America/Montevideo';\n\nconst hoy = DateTime.now().setZone(tz).startOf('day');\n\n// Luxon weekday: 1=Lun ... 6=Sáb, 7=Dom\nconst diasAlSabado = (hoy.weekday + 1) % 7; // Sáb→0, Dom→1, Lun→2, ...\nconst ultimoDia = hoy.minus({ days: diasAlSabado });\n\nconst mesActual = hoy.startOf('month');\nconst primerDia = mesActual.startOf('week'); // Luxon: startOf('week') = lunes ISO\n\nreturn [\n  {\n    json: {\n      primerDia:        primerDia.toISODate(),\n      ultimoDia:        ultimoDia.toISODate(),\n      diaUnoMes:        mesActual.toISODate(),\n      mesCorriente:     mesActual.toFormat('yyyy-MM'),\n      mesAnioCorriente: mesActual.year,\n      ultimoSabado:     ultimoDia.toISODate(),\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        320,
+        416
+      ],
+      "id": "825cddb7-57f7-4d9e-b2f4-2a3898d34da8",
+      "name": "lapso"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1RnWwaqEnGlyuUNnG4HW8jl5WoxFB7ypEm-Ey67bQkO8",
+          "mode": "list",
+          "cachedResultName": "Ingreso datos | Sonrisas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RnWwaqEnGlyuUNnG4HW8jl5WoxFB7ypEm-Ey67bQkO8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Facturación",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RnWwaqEnGlyuUNnG4HW8jl5WoxFB7ypEm-Ey67bQkO8/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        544,
+        416
+      ],
+      "id": "1b2cd734-34ed-4acc-bfa8-db406c9525cf",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ─── Clasifica y filtra cada pago ───\n// - Filtra fecha < primerDia (fuera de rango).\n// - Filtra código de prestación no válido.\n// - Normaliza Categoria (11 categorías oficiales + OTRO).\n// - Asigna Clase (AJUSTE / COMBO / RETIRO / OTRO).\n// - Calcula mesKey (YYYY-MM), semanaAnio (S{N} — convención Sonrisas), semanaMes (Semana {N} — lu-do con S1 desde día 1 y última hasta fin mes).\n// - Resuelve docId de sucursal.\n// - Marca esDelMesActual (fecha >= día 1 del mes corriente).\n\nconst tz = 'America/Montevideo';\n\n// ═══ CONFIG ═══════════════════════════════════════════════════════\nconst CODIGOS_VALIDOS = new Set([\n  \"00001\",\n  \"A0000\",\"A0001\",\"A0002\",\"A0003\",\"A0004\",\"A0005\",\"A0007\",\n  \"C0000\",\"C0001\",\"C0002\",\"C0003\",\"C0004\",\"C0005\",\"C0006\",\"C0007\",\"C0008\",\"C0009\",\"C0010\",\"C0011\",\"C0012\",\"C0013\",\"C0014\",\"C0050\",\"C0051\",\"C0052\",\"C0053\",\"C0054\",\"C0055\",\"C0056\",\"C0057\",\n  \"E0001\",\"E0002\",\"E0003\",\"E0004\",\"E0005\",\"E0006\",\"E0007\",\"E0008\",\"E0050\",\"E0051\",\"E0052\",\n  \"HB000\",\"HB001\",\"HB002\",\"HB003\",\"HB004\",\"HB005\",\"HB006\",\"HB007\",\n  \"OA001\",\"OA002\",\"OA003\",\"OA004\",\"OA005\",\"OA006\",\"OA007\",\"OA008\",\"OA009\",\"OA010\",\"OA011\",\"OA012\",\"OA013\",\"OA014\",\"OA015\",\"OA016\",\"OA017\",\"OA018\",\"OA019\",\"OA020\",\"OA021\",\"OA022\",\"OA023\",\"OA024\",\"OA025\",\"OA026\",\"OA027\",\"OA028\",\"OA029\",\"OA030\",\"OA031\",\"OA032\",\"OA033\",\"OA034\",\"OA035\",\"OA036\",\"OA037\",\"OA038\",\"OA039\",\"OA040\",\"OA041\",\"OA042\",\"OA043\",\"OA044\",\"OA045\",\"OA046\",\"OA047\",\"OA100\",\"OA101\",\"OA102\",\"OA103\",\"OA104\",\"OA105\",\"OA106\",\"OA107\",\"OA108\",\"OA109\",\"OA110\",\"OA111\",\"OA200\",\"OA201\",\"OA202\",\"OA203\",\"OA204\",\"OA205\",\"OA206\",\"OA207\",\"OA208\",\"OA300\",\"OA301\",\"OA302\",\"OA600\",\"OA601\",\"OA602\",\"OA603\",\"OA604\",\"OA605\",\"OA606\",\"OA607\",\"OA608\",\"OA609\",\"OA700\",\"OA701\",\"OA702\",\"OA703\",\"OA704\",\"OA800\",\"OA801\",\n  \"OG001\",\"OG002\",\"OG003\",\"OG004\",\"OG005\",\"OG006\",\"OG007\",\"OG020\",\"OG021\",\"OG022\",\"OG023\",\"OG024\",\"OG025\",\"OG026\",\"OG027\",\"OG028\",\"OG040\",\"OG041\",\"OG042\",\"OG043\",\"OG044\",\"OG045\",\"OG046\",\"OG047\",\"OG048\",\"OG049\",\"OG050\",\"OG051\",\"OG060\",\"OG061\",\"OG062\",\"OG063\",\"OG064\",\"OG065\",\"OG066\",\"OG067\",\"OG068\",\"OG070\",\"OG071\",\"OG072\",\"OG073\",\"OG074\",\"OG075\",\"OG080\",\"OG081\",\"OG082\",\n  \"OP000\",\"OP001\",\"OP100\",\"OP101\",\"OP102\",\"OP103\",\"OP104\",\"OP105\",\"OP106\",\"OP107\",\"OP108\",\"OP109\",\"OP110\",\"OP111\",\"OP112\",\"OP113\",\"OP114\",\"OP115\",\"OP116\",\"OP117\",\"OP118\",\"OP119\",\"OP200\",\"OP201\",\"OP202\",\"OP203\",\"OP204\",\"OP205\",\n  \"OR001\",\"OR002\",\"OR003\",\"OR004\",\"OR005\",\"OR006\",\"OR007\",\"OR008\",\"OR009\",\"OR010\",\"OR011\",\"OR012\",\"OR013\",\"OR014\",\"OR016\",\"OR017\",\"OR018\",\"OR019\",\"OR020\",\"OR021\",\"OR100\",\"OR101\",\"OR102\",\"OR103\",\"OR104\",\"OR105\",\"OR106\",\"OR107\",\"OR108\",\"OR109\",\"OR110\",\"OR111\",\"OR112\",\"OR113\",\"OR114\",\"OR115\",\"OR116\",\"OR117\",\"OR118\",\"OR119\",\"OR120\",\"OR121\",\"OR122\",\"OR123\",\"OR124\",\"OR125\",\"OR200\",\"OR201\",\"OR202\",\n  \"P0000\",\"P0001\",\"P0002\",\"P0003\",\"P0004\",\"P0005\",\"P0006\",\"P0007\",\"P0008\",\"P0009\",\"P0010\",\"P0011\",\"P1000\",\"P1001\",\"P1002\",\"P1003\",\"P1004\",\"P1005\",\"P2000\",\"P2001\",\"P2002\",\"P2003\",\"P2004\",\"P2005\",\"P2006\",\"P2007\",\"P2008\",\"P2009\",\"P3000\",\"P3001\",\"P3002\",\"P3003\",\"P3004\",\"P3005\",\"P3006\",\"P3007\",\"P3008\",\n  \"RD000\",\"RD001\",\"RD002\",\"RD003\",\"RD004\",\"RD005\",\"RD006\",\"RD007\"\n]);\n\n// Matching de Categoria (orden importante: primera regex que matchee)\nconst CATEGORIAS = [\n  { match: /ENDODONCIA/,                 out: 'ENDODONCIA' },\n  { match: /CIRUGIA/,                    out: 'CIRUGIA' },\n  { match: /^ODONTOLOGIA GENERAL$/,      out: 'GENERAL' },\n  { match: /PROTESIS/,                   out: 'PROTESIS' },\n  { match: /ORTOPEDIA/,                  out: 'ORTOPEDIA' },\n  { match: /ORTODONCIA/,                 out: 'ORTODONCIA' },\n  { match: /PERIODONCIA/,                out: 'PERIODONCIA' },\n  { match: /^PRODUCTOS HIGIENE BUCAL$/,  out: 'PRODUCTOS HIGIENE BUCAL' },\n  { match: /RADIOLOGIA/,                 out: 'RADIOLOGIA' },\n  { match: /ALINEADORES/,                out: 'ALINEADORES' },\n];\n\n// Matching de Clase por código de prestación\nconst CLASES = [\n  { clase: 'AJUSTE', match: /^OA/ },\n  { clase: 'COMBO',  match: /^OR(1\\d\\d|2\\d\\d)$/ },  // OR100–OR299\n  { clase: 'RETIRO', match: /^OR00[1-7]$/ },         // OR001–OR007\n];\n\n// Mapeo sucursal número → docId\nconst DOC_ID_SUCURSAL = {\n  '1': '1GUVq5XdG7ltgXmOlyVf7ucgMsceE7k84OyLt-2E96dc',\n  '2': '1xowQTStDe4xjDabW0sgOpuuuix3Kv-vUpQTB8Lsmoqk',\n  '3': '1ec8XrB9qcKkRUTGjoewXPx0yKuS3fe4bG6ypF3R408A',\n  '4': '1CaUQQtLcgxAkgIdT6Snmpf8KhnHNTDuPSsHbgqmCWWI',\n};\n\n// ═══ HELPERS ══════════════════════════════════════════════════════\nconst { primerDia, diaUnoMes } = $('lapso').first().json;\nconst fechaLimite = DateTime.fromISO(primerDia, { zone: tz });\nconst diaUno      = DateTime.fromISO(diaUnoMes, { zone: tz });\n\nconst normaliza = (s) =>\n  String(s || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toUpperCase().trim();\n\nconst detectarCategoria = (v) => {\n  const n = normaliza(v);\n  for (const c of CATEGORIAS) if (c.match.test(n)) return c.out;\n  return 'OTRO';\n};\n\nconst detectarClase = (codigo) => {\n  for (const c of CLASES) if (c.match.test(codigo)) return c.clase;\n  return 'OTRO';\n};\n\n// Semana del año — convención Sonrisas: S1 = del 1/1 hasta primer domingo; S2+ = lunes-domingo.\nconst semanaAnio = (dt) => {\n  const jan1 = dt.startOf('year');\n  const daysToFirstSunday = (7 - jan1.weekday) % 7; // Dom=7 → 0\n  const firstSunday = jan1.plus({ days: daysToFirstSunday });\n  if (dt <= firstSunday) return 'S1';\n  const firstMonday = firstSunday.plus({ days: 1 });\n  const diffDays = Math.floor(dt.diff(firstMonday, 'days').days);\n  return 'S' + (2 + Math.floor(diffDays / 7));\n};\n\n// Semana del mes — S1 desde día 1 hasta primer domingo; S2+ = lu-do; última termina fin de mes.\nconst semanaMes = (dt, ancla) => {\n  const monthStart = ancla;\n  const daysToFirstSunday = (7 - monthStart.weekday) % 7;\n  const firstSunday = monthStart.plus({ days: daysToFirstSunday });\n  if (dt <= firstSunday) return 'Semana 1';\n  const firstMonday = firstSunday.plus({ days: 1 });\n  const diffDays = Math.floor(dt.diff(firstMonday, 'days').days);\n  return 'Semana ' + (2 + Math.floor(diffDays / 7));\n};\n\n// ═══ PROCESO ══════════════════════════════════════════════════════\nconst out = [];\n\nfor (const item of items) {\n  const r = item.json || {};\n\n  // Fecha\n  const fechaStr = r['Fecha de recepción del pago'];\n  if (!fechaStr) continue;\n  const dt = DateTime.fromFormat(String(fechaStr), 'yyyy-MM-dd', { zone: tz }).startOf('day');\n  if (!dt.isValid) continue;\n  if (dt < fechaLimite) continue;\n\n  // Código\n  const codigo = String(r['Código Prestación'] || '').trim().toUpperCase();\n  if (!CODIGOS_VALIDOS.has(codigo)) continue;\n\n  // Sucursal\n  const sucursal = r['Nombre Sucursal'] || '';\n  const sucursalMatch = sucursal.match(/\\d+/);\n  if (!sucursalMatch) continue;\n  const sucursalNum = sucursalMatch[0];\n  const docId = DOC_ID_SUCURSAL[sucursalNum];\n  if (!docId) continue;\n\n  out.push({\n    json: {\n      fecha:            dt.toISODate(),\n      Sucursal:         sucursal,\n      SucursalNumero:   sucursalNum,\n      docId,\n      Mes:              r['Mes de recepción del pago'],\n      mesKey:           dt.toFormat('yyyy-MM'),\n      Semana:           semanaAnio(dt),\n      Semana_mes:       semanaMes(dt, diaUno),\n      Categoria:        detectarCategoria(r['Nombre categoría']),\n      Clase:            detectarClase(codigo),\n      pagadoPrestacion: Number(r['Pagado Prestación'] || 0),\n      abonoLibre:       Number(r['Abono Libre'] || 0),\n      esDelMesActual:   dt >= diaUno,\n    },\n  });\n}\n\nreturn out;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        768,
+        416
+      ],
+      "id": "7332eac5-2c8d-4621-9320-a23d1437725d",
+      "name": "Clasificar y filtrar"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1YEm91T8uZXNFjBfYh0UvY0jYv6JftLnp5ofhJ0ZxtYA",
+          "mode": "list",
+          "cachedResultName": "Copia de Facturación 2026 | Sonrisas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YEm91T8uZXNFjBfYh0UvY0jYv6JftLnp5ofhJ0ZxtYA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $json.Sucursal }}",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Categoría": "={{ $json.Mes }}",
+            "ABONO LIBRE": "={{ $json.sum_Abono_Libre || 0 }}",
+            "ENDODONCIA": "={{ $json.sum_ENDODONCIA || 0 }}",
+            "CIRUGIA": "={{ $json.sum_CIRUGIA || 0 }}",
+            "GENERAL": "={{ $json.sum_GENERAL || 0 }}",
+            "PROTESIS": "={{ $json.sum_PROTESIS || 0 }}",
+            "ORTOPEDIA": "={{ $json.sum_ORTOPEDIA || 0 }}",
+            "ORTODONCIA": "={{ $json.sum_ORTODONCIA || 0 }}",
+            "PERIODONCIA": "={{ $json.sum_PERIODONCIA || 0 }}",
+            "PRODUCTOS HIGIENE BUCAL": "={{ $json.sum_PRODUCTOS_HIGIENE_BUCAL || 0 }}",
+            "RADIOLOGIA": "={{ $json.sum_RADIOLOGIA || 0 }}",
+            "ALINEADORES": "={{ $json.sum_ALINEADORES || 0 }}",
+            "cantidadCOMBO": "={{ $json.cantidadCOMBO || 0 }}",
+            "pagadoCOMBO": "={{ $json.pagadoCOMBO || 0 }}",
+            "cantidadRETIRO": "={{ $json.cantidadRETIRO || 0 }}",
+            "pagadoRETIRO": "={{ $json.pagadoRETIRO || 0 }}",
+            "cantidadOTRO": "={{ $json.cantidadOTRO || 0 }}",
+            "pagadoOTRO": "={{ $json.pagadoOTRO || 0 }}",
+            "cantidadAJUSTE": "={{ $json.cantidadAJUSTE || 0 }}",
+            "pagadoAJUSTE": "={{ $json.pagadoAJUSTE || 0 }}"
+          },
+          "matchingColumns": [
+            "Categoría"
+          ],
+          "schema": [
+            {
+              "id": "Categoría",
+              "displayName": "Categoría",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ENDODONCIA",
+              "displayName": "ENDODONCIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CIRUGIA",
+              "displayName": "CIRUGIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "GENERAL",
+              "displayName": "GENERAL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROTESIS",
+              "displayName": "PROTESIS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ORTOPEDIA",
+              "displayName": "ORTOPEDIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ORTODONCIA",
+              "displayName": "ORTODONCIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PERIODONCIA",
+              "displayName": "PERIODONCIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PRODUCTOS HIGIENE BUCAL",
+              "displayName": "PRODUCTOS HIGIENE BUCAL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "RADIOLOGIA",
+              "displayName": "RADIOLOGIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ALINEADORES",
+              "displayName": "ALINEADORES",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ABONO LIBRE",
+              "displayName": "ABONO LIBRE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cantidadAJUSTE",
+              "displayName": "cantidadAJUSTE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cantidadCOMBO",
+              "displayName": "cantidadCOMBO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cantidadRETIRO",
+              "displayName": "cantidadRETIRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cantidadOTRO",
+              "displayName": "cantidadOTRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pagadoAJUSTE",
+              "displayName": "pagadoAJUSTE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pagadoCOMBO",
+              "displayName": "pagadoCOMBO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pagadoRETIRO",
+              "displayName": "pagadoRETIRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pagadoOTRO",
+              "displayName": "pagadoOTRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1440,
+        240
+      ],
+      "id": "87714c8a-c908-49f7-9130-4b01b7564953",
+      "name": "Reporte general",
+      "retryOnFail": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $json.docId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $now.year.format('es') }}",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Mes": "={{ $json.Mes }}",
+            "ABONO LIBRE": "={{ $json.sum_Abono_Libre || 0 }}",
+            "ENDODONCIA": "={{ $json.sum_ENDODONCIA || 0 }}",
+            "CIRUGIA": "={{ $json.sum_CIRUGIA || 0 }}",
+            "GENERAL": "={{ $json.sum_GENERAL || 0 }}",
+            "PROTESIS": "={{ $json.sum_PROTESIS || 0 }}",
+            "ORTOPEDIA": "={{ $json.sum_ORTOPEDIA || 0 }}",
+            "ORTODONCIA": "={{ $json.sum_ORTODONCIA || 0 }}",
+            "PERIODONCIA": "={{ $json.sum_PERIODONCIA || 0 }}",
+            "PRODUCTOS HIGIENE BUCAL": "={{ $json.sum_PRODUCTOS_HIGIENE_BUCAL || 0 }}",
+            "RADIOLOGIA": "={{ $json.sum_RADIOLOGIA || 0 }}",
+            "ALINEADORES": "={{ $json.sum_ALINEADORES || 0 }}",
+            "COMBO": "={{ $json.cantidadCOMBO || 0 }}",
+            "COMBO - Facturado": "={{ $json.pagadoCOMBO || 0 }}",
+            "RETIRO": "={{ $json.cantidadRETIRO || 0 }}",
+            "RETIRO - Facturado": "={{ $json.pagadoRETIRO || 0 }}",
+            "AJUSTES": "={{ $json.cantidadAJUSTE || 0 }}",
+            "AJUSTES - Facturado": "={{ $json.pagadoAJUSTE || 0 }}"
+          },
+          "matchingColumns": [
+            "Mes"
+          ],
+          "schema": [
+            {
+              "id": "Mes",
+              "displayName": "Mes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ENDODONCIA",
+              "displayName": "ENDODONCIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CIRUGIA",
+              "displayName": "CIRUGIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "GENERAL",
+              "displayName": "GENERAL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PROTESIS",
+              "displayName": "PROTESIS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ORTOPEDIA",
+              "displayName": "ORTOPEDIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ORTODONCIA",
+              "displayName": "ORTODONCIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PERIODONCIA",
+              "displayName": "PERIODONCIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PRODUCTOS HIGIENE BUCAL",
+              "displayName": "PRODUCTOS HIGIENE BUCAL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "RADIOLOGIA",
+              "displayName": "RADIOLOGIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ALINEADORES",
+              "displayName": "ALINEADORES",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ABONO LIBRE",
+              "displayName": "ABONO LIBRE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "AJUSTES",
+              "displayName": "AJUSTES",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "AJUSTES - Facturado",
+              "displayName": "AJUSTES - Facturado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "COMBO",
+              "displayName": "COMBO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "COMBO - Facturado",
+              "displayName": "COMBO - Facturado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "RETIRO",
+              "displayName": "RETIRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "RETIRO - Facturado",
+              "displayName": "RETIRO - Facturado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1664,
+        240
+      ],
+      "id": "7710157d-d136-4930-a64f-0d89b0032940",
+      "name": "Por sucursal",
+      "retryOnFail": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1YEm91T8uZXNFjBfYh0UvY0jYv6JftLnp5ofhJ0ZxtYA",
+          "mode": "list",
+          "cachedResultName": "Copia de Facturación 2026 | Sonrisas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YEm91T8uZXNFjBfYh0UvY0jYv6JftLnp5ofhJ0ZxtYA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $json.Sucursal }}",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Categoría": "={{ $json.Semana }}",
+            "ABONO LIBRE": "={{ $json.sum_Abono_Libre || 0 }}",
+            "ENDODONCIA": "={{ $json.sum_ENDODONCIA || 0 }}",
+            "CIRUGIA": "={{ $json.sum_CIRUGIA || 0 }}",
+            "GENERAL": "={{ $json.sum_GENERAL || 0 }}",
+            "PROTESIS": "={{ $json.sum_PROTESIS || 0 }}",
+            "ORTOPEDIA": "={{ $json.sum_ORTOPEDIA || 0 }}",
+            "ORTODONCIA": "={{ $json.sum_ORTODONCIA || 0 }}",
+            "PERIODONCIA": "={{ $json.sum_PERIODONCIA || 0 }}",
+            "PRODUCTOS HIGIENE BUCAL": "={{ $json.sum_PRODUCTOS_HIGIENE_BUCAL || 0 }}",
+            "RADIOLOGIA": "={{ $json.sum_RADIOLOGIA || 0 }}",
+            "ALINEADORES": "={{ $json.sum_ALINEADORES || 0 }}",
+            "cantidadCOMBO": "={{ $json.cantidadCOMBO || 0 }}",
+            "pagadoCOMBO": "={{ $json.pagadoCOMBO || 0 }}",
+            "cantidadRETIRO": "={{ $json.cantidadRETIRO || 0 }}",
+            "pagadoRETIRO": "={{ $json.pagadoRETIRO || 0 }}",
+            "cantidadOTRO": "={{ $json.cantidadOTRO || 0 }}",
+            "pagadoOTRO": "={{ $json.pagadoOTRO || 0 }}",
+            "cantidadAJUSTE": "={{ $json.cantidadAJUSTE || 0 }}",
+            "pagadoAJUSTE": "={{ $json.pagadoAJUSTE || 0 }}"
+          },
+          "matchingColumns": [
+            "Categoría"
+          ],
+          "schema": [
+            {
+              "id": "Categoría",
+              "displayName": "Categoría",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ENDODONCIA",
+              "displayName": "ENDODONCIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CIRUGIA",
+              "displayName": "CIRUGIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "GENERAL",
+              "displayName": "GENERAL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PROTESIS",
+              "displayName": "PROTESIS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ORTOPEDIA",
+              "displayName": "ORTOPEDIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ORTODONCIA",
+              "displayName": "ORTODONCIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PERIODONCIA",
+              "displayName": "PERIODONCIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PRODUCTOS HIGIENE BUCAL",
+              "displayName": "PRODUCTOS HIGIENE BUCAL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "RADIOLOGIA",
+              "displayName": "RADIOLOGIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ALINEADORES",
+              "displayName": "ALINEADORES",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ABONO LIBRE",
+              "displayName": "ABONO LIBRE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cantidadAJUSTE",
+              "displayName": "cantidadAJUSTE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cantidadCOMBO",
+              "displayName": "cantidadCOMBO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cantidadRETIRO",
+              "displayName": "cantidadRETIRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cantidadOTRO",
+              "displayName": "cantidadOTRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pagadoAJUSTE",
+              "displayName": "pagadoAJUSTE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pagadoCOMBO",
+              "displayName": "pagadoCOMBO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pagadoRETIRO",
+              "displayName": "pagadoRETIRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pagadoOTRO",
+              "displayName": "pagadoOTRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1440,
+        432
+      ],
+      "id": "f68c32e3-591d-42d0-a3ce-f14ed8dc6c27",
+      "name": "semana",
+      "retryOnFail": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $json.docId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "MES CORRIENTE",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nro de semana": "={{ $json.Semana_mes }}",
+            "ABONO LIBRE": "={{ $json.sum_Abono_Libre || 0 }}",
+            "ENDODONCIA": "={{ $json.sum_ENDODONCIA || 0 }}",
+            "CIRUGIA": "={{ $json.sum_CIRUGIA || 0 }}",
+            "GENERAL": "={{ $json.sum_GENERAL || 0 }}",
+            "PROTESIS": "={{ $json.sum_PROTESIS || 0 }}",
+            "ORTOPEDIA": "={{ $json.sum_ORTOPEDIA || 0 }}",
+            "ORTODONCIA": "={{ $json.sum_ORTODONCIA || 0 }}",
+            "PERIODONCIA": "={{ $json.sum_PERIODONCIA || 0 }}",
+            "PRODUCTOS HIGIENE BUCAL": "={{ $json.sum_PRODUCTOS_HIGIENE_BUCAL || 0 }}",
+            "RADIOLOGIA": "={{ $json.sum_RADIOLOGIA || 0 }}",
+            "ALINEADORES": "={{ $json.sum_ALINEADORES || 0 }}",
+            "AJUSTES": "={{ $json.cantidadAJUSTE || 0 }}",
+            "AJUSTES - Facturado": "={{ $json.pagadoAJUSTE || 0 }}",
+            "COMBO": "={{ $json.cantidadCOMBO || 0 }}",
+            "COMBO - Facturado": "={{ $json.pagadoCOMBO || 0 }}",
+            "RETIRO": "={{ $json.cantidadRETIRO || 0 }}",
+            "RETIRO - Facturado": "={{ $json.pagadoRETIRO || 0 }}"
+          },
+          "matchingColumns": [
+            "Nro de semana"
+          ],
+          "schema": [
+            {
+              "id": "Nro de semana",
+              "displayName": "Nro de semana",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ENDODONCIA",
+              "displayName": "ENDODONCIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CIRUGIA",
+              "displayName": "CIRUGIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "GENERAL",
+              "displayName": "GENERAL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PROTESIS",
+              "displayName": "PROTESIS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ORTOPEDIA",
+              "displayName": "ORTOPEDIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ORTODONCIA",
+              "displayName": "ORTODONCIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PERIODONCIA",
+              "displayName": "PERIODONCIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "PRODUCTOS HIGIENE BUCAL",
+              "displayName": "PRODUCTOS HIGIENE BUCAL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "RADIOLOGIA",
+              "displayName": "RADIOLOGIA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ALINEADORES",
+              "displayName": "ALINEADORES",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ABONO LIBRE",
+              "displayName": "ABONO LIBRE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "AJUSTES",
+              "displayName": "AJUSTES",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "AJUSTES - Facturado",
+              "displayName": "AJUSTES - Facturado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "COMBO",
+              "displayName": "COMBO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "COMBO - Facturado",
+              "displayName": "COMBO - Facturado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "RETIRO",
+              "displayName": "RETIRO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "RETIRO - Facturado",
+              "displayName": "RETIRO - Facturado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1440,
+        624
+      ],
+      "id": "774fe63c-fc49-415c-8ea6-c8d323916a3a",
+      "name": "Por sucursal1",
+      "retryOnFail": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                6
+              ],
+              "triggerAtHour": 13
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        832
+      ],
+      "id": "2c0fae5b-8f49-48be-a857-f1dd3c387bca",
+      "name": "Trigger Correo"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Duplicado del nodo 'lapso' para alimentar el sub-flujo de recordatorio a Cecilia.\n// Se mantiene idéntico para que ambos flujos compartan la misma lógica.\n\nconst tz = 'America/Montevideo';\n\nconst hoy = DateTime.now().setZone(tz).startOf('day');\nconst diasAlSabado = (hoy.weekday + 1) % 7;\nconst ultimoDia = hoy.minus({ days: diasAlSabado });\nconst mesActual = hoy.startOf('month');\nconst primerDia = mesActual.startOf('week');\n\nreturn [\n  {\n    json: {\n      primerDia:        primerDia.toISODate(),\n      ultimoDia:        ultimoDia.toISODate(),\n      diaUnoMes:        mesActual.toISODate(),\n      mesCorriente:     mesActual.toFormat('yyyy-MM'),\n      mesAnioCorriente: mesActual.year,\n      ultimoSabado:     ultimoDia.toISODate(),\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        320,
+        832
+      ],
+      "id": "f9f6b6e3-51df-476d-bd84-3d79dc80134b",
+      "name": "lapso1"
+    },
+    {
+      "parameters": {
+        "sendTo": "mcgrottola@suy.uy",
+        "subject": "📌  Recordatorio: Cargar Datos Facturación Semanal",
+        "message": "=<!DOCTYPE html>\n<html>\n\n  <head>\n\n    <style>\n\n      p {font-family: \"Arial\", serif;}\n\n    </style>\n\n  </head>\n  \n  <body>\n    <p>Buenas tardes Cecilia,</p>\n\n    <p>\n      Recordamos cargar los datos de Reportes (\n      <a href=\"https://sonrisasuruguay.dentalink.cl/solicitudes_reportes/finanzas.pagos_detalle_accion\">Dentalink</a>\n      ) en la plantilla de ingreso de datos (\n      <a href=\"https://docs.google.com/spreadsheets/d/1RnWwaqEnGlyuUNnG4HW8jl5WoxFB7ypEm-Ey67bQkO8/edit?gid=0#gid=0\">Ingreso Datos</a>\n      )\n    </p></br>\n\n    <p>\n      <strong>Facturación:</strong> Pagos pacientes, detalle por acción<br>\n      <strong>Profesionales 1:</strong> Citas estado mes<br>\n      <strong>Profesionales 2:</strong> Cupos y Ocupación \n    </p>\n\n    <p>\n      <strong>Fecha Inicio:</strong> {{ $json.primerDia }}<br>\n      <strong>Fecha Término:</strong> {{ $json.ultimoDia }}\n    </p> </br>\n\n    <p><em>El rango arranca el lunes previo al día 1 del mes corriente para capturar la semana que cruza el cambio de mes.</em></p>\n\n    <p>Saludos y buen fin de semana.</p>\n\n    <hr>\n\n    <p>\n      <strong>la agencia</strong><br>\n      Desarrollador en la agencia&reg;\n    </p>\n\n  </body>\n</html>",
+        "options": {
+          "appendAttribution": false,
+          "bccList": "[EMAIL-AGENCIA]",
+          "senderName": "la agencia®"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        544,
+        832
+      ],
+      "id": "133483c8-f40d-4e8c-9423-a665d98c8850",
+      "name": "Send a message",
+      "webhookId": "60961034-b976-4c8f-aa58-7b0968f9b949",
+      "retryOnFail": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YfJ3UXNTIIDtdQQW",
+          "name": "Gmail | Heber"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "6390727286",
+        "text": "=Fallo en el flujo:\n\n{{ $json.workflow.name }}\n\nVerifica la ejecución: {{ $json.execution.url }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        832
+      ],
+      "id": "b0678877-3e95-48fc-94fa-17bc7849975e",
+      "name": "Mensaje de error",
+      "webhookId": "3b706118-5877-4684-8e2d-7f4cb828a76e",
+      "credentials": {
+        "telegramApi": {
+          "id": "V5k84z3AjQc9Y5yg",
+          "name": "botla agencia"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "months",
+              "triggerAtHour": 13
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        1056
+      ],
+      "id": "cbafec9a-ca8c-4194-86b9-51b179aac0a5",
+      "name": "Trigger Borrar"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  { json: { docId: '1GUVq5XdG7ltgXmOlyVf7ucgMsceE7k84OyLt-2E96dc' } },\n  { json: { docId: '1xowQTStDe4xjDabW0sgOpuuuix3Kv-vUpQTB8Lsmoqk' } },\n  { json: { docId: '1ec8XrB9qcKkRUTGjoewXPx0yKuS3fe4bG6ypF3R408A' } },\n  { json: { docId: '1CaUQQtLcgxAkgIdT6Snmpf8KhnHNTDuPSsHbgqmCWWI' } },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        320,
+        1056
+      ],
+      "id": "4bc03ac8-1852-44b1-ace6-bdc727a1db60",
+      "name": "Sheets IDs"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        544,
+        1056
+      ],
+      "id": "ae93aae0-828f-4f62-8279-72fcff3269d1",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $json.docId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "MES CORRIENTE",
+          "mode": "name"
+        },
+        "clear": "specificRange",
+        "range": "B2:R7"
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        768,
+        1056
+      ],
+      "id": "d9c026fa-ee55-427f-af05-4834b45471fd",
+      "name": "Clear sheet",
+      "executeOnce": false,
+      "retryOnFail": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "wPnIRnRcU44L0ZWl",
+          "name": "Google Sheets | Heber Vera DEF."
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## v4 — Flujo Principal\n\nRediseño radical (9 nodos vs. ~30 en v3):\n\n1. **Trigger Reporte Semanal** (domingos)\n2. **lapso** — calcula `primerDia` (lunes ISO del día 1) y `ultimoDia` (último sábado)\n3. **Get row(s) in sheet** — lee TODO el sheet de Cecilia\n4. **Clasificar y filtrar** (Code) — filtra fecha+código, normaliza Categoría/Clase, calcula Mes/Semana/Semana_mes, resuelve docId\n5. **Agregar 3 dimensiones** (Code, 3 outputs) — agrega en una pasada por Mes, Semana año y Semana mes\n6. **Reporte general** — escribe sheet global (doc Facturación 2026) por sucursal, matching Mes\n7. **Por sucursal** — escribe en doc de cada sucursal, tab del año, matching Mes\n8. **semana** — escribe sheet global (doc Facturación 2026), matching Semana\n9. **Por sucursal1** — escribe en doc de sucursal, tab MES CORRIENTE, matching Semana_mes\n\n> Mes y Semana_mes filtran `esDelMesActual=true`. Semana año incluye todo el rango (semana puente completa).",
+        "height": 480,
+        "width": 660,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        96,
+        -256
+      ],
+      "typeVersion": 1,
+      "id": "27a3192a-75fe-4f1a-b7c6-00d51fd0fbc2",
+      "name": "Sticky Note - Principal"
+    },
+    {
+      "parameters": {
+        "content": "## Recordatorio a Cecilia\n\nSábados 13hs. Usa `lapso1` (duplicado de `lapso`) para no interferir con el flujo principal.\n\nEl template del email muestra `primerDia` y `ultimoDia`. Si falla, cae a Telegram.",
+        "height": 220,
+        "width": 760
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        96,
+        848
+      ],
+      "typeVersion": 1,
+      "id": "a66ec87c-5cf9-4c89-8df1-7602f634514e",
+      "name": "Sticky Note - Recordatorio"
+    },
+    {
+      "parameters": {
+        "content": "## Limpieza mensual MES CORRIENTE\n\nDía 1 de cada mes, 13hs. Recorre los 4 docIds y hace `Clear` en el rango B2:R6 del tab 'MES CORRIENTE'.\n\nNecesario porque el número de semanas del mes varía (un mes con 5 semanas seguido de uno con 4 dejaría filas huérfanas).",
+        "height": 220,
+        "width": 760,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        96,
+        1152
+      ],
+      "typeVersion": 1,
+      "id": "bb5c21b8-4e2c-4dce-8adf-b5b8f20f7d11",
+      "name": "Sticky Note - Limpieza"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst normalizeKey = (s) =>\n  String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '')\n                 .replace(/[^\\w]+/g, '_').replace(/^_+|_+$/g, '').replace(/_+/g, '_')\n                 .toUpperCase();\n\nfunction acumular(map, key, r) {\n  if (!map.has(key)) {\n    map.set(key, { _groupKey: r._groupKey, Sucursal: r.Sucursal, docId: r.docId, sum_Abono_Libre: 0 });\n  }\n  const agg = map.get(key);\n  agg.sum_Abono_Libre += r.abonoLibre;\n  const catCol = 'sum_' + normalizeKey(r.Categoria);\n  agg[catCol] = (agg[catCol] || 0) + r.pagadoPrestacion;\n  agg['pagado' + r.Clase] = (agg['pagado' + r.Clase] || 0) + r.pagadoPrestacion;\n  agg['cantidad' + r.Clase] = (agg['cantidad' + r.Clase] || 0) + 1;\n}\n\nconst toItems = (map, fieldName) =>\n  Array.from(map.values()).map(v => {\n    const { _groupKey, ...rest } = v;\n    return { json: { [fieldName]: _groupKey, ...rest } };\n  });\n\n// Solo filas del mes corriente (esDelMesActual=true)\nconst map = new Map();\nfor (const item of items) {\n  const r = item.json;\n  if (r.esDelMesActual) {\n    acumular(map, r.Mes + '||' + r.Sucursal, { ...r, _groupKey: r.Mes });\n  }\n}\nreturn toItems(map, 'Mes');\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        224
+      ],
+      "id": "c0b95cb6-7475-4552-b2ca-0235a0aaa450",
+      "name": "Agregar Mes"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst normalizeKey = (s) =>\n  String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '')\n                 .replace(/[^\\w]+/g, '_').replace(/^_+|_+$/g, '').replace(/_+/g, '_')\n                 .toUpperCase();\n\nfunction acumular(map, key, r) {\n  if (!map.has(key)) {\n    map.set(key, { _groupKey: r._groupKey, Sucursal: r.Sucursal, docId: r.docId, sum_Abono_Libre: 0 });\n  }\n  const agg = map.get(key);\n  agg.sum_Abono_Libre += r.abonoLibre;\n  const catCol = 'sum_' + normalizeKey(r.Categoria);\n  agg[catCol] = (agg[catCol] || 0) + r.pagadoPrestacion;\n  agg['pagado' + r.Clase] = (agg['pagado' + r.Clase] || 0) + r.pagadoPrestacion;\n  agg['cantidad' + r.Clase] = (agg['cantidad' + r.Clase] || 0) + 1;\n}\n\nconst toItems = (map, fieldName) =>\n  Array.from(map.values()).map(v => {\n    const { _groupKey, ...rest } = v;\n    return { json: { [fieldName]: _groupKey, ...rest } };\n  });\n\n// Todos los items del rango (incluye semana puente del mes anterior)\nconst map = new Map();\nfor (const item of items) {\n  const r = item.json;\n  acumular(map, r.Semana + '||' + r.Sucursal, { ...r, _groupKey: r.Semana });\n}\nreturn toItems(map, 'Semana');\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        416
+      ],
+      "id": "0a0786e8-6eee-4cd5-964a-6a1c61fe3256",
+      "name": "Agregar Semana Año"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst normalizeKey = (s) =>\n  String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '')\n                 .replace(/[^\\w]+/g, '_').replace(/^_+|_+$/g, '').replace(/_+/g, '_')\n                 .toUpperCase();\n\nfunction acumular(map, key, r) {\n  if (!map.has(key)) {\n    map.set(key, { _groupKey: r._groupKey, Sucursal: r.Sucursal, docId: r.docId, sum_Abono_Libre: 0 });\n  }\n  const agg = map.get(key);\n  agg.sum_Abono_Libre += r.abonoLibre;\n  const catCol = 'sum_' + normalizeKey(r.Categoria);\n  agg[catCol] = (agg[catCol] || 0) + r.pagadoPrestacion;\n  agg['pagado' + r.Clase] = (agg['pagado' + r.Clase] || 0) + r.pagadoPrestacion;\n  agg['cantidad' + r.Clase] = (agg['cantidad' + r.Clase] || 0) + 1;\n}\n\nconst toItems = (map, fieldName) =>\n  Array.from(map.values()).map(v => {\n    const { _groupKey, ...rest } = v;\n    return { json: { [fieldName]: _groupKey, ...rest } };\n  });\n\n// Solo filas del mes corriente (esDelMesActual=true)\nconst map = new Map();\nfor (const item of items) {\n  const r = item.json;\n  if (r.esDelMesActual) {\n    acumular(map, r.Semana_mes + '||' + r.Sucursal, { ...r, _groupKey: r.Semana_mes });\n  }\n}\nreturn toItems(map, 'Semana_mes');\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        608
+      ],
+      "id": "6ffbaae8-10fd-4841-9b30-255e6584d605",
+      "name": "Agregar Semana Mes",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1216,
+        224
+      ],
+      "id": "012b38b0-14c8-4557-9aa2-910149d5a510",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1216,
+        416
+      ],
+      "id": "619f9b37-01b9-4ba3-8c40-63775c068b3f",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1216,
+        608
+      ],
+      "id": "a5a2d16a-1b2a-4c0e-a0ea-7bbe385d8515",
+      "name": "Loop Over Items3",
+      "disabled": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Trigger Reporte Semanal": {
+      "main": [
+        [
+          {
+            "node": "lapso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "lapso": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Clasificar y filtrar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clasificar y filtrar": {
+      "main": [
+        [
+          {
+            "node": "Agregar Mes",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Agregar Semana Año",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Agregar Semana Mes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Correo": {
+      "main": [
+        [
+          {
+            "node": "lapso1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "lapso1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Mensaje de error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Borrar": {
+      "main": [
+        [
+          {
+            "node": "Sheets IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets IDs": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Clear sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agregar Mes": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agregar Semana Año": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agregar Semana Mes": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Reporte general",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reporte general": {
+      "main": [
+        [
+          {
+            "node": "Por sucursal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Por sucursal": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "semana",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "semana": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Por sucursal1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Por sucursal1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true,
+    "errorWorkflow": "OBkUyb8fuo30DzA9",
+    "timezone": "America/Montevideo",
+    "timeSavedPerExecution": 0
+  },
+  "versionId": "bfe36aab-e280-4c2a-beae-883f9ac1dd5c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "53f18675e8c84af0457975c0f07230e5c69ec8dcfbfb55c19efffef73ebf18c9"
+  },
+  "id": "uWiaLbFTD8In2Zjk",
+  "tags": []
+}

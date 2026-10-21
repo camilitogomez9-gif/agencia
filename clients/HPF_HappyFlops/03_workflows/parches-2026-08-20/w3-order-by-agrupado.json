@@ -1,0 +1,16 @@
+{
+  "wf": "W3",
+  "descripcion": "S3-b — el dump de 'todos los productos' salia alfabetico y partia las familias.",
+  "sintoma": "Orden medido en Boda ANTES: Catalogo de frases anticruda(1), Catalogo de Mandiles(2), Cilindros ficha(3), catalogo(4), video(5), Kit anticruda ficha(6). El catalogo de anticrudas salia PRIMERO y su ficha SEXTA.",
+  "objetivo": "El viejo agrupa por producto: ficha -> catalogo(s) -> video. Verificado en la corrida del viejo en E4 (cilindros: ficha, catalogo graduacion, catalogo bautizo, video).",
+  "declarado": "El orden ENTRE familias no se pudo verificar contra el viejo: E4 del viejo se corrio sobre 'Otros' y no sobre Boda, y la captura esta cortada. Se usa la lista de prioridad del prompt: sandalias, cilindros, mandiles, anticruda, pantuflas, vasos. Es decision de negocio, no un hecho medido.",
+  "simulado": "ORDER BY nuevo simulado sobre las 65 fichas reales en los 3 eventos: agrupa bien en los 3. Los 2 catalogos de cilindros de Otros quedan juntos y NO se deduplican (son dos catalogos distintos: graduacion y bautizo/comunion).",
+  "ediciones": [
+    {
+      "nodo": "Consultar caché",
+      "campo": "parameters.query",
+      "anchor": "ORDER BY subcategoria NULLS FIRST, nombre;",
+      "reemplazo": "ORDER BY\n  -- La subcategoria sigue PRIMERO: cuando $2 viene vacio la query devuelve Producto\n  -- Principal y Accesorios juntos, y mezclarlos seria una regresion.\n  subcategoria NULLS FIRST,\n  -- FAMILIA de producto. El orden alfabetico partia las familias: el catalogo de\n  -- anticrudas caia bajo \"C\" y su ficha bajo \"K\", con 5 posiciones en el medio.\n  -- El viejo agrupa por producto: ficha -> catalogo(s) -> video (verificado en E4).\n  CASE\n    WHEN lower(nombre) LIKE '%sandalia%'  THEN 1\n    WHEN lower(nombre) LIKE '%cilindro%'  THEN 2\n    WHEN lower(nombre) LIKE '%mandil%'    THEN 3\n    WHEN lower(nombre) LIKE '%anticruda%' THEN 4\n    WHEN lower(nombre) LIKE '%pantufla%'  THEN 5\n    WHEN lower(nombre) LIKE '%vaso%'      THEN 6\n    ELSE 9\n  END,\n  -- ROL dentro de la familia: la ficha primero (lleva precio y minimo), despues el\n  -- catalogo de disenos y el video al final. `media_tipo` es senal limpia del catalogo\n  -- ('imagen' | 'video' | 'pdf') y los PDF de este catalogo SON catalogos de disenos.\n  -- Se matchean las dos grafias de \"catalogo\" porque no se puede contar con `unaccent`.\n  CASE\n    WHEN media_tipo = 'video' THEN 3\n    WHEN media_tipo = 'pdf'\n      OR lower(nombre) LIKE '%catalogo%'\n      OR lower(nombre) LIKE '%catálogo%' THEN 2\n    ELSE 1\n  END,\n  nombre;"
+    }
+  ]
+}

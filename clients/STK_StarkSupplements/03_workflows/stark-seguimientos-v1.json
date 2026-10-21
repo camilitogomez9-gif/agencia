@@ -1,0 +1,1774 @@
+{
+  "name": "OFFICIAL Stark Supplements | Seguimientos",
+  "nodes": [
+    {
+      "parameters": {
+        "amount": 30,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -3680,
+        -624
+      ],
+      "id": "82031172-f4c4-4bdb-8f5b-956c1d6e8eb5",
+      "name": "Wait",
+      "webhookId": "90f74411-2a7b-4740-aaac-a61bbcbeb6a4"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  message->>'content' AS content\nFROM public.n8n_chat_histories\nWHERE session_id = '{{ $json.id }}'\n  AND message->>'type' = 'ai'\n  AND message ? 'content'              -- garantiza que existe la clave\nORDER BY id DESC\nLIMIT 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -3456,
+        -624
+      ],
+      "id": "e9b92f4e-6aa2-4b63-90d8-19ff664db742",
+      "name": "Execute a SQL query",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "6DnX94CDxROcqpbH",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bcf6c716-2c98-46cf-9f34-019830f3ba0f",
+              "leftValue": "={{ \n  JSON.stringify(\n    (\n      (\n        ($json.mensaje_real) ?? ''\n      )\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n    )\n  ).slice(1, -1)\n}}",
+              "rightValue": "={{ \n  JSON.stringify(\n    (\n      (\n        ($('trigger').item.json.last_inter_agent) ?? ''\n      )\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n    )\n  ).slice(1, -1)\n}}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3008,
+        -624
+      ],
+      "id": "db0af8ce-460a-4cdb-a81c-df53ed41c1fa",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -2784,
+        -528
+      ],
+      "id": "e944ebec-5d80-4ae8-ab43-8b7eac0c359b",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "amount": 2,
+        "unit": "hours"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1312,
+        -720
+      ],
+      "id": "71ebdf79-0ac6-45d3-86a2-a600995da295",
+      "name": "Wait1",
+      "webhookId": "22951c72-72d0-49eb-ad34-0f416aa43877"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  message->>'content' AS content\nFROM public.n8n_chat_histories\nWHERE session_id = '{{ $('trigger').item.json.id }}'\n  AND message->>'type' = 'ai'\n  AND message ? 'content'              -- garantiza que existe la clave\nORDER BY id DESC\nLIMIT 1;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1088,
+        -720
+      ],
+      "id": "96f98526-efe0-46b4-9adf-b4f36449d2bc",
+      "name": "Execute a SQL query1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "6DnX94CDxROcqpbH",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bcf6c716-2c98-46cf-9f34-019830f3ba0f",
+              "leftValue": "={{ \n  JSON.stringify(\n    (\n      (\n        ($('Execute a SQL query1').item.json.content) ?? ''\n      )\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n    )\n  ).slice(1, -1)\n}}",
+              "rightValue": "={{ \n  JSON.stringify(\n    (\n      (\n        ($('PREP. MSJ 1, 2, Y 4').item.json.output?.[0]?.content?.[0]?.text?.followup_30m) ?? ''\n      )\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n    )\n  ).slice(1, -1)\n}}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -864,
+        -720
+      ],
+      "id": "2a2e68ee-f9a6-411e-a104-e827a229d805",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "n8n_chat_histories",
+          "mode": "list",
+          "cachedResultName": "n8n_chat_histories"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "={\n  \"type\": \"ai\",\n  \"content\": \"{{ $('PREP. MSJ 1, 2, Y 4').item.json.output[0].content[0].text.followup_30m }}\",\n  \"tool_calls\": [],\n  \"additional_kwargs\": {},\n  \"response_metadata\": {},\n  \"invalid_tool_calls\": []\n}\n",
+            "session_id": "={{ $('trigger').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1760,
+        -720
+      ],
+      "id": "1290d770-47cf-4d3f-b33b-f853f6a826df",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "6DnX94CDxROcqpbH",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 5.3,
+        "unit": "hours"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        32,
+        -816
+      ],
+      "id": "de6a9c56-e1a2-4165-bccd-a4796c4c9af3",
+      "name": "Wait2",
+      "webhookId": "22951c72-72d0-49eb-ad34-0f416aa43877"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  message->>'content' AS content\nFROM public.n8n_chat_histories\nWHERE session_id = '{{ $('trigger').item.json.id }}'\n  AND message->>'type' = 'ai'\n  AND message ? 'content'              -- garantiza que existe la clave\nORDER BY id DESC\nLIMIT 1;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        256,
+        -816
+      ],
+      "id": "75a8fb1e-ba61-4b2e-a270-870dd1d6b857",
+      "name": "Execute a SQL query2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "6DnX94CDxROcqpbH",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bcf6c716-2c98-46cf-9f34-019830f3ba0f",
+              "leftValue": "={{ \n  JSON.stringify(\n    (\n      (\n        ($('Execute a SQL query2').item.json.content) ?? ''\n      )\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n    )\n  ).slice(1, -1)\n}}",
+              "rightValue": "={{ \n  JSON.stringify(\n    (\n      (\n        ($('PREP. MSJ 1, 2, Y 4').item.json.output?.[0]?.content?.[0]?.text?.followup_2h) ?? ''\n      )\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n    )\n  ).slice(1, -1)\n}}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        -816
+      ],
+      "id": "45ae95a0-18aa-4623-8e86-9c07f66c94a3",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "n8n_chat_histories",
+          "mode": "list",
+          "cachedResultName": "n8n_chat_histories"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "={\n  \"type\": \"ai\",\n  \"content\": \"{{ $('PREP. MSJ 1, 2, Y 4').item.json.output[0].content[0].text.followup_2h }}\",\n  \"tool_calls\": [],\n  \"additional_kwargs\": {},\n  \"response_metadata\": {},\n  \"invalid_tool_calls\": []\n} ",
+            "session_id": "={{ $('trigger').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -192,
+        -816
+      ],
+      "id": "0f4fad23-fc8e-4849-8f6b-4fb629829c4d",
+      "name": "Insert rows in a table1",
+      "credentials": {
+        "postgres": {
+          "id": "6DnX94CDxROcqpbH",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        -624
+      ],
+      "id": "38d488b2-2db8-4ec4-b06c-c7358b3bcc0a",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        704,
+        -720
+      ],
+      "id": "b96b7c21-41b0-4a5d-91c5-99968d3783d8",
+      "name": "No Operation, do nothing2"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "n8n_chat_histories",
+          "mode": "list",
+          "cachedResultName": "n8n_chat_histories"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "={\n  \"type\": \"ai\",\n  \"content\": \"{{ $('PREP. MSJ 1, 2, Y 4').item.json.output[0].content[0].text.followup_8h }}\",\n  \"tool_calls\": [],\n  \"additional_kwargs\": {},\n  \"response_metadata\": {},\n  \"invalid_tool_calls\": []\n} ",
+            "session_id": "={{ $('trigger').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1152,
+        -912
+      ],
+      "id": "73d32d11-c434-40d1-9879-76454e405674",
+      "name": "Insert rows in a table2",
+      "credentials": {
+        "postgres": {
+          "id": "6DnX94CDxROcqpbH",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "unit": "hours"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1376,
+        -912
+      ],
+      "id": "d4b5d697-05b0-4a66-b879-01011a079a9d",
+      "name": "Wait3",
+      "webhookId": "22951c72-72d0-49eb-ad34-0f416aa43877"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  message->>'content' AS content\nFROM public.n8n_chat_histories\nWHERE session_id = '{{ $('trigger').item.json.id }}'\n  AND message->>'type' = 'ai'\n  AND message ? 'content'              -- garantiza que existe la clave\nORDER BY id DESC\nLIMIT 1;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1600,
+        -912
+      ],
+      "id": "9f4a3295-727d-4eb8-9044-0db48adbf8e6",
+      "name": "Execute a SQL query3",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "6DnX94CDxROcqpbH",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=# TAREA (CRÍTICA): Generador de 4 seguimientos\n\nVas a recibir un **contexto de conversación** (últimas interacciones) y tu única misión es **crear 4 mensajes de seguimiento** (para enviar a los 30 min, 2 h, 8 h y 24 h desde el último mensaje del usuario) **perfectamente coordinados entre sí**, basados en lo conversado y sin dejar cabos sueltos.\n\n# INPUT (LEER SIEMPRE)\n- Contexto conversacional (últimas interacciones):  \n{{ $json.contexto_formateado }}\n\n> El contexto viene con formato tipo:\n> [INTERACCIÓN X]\n> Usuario: ...\n> Agente: ...\n>\n> Tu trabajo es detectar qué quedó pendiente y diseñar la secuencia completa alrededor de ESO.\n\n# OUTPUT (OBLIGATORIO, ÚNICO)\nRespondé **EXCLUSIVAMENTE** con un JSON válido EXACTO con estas 4 claves:\n\n{\n  \"followup_30m\": \"…\",\n  \"followup_2h\": \"…\",\n  \"followup_8h\": \"…\",\n  \"followup_24h\": \"…\"\n}\n\n⚠️ PROHIBIDO:\n- Cualquier texto fuera del JSON.\n- Explicar razonamientos.\n- Incluir “Seguimiento 1/2/3/4” dentro del texto.\n- Mencionar tiempos (“hace 30 minutos”, “hace 2 horas”, etc.).\n- Sonar robótico o genérico (cada mensaje debe usar info real del contexto).\n\n# OBJETIVO DE LOS SEGUIMIENTOS\n1) Retomar la conversación con **contexto real** (producto/objetivo/envío/pago/duda).\n2) Hacer **fácil responder** (una pregunta simple por mensaje).\n3) Evitar repetición: cada mensaje debe aportar algo nuevo (clarificar, destrabar, reducir fricción, dar opciones).\n4) Mantener tono vendedor senior: **cálido, seguro, directo**, sin insistencia agresiva.\n\n\n# TONO Y FORMATO (OBLIGATORIO)\n- Idioma: español (neutro, igual al que ). Usá “tu / quieres / tienes” si aplica.\n- Mensajes cortos: 1 a 3 líneas máximo (WhatsApp).\n- Máximo 1 emoji por mensaje.\n- Siempre cerrar con **una sola pregunta** (o elección A/B) para destrabar.\n- No pedir 3 cosas a la vez. **1 pregunta por mensaje.**\n- No uses frases de presión (“comprá ya”, “pagá ahora”, “última oportunidad”, “se agota”) ni inventes urgencias.\n\n# REGLA MADRE: “¿QUÉ QUEDÓ PENDIENTE?”\nAntes de escribir, identificá en el contexto:\n- ¿Cuál fue la ÚLTIMA pregunta o decisión pendiente para avanzar?\n- ¿Qué info faltó? (producto exacto, sabor, ciudad, método de pago, confirmar una opción, etc.)\n- ¿Qué intención tenía? (info de producto, compra, envío, pago, confianza, objeción, etc.)\n\nLos 4 seguimientos deben girar alrededor de ese “pendiente”, escalando suavemente.\n\n# NO INVENTAR (INNEGOCIABLE)\n- No inventes precios, stock, promos, tiempos de envío, políticas.\n- No inventes ingredientes, dosis o claims médicos.\n- Si el pendiente era algo médico/salud sensible, NO intentes asesorar.\n\n# ESTRUCTURA ESTRATÉGICA DE LOS 4 MENSAJES (COORDINADOS)\n### followup_30m (suave y útil)\n- Retomá con una línea contextual: producto/tema exacto.\n- Hacé una pregunta corta para destrabar el siguiente paso.\n\n### followup_2h (reduce fricción)\n- Ofrecé 2 opciones (A/B) o simplificá la decisión.\n- Si faltaba info: pedí SOLO esa info.\n\n### followup_8h (valor + confianza sin inventar)\n- Aportá algo que ayude a decidir (sin inventar): por ejemplo:\n  - “¿lo querés para rendimiento o para ganar masa?”\n  - “¿preferís isolate o whey?”\n  - “¿lo necesitás con sabor X o te da igual?”\n- Si había objeción/confianza: ofrecé prueba social sin inventar (“Si querés, te paso testimonios/reseñas”).\n- Si ya se hizo alguna de estas preguntas en la conversación, no repitas información\n\n### followup_24h (cierre suave tipo “break-up”)\n- Respetuoso, sin culpa.\n- Abrí salida elegante + puerta abierta, ejemplos:\n  - “¿Querés que lo avancemos hoy?”\n  - “¿Seguís buscando esto o ya resolviste?”\n\n## PLANTILLAS INTELIGENTES SEGÚN EL “PENDIENTE” (USÁ LA QUE CORRESPONDA)\n\n### A) Pendiente = DESAMBIGUAR PRODUCTO / SABOR\n- Incluir opciones concretas (máx 3) si el contexto ya las trajo.\n- Pregunta de elección simple.\n\nEjemplo de estilo:\nfollowup_30m: “Para asegurarme: ¿te referías a **ISO-X Vainilla** o a **Whey Protein Vainilla**?”\nfollowup_2h: “¿La querés **isolate (más limpia)** o **whey (más completa)**?”\nfollowup_8h: “¿Tu objetivo ahora es **definición** o **subir masa**?”\nfollowup_24h: “¿Querés que te pase la opción exacta para tu objetivo?”\n\n### B) Pendiente = CIUDAD/ZONA PARA ENVÍO\nfollowup_30m: pedir ciudad/zona.\nfollowup_2h: ofrecer formato simple de respuesta.\nfollowup_8h: bajar fricción (“con ciudad me alcanza”).\nfollowup_24h: puerta abierta.\n\n### C) Pendiente = MÉTODO DE PAGO\n- No “empujar”, solo facilitar elección.\n- Opciones: **QR / Transferencia / Tigo Money** (si eso aparece en el contexto del negocio).\n\n### D) Pendiente = OBJECIÓN (“lo pienso”, “está caro”, “desconfío”)\n- Validar + pregunta simple.\n- Sin inventar descuentos.\n- Ofrecer testimonio/reseña como recurso (sin prometer si no existe en el flujo).\n\n### E) Pendiente = SALUD SENSIBLE (medicación, embarazo, condición)\n- No asesorar.\n- Pedir 1 dato para que un asesor lo vea con contexto.\n\n# CHECKLIST FINAL (ANTES DE RESPONDER)\n- [ ] ¿Los 4 mensajes se basan en algo real del contexto?\n- [ ] ¿Cada mensaje es distinto y aporta algo nuevo?\n- [ ] ¿Cada mensaje termina con 1 sola pregunta fácil?\n- [ ] ¿No mencioné tiempos ni soné insistente?\n- [ ] ¿No inventé datos (precio/stock/claims)?\n- [ ] ¿El JSON es válido y SOLO contiene las 4 claves?\n- [ ] ¿No estoy repitiendo algo ya hablado previamente en el chat?\n- [ ] ¿Estoy siendo creativo?\n\n# Notas finales:\n- Evita repetir información que ya sea haya habaldo en el chat anteriormente. Ya que esto generará más fricción al parecer un loop de preguntas. \n- Adaptate a cada situación, creando mensajes únicos y con sentido para la persona.\n- SIEMPRE usa emojis en tus respuestas (☘, 😊, ⚡, ✌, ✨)\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_schema",
+              "schema": "{\n  \"type\": \"object\",\n  \"additionalProperties\": false,\n  \"properties\": {\n    \"followup_30m\": { \"type\": \"string\", \"description\": \"Primer follow up\" },\n    \"followup_2h\": { \"type\": \"string\", \"description\": \"Segundo follow up\" },\n    \"followup_8h\": { \"type\": \"string\", \"description\": \"Tercer follow up\" },\n    \"followup_24h\": { \"type\": \"string\", \"description\": \"Cuarto follow up\" }\n  },\n  \"required\": [\"followup_30m\", \"followup_2h\", \"followup_8h\",  \"followup_24h\"]\n}\n"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -2560,
+        -720
+      ],
+      "id": "d285650c-bf78-4971-9853-048290205fb0",
+      "name": "PREP. MSJ 1, 2, Y 4",
+      "credentials": {
+        "openAiApi": {
+          "id": "CWz84fUE1wUT8CXn",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## MSJ 1",
+        "width": 416
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2656,
+        -880
+      ],
+      "id": "d7230aeb-f117-482b-af30-c21c34c7da05",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## MSJ 2"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1264,
+        -944
+      ],
+      "id": "ae3f222f-bd1e-4748-981e-1612ee11a649",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## MSJ 3"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        112,
+        -1008
+      ],
+      "id": "6e8bde83-055c-4cd4-90be-1e4b158e3895",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bcf6c716-2c98-46cf-9f34-019830f3ba0f",
+              "leftValue": "={{ \n  JSON.stringify(\n    (\n      (\n        ($('Execute a SQL query3').item.json.content) ?? ''\n      )\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n    )\n  ).slice(1, -1)\n}}",
+              "rightValue": "={{ \n  JSON.stringify(\n    (\n      (\n        ($('PREP. MSJ 1, 2, Y 4').item.json.output?.[0]?.content?.[0]?.text?.followup_8h) ?? ''\n      )\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n    )\n  ).slice(1, -1)\n}}",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1824,
+        -912
+      ],
+      "id": "fc703932-edd7-4046-86af-b809f7bc1709",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "n8n_chat_histories",
+          "mode": "list",
+          "cachedResultName": "n8n_chat_histories"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "={\n  \"type\": \"ai\",\n  \"content\": \"{{ $('PREP. MSJ 1, 2, Y 4').item.json.output[0].content[0].text.followup_24h }}\",\n  \"tool_calls\": [],\n  \"additional_kwargs\": {},\n  \"response_metadata\": {},\n  \"invalid_tool_calls\": []\n}",
+            "session_id": "={{ $('trigger').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2496,
+        -1008
+      ],
+      "id": "505c00bc-db9a-46d8-9bbe-ab725d561845",
+      "name": "Insert rows in a table3",
+      "credentials": {
+        "postgres": {
+          "id": "6DnX94CDxROcqpbH",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2048,
+        -816
+      ],
+      "id": "34e303e6-9c9a-4c95-b32a-0743c4e72855",
+      "name": "No Operation, do nothing3"
+    },
+    {
+      "parameters": {
+        "url": "=https://criscapitalbrothers.kommo.com/api/v4/leads/{{ $('trigger').item.json.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "348e4dc8-6357-4391-9aab-e5d38e0c452b",
+      "name": "Get_Entity3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3392,
+        -1104
+      ],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "33d0e5f2-a2d0-494a-b1c7-d1dfedb9e1f9",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "101442331",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3616,
+        -1104
+      ],
+      "id": "4890fa0a-b254-4302-8a67-d607c13e186b",
+      "name": "If10"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://criscapitalbrothers.kommo.com/api/v4/leads/{{ $('trigger').item.json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pipeline_id",
+              "value": "={{13155539}}"
+            },
+            {
+              "name": "status_id",
+              "value": "={{143}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3840,
+        -1104
+      ],
+      "id": "7cd6f359-e112-48ae-add6-fc80395a7052",
+      "name": "PERDIDOS1",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 7,
+        "unit": "hours"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2720,
+        -1008
+      ],
+      "id": "ff68800a-39bf-422e-b27e-8965214dba21",
+      "name": "Wait4",
+      "webhookId": "22951c72-72d0-49eb-ad34-0f416aa43877"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  message->>'content' AS content\nFROM public.n8n_chat_histories\nWHERE session_id = '{{ $('trigger').item.json.id }}'\n  AND message->>'type' = 'ai'\n  AND message ? 'content'              -- garantiza que existe la clave\nORDER BY id DESC\nLIMIT 1;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2944,
+        -1008
+      ],
+      "id": "3defcc4c-17a7-4024-ba1d-3bd2c883ea65",
+      "name": "Execute a SQL query4",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "6DnX94CDxROcqpbH",
+          "name": "Stark Supplements"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bcf6c716-2c98-46cf-9f34-019830f3ba0f",
+              "leftValue": "={{ \n  JSON.stringify(\n    (\n      (\n        ($('Execute a SQL query4').item.json.content) ?? ''\n      )\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n    )\n  ).slice(1, -1)\n}}",
+              "rightValue": "={{ \n  JSON.stringify(\n    (\n      (\n        ($('PREP. MSJ 1, 2, Y 4').item.json.output[0].content[0].text.followup_24h) ?? ''\n      )\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n    )\n  ).slice(1, -1)\n}}",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3168,
+        -1008
+      ],
+      "id": "467b5b69-afd6-4b54-91d2-461b390ddd61",
+      "name": "If4"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3392,
+        -912
+      ],
+      "id": "c1c5b575-d397-4c05-8e64-df1efe2c8207",
+      "name": "No Operation, do nothing4"
+    },
+    {
+      "parameters": {
+        "content": "## MSJ 4"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        -1104
+      ],
+      "id": "6d1fb21c-a2fd-41b3-8fc6-ec5e5c6b5708",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Enviar a Perdidos\n\nPreguntar si está en etapa de seguimientos"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2464,
+        -1280
+      ],
+      "id": "3d795b69-cbf4-4cf0-9a00-cbf05206d0c7",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "id",
+              "type": "any"
+            },
+            {
+              "name": "link",
+              "type": "any"
+            },
+            {
+              "name": "account_id",
+              "type": "any"
+            },
+            {
+              "name": "chat_id",
+              "type": "any"
+            },
+            {
+              "name": "entity_id",
+              "type": "any"
+            },
+            {
+              "name": "element_type",
+              "type": "any"
+            },
+            {
+              "name": "author_id",
+              "type": "any"
+            },
+            {
+              "name": "talk_id",
+              "type": "any"
+            },
+            {
+              "name": "contact_id",
+              "type": "any"
+            },
+            {
+              "name": "account_id",
+              "type": "any"
+            },
+            {
+              "name": "last_inter_agent",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      "id": "4bc6c755-ef18-41a0-b08b-f95c7b2d9bee",
+      "typeVersion": 1.1,
+      "name": "trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -3904,
+        -624
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH msgs AS (\n  SELECT\n    id,\n    lower(message->>'type') AS mtype,\n    COALESCE(message->>'content', '') AS raw_content\n  FROM public.n8n_chat_histories\n  WHERE session_id = '{{ $('trigger').item.json.id }}'\n    AND message ? 'type'\n    AND message ? 'content'\n),\n\nclean AS (\n  SELECT\n    id,\n    mtype,\n\n    /* 1) Recorto TODO lo que sea “contexto inyectado” hacia abajo */\n    trim(\n      regexp_replace(\n        regexp_replace(\n          regexp_replace(\n            regexp_replace(\n              raw_content,\n\n              /* A) Si aparece el bloque “Ultimas interacciones...”, lo cortamos hasta el final */\n              '(?is)\\n*ultimas\\s+interacciones\\s+con\\s+el\\s+usuario\\s*:.*$',\n              '',\n              'g'\n            ),\n\n            /* B) Si por algún motivo ya viene con [INTERACCIÓN ...] adentro, lo cortamos */\n            '(?is)\\n*\\[interacci[oó]n\\s+\\d+\\].*$',\n            '',\n            'g'\n          ),\n\n          /* C) Sacamos tool traces del estilo “Calling X with input: {...}” */\n          '(?im)^\\s*calling\\s+[a-z0-9_]+\\s+with\\s+input\\s*:\\s*\\{.*$',\n          '',\n          'g'\n        ),\n\n        /* D) Quita prefijos tipo “Usuario:”, “Agente:”, etc. */\n        '(?im)^\\s*(mensaje\\s+del\\s+usuario|respuesta\\s+del\\s+agente|usuario|agente|assistant)\\s*:\\s*',\n        '',\n        'g'\n      )\n    ) AS content\n  FROM msgs\n),\n\nhumans AS (\n  SELECT id, content AS user_content\n  FROM clean\n  WHERE mtype IN ('human','user')\n    AND NULLIF(content, '') IS NOT NULL\n),\n\nais AS (\n  SELECT id, content AS agent_content\n  FROM clean\n  WHERE mtype IN ('ai','assistant')\n    AND NULLIF(content, '') IS NOT NULL\n),\n\npaired AS (\n  SELECT\n    h.id AS user_id,\n    h.user_content,\n    (\n      SELECT a.agent_content\n      FROM ais a\n      WHERE a.id > h.id\n      ORDER BY a.id\n      LIMIT 1\n    ) AS agent_content\n  FROM humans h\n  ORDER BY h.id DESC\n  LIMIT 8\n),\n\nordered AS (\n  SELECT\n    user_id,\n    user_content,\n    COALESCE(agent_content, '(sin respuesta registrada)') AS agent_content\n  FROM paired\n  ORDER BY user_id\n),\n\nformatted AS (\n  SELECT\n    '[INTERACCIÓN ' || ROW_NUMBER() OVER (ORDER BY user_id) || ']' || E'\\n' ||\n    'Usuario: ' || user_content || E'\\n' ||\n    'Agente: ' || agent_content AS block\n  FROM ordered\n)\n\nSELECT string_agg(block, E'\\n\\n') AS contexto_formateado\nFROM formatted;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -2784,
+        -720
+      ],
+      "id": "3f149509-f74e-44d7-8756-a373d644f422",
+      "name": "Execute a SQL query6",
+      "credentials": {
+        "postgres": {
+          "id": "6DnX94CDxROcqpbH",
+          "name": "Stark Supplements"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://criscapitalbrothers.kommo.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": 85808,\n    \"entity_id\": {{ $('trigger').item.json.entity_id }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1984,
+        -720
+      ],
+      "id": "e5924641-6f43-4bd6-86ff-7445bd94b609",
+      "name": "Envio Mensaje6",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://criscapitalbrothers.kommo.com/api/v4/leads/{{ $('trigger').item.json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"custom_fields_values\": [\n    {\n      \"field_id\": 1717536,\n      \"values\": [\n        {\n          \"value\": \"{{ \n  JSON.stringify(\n    (\n      (($json.output[0].content[0].text.followup_30m) ?? '')\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n    )\n  ).slice(1, -1) \n}}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2208,
+        -720
+      ],
+      "id": "0a027bef-dfba-4704-9979-659f5e81e817",
+      "name": "actualizar1",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://criscapitalbrothers.kommo.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": 85808,\n    \"entity_id\": {{ $('trigger').item.json.entity_id }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -416,
+        -816
+      ],
+      "id": "95b5a7ee-706f-4861-81dd-f98d7d2cd72c",
+      "name": "Envio Mensaje",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://criscapitalbrothers.kommo.com/api/v4/leads/{{ $('trigger').item.json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"custom_fields_values\": [\n    {\n      \"field_id\": 1717536,\n      \"values\": [\n        {\n          \"value\": \"{{ \n  JSON.stringify(\n    (\n      (($('PREP. MSJ 1, 2, Y 4').item.json.output[0].content[0].text.followup_2h) ?? '')\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n    )\n  ).slice(1, -1) \n}}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -640,
+        -816
+      ],
+      "id": "655ed828-d73a-44c0-a339-f2ae2c138b5d",
+      "name": "actualizar",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://criscapitalbrothers.kommo.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": 85808,\n    \"entity_id\": {{ $('trigger').item.json.entity_id }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        928,
+        -912
+      ],
+      "id": "884c929a-8d0f-4132-a59c-832591cb1041",
+      "name": "Envio Mensaje7",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://criscapitalbrothers.kommo.com/api/v4/leads/{{ $('trigger').item.json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"custom_fields_values\": [\n    {\n      \"field_id\": 1717536,\n      \"values\": [\n        {\n          \"value\": \"{{ \n  JSON.stringify(\n    (\n      (($('PREP. MSJ 1, 2, Y 4').item.json.output[0].content[0].text.followup_8h) ?? '')\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n    )\n  ).slice(1, -1) \n}}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        704,
+        -912
+      ],
+      "id": "35c683d8-df73-4808-852b-2bb320295a9b",
+      "name": "actualizar2",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://criscapitalbrothers.kommo.com/api/v2/salesbot/run",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"bot_id\": 85808,\n    \"entity_id\": {{ $('trigger').item.json.entity_id }},\n    \"entity_type\": 2\n  }\n] ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2272,
+        -1008
+      ],
+      "id": "f753cc08-81e0-4014-8ea0-4df4466f004c",
+      "name": "Envio Mensaje8",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://criscapitalbrothers.kommo.com/api/v4/leads/{{ $('trigger').item.json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"custom_fields_values\": [\n    {\n      \"field_id\": 1717536,\n      \"values\": [\n        {\n          \"value\": \"{{ \n  JSON.stringify(\n    (\n      (($('PREP. MSJ 1, 2, Y 4').item.json.output[0].content[0].text.followup_24h) ?? '')\n        .replace(/\\r\\n/g, '\\n')\n        // quita emojis / caracteres 4-byte (U+10000+)\n        .replace(/[\\u{10000}-\\u{10FFFF}]/gu, '')\n    )\n  ).slice(1, -1) \n}}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2048,
+        -1008
+      ],
+      "id": "d8ec4a15-cfd4-4e1e-895b-7b2defbe0256",
+      "name": "actualizar3",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://criscapitalbrothers.kommo.com/api/v4/leads/{{ $('trigger').item.json.entity_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "pipeline_id",
+              "value": "={{13155539}}"
+            },
+            {
+              "name": "status_id",
+              "value": "={{101442331}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1536,
+        -720
+      ],
+      "id": "31b9869f-cc27-4159-9388-2acc34144223",
+      "name": "SEG",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "HxDUJfO30VIHpAiP",
+          "name": "S.S | Kommo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node (JavaScript)\n// Output por item:\n// - mensaje_real: string (lo que se envía al usuario)\n// - razonamiento: string (bloque(s) [Used tools: ...] si existen)\n// - mensaje_original: string (input original)\n// - tenia_razonamiento: boolean\n\nfunction tryParseJsonString(s) {\n  if (typeof s !== 'string') return null;\n  const t = s.trim();\n  if (!t) return null;\n\n  // Solo intentamos parsear si \"parece\" JSON\n  const looksJson =\n    (t.startsWith('[') && t.endsWith(']')) ||\n    (t.startsWith('{') && t.endsWith('}'));\n\n  if (!looksJson) return null;\n\n  try {\n    return JSON.parse(t);\n  } catch {\n    return null;\n  }\n}\n\nfunction normalizeContentFromItemJson(itemJson) {\n  // 1) Caso típico: { content: \"...\" }\n  if (itemJson && typeof itemJson === 'object' && !Array.isArray(itemJson)) {\n    if (typeof itemJson.content === 'string') {\n      // Puede ser texto normal o un JSON-string tipo '[{\"content\":\"...\"}]'\n      const parsed = tryParseJsonString(itemJson.content);\n      if (Array.isArray(parsed) && parsed[0] && typeof parsed[0].content === 'string') {\n        return parsed[0].content;\n      }\n      if (parsed && typeof parsed === 'object' && typeof parsed.content === 'string') {\n        return parsed.content;\n      }\n      return itemJson.content;\n    }\n\n    // Fallbacks comunes\n    if (typeof itemJson.message === 'string') return itemJson.message;\n    if (typeof itemJson.text === 'string') return itemJson.text;\n  }\n\n  // 2) Si el json ENTERO es un string JSON\n  if (typeof itemJson === 'string') {\n    const parsed = tryParseJsonString(itemJson);\n    if (Array.isArray(parsed) && parsed[0] && typeof parsed[0].content === 'string') {\n      return parsed[0].content;\n    }\n    if (parsed && typeof parsed === 'object' && typeof parsed.content === 'string') {\n      return parsed.content;\n    }\n    return itemJson;\n  }\n\n  // 3) Si el json ENTERO es un array tipo [{content:\"...\"}]\n  if (Array.isArray(itemJson)) {\n    const first = itemJson.find(x => x && typeof x.content === 'string');\n    if (first) return first.content;\n    return JSON.stringify(itemJson);\n  }\n\n  // 4) Último recurso\n  return itemJson == null ? '' : String(itemJson);\n}\n\nfunction stripUsedToolsBlocks(text) {\n  if (typeof text !== 'string') {\n    return { mensaje: '', razonamiento: '' };\n  }\n\n  let rest = text.replace(/^\\s+/, ''); // trimStart\n  const blocks = [];\n\n  // Evita loops infinitos ante strings raros\n  const maxLoops = 10;\n\n  for (let loop = 0; loop < maxLoops; loop++) {\n    if (!rest.startsWith('[')) break;\n\n    // Solo lo tratamos como \"razonamiento\" si realmente dice \"Used tools\"\n    // (así no rompemos mensajes que empiezan con \"[\" por otros motivos)\n    const head = rest.slice(0, 80).toLowerCase();\n    if (!head.match(/^\\[\\s*used tools?\\b/)) break;\n\n    // Encontrar el ']' que cierra el primer '[' del inicio,\n    // contando corchetes y respetando strings con escapes.\n    let depth = 0;\n    let inString = false;\n    let quote = '';\n    let escaped = false;\n    let endIdx = -1;\n\n    for (let i = 0; i < rest.length; i++) {\n      const ch = rest[i];\n\n      if (inString) {\n        if (escaped) {\n          escaped = false;\n          continue;\n        }\n        if (ch === '\\\\') {\n          escaped = true;\n          continue;\n        }\n        if (ch === quote) {\n          inString = false;\n          quote = '';\n        }\n        continue;\n      }\n\n      // fuera de string\n      if (ch === '\"' || ch === \"'\") {\n        inString = true;\n        quote = ch;\n        continue;\n      }\n\n      if (ch === '[') depth++;\n      else if (ch === ']') {\n        depth--;\n        if (depth === 0) {\n          endIdx = i;\n          break;\n        }\n      }\n    }\n\n    // Si no pudimos cerrar el bloque, no tocamos nada (fail-safe)\n    if (endIdx === -1) break;\n\n    blocks.push(rest.slice(0, endIdx + 1));\n    rest = rest.slice(endIdx + 1).replace(/^\\s+/, ''); // trimStart\n  }\n\n  // Fail-safe: si por algún motivo quedó vacío, devolvemos el original\n  const mensajeFinal = rest.length ? rest : text;\n\n  return {\n    mensaje: mensajeFinal,\n    razonamiento: blocks.join('\\n\\n'),\n  };\n}\n\nconst items = $input.all();\n\nreturn items.map((item) => {\n  const original = normalizeContentFromItemJson(item.json);\n  const { mensaje, razonamiento } = stripUsedToolsBlocks(original);\n\n  return {\n    json: {\n      ...item.json,\n      mensaje_real: mensaje,\n      razonamiento,\n      mensaje_original: original,\n      tenia_razonamiento: Boolean(razonamiento),\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3232,
+        -624
+      ],
+      "id": "5bfa2100-00c0-419b-ae68-16ea7189c415",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {
+    "trigger": [
+      {
+        "json": {
+          "id": "24303946",
+          "link": "https://criscapitalbrothers.amocrm.com",
+          "account_id": "35798563",
+          "chat_id": "92090d0e-0771-43f2-80fe-738131b476a3",
+          "entity_id": "24303946",
+          "element_type": "2",
+          "author_id": "8af268b4-2b9f-45ea-ba23-49747408b4bd",
+          "talk_id": "79690",
+          "contact_id": "42928986",
+          "last_inter_agent": "Perfecto, te reservo el shaker en color *Gris* junto con el combo de termogénicos. \n\n¿Te gustaría que avancemos con el pedido? ☑"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "actualizar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table": {
+      "main": [
+        [
+          {
+            "node": "SEG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query2": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "actualizar2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table1": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table2": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query3": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PREP. MSJ 1, 2, Y 4": {
+      "main": [
+        [
+          {
+            "node": "actualizar1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "actualizar3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Entity3": {
+      "main": [
+        [
+          {
+            "node": "If10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If10": {
+      "main": [
+        [
+          {
+            "node": "PERDIDOS1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait4": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query4": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Get_Entity3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table3": {
+      "main": [
+        [
+          {
+            "node": "Wait4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "trigger": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query6": {
+      "main": [
+        [
+          {
+            "node": "PREP. MSJ 1, 2, Y 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "actualizar1": {
+      "main": [
+        [
+          {
+            "node": "Envio Mensaje6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio Mensaje6": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "actualizar": {
+      "main": [
+        [
+          {
+            "node": "Envio Mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio Mensaje": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "actualizar2": {
+      "main": [
+        [
+          {
+            "node": "Envio Mensaje7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio Mensaje7": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "actualizar3": {
+      "main": [
+        [
+          {
+            "node": "Envio Mensaje8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio Mensaje8": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SEG": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "65dda756-c3f2-4133-a91a-80e98b21a1d3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2fb601f29b5c700d2141654e4608e081bd1e5daa9614999069a9eb314029edc9"
+  },
+  "id": "LeHzUTaByRLdKbE8",
+  "tags": []
+}

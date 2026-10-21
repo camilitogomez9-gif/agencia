@@ -1,0 +1,89 @@
+{
+  "probe_id": "sess_hpf_fic_012_1785952807#c1726c468d65",
+  "session_id": "sess_hpf_fic_012_1785952807",
+  "contact_id": "6390727286",
+  "canal": "telegram",
+  "texto_enviado": "qué colores de tapas hay",
+  "media_url": null,
+  "http": 200,
+  "segundos_post": 7.8,
+  "version_antes": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "version_despues": "4fc5b0c7-0ef0-4a7b-b5fd-1dc5e8033b45",
+  "capturado_utc": "2026-08-05T18:00:39.247346+00:00",
+  "execution_id": "989406",
+  "status_n8n": "success",
+  "startedAt": "2026-08-05T18:00:27.016Z",
+  "stoppedAt": "2026-08-05T18:00:33.888Z",
+  "n_esperadas": 3,
+  "partes_esperadas": [
+    {
+      "idx": 0,
+      "message_part": "Las tapas de los cilindros se entregan surtidas, no se puede elegir el color. Si quieres ver los cilindros o algún otro producto, dime y te muestro las opciones disponibles para tu boda",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 1,
+      "message_part": "Colores de *tapas* disponibles, puede ir surtido en los *colores* que gustes",
+      "photo_url": "https://i.ibb.co/5xBmhSdK/684359acdcdba.jpg",
+      "doc_url": null,
+      "video_url": null
+    },
+    {
+      "idx": 2,
+      "message_part": "Te gustaría cotizar cilindros o prefieres ver otro recuerdito?",
+      "photo_url": null,
+      "doc_url": null,
+      "video_url": null
+    }
+  ],
+  "partes_emitidas": [
+    {
+      "emisor": "Send Photo (Telegram)",
+      "run": 0,
+      "ms": 258,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1640,
+      "chat_id": 6390727286,
+      "texto_entregado": "Colores de *tapas* disponibles, puede ir surtido en los *colores* que gustes",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 0,
+      "ms": 303,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1639,
+      "chat_id": 6390727286,
+      "texto_entregado": "Las tapas de los cilindros se entregan surtidas, no se puede elegir el color. Si quieres ver los cilindros o algún otro producto, dime y te muestro las opciones disponibles para tu boda",
+      "error": null
+    },
+    {
+      "emisor": "Send a text message1",
+      "run": 1,
+      "ms": 326,
+      "reintentos_posibles": false,
+      "canal": "telegram",
+      "entregado": true,
+      "message_id": 1641,
+      "chat_id": 6390727286,
+      "texto_entregado": "Te gustaría cotizar cilindros o prefieres ver otro recuerdito?",
+      "error": null
+    }
+  ],
+  "n_entregadas": 3,
+  "cero_partes": false,
+  "agente": {
+    "output": "Las tapas de los cilindros se entregan surtidas, no se puede elegir el color. Si quieres ver los cilindros o algún otro producto, dime y te muestro las opciones disponibles para tu boda. ¿Te gustaría cotizar cilindros o prefieres ver otro recuerdito?",
+    "tools": [
+      "MOSTRAR_PRODUCTOS"
+    ]
+  },
+  "baseline_sha256": "f92ceb1c422e6f7614a5ef75a7dfa3410cbbc03f60e9b16c5cc1b7ef945159d1",
+  "caso": "HPF-FIC-012"
+}

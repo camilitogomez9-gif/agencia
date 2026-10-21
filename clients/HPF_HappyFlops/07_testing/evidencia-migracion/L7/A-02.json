@@ -1,0 +1,13 @@
+{
+  "caso": "A-02",
+  "titulo": "derivación sin contactId → rompe",
+  "resultado": "CORROBORADO",
+  "detalle": "http=500",
+  "pasos": [
+    {
+      "resp": {
+        "message": "Workflow execution failed"
+      }
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "wf": "W6",
+  "descripcion": "item 4 (v2, bidireccional): el material de la pantufla lo decide el texto del lead, no el LLM. Reemplaza la v1, que solo colapsaba en una dirección y rompía el caso genérico.",
+  "nota": "aplicado por script (reemplazo de bloque, no anchor simple). El jsCode vigente está en ghl-live-2026-08-12-post-cambios/W6.json",
+  "ediciones": []
+}

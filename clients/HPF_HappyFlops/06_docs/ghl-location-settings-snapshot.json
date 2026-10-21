@@ -1,0 +1,27 @@
+{
+  "tomado_de": "onRwi0ZF4uYi0Lp6GAbE",
+  "settings": {
+    "allowDuplicateContact": false,
+    "allowDuplicateOpportunity": false,
+    "allowFacebookNameMerge": false,
+    "disableContactTimezone": false,
+    "contactUniqueIdentifiers": [
+      "email",
+      "phone"
+    ],
+    "crmSettings": {
+      "deSyncOwners": true,
+      "syncFollowers": {
+        "contact": true,
+        "opportunity": true
+      }
+    },
+    "saasSettings": {
+      "saasMode": "not_activated",
+      "twilioRebilling": {
+        "markup": 10,
+        "enabled": false
+      }
+    }
+  }
+}

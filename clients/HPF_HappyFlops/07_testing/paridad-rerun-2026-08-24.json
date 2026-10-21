@@ -1,0 +1,2125 @@
+{
+  "casos": [
+    {
+      "caso": "A1",
+      "tipo": "conv",
+      "sessionId": "rerun-a1-1787609202",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-a1-1787609202",
+            "contactId": null,
+            "step": "step_1",
+            "partes": [
+              {
+                "texto": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+                "adjuntos": []
+              },
+              {
+                "texto": "Me podría decir de que es su evento?",
+                "adjuntos": []
+              },
+              {
+                "texto": "🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [],
+            "texto_completo": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\n\nMe podría decir de que es su evento? \n\n🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+            "etapa_destino": "Saludo Enviado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        },
+        {
+          "mensaje": "es para una boda",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-a1-1787609202",
+            "contactId": null,
+            "step": "step_2",
+            "partes": [
+              {
+                "texto": "Qué padre! 😊  \n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\n*(Pedidos solo para eventos 2026 por tema de tiempos)*",
+                "adjuntos": []
+              },
+              {
+                "texto": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Mandiles para Boda*\n*Kit anti cruda*\n*Pantuflas*\n\nCuáles te interesan?",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+                ]
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Evento Identificado"
+          }
+        },
+        {
+          "mensaje": "quiero sandalias gruesas",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-a1-1787609202",
+            "contactId": null,
+            "step": "step_3",
+            "partes": [
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3a0e0316cbe00f3312.pdf"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701852cf81b06f05808192.mp4"
+                ]
+              },
+              {
+                "texto": "¿Le interesa sumarlos a la cotización? 😊\nDígame:\n- *Cantidad*\n- *Código postal*\n\n¡Gracias!",
+                "adjuntos": []
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Productos Mostrados"
+          }
+        },
+        {
+          "mensaje": "60 al CP 44100",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-a1-1787609202",
+            "contactId": null,
+            "step": "step_4",
+            "partes": [
+              {
+                "texto": "¡Qué buena elección! Aquí está la cotización para tus sandalias gruesas:\n\n⏳(7 DIAS DE PROMO)⏳  \n60 *Sandalias Gruesas* x $30 = *$1,800*  \nEnvío: $300  \n*Total: $2,100*  \n*Anticipo (50%): $1,050*",
+                "adjuntos": []
+              },
+              {
+                "texto": "Sabemos que comprar por internet puede generar desconfianza… 😰\n\nCon HAPPY FLOPS, tienes la SEGURIDAD de que TODO es CONFIABLE, aquí puedes ver lo que dicen nuestros clientes en Facebook ⭐⭐⭐⭐⭐",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a7e351ca6a03cda06c8508c.mp4"
+                ]
+              },
+              {
+                "texto": "*¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀\n\n1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO*  \n2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños.  \n3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir.  \n4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️.  \n5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️  \n6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸.  \n7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días).\n\nMira, ya que pides sandalias, ¿le gustaría agregar cilindros para su evento? ¡Son un hit en bodas! ✨\n\n¿Le gustaría avanzar con el pedido? Así le paso los números de cuenta para que pague el anticipo.",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [
+              "CALCULADORA"
+            ],
+            "texto_completo": "¡Qué buena elección! Aquí está la cotización para tus sandalias gruesas:\n\n⏳(7 DIAS DE PROMO)⏳  \n60 *Sandalias Gruesas* x $30 = *$1,800*  \nEnvío: $300  \n*Total: $2,100*  \n*Anticipo (50%): $1,050*\n\n*¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀\n\n1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO*  \n2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños.  \n3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir.  \n4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️.  \n5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️  \n6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸.  \n7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días).\n\nMira, ya que pides sandalias, ¿le gustaría agregar cilindros para su evento? ¡Son un hit en bodas! ✨\n\n¿Le gustaría avanzar con el pedido? Así le paso los números de cuenta para que pague el anticipo.",
+            "etapa_destino": "Cotizado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        }
+      ]
+    },
+    {
+      "caso": "A3",
+      "tipo": "conv",
+      "sessionId": "rerun-a3-1787609249",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-a3-1787609249",
+            "contactId": null,
+            "step": "step_1",
+            "partes": [
+              {
+                "texto": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+                "adjuntos": []
+              },
+              {
+                "texto": "Me podría decir de que es su evento?",
+                "adjuntos": []
+              },
+              {
+                "texto": "🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [],
+            "texto_completo": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\n\nMe podría decir de que es su evento? \n\n🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+            "etapa_destino": "Saludo Enviado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        },
+        {
+          "mensaje": "es para un bautizo",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-a3-1787609249",
+            "contactId": null,
+            "step": "step_2",
+            "partes": [
+              {
+                "texto": "Qué padre! 😊  \n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\n*(Pedidos solo para eventos 2026 por tema de tiempos)*",
+                "adjuntos": []
+              },
+              {
+                "texto": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Kit anti cruda*\n*Pantuflas*\n\nCuáles te interesan?",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/10880c83-56c2-4ee3-b30d-71e910093962.jpg"
+                ]
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Otros",
+            "etapa_destino": "Evento Identificado"
+          }
+        },
+        {
+          "mensaje": "qué productos tienen?",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-a3-1787609249",
+            "contactId": null,
+            "step": "step_3",
+            "partes": [
+              {
+                "texto": "✨ Sandalias personalizadas\n💕 Un detalle que todos van a agradecer en tu evento\n👡 Súper cómodas y personalizadas\n\n💡 Disponibles en suela delgada ($25) o suela gruesa ($30), según la comodidad que estés buscando.\n📦 Pedido mínimo de 50 pares.",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cf9c6f6a920d2e192.jpeg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3af9c6f6a920d2e179.pdf"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701852cf81b06f05808192.mp4"
+                ]
+              },
+              {
+                "texto": "✨ Cilindros personalizados\n🎉 Ideales para todo tipo de evento\n\n🎨 Por cada 20 piezas se realiza un diseño diferente.\n\n💰 Precio promo: $10 c/u\n📦 Pedido mínimo de 40 piezas",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/abfc91fc-14cb-45b6-9ec2-157f7339f22a.jpeg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/2f8fb77f-2d20-4b04-a720-c6d57efabd3e.jpeg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/2f8fb77f-2d20-4b04-a720-c6d57efabd3e.jpeg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701846a4c8a1a2c39fef44.mp4"
+                ]
+              },
+              {
+                "texto": "✨ Kit anticruda personalizado\n🎉 Ideal para cualquier tipo de evento\n🛍️ Costal de tela personalizado a 1 tinta\n📏 Medidas: 16 x 22 cm\n\n💡 Solo incluye el costal, tú lo llenas con los productos que prefieras.\n\n💰 Precio promo: $10 c/u\n📦 Pedido mínimo de 35 piezas.",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/7825f2cb-ae43-4f13-8b21-cf85090d862f.jpeg"
+                ]
+              },
+              {
+                "texto": "Te dejo el catalogo de frases que tenemos para los *ANTICRUDAS*",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/09d8e29f-2cd0-409d-9416-c34dda2e840d.jpg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701849cf81b06f0580540f.mp4"
+                ]
+              },
+              {
+                "texto": "✨ Pantuflas de satín personalizadas\n💖 Un detalle elegante y cómodo para tu evento\n🥿 Suela y esponja más gruesa\n🎨 Personalizadas con nombre y fecha\n\n📏 Unitalla (les queda del 23 al 26)\n💰 Precio promo: $30 el par\n📦 Pedido mínimo de 50 pares\n\n🎁 Opción de bolsa:\n* Bolsa de tela personalizada (+$7 c/u)\n* Bolsa tipo SHEIN no personalizada (tal cual la imagen)",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf40b86ae4203405cbd3.jpeg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3af9c6f6a920d2e17f.pdf"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+                ]
+              },
+              {
+                "texto": "¿Le interesa sumarlos a la cotización? 😊\nDígame:\n- *Cantidad*\n- *Código postal*\n\n¡Gracias!",
+                "adjuntos": []
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Otros",
+            "etapa_destino": "Productos Mostrados"
+          }
+        },
+        {
+          "mensaje": "quiero 50 pantuflas normales al CP 44100",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-a3-1787609249",
+            "contactId": null,
+            "step": "step_4",
+            "partes": [
+              {
+                "texto": "¡Qué buena elección! Aquí tienes la cotización:\n\n⏳(7 DIAS DE PROMO)⏳\n50 *Pantuflas* x $30 = *$1,500*\nEnvío: $300\n*Total: $1,800*\n*Anticipo (50%): $900*",
+                "adjuntos": []
+              },
+              {
+                "texto": "Sabemos que comprar por internet puede generar desconfianza… 😰\n\nCon HAPPY FLOPS, tienes la SEGURIDAD de que TODO es CONFIABLE, aquí puedes ver lo que dicen nuestros clientes en Facebook ⭐⭐⭐⭐⭐",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a7e351ca6a03cda06c8508c.mp4"
+                ]
+              },
+              {
+                "texto": "*¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀\n\n1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO*\n2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños.\n3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir.\n4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️.\n5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️\n6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸.\n7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días).\n\n¿Te gustaría avanzar con el pedido? Así te paso los números de cuenta para que pagues el anticipo. 😊",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [
+              "CALCULADORA"
+            ],
+            "texto_completo": "¡Qué buena elección! Aquí tienes la cotización:\n\n⏳(7 DIAS DE PROMO)⏳\n50 *Pantuflas* x $30 = *$1,500*\nEnvío: $300\n*Total: $1,800*\n*Anticipo (50%): $900*\n\n*¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀\n\n1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO*\n2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños.\n3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir.\n4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️.\n5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️\n6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸.\n7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días).\n\n¿Te gustaría avanzar con el pedido? Así te paso los números de cuenta para que pagues el anticipo. 😊",
+            "etapa_destino": "Cotizado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        }
+      ]
+    },
+    {
+      "caso": "B5",
+      "tipo": "conv",
+      "sessionId": "rerun-b5-1787609294",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-b5-1787609294",
+            "contactId": null,
+            "step": "step_1",
+            "partes": [
+              {
+                "texto": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+                "adjuntos": []
+              },
+              {
+                "texto": "Me podría decir de que es su evento?",
+                "adjuntos": []
+              },
+              {
+                "texto": "🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [],
+            "texto_completo": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\n\nMe podría decir de que es su evento? \n\n🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+            "etapa_destino": "Saludo Enviado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        },
+        {
+          "mensaje": "es para una boda",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-b5-1787609294",
+            "contactId": null,
+            "step": "step_2",
+            "partes": [
+              {
+                "texto": "Qué padre! 😊  🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉 *(Pedidos solo para eventos 2026 por tema de tiempos)*",
+                "adjuntos": []
+              },
+              {
+                "texto": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Mandiles para Boda*\n*Kit anti cruda*\n*Pantuflas*\n\nCuáles te interesan?",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+                ]
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Evento Identificado"
+          }
+        },
+        {
+          "mensaje": "quiero 60 sandalias gruesas al CP 44100",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-b5-1787609294",
+            "contactId": null,
+            "step": "step_3",
+            "partes": [
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3a0e0316cbe00f3312.pdf"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701852cf81b06f05808192.mp4"
+                ]
+              },
+              {
+                "texto": "Cotización:  \n⏳(7 DIAS DE PROMO)⏳  \n60 *Sandalias Gruesas* x $30 = *$1,800*  \nEnvío: $300  \n*Total: $2,100*  \n*Anticipo (50%): $1,050*",
+                "adjuntos": []
+              },
+              {
+                "texto": "Sabemos que comprar por internet puede generar desconfianza… 😰\n\nCon HAPPY FLOPS, tienes la SEGURIDAD de que TODO es CONFIABLE, aquí puedes ver lo que dicen nuestros clientes en Facebook ⭐⭐⭐⭐⭐",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a7e351ca6a03cda06c8508c.mp4"
+                ]
+              },
+              {
+                "texto": "*¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀\n\n1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO*  \n2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños.  \n3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir.  \n4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️.  \n5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️  \n6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸.  \n7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días).\n\nMira, ya que pides sandalias, ¿le gustaría agregar cilindros para su evento? ¡Son un hit en bodas! ✨\n\n¿Le gustaría avanzar con el pedido? Así le paso los números de cuenta para que pague el anticipo.",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [
+              "CATALOGO",
+              "CALCULADORA"
+            ],
+            "texto_completo": "Cotización:  \n⏳(7 DIAS DE PROMO)⏳  \n60 *Sandalias Gruesas* x $30 = *$1,800*  \nEnvío: $300  \n*Total: $2,100*  \n*Anticipo (50%): $1,050*\n\n*¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀\n\n1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO*  \n2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños.  \n3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir.  \n4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️.  \n5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️  \n6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸.  \n7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días).\n\nMira, ya que pides sandalias, ¿le gustaría agregar cilindros para su evento? ¡Son un hit en bodas! ✨\n\n¿Le gustaría avanzar con el pedido? Así le paso los números de cuenta para que pague el anticipo.",
+            "etapa_destino": "Cotizado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        },
+        {
+          "mensaje": "también quiero ver las pantuflas",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-b5-1787609294",
+            "contactId": null,
+            "step": "step_3",
+            "partes": [
+              {
+                "texto": "✨ Pantuflas de satín personalizadas\n💖 Un detalle elegante y cómodo para tu evento\n🥿 Suela y esponja más gruesa\n🎨 Personalizadas con nombre y fecha\n\n📏 Unitalla (les queda del 23 al 26)\n💰 Precio promo: $29 el par\n📦 Pedido mínimo de 50 pares\n\n🎁 Opción de bolsa:\n* Bolsa de tela personalizada (+$7 c/u)\n* Bolsa tipo SHEIN no personalizada (tal cual la imagen)",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png"
+                ]
+              },
+              {
+                "texto": "✨ Pantufla de moño de peluche para boda\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada y rosa\n\n💰 Precio promo: $35 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN no personalizada, tal cual como en la imagen\n* Bolsa de tela personalizada (+$7 c/u)",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg"
+                ]
+              },
+              {
+                "texto": "✨ Pantufla de moño de satín para boda\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada, rosa, cielo y beige\n\n💰 Precio promo: $30 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN no personalizada, tal cual como en la imagen\n* Bolsa de tela personalizada (+$7 c/u)",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3afb06386edeb04bce.pdf"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+                ]
+              },
+              {
+                "texto": "¿Le interesa sumarlos a la cotización? 😊\nDígame:\n- *Cantidad*\n- *Código postal*\n\n¡Gracias!",
+                "adjuntos": []
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Productos Mostrados"
+          }
+        }
+      ]
+    },
+    {
+      "caso": "B8",
+      "tipo": "conv",
+      "sessionId": "rerun-b8-1787609341",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-b8-1787609341",
+            "contactId": null,
+            "step": "step_1",
+            "partes": [
+              {
+                "texto": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+                "adjuntos": []
+              },
+              {
+                "texto": "Me podría decir de que es su evento?",
+                "adjuntos": []
+              },
+              {
+                "texto": "🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [],
+            "texto_completo": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\n\nMe podría decir de que es su evento? \n\n🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+            "etapa_destino": "Saludo Enviado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        },
+        {
+          "mensaje": "es para una boda, quiero 50 sandalias delgadas y 40 cilindros",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-b8-1787609341",
+            "contactId": null,
+            "step": "step_3",
+            "partes": [
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3a0e0316cbe00f3312.pdf"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701852cf81b06f05808192.mp4"
+                ]
+              },
+              {
+                "texto": "✨ Cilindros personalizados\n🎉 Ideales para todo tipo de evento\n\n🎨 Por cada 20 piezas se realiza un diseño diferente.\n\n💰 Precio promo: $10 c/u\n📦 Pedido mínimo de 40 piezas",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3df7d31b0eb454cf57.png"
+                ]
+              },
+              {
+                "texto": "Te comparto el *catalogo de diseños* que tenemos para *Cilindros*",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/5f4fe0c1-0adb-4571-93c9-38f2de27c7ff.jpg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701846a4c8a1a2c39fef44.mp4"
+                ]
+              },
+              {
+                "texto": "¿Le interesa sumarlos a la cotización? 😊\nDígame:\n- *Cantidad*\n- *Código postal*\n\n¡Gracias!",
+                "adjuntos": []
+              },
+              {
+                "texto": "Para poder cotizarle las *sandalias delgadas* y los *cilindros*, necesitaría que me diga la cantidad y el código postal. 😊",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "texto_completo": "Para poder cotizarle las *sandalias delgadas* y los *cilindros*, necesitaría que me diga la cantidad y el código postal. 😊",
+            "etapa_destino": "Productos Mostrados",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        }
+      ]
+    },
+    {
+      "caso": "B10",
+      "tipo": "conv",
+      "sessionId": "rerun-b10-1787609363",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-b10-1787609363",
+            "contactId": null,
+            "step": "step_1",
+            "partes": [
+              {
+                "texto": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+                "adjuntos": []
+              },
+              {
+                "texto": "Me podría decir de que es su evento?",
+                "adjuntos": []
+              },
+              {
+                "texto": "🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [],
+            "texto_completo": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\n\nMe podría decir de que es su evento? \n\n🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+            "etapa_destino": "Saludo Enviado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        },
+        {
+          "mensaje": "es para una boda",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-b10-1787609363",
+            "contactId": null,
+            "step": "step_2",
+            "partes": [
+              {
+                "texto": "Qué padre! 😊  \n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\n*(Pedidos solo para eventos 2026 por tema de tiempos)*",
+                "adjuntos": []
+              },
+              {
+                "texto": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Mandiles para Boda*\n*Kit anti cruda*\n*Pantuflas*\n\nCuáles te interesan?",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+                ]
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Evento Identificado"
+          }
+        },
+        {
+          "mensaje": "me interesan los cilindros",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-b10-1787609363",
+            "contactId": null,
+            "step": "step_3",
+            "partes": [
+              {
+                "texto": "✨ Cilindros personalizados\n🎉 Ideales para todo tipo de evento\n\n🎨 Por cada 20 piezas se realiza un diseño diferente.\n\n💰 Precio promo: $10 c/u\n📦 Pedido mínimo de 40 piezas",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3df7d31b0eb454cf57.png"
+                ]
+              },
+              {
+                "texto": "Te comparto el *catalogo de diseños* que tenemos para *Cilindros*",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/5f4fe0c1-0adb-4571-93c9-38f2de27c7ff.jpg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701846a4c8a1a2c39fef44.mp4"
+                ]
+              },
+              {
+                "texto": "¿Le interesa sumarlos a la cotización? 😊\nDígame:\n- *Cantidad*\n- *Código postal*\n\n¡Gracias!",
+                "adjuntos": []
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Productos Mostrados"
+          }
+        },
+        {
+          "mensaje": "perdón, en realidad es para unos XV",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-b10-1787609363",
+            "contactId": null,
+            "step": "step_2",
+            "partes": [
+              {
+                "texto": "Qué padre! 😊  \n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\n*(Pedidos solo para eventos 2026 por tema de tiempos)*",
+                "adjuntos": []
+              },
+              {
+                "texto": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Kit anti cruda*\n*Pantuflas*\n\nCuáles te interesan?",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/136d7ce1-0487-4767-a408-16742a068939.jpg"
+                ]
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "XV",
+            "etapa_destino": "Evento Identificado"
+          }
+        }
+      ]
+    },
+    {
+      "caso": "C1",
+      "tipo": "conv",
+      "sessionId": "rerun-c1-1787609404",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-c1-1787609404",
+            "contactId": null,
+            "step": "step_1",
+            "partes": [
+              {
+                "texto": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+                "adjuntos": []
+              },
+              {
+                "texto": "Me podría decir de que es su evento?",
+                "adjuntos": []
+              },
+              {
+                "texto": "🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [],
+            "texto_completo": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\n\nMe podría decir de que es su evento? \n\n🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+            "etapa_destino": "Saludo Enviado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        },
+        {
+          "mensaje": "es para una boda",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-c1-1787609404",
+            "contactId": null,
+            "step": "step_2",
+            "partes": [
+              {
+                "texto": "Qué padre! 😊  🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉 *(Pedidos solo para eventos 2026 por tema de tiempos)*",
+                "adjuntos": []
+              },
+              {
+                "texto": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Mandiles para Boda*\n*Kit anti cruda*\n*Pantuflas*\n\nCuáles te interesan?",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+                ]
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Evento Identificado"
+          }
+        },
+        {
+          "mensaje": "quiero pantuflas",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-c1-1787609404",
+            "contactId": null,
+            "step": "step_3",
+            "partes": [
+              {
+                "texto": "✨ Pantuflas de satín personalizadas\n💖 Un detalle elegante y cómodo para tu evento\n🥿 Suela y esponja más gruesa\n🎨 Personalizadas con nombre y fecha\n\n📏 Unitalla (les queda del 23 al 26)\n💰 Precio promo: $29 el par\n📦 Pedido mínimo de 50 pares\n\n🎁 Opción de bolsa:\n* Bolsa de tela personalizada (+$7 c/u)\n* Bolsa tipo SHEIN no personalizada (tal cual la imagen)",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png"
+                ]
+              },
+              {
+                "texto": "✨ Pantufla de moño de peluche para boda\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada y rosa\n\n💰 Precio promo: $35 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN no personalizada, tal cual como en la imagen\n* Bolsa de tela personalizada (+$7 c/u)",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg"
+                ]
+              },
+              {
+                "texto": "✨ Pantufla de moño de satín para boda\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada, rosa, cielo y beige\n\n💰 Precio promo: $30 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN no personalizada, tal cual como en la imagen\n* Bolsa de tela personalizada (+$7 c/u)",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3afb06386edeb04bce.pdf"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+                ]
+              },
+              {
+                "texto": "¿Le interesa sumarlos a la cotización? 😊\nDígame:\n- *Cantidad*\n- *Código postal*\n\n¡Gracias!",
+                "adjuntos": []
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Productos Mostrados"
+          }
+        }
+      ]
+    },
+    {
+      "caso": "C2",
+      "tipo": "conv",
+      "sessionId": "rerun-c2-1787609433",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-c2-1787609433",
+            "contactId": null,
+            "step": "step_1",
+            "partes": [
+              {
+                "texto": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+                "adjuntos": []
+              },
+              {
+                "texto": "Me podría decir de que es su evento?",
+                "adjuntos": []
+              },
+              {
+                "texto": "🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [],
+            "texto_completo": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\n\nMe podría decir de que es su evento? \n\n🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+            "etapa_destino": "Saludo Enviado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        },
+        {
+          "mensaje": "es para una boda",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-c2-1787609433",
+            "contactId": null,
+            "step": "step_2",
+            "partes": [
+              {
+                "texto": "Qué padre! 😊  🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉 *(Pedidos solo para eventos 2026 por tema de tiempos)*",
+                "adjuntos": []
+              },
+              {
+                "texto": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Mandiles para Boda*\n*Kit anti cruda*\n*Pantuflas*\n\nCuáles te interesan?",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+                ]
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Evento Identificado"
+          }
+        },
+        {
+          "mensaje": "quiero las pantuflas de moño",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-c2-1787609433",
+            "contactId": null,
+            "step": "step_3",
+            "partes": [
+              {
+                "texto": "✨ Pantuflas de satín personalizadas\n💖 Un detalle elegante y cómodo para tu evento\n🥿 Suela y esponja más gruesa\n🎨 Personalizadas con nombre y fecha\n\n📏 Unitalla (les queda del 23 al 26)\n💰 Precio promo: $29 el par\n📦 Pedido mínimo de 50 pares\n\n🎁 Opción de bolsa:\n* Bolsa de tela personalizada (+$7 c/u)\n* Bolsa tipo SHEIN no personalizada (tal cual la imagen)",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png"
+                ]
+              },
+              {
+                "texto": "✨ Pantufla de moño de peluche para boda\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada y rosa\n\n💰 Precio promo: $35 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN no personalizada, tal cual como en la imagen\n* Bolsa de tela personalizada (+$7 c/u)",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg"
+                ]
+              },
+              {
+                "texto": "✨ Pantufla de moño de satín para boda\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada, rosa, cielo y beige\n\n💰 Precio promo: $30 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN no personalizada, tal cual como en la imagen\n* Bolsa de tela personalizada (+$7 c/u)",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3afb06386edeb04bce.pdf"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+                ]
+              },
+              {
+                "texto": "¿Le interesa sumarlos a la cotización? 😊\nDígame:\n- *Cantidad*\n- *Código postal*\n\n¡Gracias!",
+                "adjuntos": []
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Productos Mostrados"
+          }
+        }
+      ]
+    },
+    {
+      "caso": "C4",
+      "tipo": "conv",
+      "sessionId": "rerun-c4-1787609464",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-c4-1787609464",
+            "contactId": null,
+            "step": "step_1",
+            "partes": [
+              {
+                "texto": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+                "adjuntos": []
+              },
+              {
+                "texto": "Me podría decir de que es su evento?",
+                "adjuntos": []
+              },
+              {
+                "texto": "🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [],
+            "texto_completo": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\n\nMe podría decir de que es su evento? \n\n🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+            "etapa_destino": "Saludo Enviado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        },
+        {
+          "mensaje": "es para una boda",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-c4-1787609464",
+            "contactId": null,
+            "step": "step_2",
+            "partes": [
+              {
+                "texto": "Qué padre! 😊  🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉 *(Pedidos solo para eventos 2026 por tema de tiempos)*",
+                "adjuntos": []
+              },
+              {
+                "texto": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Mandiles para Boda*\n*Kit anti cruda*\n*Pantuflas*\n\nCuáles te interesan?",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+                ]
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Evento Identificado"
+          }
+        },
+        {
+          "mensaje": "quiero las pantuflas de satín, 50 al CP 44100",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-c4-1787609464",
+            "contactId": null,
+            "step": "step_3",
+            "partes": [
+              {
+                "texto": "✨ Pantuflas de satín personalizadas\n💖 Un detalle elegante y cómodo para tu evento\n🥿 Suela y esponja más gruesa\n🎨 Personalizadas con nombre y fecha\n\n📏 Unitalla (les queda del 23 al 26)\n💰 Precio promo: $29 el par\n📦 Pedido mínimo de 50 pares\n\n🎁 Opción de bolsa:\n* Bolsa de tela personalizada (+$7 c/u)\n* Bolsa tipo SHEIN no personalizada (tal cual la imagen)",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png"
+                ]
+              },
+              {
+                "texto": "✨ Pantufla de moño de peluche para boda\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada y rosa\n\n💰 Precio promo: $35 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN no personalizada, tal cual como en la imagen\n* Bolsa de tela personalizada (+$7 c/u)",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg"
+                ]
+              },
+              {
+                "texto": "✨ Pantufla de moño de satín para boda\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada, rosa, cielo y beige\n\n💰 Precio promo: $30 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN no personalizada, tal cual como en la imagen\n* Bolsa de tela personalizada (+$7 c/u)",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3afb06386edeb04bce.pdf"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+                ]
+              },
+              {
+                "texto": "¿Le interesa sumarlos a la cotización? 😊\nDígame:\n- *Cantidad*\n- *Código postal*\n\n¡Gracias!",
+                "adjuntos": []
+              },
+              {
+                "texto": "¡Qué buena elección! Para poder cotizarle las *Pantuflas Mono Satín*, necesitaría confirmar si son las pantuflas normales o las pantuflas mono (con moñito). 😊",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "texto_completo": "¡Qué buena elección! Para poder cotizarle las *Pantuflas Mono Satín*, necesitaría confirmar si son las pantuflas normales o las pantuflas mono (con moñito). 😊",
+            "etapa_destino": "Productos Mostrados",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        }
+      ]
+    },
+    {
+      "caso": "C6",
+      "tipo": "conv",
+      "sessionId": "rerun-c6-1787609494",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-c6-1787609494",
+            "contactId": null,
+            "step": "step_1",
+            "partes": [
+              {
+                "texto": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+                "adjuntos": []
+              },
+              {
+                "texto": "Me podría decir de que es su evento?",
+                "adjuntos": []
+              },
+              {
+                "texto": "🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [],
+            "texto_completo": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\n\nMe podría decir de que es su evento? \n\n🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+            "etapa_destino": "Saludo Enviado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        },
+        {
+          "mensaje": "es para una boda",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-c6-1787609494",
+            "contactId": null,
+            "step": "step_2",
+            "partes": [
+              {
+                "texto": "Qué padre! 😊  🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉 *(Pedidos solo para eventos 2026 por tema de tiempos)*",
+                "adjuntos": []
+              },
+              {
+                "texto": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Mandiles para Boda*\n*Kit anti cruda*\n*Pantuflas*\n\nCuáles te interesan?",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+                ]
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Evento Identificado"
+          }
+        },
+        {
+          "mensaje": "quiero 25 sandalias delgadas y 25 gruesas, CP 44100",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-c6-1787609494",
+            "contactId": null,
+            "step": "step_3",
+            "partes": [
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3a0e0316cbe00f3312.pdf"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701852cf81b06f05808192.mp4"
+                ]
+              },
+              {
+                "texto": "¿Le interesa sumarlos a la cotización? 😊\nDígame:\n- *Cantidad*\n- *Código postal*\n\n¡Gracias!",
+                "adjuntos": []
+              },
+              {
+                "texto": "Para poder cotizar las sandalias, el mínimo de compra es de 50 pares del mismo grosor. ¿Le gustaría ajustar la cantidad a 50 pares de sandalias delgadas o 50 pares de sandalias gruesas? 😊",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "texto_completo": "Para poder cotizar las sandalias, el mínimo de compra es de 50 pares del mismo grosor. ¿Le gustaría ajustar la cantidad a 50 pares de sandalias delgadas o 50 pares de sandalias gruesas? 😊",
+            "etapa_destino": "Productos Mostrados",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        }
+      ]
+    },
+    {
+      "caso": "C8",
+      "tipo": "conv",
+      "sessionId": "rerun-c8-1787609525",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-c8-1787609525",
+            "contactId": null,
+            "step": "step_1",
+            "partes": [
+              {
+                "texto": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+                "adjuntos": []
+              },
+              {
+                "texto": "Me podría decir de que es su evento?",
+                "adjuntos": []
+              },
+              {
+                "texto": "🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [],
+            "texto_completo": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\n\nMe podría decir de que es su evento? \n\n🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+            "etapa_destino": "Saludo Enviado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        },
+        {
+          "mensaje": "es para una boda",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-c8-1787609525",
+            "contactId": null,
+            "step": "step_2",
+            "partes": [
+              {
+                "texto": "Qué padre! 😊  🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉 *(Pedidos solo para eventos 2026 por tema de tiempos)*",
+                "adjuntos": []
+              },
+              {
+                "texto": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Mandiles para Boda*\n*Kit anti cruda*\n*Pantuflas*\n\nCuáles te interesan?",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+                ]
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Evento Identificado"
+          }
+        },
+        {
+          "mensaje": "qué mandiles tienen?",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-c8-1787609525",
+            "contactId": null,
+            "step": "step_3",
+            "partes": [
+              {
+                "texto": "✨ Mandiles para boda\n🍾 Ideales para el novio y sus amigos\n🖤 Diseño divertido para la fiesta\n\nℹ️ No se personalizan.\n\n💰 Precio promo: $12 c/u\n📦 Pedido mínimo de 12 piezas.",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/437fccf5-3eee-41c8-8dc4-ae8c04b20af5.jpg"
+                ]
+              },
+              {
+                "texto": "Te comparto el *catálogo de diseños* que tenemos para *Mandiles*",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/7db1ada3-376f-420e-889a-4880cd47bc8e.jpeg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701848a4c8a1a2c39fef93.mp4"
+                ]
+              },
+              {
+                "texto": "¿Le interesa sumarlos a la cotización? 😊\nDígame:\n- *Cantidad*\n- *Código postal*\n\n¡Gracias!",
+                "adjuntos": []
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Productos Mostrados"
+          }
+        },
+        {
+          "mensaje": "quiero 20, 10 del diseño 1 y 10 del 3, CP 44100",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-c8-1787609525",
+            "contactId": null,
+            "step": "step_4",
+            "partes": [
+              {
+                "texto": "¡Qué buena elección! Aquí está la cotización para los *Mandiles*:\n\n⏳(7 DIAS DE PROMO)⏳  \n20 *Mandiles* x $12 = *$240*  \nEnvío: $250  \n*Total: $490*  \n*Anticipo (50%): $245*\n\n⚠️ Aclaración: en los mandiles se elige entre los 5 modelos del catálogo y no se personalizan — los pasos de diseño propio y muestra digital aplican solo al resto de los productos.",
+                "adjuntos": []
+              },
+              {
+                "texto": "Sabemos que comprar por internet puede generar desconfianza… 😰\n\nCon HAPPY FLOPS, tienes la SEGURIDAD de que TODO es CONFIABLE, aquí puedes ver lo que dicen nuestros clientes en Facebook ⭐⭐⭐⭐⭐",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a7e351ca6a03cda06c8508c.mp4"
+                ]
+              },
+              {
+                "texto": "*¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀\n\n1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO*  \n2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños.  \n3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir.  \n4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️.  \n5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️  \n6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸.  \n7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días).\n\n¿Le gustaría avanzar con el pedido? Así le paso los números de cuenta para que pague el anticipo. 😊",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [
+              "CALCULADORA"
+            ],
+            "texto_completo": "¡Qué buena elección! Aquí está la cotización para los *Mandiles*:\n\n⏳(7 DIAS DE PROMO)⏳  \n20 *Mandiles* x $12 = *$240*  \nEnvío: $250  \n*Total: $490*  \n*Anticipo (50%): $245*\n\n⚠️ Aclaración: en los mandiles se elige entre los 5 modelos del catálogo y no se personalizan — los pasos de diseño propio y muestra digital aplican solo al resto de los productos.\n\n*¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀\n\n1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO*  \n2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños.  \n3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir.  \n4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️.  \n5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️  \n6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸.  \n7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días).\n\n¿Le gustaría avanzar con el pedido? Así le paso los números de cuenta para que pague el anticipo. 😊",
+            "etapa_destino": "Cotizado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        }
+      ]
+    },
+    {
+      "caso": "D1",
+      "tipo": "conv",
+      "sessionId": "rerun-d1-1787609564",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-d1-1787609564",
+            "contactId": null,
+            "step": "step_1",
+            "partes": [
+              {
+                "texto": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+                "adjuntos": []
+              },
+              {
+                "texto": "Me podría decir de que es su evento?",
+                "adjuntos": []
+              },
+              {
+                "texto": "🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [],
+            "texto_completo": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\n\nMe podría decir de que es su evento? \n\n🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+            "etapa_destino": "Saludo Enviado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        },
+        {
+          "mensaje": "es para una boda",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-d1-1787609564",
+            "contactId": null,
+            "step": "step_2",
+            "partes": [
+              {
+                "texto": "Qué padre! 😊  \n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\n*(Pedidos solo para eventos 2026 por tema de tiempos)*",
+                "adjuntos": []
+              },
+              {
+                "texto": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Mandiles para Boda*\n*Kit anti cruda*\n*Pantuflas*\n\nCuáles te interesan?",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+                ]
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Evento Identificado"
+          }
+        },
+        {
+          "mensaje": "quiero 2 sandalias gruesas al CP 44100",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-d1-1787609564",
+            "contactId": null,
+            "step": "step_3",
+            "partes": [
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3a0e0316cbe00f3312.pdf"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701852cf81b06f05808192.mp4"
+                ]
+              },
+              {
+                "texto": "Para poder cotizarle las *sandalias gruesas*, el pedido mínimo es de 50 pares. Si desea avanzar con la cotización, por favor indíqueme si le gustaría ajustar la cantidad. 😊",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "texto_completo": "Para poder cotizarle las *sandalias gruesas*, el pedido mínimo es de 50 pares. Si desea avanzar con la cotización, por favor indíqueme si le gustaría ajustar la cantidad. 😊",
+            "etapa_destino": "Cotizado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        }
+      ]
+    },
+    {
+      "caso": "D2",
+      "tipo": "conv",
+      "sessionId": "rerun-d2-1787609594",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-d2-1787609594",
+            "contactId": null,
+            "step": "step_1",
+            "partes": [
+              {
+                "texto": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+                "adjuntos": []
+              },
+              {
+                "texto": "Me podría decir de que es su evento?",
+                "adjuntos": []
+              },
+              {
+                "texto": "🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [],
+            "texto_completo": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\n\nMe podría decir de que es su evento? \n\n🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+            "etapa_destino": "Saludo Enviado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        },
+        {
+          "mensaje": "es para una boda",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-d2-1787609594",
+            "contactId": null,
+            "step": "step_2",
+            "partes": [
+              {
+                "texto": "Qué padre! 😊  \n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\n*(Pedidos solo para eventos 2026 por tema de tiempos)*",
+                "adjuntos": []
+              },
+              {
+                "texto": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Mandiles para Boda*\n*Kit anti cruda*\n*Pantuflas*\n\nCuáles te interesan?",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+                ]
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Evento Identificado"
+          }
+        },
+        {
+          "mensaje": "quiero 35 cilindros al CP 44100",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-d2-1787609594",
+            "contactId": null,
+            "step": "step_3",
+            "partes": [
+              {
+                "texto": "✨ Cilindros personalizados\n🎉 Ideales para todo tipo de evento\n\n🎨 Por cada 20 piezas se realiza un diseño diferente.\n\n💰 Precio promo: $10 c/u\n📦 Pedido mínimo de 40 piezas",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3df7d31b0eb454cf57.png"
+                ]
+              },
+              {
+                "texto": "Te comparto el *catalogo de diseños* que tenemos para *Cilindros*",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/5f4fe0c1-0adb-4571-93c9-38f2de27c7ff.jpg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701846a4c8a1a2c39fef44.mp4"
+                ]
+              },
+              {
+                "texto": "Para poder cotizarle los cilindros, necesitaría que me diga la cantidad mínima de compra, que es de 40 piezas. ¿Le gustaría ajustar la cantidad para que podamos proceder con la cotización? 😊",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "texto_completo": "Para poder cotizarle los cilindros, necesitaría que me diga la cantidad mínima de compra, que es de 40 piezas. ¿Le gustaría ajustar la cantidad para que podamos proceder con la cotización? 😊",
+            "etapa_destino": "Cotizado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        }
+      ]
+    },
+    {
+      "caso": "E2",
+      "tipo": "conv",
+      "sessionId": "rerun-e2-1787609624",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-e2-1787609624",
+            "contactId": null,
+            "step": "step_1",
+            "partes": [
+              {
+                "texto": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+                "adjuntos": []
+              },
+              {
+                "texto": "Me podría decir de que es su evento?",
+                "adjuntos": []
+              },
+              {
+                "texto": "🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [],
+            "texto_completo": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\n\nMe podría decir de que es su evento? \n\n🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+            "etapa_destino": "Saludo Enviado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        },
+        {
+          "mensaje": "es para una graduación",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-e2-1787609624",
+            "contactId": null,
+            "step": "step_2",
+            "partes": [
+              {
+                "texto": "Qué padre! 😊  \n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\n*(Pedidos solo para eventos 2026 por tema de tiempos)*",
+                "adjuntos": []
+              },
+              {
+                "texto": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Kit anti cruda*\n*Pantuflas*\n\nCuáles te interesan?",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/10880c83-56c2-4ee3-b30d-71e910093962.jpg"
+                ]
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Otros",
+            "etapa_destino": "Evento Identificado"
+          }
+        },
+        {
+          "mensaje": "quiero pantuflas de moño de satín",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-e2-1787609624",
+            "contactId": null,
+            "step": "step_3",
+            "partes": [
+              {
+                "texto": "✨ Pantuflas de satín personalizadas\n💖 Un detalle elegante y cómodo para tu evento\n🥿 Suela y esponja más gruesa\n🎨 Personalizadas con nombre y fecha\n\n📏 Unitalla (les queda del 23 al 26)\n💰 Precio promo: $30 el par\n📦 Pedido mínimo de 50 pares\n\n🎁 Opción de bolsa:\n* Bolsa de tela personalizada (+$7 c/u)\n* Bolsa tipo SHEIN no personalizada (tal cual la imagen)",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf40b86ae4203405cbd3.jpeg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3af9c6f6a920d2e17f.pdf"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+                ]
+              },
+              {
+                "texto": "¿Le interesa sumarlos a la cotización? 😊\nDígame:\n- *Cantidad*\n- *Código postal*\n\n¡Gracias!",
+                "adjuntos": []
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Otros",
+            "etapa_destino": "Productos Mostrados"
+          }
+        }
+      ]
+    },
+    {
+      "caso": "E3",
+      "tipo": "conv",
+      "sessionId": "rerun-e3-1787609651",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-e3-1787609651",
+            "contactId": null,
+            "step": "step_1",
+            "partes": [
+              {
+                "texto": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+                "adjuntos": []
+              },
+              {
+                "texto": "Me podría decir de que es su evento?",
+                "adjuntos": []
+              },
+              {
+                "texto": "🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [],
+            "texto_completo": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\n\nMe podría decir de que es su evento? \n\n🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+            "etapa_destino": "Saludo Enviado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        },
+        {
+          "mensaje": "es para un evento de empresa",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-e3-1787609651",
+            "contactId": null,
+            "step": "step_2",
+            "partes": [
+              {
+                "texto": "Qué padre! 😊  \n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\n*(Pedidos solo para eventos 2026 por tema de tiempos)*",
+                "adjuntos": []
+              },
+              {
+                "texto": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Kit anti cruda*\n*Pantuflas*\n\nCuáles te interesan?",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/10880c83-56c2-4ee3-b30d-71e910093962.jpg"
+                ]
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Otros",
+            "etapa_destino": "Evento Identificado"
+          }
+        },
+        {
+          "mensaje": "tienen vasos popote?",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-e3-1787609651",
+            "contactId": null,
+            "step": "step_3",
+            "partes": [
+              {
+                "texto": "¡Claro que sí! 😊 Tenemos *vasos popote* disponibles para personalizar en su evento. Cada vaso tiene un costo de $35.",
+                "adjuntos": []
+              },
+              {
+                "texto": "Para poder cotizarlos, necesitaría que me diga la cantidad que desea y el código postal para el envío. ¡Gracias!",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [],
+            "texto_completo": "¡Claro que sí! 😊 Tenemos *vasos popote* disponibles para personalizar en su evento. Cada vaso tiene un costo de $35. \n\nPara poder cotizarlos, necesitaría que me diga la cantidad que desea y el código postal para el envío. ¡Gracias!",
+            "etapa_destino": "Productos Mostrados",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        }
+      ]
+    },
+    {
+      "caso": "E4",
+      "tipo": "conv",
+      "sessionId": "rerun-e4-1787609687",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-e4-1787609687",
+            "contactId": null,
+            "step": "step_1",
+            "partes": [
+              {
+                "texto": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+                "adjuntos": []
+              },
+              {
+                "texto": "Me podría decir de que es su evento?",
+                "adjuntos": []
+              },
+              {
+                "texto": "🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [],
+            "texto_completo": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\n\nMe podría decir de que es su evento? \n\n🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+            "etapa_destino": "Saludo Enviado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        },
+        {
+          "mensaje": "es para una boda",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-e4-1787609687",
+            "contactId": null,
+            "step": "step_2",
+            "partes": [
+              {
+                "texto": "Qué padre! 😊  \n🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉\n*(Pedidos solo para eventos 2026 por tema de tiempos)*",
+                "adjuntos": []
+              },
+              {
+                "texto": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Mandiles para Boda*\n*Kit anti cruda*\n*Pantuflas*\n\nCuáles te interesan?",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+                ]
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Evento Identificado"
+          }
+        },
+        {
+          "mensaje": "quiero ver todos los productos que tienen",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-e4-1787609687",
+            "contactId": null,
+            "step": "step_3",
+            "partes": [
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3a0e0316cbe00f3312.pdf"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701852cf81b06f05808192.mp4"
+                ]
+              },
+              {
+                "texto": "✨ Cilindros personalizados\n🎉 Ideales para todo tipo de evento\n\n🎨 Por cada 20 piezas se realiza un diseño diferente.\n\n💰 Precio promo: $10 c/u\n📦 Pedido mínimo de 40 piezas",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3df7d31b0eb454cf57.png"
+                ]
+              },
+              {
+                "texto": "Te comparto el *catalogo de diseños* que tenemos para *Cilindros*",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/5f4fe0c1-0adb-4571-93c9-38f2de27c7ff.jpg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701846a4c8a1a2c39fef44.mp4"
+                ]
+              },
+              {
+                "texto": "✨ Mandiles para boda\n🍾 Ideales para el novio y sus amigos\n🖤 Diseño divertido para la fiesta\n\nℹ️ No se personalizan.\n\n💰 Precio promo: $12 c/u\n📦 Pedido mínimo de 12 piezas.",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/437fccf5-3eee-41c8-8dc4-ae8c04b20af5.jpg"
+                ]
+              },
+              {
+                "texto": "Te comparto el *catálogo de diseños* que tenemos para *Mandiles*",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/7db1ada3-376f-420e-889a-4880cd47bc8e.jpeg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701848a4c8a1a2c39fef93.mp4"
+                ]
+              },
+              {
+                "texto": "✨ Kit anticruda personalizado\n🎉 Ideal para cualquier tipo de evento\n🛍️ Costal de tela personalizado a 1 tinta\n📏 Medidas: 16 x 22 cm\n\n💡 Solo incluye el costal, tú lo llenas con los productos que prefieras.\n\n💰 Precio promo: $10 c/u\n📦 Pedido mínimo de 35 piezas.",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3df9c6f6a920d2e198.png"
+                ]
+              },
+              {
+                "texto": "Te dejo el catalogo de frases que tenemos para los *ANTICRUDAS*",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/de2c4640-30c3-40e9-883b-d5a79d00d4af.jpg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701849cf81b06f0580540f.mp4"
+                ]
+              },
+              {
+                "texto": "✨ Pantuflas de satín personalizadas\n💖 Un detalle elegante y cómodo para tu evento\n🥿 Suela y esponja más gruesa\n🎨 Personalizadas con nombre y fecha\n\n📏 Unitalla (les queda del 23 al 26)\n💰 Precio promo: $29 el par\n📦 Pedido mínimo de 50 pares\n\n🎁 Opción de bolsa:\n* Bolsa de tela personalizada (+$7 c/u)\n* Bolsa tipo SHEIN no personalizada (tal cual la imagen)",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3cdf29341f4d8b2f6f.png"
+                ]
+              },
+              {
+                "texto": "✨ Pantufla de moño de peluche para boda\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada y rosa\n\n💰 Precio promo: $35 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN no personalizada, tal cual como en la imagen\n* Bolsa de tela personalizada (+$7 c/u)",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3e0e0316cbe00f334c.jpeg"
+                ]
+              },
+              {
+                "texto": "✨ Pantufla de moño de satín para boda\n🥿 Suela y esponja más gruesa\n📏 Es unitalla, les queda desde el 23 al 26\n🎨 1 diseño cada 50 pares\n🌈 Colores disponibles: blanca, negra, morada, rosa, cielo y beige\n\n💰 Precio promo: $30 el par\n📦 Pedido mínimo: 50 pares\n\n🎁 Elige entre:\n* Bolsa tipo SHEIN no personalizada, tal cual como en la imagen\n* Bolsa de tela personalizada (+$7 c/u)",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3ffb06386edeb05b71.jpeg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3afb06386edeb04bce.pdf"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701850cf81b06f058078d4.mp4"
+                ]
+              },
+              {
+                "texto": "✨ Vaso con popote 24 oz para boda\n🖨️ Diseño en serigrafía\n🥤 Vasos personalizados\n🎨 Mismo diseño y tinta para todas las piezas\n🎨 1 diseño cada 50 vasos\n\n🌈 Tenemos varios colores de vasos\n🥤 Puede escoger 1 color de vaso por cada 20 vasos\n\n💰 Precio promo: $35\n📦 Pedido mínimo: 50 piezas\n⏳ Tiempo de fabricación: 15 días",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf42ca81015f1c93cf8d.jpeg"
+                ]
+              },
+              {
+                "texto": "¿Le interesa sumarlos a la cotización? 😊\nDígame:\n- *Cantidad*\n- *Código postal*\n\n¡Gracias!",
+                "adjuntos": []
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Productos Mostrados"
+          }
+        }
+      ]
+    },
+    {
+      "caso": "G3",
+      "tipo": "manual",
+      "veredicto_auto": "BLOCKED_MANUAL",
+      "nota": "Requiere test desde Telegram real (adjunto). Verificar R6 aparte."
+    },
+    {
+      "caso": "G5",
+      "tipo": "manual",
+      "veredicto_auto": "BLOCKED_MANUAL",
+      "nota": "Requiere test desde Telegram real (adjunto). Verificar R6 aparte."
+    },
+    {
+      "caso": "H2",
+      "tipo": "conv",
+      "sessionId": "rerun-h2-1787609716",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-h2-1787609716",
+            "contactId": null,
+            "step": "step_1",
+            "partes": [
+              {
+                "texto": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+                "adjuntos": []
+              },
+              {
+                "texto": "Me podría decir de que es su evento?",
+                "adjuntos": []
+              },
+              {
+                "texto": "🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [],
+            "texto_completo": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\n\nMe podría decir de que es su evento? \n\n🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+            "etapa_destino": "Saludo Enviado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        },
+        {
+          "mensaje": "es para una boda",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-h2-1787609716",
+            "contactId": null,
+            "step": "step_2",
+            "partes": [
+              {
+                "texto": "Qué padre! 😊  🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉 *(Pedidos solo para eventos 2026 por tema de tiempos)*",
+                "adjuntos": []
+              },
+              {
+                "texto": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Mandiles para Boda*\n*Kit anti cruda*\n*Pantuflas*\n\nCuáles te interesan?",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+                ]
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Evento Identificado"
+          }
+        },
+        {
+          "mensaje": "me hacen 20 mandiles con el nombre de los novios?",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-h2-1787609716",
+            "contactId": null,
+            "step": "step_3",
+            "partes": [
+              {
+                "texto": "✨ Mandiles para boda\n🍾 Ideales para el novio y sus amigos\n🖤 Diseño divertido para la fiesta\n\nℹ️ No se personalizan.\n\n💰 Precio promo: $12 c/u\n📦 Pedido mínimo de 12 piezas.",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/437fccf5-3eee-41c8-8dc4-ae8c04b20af5.jpg"
+                ]
+              },
+              {
+                "texto": "Te comparto el *catálogo de diseños* que tenemos para *Mandiles*",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/7db1ada3-376f-420e-889a-4880cd47bc8e.jpeg"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701848a4c8a1a2c39fef93.mp4"
+                ]
+              },
+              {
+                "texto": "¿Le interesa sumarlos a la cotización? 😊\nDígame:\n- *Cantidad*\n- *Código postal*\n\n¡Gracias!",
+                "adjuntos": []
+              },
+              {
+                "texto": "Los mandiles vienen pre-hechos con 5 frases pre-establecidas y no se personalizan. Puede elegir entre los modelos disponibles en nuestro catálogo, pero no podemos agregar nombres o diseños personalizados.",
+                "adjuntos": []
+              },
+              {
+                "texto": "Si desea, puedo cotizarle los mandiles con las frases pre-establecidas. ¿Le gustaría que lo haga? 😊",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "texto_completo": "Los mandiles vienen pre-hechos con 5 frases pre-establecidas y no se personalizan. Puede elegir entre los modelos disponibles en nuestro catálogo, pero no podemos agregar nombres o diseños personalizados.\n\nSi desea, puedo cotizarle los mandiles con las frases pre-establecidas. ¿Le gustaría que lo haga? 😊",
+            "etapa_destino": "Productos Mostrados",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        }
+      ]
+    },
+    {
+      "caso": "H3",
+      "tipo": "conv",
+      "sessionId": "rerun-h3-1787609746",
+      "turnos": [
+        {
+          "mensaje": "hola",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-h3-1787609746",
+            "contactId": null,
+            "step": "step_1",
+            "partes": [
+              {
+                "texto": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀",
+                "adjuntos": []
+              },
+              {
+                "texto": "Me podría decir de que es su evento?",
+                "adjuntos": []
+              },
+              {
+                "texto": "🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [],
+            "texto_completo": "Hola! gracias por escribir a *Happy Flops*, me llamo *Rebeca* soy un asistente virtual, yo le estaré atendiendo con gusto ☺️🙋‍♀\n\nMe podría decir de que es su evento? \n\n🤵👰 - *Boda*\n🎂🥳 - *XV Años*\n👼🏢 - *Otros*",
+            "etapa_destino": "Saludo Enviado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        },
+        {
+          "mensaje": "es para una boda",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-h3-1787609746",
+            "contactId": null,
+            "step": "step_2",
+            "partes": [
+              {
+                "texto": "Qué padre! 😊  🎉 *¡SEMANA LOCA DE PROMOS! SOLO 7 DÍAS PARA LLEVARTE TUS RECUERDITOS PERSONALIZADOS CON DESCUENTAZO* 🎉 *(Pedidos solo para eventos 2026 por tema de tiempos)*",
+                "adjuntos": []
+              },
+              {
+                "texto": "TENEMOS ESTOS PRODUCTOS PARA TU EVENTO:\n\n*Sandalias*\n*Cilindros*\n*Mandiles para Boda*\n*Kit anti cruda*\n*Pantuflas*\n\nCuáles te interesan?",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/94d1527d-83d1-40e2-bfac-05dd969c3ea7.jpg"
+                ]
+              }
+            ],
+            "sin_media": [],
+            "tools_usadas": [
+              "CATALOGO"
+            ],
+            "sin_fichas": false,
+            "evento": "Boda",
+            "etapa_destino": "Evento Identificado"
+          }
+        },
+        {
+          "mensaje": "quiero 60 sandalias gruesas al CP 44100",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-h3-1787609746",
+            "contactId": null,
+            "step": "step_3",
+            "partes": [
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a62bf3a0e0316cbe00f3312.pdf"
+                ]
+              },
+              {
+                "texto": "",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a701852cf81b06f05808192.mp4"
+                ]
+              },
+              {
+                "texto": "¡Qué buena elección! Aquí está la cotización para tus sandalias gruesas:\n\n⏳(7 DIAS DE PROMO)⏳  \n60 *Sandalias Gruesas* x $30 = *$1,800*  \nEnvío: $300  \n*Total: $2,100*  \n*Anticipo (50%): $1,050*",
+                "adjuntos": []
+              },
+              {
+                "texto": "Sabemos que comprar por internet puede generar desconfianza… 😰\n\nCon HAPPY FLOPS, tienes la SEGURIDAD de que TODO es CONFIABLE, aquí puedes ver lo que dicen nuestros clientes en Facebook ⭐⭐⭐⭐⭐",
+                "adjuntos": [
+                  "https://assets.cdn.filesafe.space/onRwi0ZF4uYi0Lp6GAbE/media/6a7e351ca6a03cda06c8508c.mp4"
+                ]
+              },
+              {
+                "texto": "*¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀\n\n1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO*  \n2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños.  \n3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir.  \n4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️.  \n5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️  \n6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸.  \n7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días).\n\nMira, ya que pides sandalias, ¿le gustaría agregar cilindros para su evento? ¡Son un hit en bodas! ✨\n\n¿Le gustaría avanzar con el pedido? Así le paso los números de cuenta para que pague el anticipo.",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [
+              "CATALOGO",
+              "CALCULADORA"
+            ],
+            "texto_completo": "¡Qué buena elección! Aquí está la cotización para tus sandalias gruesas:\n\n⏳(7 DIAS DE PROMO)⏳  \n60 *Sandalias Gruesas* x $30 = *$1,800*  \nEnvío: $300  \n*Total: $2,100*  \n*Anticipo (50%): $1,050*\n\n*¡HAZ TU PEDIDO EN 7 SENCILLOS PASOS!*🚀\n\n1. *COTIZACION de los PRODUCTOS que requiere para su PEDIDO*  \n2. Se requiere del *50% de ANTICIPO* para desarrollar los diseños.  \n3. *Elige tu DISEÑO favorito* 🎨 y proporciona los *DATOS* que deseas incluir.  \n4. Mandamos la *MUESTRA DIGITAL* para tu aprobación o cambios ✏️.  \n5. Una vez *AUTORIZADO, COMENZAMOS LA PRODUCCION*, son *15 DIAS EN PRODUCCION*. 🛠️  \n6. Al terminar, te enviamos una *FOTO DEL PRODUCTO* para que confirmes que todo está perfecto 📸.  \n7. Hace el *PAGO FINAL* y te enviamos tu pedido 🚚 (tiempo de paquetería: 2 a 5 días).\n\nMira, ya que pides sandalias, ¿le gustaría agregar cilindros para su evento? ¡Son un hit en bodas! ✨\n\n¿Le gustaría avanzar con el pedido? Así le paso los números de cuenta para que pague el anticipo.",
+            "etapa_destino": "Cotizado",
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        },
+        {
+          "mensaje": "los necesito para el viernes que viene",
+          "respuesta": {
+            "ok": true,
+            "sessionId": "rerun-h3-1787609746",
+            "contactId": null,
+            "step": "step_4",
+            "partes": [
+              {
+                "texto": "Voy a consultar con nuestro equipo para ver si podemos cumplir con la fecha de entrega que necesitas. Te responderemos a la brevedad. ¡Gracias por tu paciencia! 😊",
+                "adjuntos": []
+              }
+            ],
+            "tools_usadas": [
+              "ATENCION_PERSONALIZADA"
+            ],
+            "texto_completo": "Voy a consultar con nuestro equipo para ver si podemos cumplir con la fecha de entrega que necesitas. Te responderemos a la brevedad. ¡Gracias por tu paciencia! 😊",
+            "etapa_destino": null,
+            "pago_marcador": false,
+            "pago_pdf": null
+          }
+        }
+      ]
+    }
+  ]
+}

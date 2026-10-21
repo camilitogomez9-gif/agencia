@@ -1,0 +1,14 @@
+{
+  "wf": "W6",
+  "descripcion": "Saca la pregunta de cantidad y código postal cuando en el MISMO turno el Recolector ya cotizó. Reportado el 14/08: el lead escribió 'quiero 60 sandalias gruesas al CP 44100' y el bot le pidió cantidad y CP, y a continuación le mandó la cotización con esos mismos datos.",
+  "causa": "`Cards a partes` agrega CTA_STEP_3 SIEMPRE que el step es step_3. Cuando el mensaje del lead ya trae cantidad y CP, el turno produce fichas (step_3) y además cotización, y las dos cosas salen juntas.",
+  "por_que_aca": "Se corrige en `Partir en burbujas` y no en `Cards a partes` porque es el único punto donde ya se conocen las dos mitades del turno: las fichas con su CTA y el texto del Recolector. En `Cards a partes` todavía no se sabe si va a haber cotización.",
+  "ediciones": [
+    {
+      "nodo": "Partir en burbujas",
+      "campo": "parameters.jsCode",
+      "anchor": "const partesFinales = fichas.concat(partes.map(p => (typeof p === 'string'\n  ? { texto: p, adjuntos: [] } : p)));",
+      "reemplazo": "// Si en este mismo turno el Recolector YA cotizó, la pregunta de cantidad y código\n// postal que `Cards a partes` agrega en step_3 sobra: el lead ya dio los dos datos.\n// Reportado el 14/08 — pedía cantidad y CP y acto seguido mandaba la cotización con\n// esos mismos números.\n//\n// Se reusa la regex INDIVISIBLE, que ya identifica una cotización, en vez de inventar\n// otra. Ojo que matchea \"Cotizacion\"/\"Cotización\" pero NO \"cotizar\": un \"decime la\n// cantidad para cotizarte\" no cuenta como cotización hecha, y ahí el CTA sí debe salir.\nconst yaCotizo = INDIVISIBLE.test(txt);\nconst fichasFinales = yaCotizo\n  ? fichas.filter(p => !/Le interesa sumarlos a la cotizaci/i.test(p.texto || ''))\n  : fichas;\n\nconst partesFinales = fichasFinales.concat(partes.map(p => (typeof p === 'string'\n  ? { texto: p, adjuntos: [] } : p)));"
+    }
+  ]
+}

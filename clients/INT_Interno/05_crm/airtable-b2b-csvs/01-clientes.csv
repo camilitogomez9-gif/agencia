@@ -1,0 +1,14 @@
+ID,Nombre,Contacto principal,Email,Telefono,Origen,Estado ciclo,Fecha primer contacto,Closer asignado,Notas
+CLI_IMP,Importadores Conectados,Diego Labores,,,Referido,Producción,2026-04-01,CLO_JANO,Cursos y mentoría de importaciones — agente de ventas DM IG/WA/FB
+CLI_SNR,Sonrisas,Cecilia,,,Referido,Mantenimiento,2026-01-08,CLO_JANO,Clínica dental — reporte facturación mensual + correos
+CLI_SYS,Sistemas y Soluciones,Edgardo,info@sistemasysoluciones.com,,Inbound,Producción,2026-04-10,CLO_JANO,Industria gráfica — agente conversacional con tools Airtable
+CLI_VTR,Venttur,Max,,,Referido,Producción,2026-04-15,CLO_JANO,Plataforma educativa — tracking CAPI Meta + outreach
+CLI_CLZ,Collazo Servicio Técnico,Matías,,,Referido,Producción,2026-05-01,CLO_JP,Servicio técnico — agente + round-robin cal.com
+CLI_NPR,Napier Salon,Wilfrido,,,Referido,Desarrollo,2026-05-15,CLO_JANO,Peluquería hombres MVD — agente gestión citas
+CLI_HPF,Happy Flops,Oscar,,,Inbound,Mantenimiento,2026-02-01,CLO_JP,Sandalias eventos — flujos n8n + migración GHL
+CLI_NVJ,Narvaja Hogar,,,,Referido,Producción,2026-03-10,CLO_JANO,Tienda hogar UY — agente WA/IG/FB
+CLI_TFO,TOFO Pizza,Mauricio García de la Vega,mauriciogarciadelav@gmail.com,,Inbound,Producción,2026-03-15,CLO_JANO,Pizzas robóticas MX — agente derivación a 4 subagentes
+CLI_DLK,Dialectika,Pablo,,,Referido,Diagnóstico,2026-05-20,CLO_JP,Plataforma psicología CL — automatizaciones n8n + Supabase
+CLI_HBV,Heber Vera,Eloísa Vera,,,Referido,Mantenimiento,2026-02-15,CLO_JANO,Peluquería referente MVD — agente WA + métricas semanales
+CLI_STK,Stark Supplements,Cristian,,,Outbound,Pausado,2026-03-01,CLO_JP,Suplementos BO — agente Kommo (pendientes producción)
+CLI_CRZ,Cereza Invest,Maxi Robles,,,Referido,Producción,2026-04-05,CLO_JANO,Inversiones AR — agente Alexis WA/IG via ManyChat

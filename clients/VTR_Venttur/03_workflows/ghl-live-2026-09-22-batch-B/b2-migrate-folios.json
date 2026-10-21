@@ -1,0 +1,281 @@
+{
+  "updatedAt": "2026-09-22T03:43:45.967Z",
+  "createdAt": "2026-09-22T03:38:44.300Z",
+  "id": "FoDzrFAEynflWjeG",
+  "name": "VTR Batch B2 · Migrar folios Airtable → Supabase (one-shot)",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "vtr-batch-b2-migrate-folios-92ffb2e5",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "b8bf676a-debb-4265-b6f0-f9ca6c4f77d5",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "879e02d6-97b7-48b6-a5a7-908bb9b94ea2"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "[AIRTABLE_BASE_ID]",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "[AIRTABLE_TABLE_ID]",
+          "mode": "id"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "id": "056b3b60-4dcd-4085-abde-3b13fdb10a0d",
+      "name": "Airtable Folios",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        0
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "[N8N_CREDENTIAL_ID]",
+          "name": "Venttur Dashboard"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO capi_folios (folio,fbclid,fbc,fbp,programa,ts,landing_url,user_agent,ip,updated_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,now()) ON CONFLICT (folio) DO UPDATE SET fbclid=EXCLUDED.fbclid,fbc=EXCLUDED.fbc,fbp=EXCLUDED.fbp,programa=EXCLUDED.programa,ts=EXCLUDED.ts,landing_url=EXCLUDED.landing_url,user_agent=EXCLUDED.user_agent,ip=EXCLUDED.ip,updated_at=now()",
+        "options": {
+          "queryReplacement": "={{ [$json.Folio || null, $json.fbclid || null, $json.fbc || null, $json.fbp || null, $json.Programa || null, ($json.Timestamp != null ? new Date($json.Timestamp).toISOString() : null), $json['Landing URL'] || null, $json.user_agent || null, $json.ip || null] }}"
+        }
+      },
+      "id": "397f05ea-5b84-4ea7-9f6d-574f69fd631a",
+      "name": "Upsert folio",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        480,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "ihpvM7nYMdLCwWDP",
+          "name": "Venttur"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT COUNT(*) AS supabase_count FROM capi_folios;",
+        "options": {}
+      },
+      "id": "18324663-9e98-4400-a500-52c97e17e6af",
+      "name": "Count after",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        720,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "ihpvM7nYMdLCwWDP",
+          "name": "Venttur"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, supabase_count_after: $json.supabase_count, airtable_count: $('Airtable Folios').all().length, with_folio: $('Has folio?').all().length, skipped_null_folio: $('Airtable Folios').all().length - $('Has folio?').all().length } }}",
+        "options": {}
+      },
+      "id": "f280947c-aa12-411a-b535-f565dce8b382",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "has-folio-2026-09-22",
+              "leftValue": "={{ ($json.Folio || '').toString().trim() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5f97e15e-498f-4580-b46b-8c2611004d39",
+      "name": "Has folio?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        360,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Airtable Folios",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable Folios": {
+      "main": [
+        [
+          {
+            "node": "Has folio?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert folio": {
+      "main": [
+        [
+          {
+            "node": "Count after",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Count after": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has folio?": {
+      "main": [
+        [
+          {
+            "node": "Upsert folio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "settings": {
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "9048e2d4-c17d-433b-8897-c291ca90becc",
+  "activeVersionId": null,
+  "versionCounter": 12,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-09-22T03:38:44.303Z",
+      "createdAt": "2026-09-22T03:38:44.303Z",
+      "role": "workflow:owner",
+      "workflowId": "FoDzrFAEynflWjeG",
+      "projectId": "OZub3m3DGqbZefcZ",
+      "project": {
+        "updatedAt": "2025-02-10T13:18:00.403Z",
+        "createdAt": "2025-02-10T13:17:23.832Z",
+        "id": "OZub3m3DGqbZefcZ",
+        "name": "la agencia <[EMAIL-AGENCIA]>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-02-10T13:17:23.833Z",
+            "createdAt": "2025-02-10T13:17:23.833Z",
+            "userId": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+            "projectId": "OZub3m3DGqbZefcZ",
+            "user": {
+              "updatedAt": "2026-09-21T22:19:54.000Z",
+              "createdAt": "2025-02-10T13:17:22.713Z",
+              "id": "5365a906-5ad6-4773-b96f-9db06186b8c7",
+              "email": "[EMAIL-AGENCIA]",
+              "firstName": "la agencia",
+              "lastName": "AI",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-02-10T13:18:23.044Z",
+                "personalization_survey_n8n_version": "1.77.3",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "KFHNPOd9iRMDKpBc",
+                "userActivatedAt": 1739194255698,
+                "npsSurvey": {
+                  "waitingForResponse": true,
+                  "ignoredCount": 2,
+                  "lastShownAt": 1789467400717
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-09-21",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

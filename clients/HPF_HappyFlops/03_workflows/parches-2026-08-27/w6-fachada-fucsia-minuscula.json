@@ -1,0 +1,13 @@
+{
+  "wf": "W6",
+  "descripcion": "Cierra el hallazgo colateral del delta 09: W6 tenía DOS ocurrencias de la sede física con distinto casing — 'Fachada Fucsia, Portones Negros' (mayúsculas, cubierto por el delta 09 en el parche w6-vocabulario-mexicano-colores.json) y 'Fachada fucsia, portones negros' (minúsculas, no estaba en la base congelada y no cubría el delta). Este parche normaliza la segunda al vocabulario mexicano manteniendo el casing minúsculas del original. No unifico casing entre las dos ocurrencias para no expandir el scope sin permiso.",
+  "ediciones": [
+    {
+      "nodo": "Recolector",
+      "campo": "parameters.options.systemMessage",
+      "anchor": "Fachada fucsia, portones negros",
+      "reemplazo": "Fachada fiusha, portones negros",
+      "motivo": "Segunda descripción de la sede física en W6 (offset ~6261, distinta al bloque de 'Ubicación' que cubre el parche anterior). Sólo léxico: 'fucsia' → 'fiusha', conservando el casing minúsculas."
+    }
+  ]
+}
